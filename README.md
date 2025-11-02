@@ -83,6 +83,8 @@ Todo el material será de **acceso libre y open source**, promoviendo una educac
 
 ---
 
+```
+
 ## ⚙️ **Tecnologías Base**
 
 | Categoría | Tecnologías |
@@ -97,7 +99,9 @@ Todo el material será de **acceso libre y open source**, promoviendo una educac
 | **Infraestructura** | Docker, Nginx, Linux Servers |
 | **Control de Versiones** | Git / GitHub |
 
----
+```
+
+```
 
 ## 🧩 **Arquitectura General del Sistema**
 
@@ -126,7 +130,8 @@ SSH / MQTT / TCP/IP
 └───────────────────────────────┘
 
 
----
+```
+
 
 ## 🧠 **Ejemplo de Conexión con BeagleBone Black**
 
