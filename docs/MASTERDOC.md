@@ -92,7 +92,8 @@ ActorRolDescripciónInteracciones Clave👨‍🌾 AgricultorUsuario FinalPropie
 2. Vistas de Arquitectura (Modelo C4)
 2.1. Vista de Contexto del Sistema
 Nivel 1: El sistema como "caja negra" y sus interacciones externas.
-mermaidgraph TD
+```mermaid
+graph TD
     subgraph "Actores Humanos"
         direction TB
         actor1[👨‍🌾 Agricultor]
@@ -608,6 +609,7 @@ Contenido_Academico {
     datetime created_at
 }
 
+```
 ---
 
 ### 4.2. Diccionario de Datos
@@ -2413,7 +2415,8 @@ Precisión/Recall por clase: >85%
 6.2. Pipeline de Inferencia Híbrida
 El sistema implementa dos flujos de inferencia complementarios:
 A. Inferencia Cloud (Alta Precisión)
-mermaidsequenceDiagram
+```mermaid
+sequenceDiagram
     participant U as Usuario
     participant F as Frontend React
     participant B as Backend Django
@@ -2464,6 +2467,7 @@ mermaidsequenceDiagram
 - Latencia ultra-baja: <500ms
 - Procesamiento automático continuo
 
+```
 ---
 
 ### 6.3. Modelo Seleccionado

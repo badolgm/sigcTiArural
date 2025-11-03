@@ -620,7 +620,8 @@ ActorRolDescripciónInteracciones Clave👨‍🌾 AgricultorUsuario FinalPropie
 2. Vistas de Arquitectura (Modelo C4)
 2.1. Vista de Contexto del Sistema
 Nivel 1: El sistema como "caja negra" y sus interacciones externas.
-mermaidgraph TD
+```mermaid
+graph TD
     subgraph "Actores Humanos"
         direction TB
         actor1[👨‍🌾 Agricultor]
@@ -1136,6 +1137,7 @@ Contenido_Academico {
     datetime created_at
 }
 
+```
 ---
 
 ### 4.2. Diccionario de Datos
@@ -2941,7 +2943,8 @@ Precisión/Recall por clase: >85%
 6.2. Pipeline de Inferencia Híbrida
 El sistema implementa dos flujos de inferencia complementarios:
 A. Inferencia Cloud (Alta Precisión)
-mermaidsequenceDiagram
+```mermaid
+sequenceDiagram
     participant U as Usuario
     participant F as Frontend React
     participant B as Backend Django
@@ -2992,6 +2995,7 @@ mermaidsequenceDiagram
 - Latencia ultra-baja: <500ms
 - Procesamiento automático continuo
 
+```
 ---
 
 ### 6.3. Modelo Seleccionado
@@ -3240,7 +3244,8 @@ ActorRolDescripciónInteracciones Clave👨‍🌾 AgricultorUsuario FinalPropie
 2. Vistas de Arquitectura (Modelo C4)
 2.1. Vista de Contexto del Sistema
 Nivel 1: El sistema como "caja negra" y sus interacciones externas.
-mermaidgraph TD
+```mermaid
+graph TD
     subgraph "Actores Humanos"
         direction TB
         actor1[👨‍🌾 Agricultor]
@@ -3756,6 +3761,7 @@ Contenido_Academico {
     datetime created_at
 }
 
+```
 ---
 
 ### 4.2. Diccionario de Datos
@@ -5561,7 +5567,8 @@ Precisión/Recall por clase: >85%
 6.2. Pipeline de Inferencia Híbrida
 El sistema implementa dos flujos de inferencia complementarios:
 A. Inferencia Cloud (Alta Precisión)
-mermaidsequenceDiagram
+```mermaid
+sequenceDiagram
     participant U as Usuario
     participant F as Frontend React
     participant B as Backend Django
@@ -5612,6 +5619,7 @@ mermaidsequenceDiagram
 - Latencia ultra-baja: <500ms
 - Procesamiento automático continuo
 
+```
 ---
 
 ### 6.3. Modelo Seleccionado
@@ -6950,7 +6958,7 @@ fetch('https://api.sigct-rural.com/api/v1/proyectos/', {
 });
 ```
 
-> 📘 **Documentación completa de API**: [docs/API_REFERENCE.md](docs/API_REFERENCE.md)
+> 📘 **Documentación completa de API**: [docs/docs/API_REFERENCE.md](docs/API_REFERENCE.md)
 
 ---
 
@@ -7234,7 +7242,7 @@ server {
 }
 ```
 
-> 📘 **Guía completa de despliegue**: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+> 📘 **Guía completa de despliegue**: [docs/docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 
 ---
 
@@ -7305,12 +7313,12 @@ Para proponer nuevas funcionalidades:
 
 | Documento | Descripción |
 |-----------|-------------|
-| **[MASTERDOC.md](docs/MASTERDOC.md)** | 📘 Documento de Arquitectura de Software (DAS) completo con diagramas C4, E-R, casos de uso |
-| **[PLANMAESTRO.md](docs/PLANMAESTRO.md)** | 🚀 Plan de fases de desarrollo con cronograma detallado |
-| **[API_REFERENCE.md](docs/API_REFERENCE.md)** | 🌐 Documentación completa de endpoints REST |
-| **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** | 🚢 Guía paso a paso para despliegue en producción |
-| **[EDGE_SETUP.md](docs/EDGE_SETUP.md)** | 🖥️ Configuración detallada de BeagleBone Black |
-| **[CONTRIBUTING.md](docs/CONTRIBUTING.md)** | 🤝 Guía para contribuidores |
+| **[MASTERDOC.md](docs/docs/MASTERDOC.md)** | 📘 Documento de Arquitectura de Software (DAS) completo con diagramas C4, E-R, casos de uso |
+| **[PLANMAESTRO.md](docs/docs/PLANMAESTRO.md)** | 🚀 Plan de fases de desarrollo con cronograma detallado |
+| **[API_REFERENCE.md](docs/docs/API_REFERENCE.md)** | 🌐 Documentación completa de endpoints REST |
+| **[DEPLOYMENT.md](docs/docs/DEPLOYMENT.md)** | 🚢 Guía paso a paso para despliegue en producción |
+| **[EDGE_SETUP.md](docs/docs/EDGE_SETUP.md)** | 🖥️ Configuración detallada de BeagleBone Black |
+| **[CONTRIBUTING.md](docs/docs/CONTRIBUTING.md)** | 🤝 Guía para contribuidores |
 
 ### Documentación Interactiva
 
@@ -7407,7 +7415,7 @@ Este proyecto es desarrollado como **Proyecto Productivo** del programa **Tecnol
 
 ## 📜 Licencia
 
-Este proyecto está licenciado bajo **MIT License** - ver el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto está licenciado bajo **MIT License** - ver el archivo [docs/LICENSE](LICENSE) para más detalles.
 ```
 MIT License
 
