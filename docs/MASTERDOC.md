@@ -4467,4 +4467,4 @@ Para la comunidad rural y educativa del mundo 🌍
 ¿Listo para comenzar? → ⚡ Inicio Rápido
 ¿Tienes preguntas? → 💬 Abre un Discussion
 ¿Encontraste un bug? → 🐛 Reporta un Issue
-¿Quieres contribuir? → 🤝 Lee la Guía de Contribución
+¿Quieres contribuir? → 🤝 Lee la Guía de Contribución 
