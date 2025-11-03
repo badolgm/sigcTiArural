@@ -14,10 +14,18 @@ const categories = [
     accent: '#00e5ff',
     icon: '🤖',
     links: [
+      { label: '🧪 Abrir Laboratorio (SIGC&T)', to: 'lab-robotics', internal: true },
       { label: 'ROS Wiki', href: 'http://wiki.ros.org/' },
       { label: 'Open Robotics', href: 'https://www.openrobotics.org/' },
       { label: 'Docs ROS2 (Humble)', href: 'https://docs.ros.org/en/humble/' },
       { label: 'Gazebo Simulator', href: 'https://gazebosim.org/' },
+      { label: 'Webots Player (Cloud)', href: 'https://play.webots.cloud/' },
+      { label: 'URDF Viewer (Three.js)', href: 'https://gkjohnson.github.io/urdf-loaders/examples/urdf-viewer.html' },
+      { label: 'MoveIt (Manipulación)', href: 'https://moveit.picknik.ai/' },
+      { label: 'TurtleBot3 Tutorials', href: 'https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/' },
+      { label: 'ROSBridge Suite', href: 'https://wiki.ros.org/rosbridge_suite' },
+      { label: 'Gazebo Fuel Worlds', href: 'https://fuel.gazebosim.org/' },
+      { label: 'Ignition (Fortress/Garden)', href: 'https://gazebosim.org/docs' },
     ],
   },
   {
@@ -25,11 +33,17 @@ const categories = [
     accent: '#a3ff12',
     icon: '⚡',
     links: [
+      { label: '🧪 Abrir Laboratorio (SIGC&T)', to: 'lab-embedded', internal: true },
       { label: 'BeagleBoard.org', href: 'https://beagleboard.org/' },
       { label: 'BeagleBone Black', href: 'https://beagleboard.org/black' },
       { label: 'Zephyr RTOS', href: 'https://zephyrproject.org/' },
       { label: 'Yosys (FPGA)', href: 'https://yosyshq.net/yosys/' },
       { label: 'Arduino IDE', href: 'https://www.arduino.cc/en/software' },
+      { label: 'Wokwi Simulator', href: 'https://wokwi.com/' },
+      { label: 'Renode (Emulación HW)', href: 'https://renode.io/' },
+      { label: 'TensorFlow Lite Micro', href: 'https://www.tensorflow.org/lite/microcontrollers' },
+      { label: 'PlatformIO', href: 'https://platformio.org/' },
+      { label: 'EDGE_SETUP (SIGC&T)', href: 'https://github.com/badolgm/sigcTiArural/blob/main/docs/EDGE_SETUP.md' },
     ],
   },
   {
@@ -42,7 +56,7 @@ const categories = [
         title: 'Laboratorio Cuántico - Nivel Fácil',
         accent: '#ff6b9d',
         links: [
-          { label: '🧮 Lab Matemáticas Interactivo', href: '/labs/advanced-math', internal: true },
+          { label: '🧮 Lab Matemáticas Interactivo', to: 'advanced-math', internal: true },
           { label: 'Qiskit Textbook', href: 'https://qiskit.org/textbook/' },
           { label: 'Quantum Computing Playground', href: 'http://www.quantumplayground.net/' },
           { label: 'IBM Quantum Experience', href: 'https://quantum-computing.ibm.com/' },
@@ -135,10 +149,16 @@ const categories = [
     accent: '#00e5ff',
     icon: '📡',
     links: [
+      { label: '🧪 Abrir Laboratorio (SIGC&T)', to: 'lab-telecom', internal: true },
       { label: 'GNU Radio', href: 'https://www.gnuradio.org/' },
       { label: 'Start with GNU Radio', href: 'https://wiki.gnuradio.org/index.php/Start' },
       { label: 'ITU Standards', href: 'https://www.itu.int/' },
       { label: 'SDR Academy', href: 'https://www.sdrplay.com/sdr-academy/' },
+      { label: 'WebSDR Index', href: 'https://www.websdr.org/' },
+      { label: 'SDR# (Airspy)', href: 'https://airspy.com/download/' },
+      { label: 'SatNOGS Network', href: 'https://network.satnogs.org/' },
+      { label: 'SDRangel', href: 'https://github.com/f4exb/sdrangel' },
+      { label: 'RTL-SDR Blog', href: 'https://www.rtl-sdr.com/' },
     ],
   },
   {
@@ -161,37 +181,45 @@ const categories = [
       { label: 'SOFIA Plus', href: 'https://oferta.senasofiaplus.edu.co/sofia-oferta/' },
       { label: 'Universidad Nacional', href: 'https://unal.edu.co/' },
       { label: 'Universidad de los Andes', href: 'https://uniandes.edu.co/' },
+      { label: '📚 Ver MASTERDOC v4.2 (Interno)', to: 'docs-masterdoc', internal: true },
     ],
   },
 ];
 
-const SubSection = ({ title, accent, links }) => (
+const SubSection = ({ title, accent, links, onNavigate }) => (
   <div className="mb-4 p-3 rounded-lg border border-opacity-30" style={{ borderColor: accent }}>
     <h4 className="text-sm font-semibold mb-2 uppercase" style={{ color: accent, textShadow: `0 0 4px ${accent}60` }}>
       {title}
     </h4>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
       {links.map((l) => (
-        <a
-          key={l.href}
-          href={l.href}
-          target={l.internal ? '_self' : '_blank'}
-          rel={l.internal ? '' : 'noreferrer'}
-          className="px-2 py-1 text-xs rounded border transition-all duration-200 hover:scale-105"
-          style={{ 
-            borderColor: `${accent}40`, 
-            color: '#e6edf3',
-            backgroundColor: `${accent}10`
-          }}
-        >
-          {l.label}
-        </a>
+        l.internal && l.to ? (
+          <button
+            key={l.label}
+            onClick={() => onNavigate && onNavigate(l.to)}
+            className="px-2 py-1 text-xs rounded border transition-all duration-200 hover:scale-105"
+            style={{ borderColor: `${accent}40`, color: '#e6edf3', backgroundColor: `${accent}10` }}
+          >
+            {l.label}
+          </button>
+        ) : (
+          <a
+            key={l.href || l.label}
+            href={l.href}
+            target="_blank"
+            rel="noreferrer"
+            className="px-2 py-1 text-xs rounded border transition-all duration-200 hover:scale-105"
+            style={{ borderColor: `${accent}40`, color: '#e6edf3', backgroundColor: `${accent}10` }}
+          >
+            {l.label}
+          </a>
+        )
       ))}
     </div>
   </div>
 );
 
-const Card = ({ title, accent, links, sections, icon, isExpanded }) => {
+const Card = ({ title, accent, links, sections, icon, isExpanded, onNavigate }) => {
   const [expanded, setExpanded] = useState(isExpanded || false);
   
   return (
@@ -225,22 +253,33 @@ const Card = ({ title, accent, links, sections, icon, isExpanded }) => {
       {sections ? (
         <div className={`transition-all duration-300 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-32 opacity-70 overflow-hidden'}`}>
           {sections.map((section) => (
-            <SubSection key={section.title} {...section} />
+            <SubSection key={section.title} {...section} onNavigate={onNavigate} />
           ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              target="_blank"
-              rel="noreferrer"
-              className="px-3 py-2 text-sm rounded border neon-btn transition-all duration-200 hover:scale-105"
-              style={{ borderColor: `${accent}60`, color: '#e6edf3' }}
-            >
-              {l.label}
-            </a>
+            l.internal && l.to ? (
+              <button
+                key={l.label}
+                onClick={() => onNavigate && onNavigate(l.to)}
+                className="px-3 py-2 text-sm rounded border neon-btn transition-all duration-200 hover:scale-105"
+                style={{ borderColor: `${accent}60`, color: '#e6edf3' }}
+              >
+                {l.label}
+              </button>
+            ) : (
+              <a
+                key={l.href || l.label}
+                href={l.href}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-2 text-sm rounded border neon-btn transition-all duration-200 hover:scale-105"
+                style={{ borderColor: `${accent}60`, color: '#e6edf3' }}
+              >
+                {l.label}
+              </a>
+            )
           ))}
         </div>
       )}
@@ -248,7 +287,7 @@ const Card = ({ title, accent, links, sections, icon, isExpanded }) => {
   );
 };
 
-const LabCatalog = () => {
+const LabCatalog = ({ onNavigate }) => {
   return (
     <div className="p-6 pt-20 min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
       <div className="max-w-7xl mx-auto text-white">
@@ -264,7 +303,7 @@ const LabCatalog = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {categories.map((c) => (
-            <Card key={c.title} {...c} />
+            <Card key={c.title} {...c} onNavigate={onNavigate} />
           ))}
         </div>
       </div>

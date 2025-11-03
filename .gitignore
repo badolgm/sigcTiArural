@@ -2,6 +2,13 @@
 # Ignorar versiones viejas de README (mantener locales)
 READMEV2.md
 READMEV3.md
+READMEV4.md
 
-# Ignorar node_modules del frontend (evitar subir dependencias)
+# Ignorar node_modules a cualquier nivel
+node_modules/
 src/frontend/node_modules/
+
+# Ignorar artefactos de Vite/React
+dist/
+build/
+.vite-cache/
