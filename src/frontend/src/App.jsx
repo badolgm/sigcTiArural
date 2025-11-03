@@ -4,6 +4,12 @@ import React, { useState } from 'react';
 import TopNav from './components/TopNav.jsx'; // FIX: Especificación de extensión
 import Dashboard from './pages/Dashboard.jsx'; // FIX: Especificación de extensión
 import LabCatalog from './pages/LabCatalog.jsx';
+import AdvancedMathLab from './labs/AdvancedMathLab.jsx';
+import RoboticsLab from './labs/RoboticsLab.jsx';
+import EmbeddedLab from './labs/EmbeddedLab.jsx';
+import TelecomLab from './labs/TelecomLab.jsx';
+import DocsEdgeSetup from './pages/DocsEdgeSetup.jsx';
+import DocsMasterdoc from './pages/DocsMasterdoc.jsx';
 
 // Importaciones de otras páginas (Placeholders)
 // import Labs from './pages/Labs'; 
@@ -28,7 +34,7 @@ const initialNodes = [
 
 // --- FUNCIÓN DE RENDERIZADO DE PÁGINAS (Switch Case) ---
 
-const PageContent = ({ page, nodes }) => {
+const PageContent = ({ page, nodes, onNavigate }) => {
     // Usamos el Switch para el ruteo básico (según MASTERDOC)
     switch (page) {
         case 'home':
@@ -36,7 +42,19 @@ const PageContent = ({ page, nodes }) => {
             return <Dashboard nodes={nodes} />;
         // Los otros casos solo tienen placeholders por ahora
         case 'labs':
-            return <LabCatalog />;
+            return <LabCatalog onNavigate={onNavigate} />;
+        case 'advanced-math':
+            return <AdvancedMathLab onNavigate={onNavigate} />;
+        case 'lab-robotics':
+            return <RoboticsLab />;
+        case 'lab-embedded':
+            return <EmbeddedLab />;
+        case 'lab-telecom':
+            return <TelecomLab />;
+        case 'docs-edge-setup':
+            return <DocsEdgeSetup />;
+        case 'docs-masterdoc':
+            return <DocsMasterdoc />;
         case 'ai':
             return <PlaceholderPage title="DIAGNÓSTICO POR INTELIGENCIA ARTIFICIAL" description="Página para subir imágenes y recibir análisis Cloud/Edge." />;
         case 'library':
@@ -106,7 +124,7 @@ const App = () => {
             <TopNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
             
             {/* 2. Contenido de la Página (Lógica de Ruteo) */}
-            <PageContent page={currentPage} nodes={nodes} />
+            <PageContent page={currentPage} nodes={nodes} onNavigate={setCurrentPage} />
         </div>
     );
 };

@@ -27,6 +27,7 @@ const TopNav = ({ currentPage, setCurrentPage }) => {
   const navItems = [
     { name: 'Dashboard', page: 'dashboard' },
     { name: 'Laboratorios', page: 'labs' },
+    { name: 'Matemáticas Avanzadas', page: 'advanced-math' },
     { name: 'IA Predictiva', page: 'ai' },
     { name: 'Biblioteca', page: 'library' },
     { name: 'Docs (v5.0)', page: 'docs' },
