@@ -1,2 +1,6 @@
-[Immersive content redacted for brevity.]
-
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};

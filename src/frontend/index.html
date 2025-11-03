@@ -1,46 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGC&T Rural - Dashboard Científico</title>
-    <!-- Carga de Tailwind CSS: La inyección de código dentro de App.jsx asegura los colores NEÓN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Estilos generales para el fondo y la fuente */
-        :root {
-            /* Definición manual de los colores Neón para mejor compatibilidad */
-            --neon-primary: #00FFFF;
-            --neon-secondary: #39FF14;
-            --dark-bg: #0a0a0a;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--dark-bg);
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* Evitar scroll horizontal */
-        }
-    </style>
-</head>
-<body>
-    <div id="root">
-        <!-- El contenido de React se inyectará aquí -->
-    </div>
-
-    <!-- 1. Carga de React y ReactDOM -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-
-    <!-- 2. Carga del Babel Standalone para interpretar JSX en el navegador -->
-    <!-- ¡IMPORTANTE! Solo para desarrollo local, no para producción. -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- 3. Carga de los Gráficos Recharts (Necesario para la siguiente fase) -->
-    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
-
-    <!-- 4. Carga de tu Código Principal (main.jsx) -->
-    <!-- Se usa type="text/babel" para que Babel lo compile en el navegador. -->
-    <script type="text/babel" data-type="module" src="./src/main.jsx"></script>
-</body>
-</html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SIGC&T Rural - Frontend</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-bg text-text bg-grid-dark [background-size:20px_20px]">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+  </html>

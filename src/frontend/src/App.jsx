@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 // Importamos los componentes modulares
 import TopNav from './components/TopNav.jsx'; // FIX: Especificación de extensión
 import Dashboard from './pages/Dashboard.jsx'; // FIX: Especificación de extensión
+import LabCatalog from './pages/LabCatalog.jsx';
 
 // Importaciones de otras páginas (Placeholders)
 // import Labs from './pages/Labs'; 
@@ -35,7 +36,7 @@ const PageContent = ({ page, nodes }) => {
             return <Dashboard nodes={nodes} />;
         // Los otros casos solo tienen placeholders por ahora
         case 'labs':
-            return <PlaceholderPage title="LABORATORIOS VIRTUALES STEM" description="Simulaciones interactivas de electrónica, telemática y programación." />;
+            return <LabCatalog />;
         case 'ai':
             return <PlaceholderPage title="DIAGNÓSTICO POR INTELIGENCIA ARTIFICIAL" description="Página para subir imágenes y recibir análisis Cloud/Edge." />;
         case 'library':
@@ -100,27 +101,7 @@ const App = () => {
     const [nodes, setNodes] = useState(initialNodes); 
 
     return (
-        <div className="min-h-screen">
-            {/* Carga de Tailwind CSS y Configuración de Colores Neón */}
-            <script src="https://cdn.tailwindcss.com"></script>
-            <script>
-                {/* Aseguramos que Tailwind reconozca los colores dinámicos NEÓN */}
-                {`
-                    tailwind.config = {
-                        theme: {
-                            extend: {
-                                colors: {
-                                    'neon-primary': '${NEON_COLORS.primary}',
-                                    'neon-secondary': '${NEON_COLORS.secondary}',
-                                    'neon-alert': '${NEON_COLORS.alert}',
-                                    'dark-bg': '${NEON_COLORS.darkBackground}',
-                                }
-                            }
-                        }
-                    }
-                `}
-            </script>
-            
+        <div className="min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
             {/* 1. Barra de Navegación (Importada y Modular) */}
             <TopNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
             

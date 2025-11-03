@@ -8,20 +8,17 @@ const NEON_COLORS = {
   darkBackground: '#0a0a0a',
 };
 
-// Clase para la sombra flotante Neón
-const getNeonShadow = (color) => `shadow-[0_0_15px_${color}80] hover:shadow-[0_0_25px_${color}] transition-all duration-500`;
-
-// Clase para el borde dinámico del estado
-const getStatusClasses = (status) => {
+// Estilos dinámicos para sombra y borde según estado
+const getStatusStyle = (status) => {
   switch (status) {
     case 'online':
-      return `border-[${NEON_COLORS.secondary}] ${getNeonShadow(NEON_COLORS.secondary)} text-[${NEON_COLORS.secondary}]`;
+      return { borderColor: NEON_COLORS.secondary, boxShadow: `0 0 15px ${NEON_COLORS.secondary}80` };
     case 'alert':
-      return `border-[${NEON_COLORS.alert}] ${getNeonShadow(NEON_COLORS.alert)} text-[${NEON_COLORS.alert}]`;
+      return { borderColor: NEON_COLORS.alert, boxShadow: `0 0 15px ${NEON_COLORS.alert}80` };
     case 'offline':
-      return `border-gray-700 shadow-none text-gray-500`;
+      return { borderColor: '#374151', boxShadow: 'none', color: '#6b7280' };
     default:
-      return `border-[${NEON_COLORS.primary}]`;
+      return { borderColor: NEON_COLORS.primary };
   }
 };
 
@@ -34,12 +31,15 @@ const ClusterCard = ({ node }) => {
     if (!node) return null; 
     
     const { id, name, role, status, data } = node;
-    const statusClasses = getStatusClasses(status);
+    const statusStyle = getStatusStyle(status);
     const statusText = status.toUpperCase();
     const isAlert = status === 'alert';
 
     return (
-        <div className={`p-6 bg-gray-900 bg-opacity-80 rounded-xl border-2 ${statusClasses} transition-all duration-700 ease-in-out transform hover:-translate-y-1`}>
+        <div
+          className={`p-6 bg-gray-900 bg-opacity-80 rounded-xl border-2 transition-all duration-700 ease-in-out transform hover:-translate-y-1`}
+          style={statusStyle}
+        >
             {/* Cabecera y ID */}
             <div className="flex justify-between items-start mb-4 border-b border-gray-700 pb-2">
                 <h3 className="text-xl font-bold uppercase" style={{ color: NEON_COLORS.primary, textShadow: `0 0 5px ${NEON_COLORS.primary}80` }}>
@@ -62,11 +62,11 @@ const ClusterCard = ({ node }) => {
             <div className="space-y-2 text-sm">
                 <p className="flex justify-between items-center text-gray-300">
                     <span className="font-semibold">CPU Load:</span>
-                    <span className={isAlert ? `text-[${NEON_COLORS.alert}]` : 'text-white'}>{data.cpu}</span>
+                    <span style={isAlert ? { color: NEON_COLORS.alert } : {}}>{data.cpu}</span>
                 </p>
                 <p className="flex justify-between items-center text-gray-300">
                     <span className="font-semibold">Temperature:</span>
-                    <span className={isAlert ? `text-[${NEON_COLORS.alert}]` : 'text-white'}>{data.temp}</span>
+                    <span style={isAlert ? { color: NEON_COLORS.alert } : {}}>{data.temp}</span>
                 </p>
                 
                 {data.diagnosis && (
@@ -78,7 +78,7 @@ const ClusterCard = ({ node }) => {
                 {data.network && (
                     <p className="flex justify-between items-center text-gray-300">
                         <span className="font-semibold">Network:</span>
-                        <span className={data.network !== 'OK' ? `text-[${NEON_COLORS.alert}]` : 'text-white'}>{data.network}</span>
+                        <span style={data.network !== 'OK' ? { color: NEON_COLORS.alert } : {}}>{data.network}</span>
                     </p>
                 )}
             </div>

@@ -1,1 +1,32 @@
-[Immersive content redacted for brevity.]
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0b0f14;
+  --text: #e6edf3;
+  --muted: #a0b4c0;
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff3cc7;
+  --neon-lime: #a3ff12;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif;
+}
+
+.neon-border { box-shadow: 0 0 8px rgba(0,229,255,0.35), 0 0 16px rgba(0,229,255,0.18); }
+.neon-text-cyan { text-shadow: 0 0 6px rgba(0,229,255,0.45); }
+.neon-text-magenta { text-shadow: 0 0 6px rgba(255,60,199,0.45); }
+.neon-btn { transition: all 160ms ease; }
+.neon-btn:hover { box-shadow: 0 0 10px rgba(0,229,255,0.6); transform: translateY(-1px); }
+
+.card-float {
+  backdrop-filter: blur(6px);
+  background: rgba(13,18,25,0.66);
+  border: 1px solid rgba(160,180,192,0.16);
+}

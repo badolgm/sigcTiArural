@@ -2,3 +2,6 @@
 # Ignorar versiones viejas de README (mantener locales)
 READMEV2.md
 READMEV3.md
+
+# Ignorar node_modules del frontend (evitar subir dependencias)
+src/frontend/node_modules/

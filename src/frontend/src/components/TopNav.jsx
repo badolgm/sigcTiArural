@@ -33,15 +33,17 @@ const TopNav = ({ currentPage, setCurrentPage }) => {
   ];
 
   // Estilo para el botón de alerta (simulación de un estado crítico)
-  const alertStyle = `bg-[${NEON_COLORS.alert}] shadow-[0_0_8px_${NEON_COLORS.alert}]`;
-  const okStyle = `bg-[${NEON_COLORS.secondary}] shadow-[0_0_8px_${NEON_COLORS.secondary}]`;
+  const dotStyle = (color) => ({ backgroundColor: color, boxShadow: `0 0 8px ${color}` });
 
   // Lógica para determinar el estado general del clúster (si hay alguna alerta)
   const clusterStatus = initialNodes.some(n => n.status === 'alert') ? 'alert' : 'online';
 
   return (
     // Contenedor principal de la navegación con el fondo oscuro y un borde neón inferior
-    <nav className={`fixed top-0 left-0 w-full z-50 bg-[${NEON_COLORS.darkBackground}] border-b-2 border-[${NEON_COLORS.primary}] shadow-[0_4px_15px_-5px_${NEON_COLORS.primary}] backdrop-blur-sm bg-opacity-90`}>
+    <nav
+      className={"fixed top-0 left-0 w-full z-50 border-b-2 backdrop-blur-sm bg-opacity-90"}
+      style={{ backgroundColor: NEON_COLORS.darkBackground, borderColor: NEON_COLORS.primary, boxShadow: `0 4px 15px -5px ${NEON_COLORS.primary}` }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
@@ -62,12 +64,8 @@ const TopNav = ({ currentPage, setCurrentPage }) => {
                 <button
                   key={item.name}
                   onClick={() => setCurrentPage(item.page)}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 
-                    ${currentPage === item.page 
-                      ? `bg-gray-800 text-white shadow-[0_0_8px_${NEON_COLORS.primary}] border border-[${NEON_COLORS.primary}]`
-                      : `text-gray-300 hover:bg-gray-700 hover:text-[${NEON_COLORS.primary}] hover:shadow-[0_0_5px_${NEON_COLORS.primary}]`
-                    }
-                  `}
+                  className={"px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 " + (currentPage === item.page ? "bg-gray-800 text-white border" : "text-gray-300 hover:bg-gray-700")}
+                  style={currentPage === item.page ? { borderColor: NEON_COLORS.primary, boxShadow: `0 0 8px ${NEON_COLORS.primary}` } : { color: undefined }}
                 >
                   {item.name}
                 </button>
@@ -76,7 +74,10 @@ const TopNav = ({ currentPage, setCurrentPage }) => {
               {/* Indicador de Estado del Clúster */}
               <div className="ml-4 flex items-center">
                 <span className="text-xs font-semibold uppercase text-gray-400 mr-2">Cluster Status:</span>
-                <span className={`inline-block w-3 h-3 rounded-full ${clusterStatus === 'alert' ? alertStyle : okStyle} transition-all duration-500`}></span>
+                <span
+                  className="inline-block w-3 h-3 rounded-full transition-all duration-500"
+                  style={clusterStatus === 'alert' ? dotStyle(NEON_COLORS.alert) : dotStyle(NEON_COLORS.secondary)}
+                ></span>
               </div>
             </div>
           </div>
@@ -107,19 +108,18 @@ const TopNav = ({ currentPage, setCurrentPage }) => {
               <button
                 key={item.name}
                 onClick={() => {setCurrentPage(item.page); setIsMenuOpen(false);}}
-                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-all duration-300 
-                    ${currentPage === item.page 
-                      ? `bg-gray-800 text-white shadow-[0_0_8px_${NEON_COLORS.primary}] border border-[${NEON_COLORS.primary}]`
-                      : `text-gray-300 hover:bg-gray-700 hover:text-[${NEON_COLORS.primary}]`
-                    }
-                `}
+                className={"block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-all duration-300 " + (currentPage === item.page ? "bg-gray-800 text-white border" : "text-gray-300 hover:bg-gray-700")}
+                style={currentPage === item.page ? { borderColor: NEON_COLORS.primary, boxShadow: `0 0 8px ${NEON_COLORS.primary}` } : {}}
               >
                 {item.name}
               </button>
             ))}
              <div className="py-2 px-3 text-sm font-semibold text-gray-400 border-t border-gray-700 mt-2 flex items-center">
                 Cluster Status: 
-                <span className={`ml-2 inline-block w-3 h-3 rounded-full ${clusterStatus === 'alert' ? alertStyle : okStyle} transition-all duration-500`}></span>
+                <span
+                  className="ml-2 inline-block w-3 h-3 rounded-full transition-all duration-500"
+                  style={clusterStatus === 'alert' ? dotStyle(NEON_COLORS.alert) : dotStyle(NEON_COLORS.secondary)}
+                ></span>
              </div>
           </div>
         </div>

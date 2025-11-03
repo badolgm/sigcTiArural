@@ -1,5 +1,6 @@
 import React from 'react';
 import ClusterCard from '../components/ClusterCard'; // Importamos el componente reutilizable
+import GlobalChart from '../components/GlobalChart.jsx';
 
 // Colores Neón definidos (importados localmente para asegurar el color)
 const NEON_COLORS = {
@@ -26,7 +27,7 @@ const initialNodes = [
  */
 const Dashboard = ({ nodes = initialNodes }) => { // Usamos initialNodes como fallback
     return (
-        <div className="p-8 pt-24 min-h-screen bg-[${NEON_COLORS.darkBackground}] text-white">
+        <div className="p-8 pt-24 min-h-screen text-white" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
             <div className="max-w-7xl mx-auto">
                 {/* Título Principal Neón */}
                 <h1 
@@ -51,13 +52,13 @@ const Dashboard = ({ nodes = initialNodes }) => { // Usamos initialNodes como fa
                 </div>
 
                 {/* Sección de Telemetría Global (Gráficos) */}
-                <div className={`mt-16 p-8 rounded-xl border-2 border-[${NEON_COLORS.secondary}] ${getNeonShadow(NEON_COLORS.secondary)} bg-gray-900 bg-opacity-70`}>
-                    <h2 class={`text-2xl font-bold uppercase mb-4`} style={{ color: NEON_COLORS.secondary, textShadow: `0 0 8px ${NEON_COLORS.secondary}80` }}>
+                <div className={`mt-16 p-8 rounded-xl border-2 bg-gray-900 bg-opacity-70`}
+                    style={{ borderColor: NEON_COLORS.secondary, boxShadow: `0 0 15px ${NEON_COLORS.secondary}80` }}
+                >
+                    <h2 className={`text-2xl font-bold uppercase mb-4`} style={{ color: NEON_COLORS.secondary, textShadow: `0 0 8px ${NEON_COLORS.secondary}80` }}>
                         Telemetría Global (Gráficos)
                     </h2>
-                    <div className="h-48 flex items-center justify-center text-gray-500 border border-dashed border-gray-700 rounded-lg">
-                        [Aquí se integrarán los gráficos dinámicos de temperatura y humedad (Fase 2.2)]
-                    </div>
+                    <GlobalChart />
                 </div>
 
             </div>
