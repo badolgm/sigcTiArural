@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import TopNav from './components/TopNav.jsx'; // FIX: Especificación de extensión
 import Dashboard from './pages/Dashboard.jsx'; // FIX: Especificación de extensión
 import LabCatalog from './pages/LabCatalog.jsx';
+import AdvancedMathLab from './labs/AdvancedMathLab.jsx';
 
 // Importaciones de otras páginas (Placeholders)
 // import Labs from './pages/Labs'; 
@@ -37,6 +38,8 @@ const PageContent = ({ page, nodes }) => {
         // Los otros casos solo tienen placeholders por ahora
         case 'labs':
             return <LabCatalog />;
+        case 'advanced-math':
+            return <AdvancedMathLab />;
         case 'ai':
             return <PlaceholderPage title="DIAGNÓSTICO POR INTELIGENCIA ARTIFICIAL" description="Página para subir imágenes y recibir análisis Cloud/Edge." />;
         case 'library':
