@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Importamos los componentes modulares
 import TopNav from './components/TopNav.jsx'; // FIX: Especificación de extensión
@@ -10,6 +10,12 @@ import EmbeddedLab from './labs/EmbeddedLab.jsx';
 import TelecomLab from './labs/TelecomLab.jsx';
 import DocsEdgeSetup from './pages/DocsEdgeSetup.jsx';
 import DocsMasterdoc from './pages/DocsMasterdoc.jsx';
+import DocsReadme from './pages/DocsReadme.jsx';
+import DocsPlanMaestro from './pages/DocsPlanMaestro.jsx';
+import DocsApiReference from './pages/DocsApiReference.jsx';
+import AIPredictiva from './pages/AIPredictiva.jsx';
+import DataScienceLab from './pages/DataScienceLab.jsx';
+import { fetchClusterNodesReal, fetchTelemetrySeriesReal } from './services/cloud.js';
 
 // Importaciones de otras páginas (Placeholders)
 // import Labs from './pages/Labs'; 
@@ -55,8 +61,16 @@ const PageContent = ({ page, nodes, onNavigate }) => {
             return <DocsEdgeSetup />;
         case 'docs-masterdoc':
             return <DocsMasterdoc />;
+        case 'docs-readme':
+            return <DocsReadme />;
+        case 'docs-plan':
+            return <DocsPlanMaestro />;
+        case 'docs-api':
+            return <DocsApiReference />;
         case 'ai':
-            return <PlaceholderPage title="DIAGNÓSTICO POR INTELIGENCIA ARTIFICIAL" description="Página para subir imágenes y recibir análisis Cloud/Edge." />;
+            return <AIPredictiva />;
+        case 'data-lab':
+            return <DataScienceLab />;
         case 'library':
             return <PlaceholderPage title="BIBLIOTECA DE CONOCIMIENTO" description="Recursos curados del SENA y universidades aliadas." />;
         case 'docs':
@@ -117,14 +131,29 @@ const App = () => {
     const [currentPage, setCurrentPage] = useState('dashboard');
     // Estado para los datos del clúster (será actualizado por WebSocket/API)
     const [nodes, setNodes] = useState(initialNodes); 
+    const [chartData, setChartData] = useState(null);
+
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            const [n, c] = await Promise.all([
+                fetchClusterNodesReal().catch(() => null),
+                fetchTelemetrySeriesReal().catch(() => null),
+            ]);
+            if (!mounted) return;
+            if (Array.isArray(n) && n.length) setNodes(n);
+            if (Array.isArray(c) && c.length) setChartData(c);
+        })();
+        return () => { mounted = false; };
+    }, []);
 
     return (
         <div className="min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
             {/* 1. Barra de Navegación (Importada y Modular) */}
-            <TopNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
+            <TopNav currentPage={currentPage} setCurrentPage={setCurrentPage} clusterNodes={nodes} />
             
             {/* 2. Contenido de la Página (Lógica de Ruteo) */}
-            <PageContent page={currentPage} nodes={nodes} onNavigate={setCurrentPage} />
+            <PageContent page={currentPage} nodes={nodes} chartData={chartData} onNavigate={setCurrentPage} />
         </div>
     );
 };

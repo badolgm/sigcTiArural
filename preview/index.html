@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vista previa Markdown (GitHub-like) + Mermaid</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css" integrity="sha512-0S5Eo3t8YQnQn8JbOQ5uL3qzWn6WJXhM3P8lF9d0ywbV5oYw7cI8fQvQH9YfJv8t1cR2rWw4tWj1RzEwBqJmXTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      body { margin: 0; padding: 20px; }
+      .container { max-width: 1000px; margin: 0 auto; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Vista previa Markdown local</h1>
+      <p>
+        Archivo: <code id="file-path"></code>
+        · Cambia con <code>?doc=docs/MASTERDOC.md</code> para ver MASTERDOC.
+      </p>
+      <article id="content" class="markdown-body"></article>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: false });
+      const params = new URLSearchParams(window.location.search);
+      const doc = params.get('doc') || '../README.md';
+      document.getElementById('file-path').textContent = doc;
+
+      fetch(doc)
+        .then(r => {
+          if (!r.ok) throw new Error('No se pudo cargar ' + doc);
+          return r.text();
+        })
+        .then(md => {
+          const html = marked.parse(md, { gfm: true, breaks: false });
+          const el = document.getElementById('content');
+          el.innerHTML = html;
+          // Render Mermaid blocks: find <code class="language-mermaid">
+          const codes = el.querySelectorAll('code.language-mermaid');
+          codes.forEach((code, idx) => {
+            const parent = code.parentElement;
+            const graphDefinition = code.textContent;
+            const id = 'mermaid-' + idx;
+            const div = document.createElement('div');
+            div.id = id;
+            parent.replaceWith(div);
+            try {
+              mermaid.render(id, graphDefinition, (svgCode) => {
+                div.innerHTML = svgCode;
+              }, div);
+            } catch (e) {
+              div.innerHTML = '<pre style="color:red">Mermaid error: ' + e.message + '</pre>';
+            }
+          });
+        })
+        .catch(err => {
+          document.getElementById('content').innerHTML = '<pre style="color:red">' + err + '</pre>';
+        });
+    </script>
+  </body>
+  </html>

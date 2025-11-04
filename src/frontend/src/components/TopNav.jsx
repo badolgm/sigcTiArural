@@ -20,7 +20,7 @@ const initialNodes = [
  * TopNav: Barra de Navegación Superior con estética Neón.
  * Incluye el estado del Clúster para cumplimiento de MASTERDOC.
  */
-const TopNav = ({ currentPage, setCurrentPage }) => {
+const TopNav = ({ currentPage, setCurrentPage, clusterNodes }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   // Definición de enlaces de navegación
@@ -28,6 +28,7 @@ const TopNav = ({ currentPage, setCurrentPage }) => {
     { name: 'Dashboard', page: 'dashboard' },
     { name: 'Laboratorios', page: 'labs' },
     { name: 'Matemáticas Avanzadas', page: 'advanced-math' },
+    { name: 'Ciencia de Datos', page: 'data-lab' },
     { name: 'IA Predictiva', page: 'ai' },
     { name: 'Biblioteca', page: 'library' },
     { name: 'Docs (v5.0)', page: 'docs' },
@@ -37,7 +38,8 @@ const TopNav = ({ currentPage, setCurrentPage }) => {
   const dotStyle = (color) => ({ backgroundColor: color, boxShadow: `0 0 8px ${color}` });
 
   // Lógica para determinar el estado general del clúster (si hay alguna alerta)
-  const clusterStatus = initialNodes.some(n => n.status === 'alert') ? 'alert' : 'online';
+  const srcNodes = Array.isArray(clusterNodes) && clusterNodes.length ? clusterNodes : initialNodes;
+  const clusterStatus = srcNodes.some(n => n.status === 'alert') ? 'alert' : 'online';
 
   return (
     // Contenedor principal de la navegación con el fondo oscuro y un borde neón inferior

@@ -1,0 +1,8 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.0
+numpy>=1.24
+Pillow>=10.0
+requests>=2.31
+
+# Opcional (para inferencia con Keras/TensorFlow CPU)
+tensorflow-cpu>=2.13

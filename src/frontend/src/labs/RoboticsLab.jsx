@@ -70,14 +70,23 @@ const RoboticsLab = () => {
           <div className="rounded-lg overflow-hidden border" style={{ borderColor: '#334155' }}>
             <iframe
               title="Webots Player"
-              src="https://play.webots.cloud/run?url=https://github.com/cyberbotics/webots/blob/release/projects/robots/robotis/darwin-op/worlds/darwin-op.wbt"
+              src="https://webots.cloud/run?url=https://github.com/cyberbotics/webots/blob/release/projects/robots/robotis/darwin-op/worlds/darwin-op.wbt"
               width="100%"
               height="480"
               frameBorder="0"
               allowFullScreen
             />
           </div>
-          <div className="text-xs text-gray-500 mt-2">Fuente: Cyberbotics Webots Player. Puedes cambiar el mundo usando la URL del repositorio.</div>
+          <div className="text-xs text-gray-500 mt-2">Fuente: Cyberbotics Webots Player. Si el dominio está bloqueado por red/DNS, usa el botón para abrir en pestaña.</div>
+          <div className="mt-2">
+            <a
+              className="px-3 py-2 text-xs rounded border"
+              style={{ borderColor: NEON_COLORS.primary, color: '#e6edf3' }}
+              href="https://webots.cloud/run?url=https://github.com/cyberbotics/webots/blob/release/projects/robots/robotis/darwin-op/worlds/darwin-op.wbt"
+              target="_blank"
+              rel="noreferrer"
+            >Abrir Webots Cloud</a>
+          </div>
         </Section>
 
         <Section title="Visor URDF (Three.js)">
@@ -85,14 +94,23 @@ const RoboticsLab = () => {
           <div className="rounded-lg overflow-hidden border" style={{ borderColor: '#334155' }}>
             <iframe
               title="URDF Viewer"
-              src="https://gkjohnson.github.io/urdf-loaders/examples/urdf-viewer.html?model=https://raw.githubusercontent.com/ros-industrial/universal_robot/kinetic-devel/ur_description/urdf/ur5.urdf"
+              src="https://gkjohnson.github.io/urdf-loaders/javascript/example/index.html"
               width="100%"
               height="420"
               frameBorder="0"
               allowFullScreen
             />
           </div>
-          <div className="text-xs text-gray-500 mt-2">Visor de URDF de Gregory K. Johnson. Admite cualquier URL pública de URDF.</div>
+          <div className="text-xs text-gray-500 mt-2">Visor URDF público con ejemplos integrados. Si necesitas cargar URDF externos con meshes, abre en pestaña y usa el selector de paquetes.</div>
+          <div className="mt-2">
+            <a
+              className="px-3 py-2 text-xs rounded border"
+              style={{ borderColor: NEON_COLORS.primary, color: '#e6edf3' }}
+              href="https://gkjohnson.github.io/urdf-loaders/javascript/example/index.html"
+              target="_blank"
+              rel="noreferrer"
+            >Abrir URDF Viewer</a>
+          </div>
         </Section>
 
         <Section title="Conexión ROSBridge (Opcional)">

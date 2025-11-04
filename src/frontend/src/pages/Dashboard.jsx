@@ -25,7 +25,7 @@ const initialNodes = [
  * Dashboard: Página principal que muestra el estado de los 3 nodos BBB y telemetría general.
  * Cumple con la Fase 2.1 del Plan Maestro.
  */
-const Dashboard = ({ nodes = initialNodes }) => { // Usamos initialNodes como fallback
+const Dashboard = ({ nodes = initialNodes, chartData }) => { // Usamos initialNodes como fallback
     return (
         <div className="p-8 pt-24 min-h-screen text-white" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
             <div className="max-w-7xl mx-auto">
@@ -58,7 +58,8 @@ const Dashboard = ({ nodes = initialNodes }) => { // Usamos initialNodes como fa
                     <h2 className={`text-2xl font-bold uppercase mb-4`} style={{ color: NEON_COLORS.secondary, textShadow: `0 0 8px ${NEON_COLORS.secondary}80` }}>
                         Telemetría Global (Gráficos)
                     </h2>
-                    <GlobalChart />
+                    <GlobalChart data={chartData}
+                    />
                 </div>
 
             </div>

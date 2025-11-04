@@ -8,7 +8,9 @@ Mostrar imagen
 </div>
 
 📋 Información del Documento
-CampoValorVersión4.2EstadoBorrador de ArquitecturaFecha02-Nov-2025AutorB. Gómez (Asistente: Gemini)FormatoMarkdown + Mermaid (GitHub)
+CampoValorVersión4.2EstadoBorrador de ArquitecturaFecha02-Nov-2025
+Autor BernardoGómez  
+FormatoMarkdown + Mermaid (GitHub)
 
 📑 Tabla de Contenidos
 
