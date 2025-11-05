@@ -16,6 +16,9 @@ const PRESET_MODELS = [
     labels: '',
   },
 ];
+// Valores por defecto para carga rápida
+const DEFAULT_MOBILENET_V2 = 'https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v2_1.0_224/model.json';
+const DEFAULT_IMAGENET_INDEX = 'https://storage.googleapis.com/download.tensorflow.org/data/imagenet_class_index.json';
 
 const AIPredictiva = () => {
   const [imageUrl, setImageUrl] = useState('');
@@ -34,6 +37,29 @@ const AIPredictiva = () => {
   const [modelReady, setModelReady] = useState(false);
   const [labelsSourceType, setLabelsSourceType] = useState('simple'); // 'simple' | 'imagenet'
   const imgRef = useRef(null);
+
+  // Carga automática: establece valores por defecto y dispara carga de modelo y etiquetas
+  const autoLoadDefaults = async () => {
+    try {
+      setError(null);
+      // Asegurar modo navegador
+      setMode('browser');
+      // Usar ImageNet por defecto
+      setLabelsSourceType('imagenet');
+      setModelUrl(DEFAULT_MOBILENET_V2);
+      setLabelsUrl(DEFAULT_IMAGENET_INDEX);
+      // Esperar a que TFJS esté listo antes de cargar
+      const waitTf = () => new Promise((resolve) => {
+        if (tfReady) return resolve(true);
+        const id = setInterval(() => { if (tfReady) { clearInterval(id); resolve(true); } }, 100);
+      });
+      await waitTf();
+      await loadTfjsModelByUrl();
+      await fetchLabelsByUrl();
+    } catch (e) {
+      setError(String(e.message || e));
+    }
+  };
 
   useEffect(() => {
     // Si el modo es navegador, cargar TFJS y MobileNet vía CDN
@@ -357,6 +383,7 @@ const AIPredictiva = () => {
               <div className="flex gap-2 items-end">
                 <button onClick={loadTfjsModelByUrl} className="px-3 py-2 rounded text-sm border" style={{ borderColor: '#39FF14', color: '#e6edf3' }}>Cargar Modelo</button>
                 <button onClick={fetchLabelsByUrl} className="px-3 py-2 rounded text-sm border" style={{ borderColor: '#00FFFF', color: '#e6edf3' }}>Cargar Etiquetas</button>
+                <button onClick={autoLoadDefaults} className="px-3 py-2 rounded text-sm border" style={{ borderColor: '#FFD700', color: '#e6edf3' }}>Auto cargar</button>
                 <span className="text-xs ml-2" style={{ color: modelReady ? '#39FF14' : '#FF3131' }}>{modelReady ? 'Modelo listo' : 'Esperando modelo...'}</span>
               </div>
             </div>

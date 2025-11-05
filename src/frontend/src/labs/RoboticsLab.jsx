@@ -54,6 +54,16 @@ const useRosbridgeStatus = () => {
 
 const RoboticsLab = () => {
   const { status, error, connect } = useRosbridgeStatus();
+  const [webotsLoaded, setWebotsLoaded] = useState(false);
+  const [webotsTried, setWebotsTried] = useState(false);
+  const [webotsTimeout, setWebotsTimeout] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!webotsLoaded) setWebotsTimeout(true);
+    }, 7000);
+    return () => clearTimeout(t);
+  }, [webotsLoaded]);
 
   return (
     <div className="p-6 pt-20 min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
@@ -67,7 +77,18 @@ const RoboticsLab = () => {
 
         <Section title="Simulador Webots (Player Web)">
           <p className="text-sm text-gray-400 mb-2">Ejecuta mundos reales de Webots directamente en el navegador.</p>
-          <div className="rounded-lg overflow-hidden border" style={{ borderColor: '#334155' }}>
+          <div className="rounded-lg overflow-hidden border relative" style={{ borderColor: '#334155' }}>
+            {!webotsLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-cyan-400 mx-auto"></div>
+                  <p className="text-xs text-gray-300 mt-2">Cargando Webots Player…</p>
+                  {(webotsTimeout || (webotsTried && !webotsLoaded)) && (
+                    <p className="text-xs text-gray-400 mt-1">Si ves este espacio en blanco, tu navegador o la política del proveedor bloquea el iFrame (CSP/X-Frame-Options). Usa el botón para abrir en pestaña.</p>
+                  )}
+                </div>
+              </div>
+            )}
             <iframe
               title="Webots Player"
               src="https://webots.cloud/run?url=https://github.com/cyberbotics/webots/blob/release/projects/robots/robotis/darwin-op/worlds/darwin-op.wbt"
@@ -75,10 +96,14 @@ const RoboticsLab = () => {
               height="480"
               frameBorder="0"
               allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              onLoad={() => { setWebotsLoaded(true); setWebotsTried(true); }}
+              onError={() => { setWebotsTried(true); }}
             />
           </div>
           <div className="text-xs text-gray-500 mt-2">Fuente: Cyberbotics Webots Player. Si el dominio está bloqueado por red/DNS, usa el botón para abrir en pestaña.</div>
-          <div className="mt-2">
+          <div className="mt-2 flex gap-2 flex-wrap">
             <a
               className="px-3 py-2 text-xs rounded border"
               style={{ borderColor: NEON_COLORS.primary, color: '#e6edf3' }}
@@ -86,6 +111,13 @@ const RoboticsLab = () => {
               target="_blank"
               rel="noreferrer"
             >Abrir Webots Cloud</a>
+            <a
+              className="px-3 py-2 text-xs rounded border"
+              style={{ borderColor: NEON_COLORS.primary, color: '#e6edf3' }}
+              href="https://www.youtube.com/embed/AuJKwyFJAgE"
+              target="_blank"
+              rel="noreferrer"
+            >Ver demo de Webots</a>
           </div>
         </Section>
 

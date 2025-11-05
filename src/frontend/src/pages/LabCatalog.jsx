@@ -39,7 +39,7 @@ const Card = ({ title, accent, links, sections, icon, isExpanded, onNavigate }) 
   
   return (
     <div
-      className="card-float rounded-lg p-4 transition-all duration-300 hover:scale-[1.02]"
+      className="card-float rounded-lg p-4 transition-all duration-300"
       style={{ 
         boxShadow: `0 0 8px ${accent}40`, 
         borderColor: `${accent}50`,
@@ -66,7 +66,7 @@ const Card = ({ title, accent, links, sections, icon, isExpanded, onNavigate }) 
       </div>
       
       {sections ? (
-        <div className={`transition-all duration-300 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-32 opacity-70 overflow-hidden'}`}>
+        <div className={`transition-all duration-300 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-28 opacity-80 overflow-hidden'}`}>
           {sections.map((section) => (
             <SubSection key={section.title} {...section} onNavigate={onNavigate} />
           ))}
@@ -103,6 +103,27 @@ const Card = ({ title, accent, links, sections, icon, isExpanded, onNavigate }) 
 };
 
 const LabCatalog = ({ onNavigate }) => {
+  // Orden preferido para mejorar agrupación temática en el grid
+  const desiredOrder = [
+    'Robótica',
+    'Sistemas Embebidos',
+    'Física y Electrónica',
+    'Telecomunicaciones',
+    'Agricultura + IA',
+    'Ciencia de Datos',
+    'Matemáticas Avanzadas',
+    'Cursos',
+    'SENA y Universidades / OCW',
+    'Documentación Técnica',
+    'Web3 & Blockchain',
+  ];
+  const sortedCategories = [...labCategories].sort((a, b) => {
+    const ia = desiredOrder.indexOf(a.title);
+    const ib = desiredOrder.indexOf(b.title);
+    const ra = ia === -1 ? 999 : ia;
+    const rb = ib === -1 ? 999 : ib;
+    return ra - rb;
+  });
   return (
     <div className="p-6 pt-20 min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
       <div className="max-w-7xl mx-auto text-white">
@@ -110,14 +131,14 @@ const LabCatalog = ({ onNavigate }) => {
           className="text-3xl sm:text-4xl font-bold mb-6 uppercase text-center"
           style={{ color: NEON_COLORS.primary, textShadow: `0 0 12px ${NEON_COLORS.primary}, 0 0 8px ${NEON_COLORS.primary}AA` }}
         >
-          🧬 Laboratorios Científicos Avanzados
+          🧬 Recursos Académicos y Laboratorios Científicos Avanzados
         </h1>
         <p className="text-base text-center text-gray-400 mb-8 max-w-3xl mx-auto">
-          Recursos cuánticos, simulaciones matemáticas avanzadas y laboratorios virtuales para investigación científica de alto nivel.
+          Recursos académicos científicos y simulaciones matemáticas avanzadas y laboratorios virtuales para investigación científica de alto nivel.
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {labCategories.map((c) => (
+          {sortedCategories.map((c) => (
             <Card key={c.title} {...c} onNavigate={onNavigate} />
           ))}
         </div>

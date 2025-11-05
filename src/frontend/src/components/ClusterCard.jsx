@@ -17,6 +17,8 @@ const getStatusStyle = (status) => {
       return { borderColor: NEON_COLORS.alert, boxShadow: `0 0 15px ${NEON_COLORS.alert}80` };
     case 'offline':
       return { borderColor: '#374151', boxShadow: 'none', color: '#6b7280' };
+    case 'construction':
+      return { borderColor: '#f59e0b', boxShadow: '0 0 15px #f59e0b80' };
     default:
       return { borderColor: NEON_COLORS.primary };
   }
@@ -26,14 +28,29 @@ const getStatusStyle = (status) => {
  * ClusterCard: Muestra el estado y telemetría de un nodo BeagleBone Black.
  * Aplica la estética 'flotante' y neón requerida.
  */
-const ClusterCard = ({ node }) => {
+const ClusterCard = ({ node, onRequireAuth }) => {
     // FIX: Verificar si 'node' es nulo o indefinido antes de la desestructuración
     if (!node) return null; 
     
-    const { id, name, role, status, data } = node;
+    const { id, name, role, status, data, icon, image, links, banner } = node;
     const statusStyle = getStatusStyle(status);
-    const statusText = status.toUpperCase();
+    const statusText = status === 'construction' ? 'EN CONSTRUCCIÓN' : status.toUpperCase();
     const isAlert = status === 'alert';
+
+    const ControlButton = ({ label, danger, onClick, disabled }) => (
+      <button
+        className={`px-3 py-2 text-xs rounded border neon-btn transition-all duration-200 hover:scale-105 ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+        style={{ borderColor: danger ? `${NEON_COLORS.alert}80` : `${NEON_COLORS.primary}60`, color: danger ? NEON_COLORS.alert : '#e6edf3' }}
+        onClick={onClick}
+        disabled={disabled}
+      >
+        {label}
+      </button>
+    );
+
+    const requireAuth = (action) => {
+      if (typeof onRequireAuth === 'function') onRequireAuth(action);
+    };
 
     return (
         <div
@@ -58,6 +75,16 @@ const ClusterCard = ({ node }) => {
                 {name}
             </p>
 
+            {/* Icono/Imagen opcional */}
+            {icon && (
+              <div className="text-4xl mb-3" aria-hidden="true">{icon}</div>
+            )}
+            {image && (
+              <div className="rounded-lg overflow-hidden mb-3 border" style={{ borderColor: '#334155' }}>
+                <img src={image} alt={name} className="w-full h-28 object-cover" />
+              </div>
+            )}
+
             {/* Datos de Telemetría */}
             <div className="space-y-2 text-sm">
                 <p className="flex justify-between items-center text-gray-300">
@@ -81,6 +108,30 @@ const ClusterCard = ({ node }) => {
                         <span style={data.network !== 'OK' ? { color: NEON_COLORS.alert } : {}}>{data.network}</span>
                     </p>
                 )}
+            </div>
+
+            {/* Enlaces opcionales */}
+            {Array.isArray(links) && links.length > 0 && (
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {links.map((l) => (
+                  <a key={l.href} href={l.href} target="_blank" rel="noreferrer" className="px-3 py-2 text-xs rounded border neon-btn transition-all duration-200 hover:scale-105" style={{ borderColor: `${NEON_COLORS.primary}60`, color: '#e6edf3' }}>
+                    {l.label}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Banda informativa */}
+            {banner && (
+              <div className="mt-3 text-xs text-yellow-300 font-semibold">{banner}</div>
+            )}
+
+            {/* Controles estilo panel gamer (acciones restringidas) */}
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <ControlButton label="Iniciar adquisición" onClick={() => requireAuth({ node: id, action: 'start-acq' })} />
+              <ControlButton label="Detener adquisición" danger onClick={() => requireAuth({ node: id, action: 'stop-acq' })} />
+              <ControlButton label="Reiniciar servicio" danger onClick={() => requireAuth({ node: id, action: 'restart-service' })} />
+              <ControlButton label="Inferencia IA" onClick={() => requireAuth({ node: id, action: 'run-ai' })} />
             </div>
         </div>
     );

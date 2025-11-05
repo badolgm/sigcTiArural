@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { AuthProvider } from './auth/AuthContext.jsx';
 
 // Importamos los componentes modulares
 import TopNav from './components/TopNav.jsx'; // FIX: Especificación de extensión
 import Dashboard from './pages/Dashboard.jsx'; // FIX: Especificación de extensión
 import LabCatalog from './pages/LabCatalog.jsx';
 import AdvancedMathLab from './labs/AdvancedMathLab.jsx';
+import AdvancedMathLabV2 from './labs/AdvancedMathLabV2.jsx';
 import RoboticsLab from './labs/RoboticsLab.jsx';
 import EmbeddedLab from './labs/EmbeddedLab.jsx';
 import TelecomLab from './labs/TelecomLab.jsx';
+import ElectronicsLab from './labs/ElectronicsLab.jsx';
 import DocsEdgeSetup from './pages/DocsEdgeSetup.jsx';
 import DocsMasterdoc from './pages/DocsMasterdoc.jsx';
 import DocsReadme from './pages/DocsReadme.jsx';
@@ -51,12 +54,16 @@ const PageContent = ({ page, nodes, onNavigate }) => {
             return <LabCatalog onNavigate={onNavigate} />;
         case 'advanced-math':
             return <AdvancedMathLab onNavigate={onNavigate} />;
+        case 'advanced-math-v2':
+            return <AdvancedMathLabV2 />;
         case 'lab-robotics':
             return <RoboticsLab />;
         case 'lab-embedded':
             return <EmbeddedLab />;
         case 'lab-telecom':
             return <TelecomLab />;
+        case 'lab-electronics':
+            return <ElectronicsLab onNavigate={onNavigate} />;
         case 'docs-edge-setup':
             return <DocsEdgeSetup />;
         case 'docs-masterdoc':
@@ -148,13 +155,15 @@ const App = () => {
     }, []);
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
-            {/* 1. Barra de Navegación (Importada y Modular) */}
-            <TopNav currentPage={currentPage} setCurrentPage={setCurrentPage} clusterNodes={nodes} />
-            
-            {/* 2. Contenido de la Página (Lógica de Ruteo) */}
-            <PageContent page={currentPage} nodes={nodes} chartData={chartData} onNavigate={setCurrentPage} />
-        </div>
+        <AuthProvider>
+            <div className="min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
+                {/* 1. Barra de Navegación (Importada y Modular) */}
+                <TopNav currentPage={currentPage} setCurrentPage={setCurrentPage} clusterNodes={nodes} />
+                
+                {/* 2. Contenido de la Página (Lógica de Ruteo) */}
+                <PageContent page={currentPage} nodes={nodes} chartData={chartData} onNavigate={setCurrentPage} />
+            </div>
+        </AuthProvider>
     );
 };
 

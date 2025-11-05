@@ -4,7 +4,10 @@
 const DEFAULT_COORDS = { lat: 6.24, lon: -75.57 }; // Medellín por defecto
 
 export async function fetchBackendHealth(urls = [
-  'https://sigct-backend.onrender.com/api/health/',
+  // Ruta válida comprobada en Render
+  'https://sigct-backend.onrender.com/health',
+  // Fallback antiguo (puede retornar 404 o no resolver)
+  'https://sigct-backend.onrender.com/api/health',
   'https://api.sigct-rural.com/api/health/',
 ]) {
   for (const u of urls) {

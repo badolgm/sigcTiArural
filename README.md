@@ -3,15 +3,33 @@
 # 🌾 SIGC&T Rural
 ### Sistema Integrado de Gestión del Conocimiento y Tecnología Rural
 
-![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge)
-![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo-blue?style=for-the-badge)
-![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow?style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Django](https://img.shields.io/badge/Django-4.x-0C4B33?style=for-the-badge&logo=django&logoColor=white)
-![React](https://img.shields.io/badge/React-18%2B-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3%2B-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![BeagleBone Black](https://img.shields.io/badge/BeagleBone%20Black-Rev%20C-FF7F00?style=for-the-badge)
-![IA](https://img.shields.io/badge/IA-TensorFlow%20%7C%20TFLite-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
+[
+  ![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge)
+](https://www.sena.edu.co/es-co/)
+[
+  ![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo-blue?style=for-the-badge)
+](https://github.com/badolgm/sigcTiArural)
+[
+  ![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow?style=for-the-badge)
+](https://opensource.org/licenses/MIT)
+[
+  ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
+](https://www.python.org/)
+[
+  ![Django](https://img.shields.io/badge/Django-4.x-0C4B33?style=for-the-badge&logo=django&logoColor=white)
+](https://docs.djangoproject.com/en/stable/)
+[
+  ![React](https://img.shields.io/badge/React-18%2B-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+](https://react.dev/)
+[
+  ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3%2B-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+](https://tailwindcss.com/)
+[
+  ![BeagleBone Black](https://img.shields.io/badge/BeagleBone%20Black-Rev%20C-FF7F00?style=for-the-badge)
+](https://beagleboard.org/black)
+[
+  ![IA](https://img.shields.io/badge/IA-TensorFlow%20%7C%20TFLite-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
+](https://www.tensorflow.org/)
 
 </div>
 
@@ -265,6 +283,8 @@ Input(224x224x3) → MobileNetV2 → GAP → Dropout(0.3) → Dense(38, softmax)
 ```
 
 > Entrenamiento y notebooks en `src/ai_models/notebooks/` y modelos en `src/ai_models/production_models/`.
+
+> Nota de responsabilidad: La IA se emplea únicamente como asistente de modelos predictivos integrados en el sistema. No se atribuye contenido “generado por IA” ni por herramientas externas; todo el material técnico está curado y redactado con fines académicos.
 
 ---
 
@@ -668,6 +688,51 @@ Proyecto alineado al **SENA** para fortalecer habilidades técnicas aplicadas al
 - PlantVillage Dataset (GitHub): https://github.com/spMohanty/PlantVillage-Dataset
 - Kaggle – Plant Disease Classification: https://www.kaggle.com/code/shreyashpatil217/plant-disease-classification-transfer-learnig
 - Open FING: https://open.fing.edu.uy/
+
+---
+
+## ⚙️ Tecnologías Base
+
+| Categoría | Tecnologías |
+|------------|--------------|
+| Lenguajes Base | Python, JavaScript |
+| Frameworks Backend | Flask, Django, Node.js (Express) |
+| Frontend Web | HTML5, CSS3, JavaScript, React, TailwindCSS |
+| Comunicación | WebSocket, REST API, MQTT |
+| IA y Aprendizaje Automático | TensorFlow, PyTorch, Scikit-learn |
+| Dispositivos Embebidos | BeagleBone Black, Raspberry Pi, Arduino, FPGA |
+| Bases de Datos | PostgreSQL, SQLite, MongoDB |
+| Infraestructura | Docker, Nginx, Linux Servers |
+| Control de Versiones | Git / GitHub |
+
+## 🤖 Robótica y Sistemas Embebidos
+
+- Laboratorio de Robótica (SIGC&T): navegación, manipulación, simuladores (Gazebo/Webots).
+- Laboratorio de Sistemas Embebidos: GPIO, I2C/SPI, sensores DHT22, cámara USB, TFLite Micro.
+- Prácticas sugeridas:
+  - Control de motores con PWM.
+  - Lectura de humedad del suelo y temperatura (telemetría MQTT).
+  - Captura y diagnóstico de imágenes en Edge con TFLite.
+
+## 🧮 Laboratorio Cuántico “Dr. Binary” (V2)
+
+- Interfaz lúdica con partículas, tarjetas de modos y visualizaciones matemáticas.
+- Temas: ecuaciones diferenciales, transformadas (Fourier/Laplace/Wavelets), álgebra lineal, análisis complejo.
+- Acceso desde la app: Labs → Matemáticas Avanzadas → “Dr. Binary (V2)”.
+- Ejemplo de fórmulas:
+  - Ecuación diferencial: `dy/dx + y = e^x`.
+  - Matriz de rotación 2D: `R(θ) = [[cosθ, -sinθ],[sinθ, cosθ]]`.
+  - Transformada de Fourier: `F(ω) = ∫ f(t) e^{-iωt} dt`.
+
+## 🌱 Ciencia Agrícola y Evolución
+
+- De la agricultura tradicional a la agricultura inteligente: sensores, IA, drones, imágenes satelitales.
+- Adaptación climática: riego inteligente, cultivos resistentes, monitoreo de plagas y enfermedades.
+- Resiliencia ante pandemias: huertos urbanos y domésticos, invernaderos modulares, trazabilidad con blockchain.
+- Buenas prácticas:
+  - Huertos pequeños: planificación de siembra, rotación de cultivos, sustratos y compostaje.
+  - Monitoreo en casa: humedad, temperatura, luz, CO₂.
+  - Registro y trazabilidad: IPFS/Blockchain para lotes, insumos y cadenas de frío.
 
 ---
 
