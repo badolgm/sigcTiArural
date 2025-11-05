@@ -12,3 +12,6 @@ src/frontend/node_modules/
 dist/
 build/
 .vite-cache/
+
+# Ignorar respaldos locales pesados
+backups/
