@@ -1,24 +1,26 @@
 <div align="center">
 
 # 🌾 SIGC&T Rural
+
 ### Sistema Integrado de Gestión del Conocimiento y Tecnología Rural
 
 [![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge)](https://www.sena.edu.co/es-co/)
 [![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo-blue?style=for-the-badge)](https://github.com/badolgm/sigcTiArural)
-[![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow?style=for-the-badge)](LICENSE)
+
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/Django-4.x-0C4B33?style=for-the-badge&logo=django&logoColor=white)](https://docs.djangoproject.com/en/stable/)
+[![Django](https://img.shields.io/badge/Django-4.x-0C4B33?style=for-the-badge&logo=django&logoColor=white)](https://docs.djangoproject.com/)
 [![React](https://img.shields.io/badge/React-18%2B-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3%2B-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+
 [![BeagleBone Black](https://img.shields.io/badge/BeagleBone%20Black-Rev%20C-FF7F00?style=for-the-badge)](https://beagleboard.org/black)
 [![IA](https://img.shields.io/badge/IA-TensorFlow%20%7C%20TFLite-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
 
+---
+
 **Plataforma híbrida Cloud/Edge de código abierto que democratiza el acceso a agricultura inteligente mediante IoT, IA y educación técnica**
 
-[🚀 Inicio Rápido](#-inicio-rápido) •
-[📖 Documentación](#-documentación) •
-[🤝 Contribuir](#-contribuciones) •
-[📞 Contacto](#-contacto)
+[🚀 Inicio Rápido](#-inicio-rápido) • [📖 Documentación](#-documentación) • [🤝 Contribuir](#-contribuciones) • [📞 Contacto](#-contacto)
 
 </div>
 
@@ -27,109 +29,121 @@
 ## 📖 Tabla de Contenidos
 
 - [🧭 Descripción General](#-descripción-general)
-- [🌟 Misión y Visión](#-misión-y-visión)
-- [🌍 Impacto Social (ODS)](#-impacto-social-ods)
-- [✨ Características Principales](#-características-principales)
-- [🏗️ Arquitectura del Sistema](#️-arquitectura-del-sistema)
+- [🎯 Misión y Visión](#-misión-y-visión)
+- [🌍 Impacto Social](#-impacto-social-ods)
+- [✨ Características](#-características-principales)
+- [🏗️ Arquitectura](#️-arquitectura-del-sistema)
 - [📊 Stack Tecnológico](#-stack-tecnológico)
 - [🚀 Inicio Rápido](#-inicio-rápido)
-- [🔧 Configuración](#-configuración)
-- [🧪 Uso y Ejemplos](#-uso-y-ejemplos)
-- [🤖 Inteligencia Artificial](#-inteligencia-artificial)
-- [🧩 Estructura del Proyecto](#-estructura-del-proyecto)
-- [🧪 Testing](#-testing)
-- [🚢 Despliegue](#-despliegue)
 - [📄 Documentación](#-documentación)
 - [🤝 Contribuciones](#-contribuciones)
-- [🎓 Contexto Académico SENA](#-contexto-académico-sena)
-- [📚 Recursos y Referencias](#-recursos-y-referencias)
 - [📜 Licencia](#-licencia)
 - [👥 Autores](#-autores)
-- [🙏 Agradecimientos](#-agradecimientos)
-- [📞 Contacto](#-contacto)
 
 ---
 
 ## 🧭 Descripción General
 
-**SIGC&T Rural** es una plataforma web de código abierto, con enfoque académico, científico y social, que integra **IoT**, **Inteligencia Artificial (IA)** y **educación técnica** para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.
+**SIGC&T Rural** es una plataforma web de código abierto, con enfoque académico, científico y social, que integra **IoT**, **Inteligencia Artificial** y **educación técnica** para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.
 
-Nace en el marco del **Proyecto Productivo SENA** del programa **Tecnología en Análisis y Desarrollo de Software** y propone una arquitectura híbrida **Cloud/Edge** con dispositivos como **BeagleBone Black**, **Raspberry Pi** y **Arduino**, conectados a un backend **Django** y un frontend **React + TailwindCSS**.
+Desarrollado como **Proyecto Productivo SENA** del programa **Tecnología en Análisis y Desarrollo de Software (ADSO)**.
+
+<div align="center">
 
 ### 🎯 ¿Qué ofrece la plataforma?
 
-<table>
-  <tr>
-    <td width="25%" align="center"><b>🔌 Internet de las Cosas (IoT)</b><br/><sub>Sensores y actuadores en tiempo real</sub></td>
-    <td width="25%" align="center"><b>🤖 Inteligencia Artificial</b><br/><sub>Diagnóstico y análisis automático</sub></td>
-    <td width="25%" align="center"><b>⚡ Edge Computing</b><br/><sub>Procesamiento distribuido local</sub></td>
-    <td width="25%" align="center"><b>📚 Educación Abierta</b><br/><sub>Recursos técnicos gratuitos</sub></td>
-  </tr>
-</table>
+| 🔌 IoT | 🤖 IA | ⚡ Edge Computing | 📚 Educación |
+|:------:|:-----:|:----------------:|:------------:|
+| Sensores en tiempo real | Diagnóstico automático | Procesamiento local | Recursos gratuitos |
+| MQTT + WebSockets | TensorFlow + TFLite | BeagleBone Black | Laboratorios virtuales |
+
+</div>
 
 ---
 
-## 🌟 Misión y Visión
+## 🎯 Misión y Visión
 
-### 🎯 Misión
-Democratizar el acceso a tecnologías de agricultura inteligente, ofreciendo herramientas de monitoreo IoT, diagnóstico con IA y educación técnica gratuita para comunidades rurales y estudiantes de todo el país.
+### 🌟 Misión
+
+Democratizar el acceso a tecnologías de agricultura inteligente, ofreciendo herramientas de monitoreo IoT, diagnóstico con IA y educación técnica gratuita para comunidades rurales y estudiantes.
 
 ### 🔭 Visión
-Ser la plataforma referente en Latinoamérica para la transformación digital del campo mediante tecnologías abiertas, colaborativas y de impacto social medible.
+
+Ser la plataforma referente en Latinoamérica para la transformación digital del campo mediante tecnologías abiertas y colaborativas.
 
 ---
 
 ## 🌍 Impacto Social (ODS)
 
-El proyecto está alineado con los Objetivos de Desarrollo Sostenible de la ONU:
+<div align="center">
 
-| ODS | Objetivo | Contribución de SIGC&T Rural |
-|:---:|----------|------------------------------|
-| **🌾 ODS 2** | Hambre Cero | Optimización productiva mediante datos en tiempo real y diagnóstico temprano de enfermedades |
-| **🎓 ODS 4** | Educación de Calidad | Acceso abierto a formación técnica avanzada en IoT, IA y agricultura 4.0 |
-| **🏭 ODS 9** | Industria, Innovación e Infraestructura | Infraestructura tecnológica de bajo costo en contextos rurales |
-| **🤝 ODS 17** | Alianzas para lograr los objetivos | Articulación academia–agricultura–tecnología |
+| ODS | Objetivo | Contribución |
+|:---:|----------|--------------|
+| 🌾 **ODS 2** | Hambre Cero | Optimización productiva con datos en tiempo real |
+| 🎓 **ODS 4** | Educación de Calidad | Formación técnica gratuita en IoT, IA y Agricultura 4.0 |
+| 🏭 **ODS 9** | Industria e Innovación | Infraestructura tecnológica de bajo costo |
+| 🤝 **ODS 17** | Alianzas | Articulación academia–agricultura–tecnología |
+
+</div>
 
 ---
 
 ## ✨ Características Principales
 
-### 📊 Monitoreo y Visualización
-- Dashboard IoT en tiempo real (temperatura, humedad, luz, imágenes)
+### 📊 Monitoreo IoT
+- Dashboard en tiempo real (temperatura, humedad, luz)
 - Gráficos interactivos con series temporales
 - Sistema de alertas (email/push)
-- Interfaz responsive para móvil, tablet y escritorio
+- Interfaz responsive (móvil, tablet, escritorio)
 
 ### 🤖 Inteligencia Artificial
 - Diagnóstico de enfermedades en plantas
-- Inferencia en Cloud (TensorFlow) y Edge (TensorFlow Lite)
+- Inferencia Cloud (TensorFlow) y Edge (TFLite)
 - Transfer Learning con MobileNetV2
-- Modelos pre-entrenados con PlantVillage dataset
+- Dataset PlantVillage (92.5% accuracy)
 
 ### 📚 Contenido Educativo
-- Biblioteca técnica abierta (IoT, IA, Agricultura 4.0)
+- Biblioteca técnica abierta
 - Laboratorios virtuales interactivos
-- Videos tutoriales y documentación completa
+- Videos tutoriales
 - Recursos curados para estudiantes SENA
 
-### 🔌 Integración Hardware
-- Clúster de 3 BeagleBone Black Rev C
-- Comunicación MQTT y WebSockets
-- Lectura de sensores (DHT22, humedad de suelo)
+### 🔌 Hardware Embebido
+- Clúster 3x BeagleBone Black Rev C
+- Comunicación MQTT + WebSockets
+- Sensores DHT22, humedad de suelo
 - Captura y análisis de imágenes
-
-### 🚀 Innovaciones Técnicas
-- Arquitectura Híbrida Cloud–Edge
-- Inferencia IA en Edge con latencia <500ms
-- Actualizaciones en vivo con WebSockets
-- API RESTful documentada
-- Código 100% abierto bajo licencia MIT
 
 ---
 
 ## 🏗️ Arquitectura del Sistema
 
+### Vista de Contexto del Sistema
+
+<div align="center">
+<img src="documentación/diagramas/CONTEXTO.png" alt="Vista de Contexto C4" width="800"/>
+
+*Diagrama C4 Nivel 1: Actores, Sistema y Sistemas Externos*
+</div>
+
+### Vista de Contenedores
+
+<div align="center">
+<img src="documentación/diagramas/CONTENEDORES.png" alt="Vista de Contenedores C4" width="800"/>
+
+*Diagrama C4 Nivel 2: Arquitectura de Contenedores Cloud/Edge*
+</div>
+
 ### Vista de Alto Nivel
+
+<div align="center">
+<img src="documentación/diagramas/ARQUITECTURA_ALTO_NIVEL.png" alt="Arquitectura Alto Nivel" width="700"/>
+
+*Arquitectura Híbrida Cloud-Edge*
+</div>
+
+<details>
+<summary><b>📊 Ver Diagrama Mermaid Interactivo</b></summary>
 
 ```mermaid
 graph TB
@@ -139,20 +153,33 @@ graph TB
         DB[(PostgreSQL)]
         AI[TensorFlow Service]
     end
-    subgraph EDGE["🏠 EDGE"]
+    
+    subgraph EDGE["🏠 EDGE NETWORK"]
         BBB1[BBB-01<br/>Gateway MQTT]
         BBB2[BBB-02<br/>IA TFLite]
         BBB3[BBB-03<br/>Sensores IoT]
     end
+    
     U[👥 Usuarios<br/>Web/Móvil] --> FE
     FE <--> BE
     BE <--> DB
     BE <--> AI
+    
     BBB3 -->|MQTT| BBB1
     BBB3 -->|HTTP| BBB2
     BBB1 -->|HTTPS| BE
     BBB2 -.->|Alertas| BBB1
+    
+    style FE fill:#61dafb
+    style BE fill:#0c4b33,color:#fff
+    style DB fill:#336791,color:#fff
+    style AI fill:#ff6f00
+    style BBB1 fill:#ffa500
+    style BBB2 fill:#ff4444
+    style BBB3 fill:#4444ff,color:#fff
 ```
+
+</details>
 
 ### Componentes Principales
 
@@ -166,52 +193,51 @@ graph TB
 | **IA Edge (BBB-02)** | Flask + TFLite | Inferencia local | 5000 |
 | **IoT Node (BBB-03)** | Python + Adafruit_BBIO | Sensores y cámara | N/A |
 
-> 📖 Para arquitectura detallada, consulta: `docs/MASTERDOC_v4.2_DAS.md` y `docs/architecture/README.md`
+> 📖 **Documentación detallada:** [docs/MASTERDOC_v4.2_DAS.md](documentación/MASTERDOC.md) | [docs/architecture/](documentación/architecture/)
 
 ---
 
 ## 📊 Stack Tecnológico
 
+<div align="center">
+
 ### Backend
-- **Lenguaje**: Python 3.10+
-- **Framework**: Django 4.x + Django REST Framework
-- **WebSockets**: Django Channels
-- **Base de Datos**: PostgreSQL 15
-- **Autenticación**: JWT (JSON Web Tokens)
+
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-4.x-0C4B33?style=flat-square&logo=django&logoColor=white)
+![DRF](https://img.shields.io/badge/DRF-3.14-a30000?style=flat-square)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=flat-square&logo=postgresql&logoColor=white)
 
 ### Frontend
-- **Framework**: React 18+
-- **Bundler**: Vite
-- **Estilos**: TailwindCSS 3+
-- **HTTP Client**: Axios
-- **Gráficos**: Recharts / D3.js
+
+![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-5+-646CFF?style=flat-square&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3+-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-1.6-5A29E4?style=flat-square)
 
 ### Inteligencia Artificial
-- **Framework**: TensorFlow 2.x / Keras
-- **Edge AI**: TensorFlow Lite
-- **Visión Computacional**: OpenCV
-- **Dataset**: PlantVillage (Penn State)
+
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)
+![Keras](https://img.shields.io/badge/Keras-2.x-D00000?style=flat-square&logo=keras&logoColor=white)
+![OpenCV](https://img.shields.io/badge/OpenCV-4.x-5C3EE8?style=flat-square&logo=opencv&logoColor=white)
+![TFLite](https://img.shields.io/badge/TFLite-Edge-FF6F00?style=flat-square)
 
 ### Hardware Embebido
-- **Placas**: BeagleBone Black Rev C
-- **OS**: Debian 11 (ARM)
-- **Comunicación**: Paho-MQTT, HTTP/REST
-- **GPIO**: Adafruit_BBIO
-- **Sensores**: DHT22, humedad de suelo, cámara USB
 
-### DevOps (Planeado)
-- **Contenedores**: Docker
-- **CI/CD**: GitHub Actions
-- **Servidor Web**: Nginx + Gunicorn
-- **Monitoreo**: Prometheus + Grafana (futuro)
+![BeagleBone](https://img.shields.io/badge/BeagleBone-Black_Rev_C-FF7F00?style=flat-square)
+![Debian](https://img.shields.io/badge/Debian-11_ARM-A81D33?style=flat-square&logo=debian&logoColor=white)
+![MQTT](https://img.shields.io/badge/MQTT-Mosquitto-3C5280?style=flat-square)
+![Python](https://img.shields.io/badge/Adafruit__BBIO-GPIO-3776AB?style=flat-square)
+
+</div>
 
 ---
 
 ## 🚀 Inicio Rápido
 
 ### Requisitos Previos
+
 ```bash
-# Herramientas necesarias
 Git 2.30+
 Python 3.10+
 Node.js 18+
@@ -225,24 +251,20 @@ git clone https://github.com/badolgm/sigcTiArural.git
 cd sigcTiArural
 ```
 
-### 2️⃣ Configurar Backend (Django)
+### 2️⃣ Backend (Django)
 
 ```bash
 cd src/backend
 
-# Crear entorno virtual
+# Crear y activar entorno virtual
 python -m venv venv
-
-# Activar entorno virtual
-# Linux/Mac:
-source venv/bin/activate
-# Windows:
-venv\Scripts\activate
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
 
 # Instalar dependencias
 pip install -r requirements.txt
 
-# Ejecutar migraciones
+# Migrar base de datos
 python manage.py migrate
 
 # Crear superusuario (opcional)
@@ -252,9 +274,9 @@ python manage.py createsuperuser
 python manage.py runserver 0.0.0.0:8000
 ```
 
-✅ El backend estará disponible en: `http://localhost:8000`
+✅ Backend disponible en: `http://localhost:8000`
 
-### 3️⃣ Configurar Frontend (React)
+### 3️⃣ Frontend (React + Vite)
 
 ```bash
 cd src/frontend
@@ -262,14 +284,14 @@ cd src/frontend
 # Instalar dependencias
 npm install
 
-# Crear archivo de configuración
+# Configurar variables de entorno
 echo "VITE_API_URL=http://localhost:8000" > .env.local
 
 # Iniciar servidor de desarrollo
 npm run dev
 ```
 
-✅ El frontend estará disponible en: `http://localhost:5173`
+✅ Frontend disponible en: `http://localhost:5173`
 
 ---
 
@@ -277,20 +299,15 @@ npm run dev
 
 ### Variables de Entorno
 
-Copia el archivo `.env.example` y crea tu propio `.env`:
+**Backend (`.env` en `src/backend/`)**
 
-```bash
-cp .env.example .env
-```
-
-#### Backend (Django)
 ```ini
-# Configuración general
+# Django
 DEBUG=True
-SECRET_KEY=tu-secret-key-super-secreta-aqui
+SECRET_KEY=tu-secret-key-super-secreta
 ALLOWED_HOSTS=localhost,127.0.0.1
 
-# Base de datos PostgreSQL
+# Base de datos
 DB_NAME=sigct_rural_db
 DB_USER=sigct_user
 DB_PASSWORD=tu-password-seguro
@@ -304,38 +321,33 @@ MQTT_USER=mqtt_user
 MQTT_PASSWORD=mqtt_password
 ```
 
-#### Frontend (React)
+**Frontend (`.env.local` en `src/frontend/`)**
+
 ```ini
 VITE_API_URL=http://localhost:8000
 VITE_WS_URL=ws://localhost:8000/ws
 ```
 
-### Configuración Adicional
-
-Ajusta `config/settings.ini` para parámetros específicos de logging, timeouts y otras configuraciones avanzadas.
-
 ---
 
-## 🧪 Uso y Ejemplos
+## 🧪 Ejemplos de Uso
 
-### Ejemplo 1: Publicar Lectura de Temperatura (Edge)
+### Ejemplo 1: Publicar Lectura de Sensor (Edge)
 
 ```python
 import Adafruit_DHT
 import paho.mqtt.client as mqtt
 import json
-import time
 from datetime import datetime
 
-# Configuración del sensor DHT22
+# Configuración
 DHT_SENSOR = Adafruit_DHT.DHT22
 DHT_PIN = "P8_11"
 
-# Conectar al broker MQTT
 client = mqtt.Client()
 client.connect("192.168.1.100", 1883, 60)
 
-# Bucle de lectura
+# Lectura continua
 while True:
     humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
     
@@ -344,27 +356,26 @@ while True:
             "nodo_id": "BBB-03",
             "sensor_tipo": "temperatura",
             "valor": round(temperature, 2),
-            "unidad": "C",
             "timestamp": datetime.utcnow().isoformat()
         }
         
         client.publish("sigct/sensors/bbb03/temperatura", json.dumps(payload))
-        print(f"✅ Publicado: {temperature}°C | Humedad: {humidity}%")
+        print(f"✅ {temperature}°C | {humidity}%")
     
     time.sleep(10)
 ```
 
-### Ejemplo 2: Consumir API REST (Cliente)
+### Ejemplo 2: Consumir API REST
 
 ```bash
-# Obtener lista de proyectos
+# Obtener proyectos
 curl -X GET "http://localhost:8000/api/v1/proyectos/" \
-  -H "Authorization: Bearer TU_TOKEN_JWT" \
+  -H "Authorization: Bearer TOKEN" \
   -H "Content-Type: application/json"
 
 # Enviar lectura de sensor
 curl -X POST "http://localhost:8000/api/v1/readings/" \
-  -H "Authorization: Bearer TU_TOKEN_JWT" \
+  -H "Authorization: Bearer TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "nodo_id": "BBB-03",
@@ -374,7 +385,7 @@ curl -X POST "http://localhost:8000/api/v1/readings/" \
   }'
 ```
 
-### Ejemplo 3: Inferencia de IA (Python)
+### Ejemplo 3: Inferencia con IA
 
 ```python
 import tensorflow as tf
@@ -389,13 +400,12 @@ img = Image.open('hoja_tomate.jpg').resize((224, 224))
 img_array = np.array(img) / 255.0
 img_array = np.expand_dims(img_array, axis=0)
 
-# Realizar predicción
+# Predicción
 predictions = model.predict(img_array)
 class_idx = np.argmax(predictions[0])
 confidence = predictions[0][class_idx]
 
-print(f"Clase predicha: {class_idx}")
-print(f"Confianza: {confidence:.2%}")
+print(f"Clase: {class_idx} | Confianza: {confidence:.2%}")
 ```
 
 ---
@@ -404,40 +414,29 @@ print(f"Confianza: {confidence:.2%}")
 
 ### Arquitectura del Modelo
 
-El sistema utiliza **Transfer Learning** con MobileNetV2 como base:
+Transfer Learning con **MobileNetV2**:
 
 ```
 Input(224x224x3) 
-  → MobileNetV2 (pre-trained ImageNet)
+  → MobileNetV2 (ImageNet)
   → GlobalAveragePooling2D
   → Dropout(0.3)
   → Dense(38, softmax)
 ```
 
-### Dataset
+### Dataset y Métricas
 
-- **Fuente**: PlantVillage (Penn State University)
-- **Clases**: 38 enfermedades en tomate, papa, maíz
-- **Imágenes**: ~54,000 imágenes etiquetadas
-- **División**: 70% entrenamiento, 20% validación, 10% prueba
+- **Fuente:** PlantVillage (Penn State University)
+- **Clases:** 38 enfermedades (tomate, papa, maíz)
+- **Imágenes:** ~54,000 etiquetadas
 
-### Métricas de Rendimiento
-
-| Métrica | Cloud (TensorFlow) | Edge (TFLite) |
-|---------|-------------------|---------------|
+| Métrica | Cloud | Edge |
+|---------|-------|------|
 | Accuracy | 92.5% | 90.1% |
 | Latencia | ~150ms | ~450ms |
-| Tamaño Modelo | 52 MB (.h5) | 8 MB (.tflite) |
-| Hardware | CPU/GPU | ARM Cortex-A8 |
+| Tamaño | 52 MB | 8 MB |
 
-### Notebooks de Entrenamiento
-
-Los notebooks Jupyter para entrenamiento y evaluación están disponibles en:
-- `src/ai_models/notebooks/training_mobilenetv2.ipynb`
-- `src/ai_models/notebooks/model_evaluation.ipynb`
-- `src/ai_models/notebooks/tflite_conversion.ipynb`
-
-> ⚠️ **Nota de Responsabilidad**: La IA se emplea únicamente como asistente de modelos predictivos integrados en el sistema. No se atribuye contenido "generado por IA" ni por herramientas externas; todo el material técnico está curado y redactado con fines académicos.
+> 📓 **Notebooks:** `src/ai_models/notebooks/`
 
 ---
 
@@ -445,77 +444,46 @@ Los notebooks Jupyter para entrenamiento y evaluación están disponibles en:
 
 ```
 sigcTiArural/
-├── 📄 README.md                      # Este archivo
-├── 📄 .env.example                   # Plantilla de variables de entorno
-├── 📄 .gitignore
-├── 📄 LICENSE                        # Licencia MIT
+├── 📄 README.md                    # Este archivo
+├── 📄 LICENSE                      # MIT License
+├── 📄 .env.example                 # Plantilla de configuración
 │
-├── 📁 config/                        # Configuraciones generales
-│   └── settings.ini
+├── 📁 documentación/                # Documentación técnica
+│   ├── MASTERDOC.md                # DAS completo
+│   ├── PLANMAESTRO.md              # Plan de fases
+│   ├── API_REFERENCE.md            # Referencia API
+│   ├── DEPLOYMENT.md               # Guía de despliegue
+│   ├── diagramas/                  # Diagramas UML/C4
+│   ├── sena_artifacts/             # Artefactos SENA
+│   └── evidencias/                 # Evidencias del proyecto
 │
-├── 📁 data/                          # Datos y logs
-│   ├── datasets/                     # Datasets de IA
-│   ├── logs/                         # Logs del sistema
-│   └── uploads/                      # Archivos subidos por usuarios
-│
-├── 📁 docs/                          # Documentación técnica
-│   ├── MASTERDOC_v4.2_DAS.md        # Documento de Arquitectura de Software
-│   ├── PLAN_MAESTRO_v4.2.md         # Plan de fases del proyecto
-│   ├── API_REFERENCE.md              # Referencia de API REST
-│   ├── DEPLOYMENT.md                 # Guía de despliegue
-│   ├── EDGE_SETUP.md                 # Configuración de hardware Edge
-│   ├── architecture/                 # Diagramas de arquitectura
-│   ├── database/                     # Diseño de base de datos
-│   ├── sena_artifacts/               # Artefactos académicos SENA
-│   └── uml/                          # Diagramas UML
-│
-├── 📁 src/                           # Código fuente
-│   ├── 📁 backend/                   # Backend Django
-│   │   ├── manage.py
-│   │   ├── requirements.txt
-│   │   ├── sigct_backend/           # Proyecto Django principal
-│   │   │   ├── settings.py
-│   │   │   ├── urls.py
-│   │   │   └── wsgi.py
-│   │   ├── api/                     # API REST (DRF)
-│   │   ├── users/                   # Módulo de usuarios
-│   │   ├── iot/                     # Módulo IoT
-│   │   └── ai_service/              # Servicio de IA
+├── 📁 src/                         # Código fuente
+│   ├── backend/                    # Django
+│   │   ├── sigct_backend/         # Proyecto principal
+│   │   ├── api/                   # API REST (DRF)
+│   │   ├── users/                 # Usuarios
+│   │   ├── iot/                   # Módulo IoT
+│   │   └── ia_service/            # Servicio IA
 │   │
-│   ├── 📁 frontend/                  # Frontend React
-│   │   ├── index.html
-│   │   ├── package.json
-│   │   ├── vite.config.js
-│   │   ├── tailwind.config.js
-│   │   ├── postcss.config.js
-│   │   ├── public/                  # Archivos estáticos
-│   │   └── src/
-│   │       ├── App.jsx
-│   │       ├── main.jsx
-│   │       ├── components/          # Componentes React
-│   │       ├── pages/               # Páginas/vistas
-│   │       ├── services/            # Servicios API
-│   │       └── utils/               # Utilidades
+│   ├── frontend/                   # React
+│   │   ├── src/
+│   │   │   ├── components/       # Componentes React
+│   │   │   ├── pages/            # Páginas/vistas
+│   │   │   ├── services/         # Servicios API
+│   │   │   └── utils/            # Utilidades
+│   │   └── public/               # Archivos estáticos
 │   │
-│   ├── 📁 ai_models/                 # Modelos de IA
-│   │   ├── notebooks/               # Jupyter notebooks
-│   │   ├── training_scripts/        # Scripts de entrenamiento
-│   │   └── production_models/       # Modelos en producción
-│   │       ├── model_v1.h5          # Modelo TensorFlow
-│   │       └── model_v1.tflite      # Modelo TFLite
+│   ├── ai_models/                  # Modelos IA
+│   │   ├── notebooks/            # Jupyter notebooks
+│   │   ├── training_scripts/     # Entrenamiento
+│   │   └── production_models/    # Modelos .h5 y .tflite
 │   │
-│   └── 📁 embedded/                  # Código para hardware embebido
-│       ├── bbb_01_gateway/          # BeagleBone Gateway
-│       │   ├── mqtt_gateway.py
-│       │   └── sync_service.py
-│       ├── bbb_02_ia_edge/          # BeagleBone IA Edge
-│       │   ├── flask_api.py
-│       │   └── tflite_inference.py
-│       └── bbb_03_sensors/          # BeagleBone Sensores
-│           ├── sensor_reader.py
-│           └── camera_capture.py
+│   └── embedded/                   # Hardware Edge
+│       ├── bbb_01_gateway/       # Gateway MQTT
+│       ├── bbb_02_ia_edge/       # IA local
+│       └── bbb_03_sensors/       # Sensores IoT
 │
-└── 📁 tests/                         # Pruebas unitarias e integración
+└── 📁 tests/                       # Pruebas
     ├── backend/
     ├── frontend/
     └── embedded/
@@ -525,176 +493,80 @@ sigcTiArural/
 
 ## 🧪 Testing
 
-### Backend (Django)
+### Backend
 
 ```bash
 cd src/backend
-
-# Ejecutar todas las pruebas
 python manage.py test
-
-# Ejecutar pruebas de un módulo específico
-python manage.py test api.tests
-
-# Ejecutar con cobertura
-pip install coverage
-coverage run --source='.' manage.py test
-coverage report
 ```
 
-### Frontend (React)
+### Frontend
 
 ```bash
 cd src/frontend
-
-# Ejecutar pruebas
 npm test
-
-# Ejecutar con cobertura
-npm test -- --coverage
-
-# Ejecutar en modo watch
-npm test -- --watch
 ```
 
 ### Hardware Embebido
 
 ```bash
 cd src/embedded
-
-# Instalar pytest
-pip install pytest pytest-cov
-
-# Ejecutar pruebas
 python -m pytest -v
-
-# Con cobertura
-python -m pytest --cov=. --cov-report=html
 ```
-
----
-
-## 🚢 Despliegue
-
-### Desarrollo Local
-
-Ya cubierto en la sección [🚀 Inicio Rápido](#-inicio-rápido)
-
-### Despliegue en Cloud (Render/Railway)
-
-#### Backend Django
-
-1. Crear cuenta en [Render.com](https://render.com/)
-2. Conectar repositorio de GitHub
-3. Configurar variables de entorno
-4. Definir comando de inicio: `gunicorn sigct_backend.wsgi:application`
-
-#### Frontend React
-
-1. Build de producción:
-```bash
-cd src/frontend
-npm run build
-```
-
-2. Desplegar carpeta `dist/` en Render Static Site o Netlify
-
-### Configuración de Hardware Edge
-
-Consulta la guía detallada: [`docs/EDGE_SETUP.md`](docs/EDGE_SETUP.md)
-
-**Resumen**:
-1. Flashear Debian 11 en BeagleBone Black
-2. Configurar red local estática
-3. Instalar dependencias Python y Mosquitto
-4. Copiar scripts de `src/embedded/`
-5. Configurar servicios systemd
-6. Conectar sensores a pines GPIO
 
 ---
 
 ## 📄 Documentación
 
-### Documentación Principal
-
 | Documento | Descripción |
 |-----------|-------------|
-| [MASTERDOC_v4.2_DAS.md](docs/MASTERDOC_v4.2_DAS.md) | Documento de Arquitectura de Software completo |
-| [PLAN_MAESTRO_v4.2.md](docs/PLAN_MAESTRO_v4.2.md) | Plan maestro de fases del proyecto |
-| [API_REFERENCE.md](docs/API_REFERENCE.md) | Referencia completa de API REST |
-| [DEPLOYMENT.md](docs/DEPLOYMENT.md) | Guía de despliegue en producción |
-| [EDGE_SETUP.md](docs/EDGE_SETUP.md) | Configuración de dispositivos Edge |
-
-### Documentación por Categoría
-
-- **Arquitectura**: `docs/architecture/README.md`
-- **Base de Datos**: `docs/database/README.md`
-- **Diagramas UML**: `docs/uml/README.md`
-- **Artefactos SENA**: `docs/sena_artifacts/README.md`
-
-### API REST
-
-La API está documentada con:
-- Swagger/OpenAPI (en construcción)
-- Postman Collection (disponible en `docs/postman/`)
-
-**Endpoints principales**:
-- `GET /api/v1/proyectos/` - Listar proyectos
-- `POST /api/v1/readings/` - Enviar lectura de sensor
-- `POST /api/v1/ia/classify/` - Clasificar imagen
-- `GET /api/v1/dashboard/stats/` - Estadísticas del dashboard
+| [MASTERDOC.md](documentación/MASTERDOC.md) | Documento de Arquitectura de Software (DAS) |
+| [PLANMAESTRO.md](documentación/PLANMAESTRO.md) | Plan de fases y cronograma |
+| [API_REFERENCE.md](documentación/API_REFERENCE.md) | Referencia completa de API REST |
+| [DEPLOYMENT.md](documentación/DEPLOYMENT.md) | Guía de despliegue producción |
+| [diagramas/](documentación/diagramas/) | Diagramas UML y C4 |
 
 ---
 
 ## 🤝 Contribuciones
 
-¡Las contribuciones son bienvenidas! Este es un proyecto académico de código abierto.
+¡Las contribuciones son bienvenidas! 🎉
 
 ### Cómo Contribuir
 
 1. **Fork** el repositorio
-2. Crea una **rama** para tu feature: `git checkout -b feature/mi-nueva-funcionalidad`
-3. **Commit** tus cambios: `git commit -am 'Agrega nueva funcionalidad X'`
-4. **Push** a la rama: `git push origin feature/mi-nueva-funcionalidad`
+2. Crea una rama: `git checkout -b feature/nueva-funcionalidad`
+3. Commit: `git commit -am 'feat: Agregar funcionalidad X'`
+4. Push: `git push origin feature/nueva-funcionalidad`
 5. Abre un **Pull Request**
 
 ### Guías de Estilo
 
-- **Python**: Seguir PEP 8
-- **JavaScript**: Seguir ESLint + Prettier
-- **Commits**: Mensajes claros y descriptivos en español
-- **Documentación**: Actualizar README y docs según cambios
+- **Python:** PEP 8
+- **JavaScript:** ESLint + Prettier
+- **Commits:** Mensajes claros (feat/fix/docs/style)
 
 ### Reporte de Bugs
 
-Abre un **Issue** en GitHub con:
+Abre un **Issue** con:
 - Descripción clara del problema
 - Pasos para reproducir
-- Comportamiento esperado vs. actual
 - Screenshots (si aplica)
-- Entorno (OS, versión de Python/Node, etc.)
+- Entorno (OS, versiones)
 
 ---
 
 ## 🎓 Contexto Académico SENA
 
-Este proyecto es parte del **Programa de Tecnología en Análisis y Desarrollo de Software (ADSO)** del **SENA** (Servicio Nacional de Aprendizaje de Colombia).
-
-### Objetivos Académicos
-
-- Aplicar conocimientos de desarrollo web full-stack
-- Integrar tecnologías IoT y hardware embebido
-- Implementar soluciones de IA en agricultura
-- Desarrollar habilidades de trabajo colaborativo
-- Contribuir al impacto social mediante tecnología
+Proyecto del programa **Tecnología en Análisis y Desarrollo de Software (ADSO)** del **SENA**.
 
 ### Competencias Desarrolladas
 
-- ✅ Desarrollo de aplicaciones web con Django y React
-- ✅ Diseño e implementación de APIs RESTful
+- ✅ Desarrollo web full-stack (Django + React)
+- ✅ Diseño de APIs RESTful
 - ✅ Integración de sistemas IoT (MQTT, sensores)
 - ✅ Implementación de modelos de Machine Learning
-- ✅ Despliegue en infraestructura Cloud/Edge
+- ✅ Despliegue Cloud/Edge
 - ✅ Documentación técnica profesional
 
 ---
@@ -703,74 +575,40 @@ Este proyecto es parte del **Programa de Tecnología en Análisis y Desarrollo d
 
 ### Enlaces Oficiales
 
-- **SENA**: [https://www.sena.edu.co/](https://www.sena.edu.co/es-co/)
-- **Repositorio GitHub**: [https://github.com/badolgm/sigcTiArural](https://github.com/badolgm/sigcTiArural)
+- **SENA:** [sena.edu.co](https://www.sena.edu.co/es-co/)
+- **Repositorio:** [github.com/badolgm/sigcTiArural](https://github.com/badolgm/sigcTiArural)
 
-### Datasets y Recursos Académicos
+### Datasets y Recursos
 
-- **PlantVillage** (Penn State): [https://plantvillage.psu.edu/](https://plantvillage.psu.edu/)
-- **PlantVillage Dataset** (GitHub): [https://github.com/spMohanty/PlantVillage-Dataset](https://github.com/spMohanty/PlantVillage-Dataset)
-- **Kaggle - Plant Disease Classification**: [Notebook de referencia](https://www.kaggle.com/code/shreyashpatil217/plant-disease-classification-transfer-learnig)
+- **PlantVillage:** [plantvillage.psu.edu](https://plantvillage.psu.edu/)
+- **Dataset GitHub:** [PlantVillage-Dataset](https://github.com/spMohanty/PlantVillage-Dataset)
+- **Kaggle:** [Plant Disease Classification](https://www.kaggle.com/code/shreyashpatil217/plant-disease-classification-transfer-learnig)
 
 ### Documentación Técnica
 
-- **Django**: [https://docs.djangoproject.com/](https://docs.djangoproject.com/)
-- **React**: [https://react.dev/](https://react.dev/)
-- **TensorFlow**: [https://www.tensorflow.org/](https://www.tensorflow.org/)
-- **BeagleBone**: [https://beagleboard.org/](https://beagleboard.org/)
-- **MQTT**: [https://mqtt.org/](https://mqtt.org/)
-
-### Cursos y Tutoriales
-
-- **Open FING**: [https://open.fing.edu.uy/](https://open.fing.edu.uy/)
-- **TensorFlow for Beginners**: [https://www.tensorflow.org/tutorials](https://www.tensorflow.org/tutorials)
-- **Django REST Framework**: [https://www.django-rest-framework.org/tutorial/quickstart/](https://www.django-rest-framework.org/tutorial/quickstart/)
-- **React Official Tutorial**: [https://react.dev/learn](https://react.dev/learn)
-
-### Comunidades y Foros
-
-- **Stack Overflow**: Para consultas técnicas
-- **GitHub Discussions**: Para discusiones sobre el proyecto
-- **Discord SENA ADSO**: Comunidad de aprendices (enlace interno)
+- **Django:** [docs.djangoproject.com](https://docs.djangoproject.com/)
+- **React:** [react.dev](https://react.dev/)
+- **TensorFlow:** [tensorflow.org](https://www.tensorflow.org/)
+- **BeagleBone:** [beagleboard.org](https://beagleboard.org/)
 
 ---
 
 ## 📜 Licencia
 
-Este proyecto está licenciado bajo la **Licencia MIT**.
+Proyecto bajo **Licencia MIT** - Ver [LICENSE](LICENSE) para detalles.
 
 ```
-MIT License
-
-Copyright (c) 2025 Bernardo A. Gómez Montoya - Proyecto SIGC&T Rural
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Copyright (c) 2025 Bernardo A. Gómez Montoya - SIGC&T Rural
 ```
 
-**Esto significa que puedes**:
-- ✅ Usar el código comercialmente
-- ✅ Modificar el código
-- ✅ Distribuir el código
+**Puedes:**
+- ✅ Usar comercialmente
+- ✅ Modificar
+- ✅ Distribuir
 - ✅ Uso privado
 
-**Con las siguientes condiciones**:
-- 📄 Incluir la licencia y el aviso de copyright
+**Condiciones:**
+- 📄 Incluir licencia y copyright
 - 📄 Indicar cambios realizados
 
 ---
@@ -780,98 +618,49 @@ SOFTWARE.
 ### 👨‍💻 Desarrollador Principal
 
 **Bernardo A. Gómez Montoya**
-- 🎓 Tecnólogo en Análisis y Desarrollo de Software - SENA
-- 💼 Desarrollador e Investigador - Proyecto SIGC&T Rural
-- 📧 Email: [badolgm@gmail.com](mailto:badolgm@gmail.com)
-- 🌍 Ubicación: Colombia
-- 🔗 GitHub: [@badolgm](https://github.com/badolgm)
 
-### 🤝 Colaboradores y Apoyo
+- 🎓 Tecnólogo ADSO - SENA
+- 💼 Desarrollador e Investigador
+- 📧 badolgm@gmail.com
+- 🌍 Colombia
+- 🔗 [@badolgm](https://github.com/badolgm)
 
-Este proyecto ha sido posible gracias al apoyo de:
+### 🤝 Colaboradores
 
-- **Instructores SENA** - Orientación técnica y académica
-- **Compañeros Aprendices ADSO** - Pruebas y retroalimentación
-- **Comunidad Open Source** - Herramientas y bibliotecas
-- **PlantVillage (Penn State)** - Datasets de enfermedades de plantas
-
-### 🌱 Cómo Ser Parte
-
-Si deseas contribuir o colaborar en este proyecto:
-1. Revisa la sección [🤝 Contribuciones](#-contribuciones)
-2. Abre un Issue o Pull Request
-3. Únete a las discusiones en GitHub
-4. Comparte el proyecto con otros estudiantes y agricultores
+- Instructores SENA
+- Compañeros Aprendices ADSO
+- Comunidad Open Source
+- PlantVillage (Penn State University)
 
 ---
 
 ## 🙏 Agradecimientos
 
-Queremos agradecer especialmente a:
+- **SENA** - Formación técnica y apoyo institucional
+- **Penn State University** - Dataset PlantVillage
+- **Comunidad Open Source** - Herramientas y bibliotecas
+- **Agricultores y comunidades rurales** - Retroalimentación valiosa
 
-### 🏛️ Instituciones
+### 💻 Tecnologías Open Source Utilizadas
 
-- **SENA (Servicio Nacional de Aprendización)** - Por la formación técnica y el apoyo institucional
-- **Penn State University** - Por el dataset PlantVillage de acceso abierto
-- **Open Source Community** - Por las herramientas y bibliotecas utilizadas
-
-### 👨‍🏫 Mentores y Educadores
-
-- Instructores del programa ADSO del SENA
-- Comunidad educativa que promueve la tecnología en el campo
-
-### 🌾 Agricultores y Comunidades Rurales
-
-- Por su valiosa retroalimentación sobre necesidades reales
-- Por confiar en la tecnología como herramienta de transformación
-
-### 💻 Proyectos Open Source Utilizados
-
-- **Django** & **Django REST Framework**
-- **React** & **Vite**
-- **TensorFlow** & **Keras**
-- **BeagleBoard.org** - Por la documentación de BeagleBone Black
-- **Mosquitto** (Eclipse Foundation)
-- **TailwindCSS**
-- Todos los proyectos listados en `requirements.txt` y `package.json`
+Django • React • TensorFlow • BeagleBoard • Mosquitto • TailwindCSS • PostgreSQL • Y muchas más...
 
 ---
 
 ## 📞 Contacto
 
-### 📧 Información de Contacto
+### 📧 Información
 
-**Email Principal**: [badolgm@gmail.com](mailto:badolgm@gmail.com)
-
-### 🔗 Enlaces del Proyecto
-
-- **Repositorio GitHub**: [https://github.com/badolgm/sigcTiArural](https://github.com/badolgm/sigcTiArural)
-- **Issues (Reportar Bugs)**: [https://github.com/badolgm/sigcTiArural/issues](https://github.com/badolgm/sigcTiArural/issues)
-- **Discussions**: [https://github.com/badolgm/sigcTiArural/discussions](https://github.com/badolgm/sigcTiArural/discussions)
-
-### 💬 Soporte
-
-**¿Tienes preguntas?**
-1. Revisa primero la [📄 Documentación](#-documentación)
-2. Busca en [Issues](https://github.com/badolgm/sigcTiArural/issues) si ya fue reportado
-3. Abre un nuevo Issue con tu pregunta
-4. Envía un email a [badolgm@gmail.com](mailto:badolgm@gmail.com)
-
-**¿Encontraste un bug?**
-1. Abre un Issue con etiqueta `bug`
-2. Incluye pasos para reproducirlo
-3. Adjunta logs y screenshots si es posible
-
-**¿Tienes una idea?**
-1. Abre un Issue con etiqueta `enhancement`
-2. Describe tu propuesta claramente
-3. Explica el valor que aportaría al proyecto
+- **Email:** [badolgm@gmail.com](mailto:badolgm@gmail.com)
+- **GitHub:** [github.com/badolgm/sigcTiArural](https://github.com/badolgm/sigcTiArural)
+- **Issues:** [Reportar bugs](https://github.com/badolgm/sigcTiArural/issues)
+- **Discussions:** [Unirse a la conversación](https://github.com/badolgm/sigcTiArural/discussions)
 
 ---
 
-## 🚀 Roadmap y Próximos Pasos
+## 🚀 Roadmap
 
-### Fase Actual: Alpha v0.5 ✅
+### ✅ Fase Actual: Alpha v0.5
 
 - [x] Arquitectura base Cloud/Edge
 - [x] Dashboard IoT básico
@@ -879,130 +668,50 @@ Queremos agradecer especialmente a:
 - [x] Comunicación MQTT
 - [x] Documentación técnica
 
-### Fase 1: Beta v1.0 (Q2 2025) 🚧
+### 🚧 Próximos Pasos: Beta v1.0 (Q2 2025)
 
-- [ ] Sistema de autenticación completo (JWT)
-- [ ] WebSockets para actualizaciones en tiempo real
-- [ ] Dashboard avanzado con gráficos históricos
-- [ ] Alertas por email y push notifications
-- [ ] API RESTful completa y documentada (Swagger)
-- [ ] Tests unitarios (>80% cobertura)
+- [ ] Autenticación JWT completa
+- [ ] WebSockets en tiempo real
+- [ ] Dashboard avanzado
+- [ ] Sistema de alertas
+- [ ] API documentada (Swagger)
+- [ ] Tests (>80% cobertura)
 
-### Fase 2: Producción v1.5 (Q3 2025) 📋
+### 🔮 Futuro: v1.5+ (Q3-Q4 2025)
 
-- [ ] Despliegue en Cloud (Render/Railway)
-- [ ] Optimización de modelos IA
-- [ ] Sistema de roles y permisos
-- [ ] Módulo de contenido educativo completo
-- [ ] Integración con más sensores
-- [ ] Documentación de usuario final
-
-### Fase 3: Escalamiento v2.0 (Q4 2025) 🔮
-
-- [ ] Soporte para múltiples cultivos
-- [ ] Panel de administración avanzado
-- [ ] Integración con SofiaPlus (SENA)
-- [ ] Aplicación móvil nativa (React Native)
-- [ ] Sistema de recomendaciones con IA
-- [ ] Marketplace de sensores y hardware
+- [ ] Despliegue en Cloud
+- [ ] Más sensores y cultivos
+- [ ] Panel de administración
+- [ ] App móvil nativa
+- [ ] Integración SofiaPlus (SENA)
 
 ---
 
-## 📊 Estadísticas del Proyecto
+## ❓ FAQ
 
-```
-📈 Proyecto Activo Desde: Enero 2025
-👨‍💻 Commits: 150+
-📁 Archivos: 200+
-⭐ Stars: 0 (¡Sé el primero!)
-🍴 Forks: 0
-🐛 Issues Abiertos: 0
-✅ Issues Cerrados: 0
-```
+<details>
+<summary><b>¿Es realmente gratuito?</b></summary>
 
-### 🏆 Objetivos de Impacto
+Sí, 100% código abierto bajo licencia MIT. Puedes usarlo, modificarlo y redistribuirlo libremente.
+</details>
 
-| Métrica | Meta 2025 | Progreso |
-|---------|-----------|----------|
-| Estudiantes Capacitados | 100+ | 🔄 En proceso |
-| Agricultores Beneficiados | 20+ | 🔄 En proceso |
-| Nodos Edge Desplegados | 10+ | 🔄 En proceso |
-| Cursos Publicados | 15+ | 🔄 En proceso |
-| Modelos IA Entrenados | 5+ | ✅ 2/5 |
+<details>
+<summary><b>¿Necesito hardware especializado?</b></summary>
 
----
+Para la plataforma web, solo necesitas un navegador. Para el laboratorio Edge, se requieren BeagleBone Black (opcional).
+</details>
 
-## 🎯 Casos de Uso
+<details>
+<summary><b>¿Funciona sin internet?</b></summary>
 
-### 👨‍🌾 Para Agricultores
+El Edge computing permite funcionamiento parcial offline. Los datos se almacenan localmente y se sincronizan cuando hay conexión.
+</details>
 
-**Problema**: Detección tardía de enfermedades en cultivos
-**Solución**: 
-- Captura de imagen con cámara
-- Diagnóstico automático con IA en <2 segundos
-- Recomendaciones de tratamiento
-- Alertas tempranas
+<details>
+<summary><b>¿Puedo usar otros cultivos?</b></summary>
 
-**Problema**: Falta de datos para tomar decisiones
-**Solución**:
-- Monitoreo 24/7 de temperatura, humedad
-- Historial de datos con gráficos
-- Tendencias y predicciones
-- Acceso desde móvil
-
-### 🎓 Para Estudiantes
-
-**Problema**: Falta de recursos de IoT y IA en zonas rurales
-**Solución**:
-- Acceso gratuito a laboratorios virtuales
-- Contenido educativo curado
-- Experimentación con hardware real (remoto)
-- Certificados de completitud
-
-### 👨‍🏫 Para Instructores
-
-**Problema**: Dificultad para enseñar IoT sin hardware
-**Solución**:
-- Plataforma completa lista para usar
-- Documentación pedagógica
-- Ejemplos de código comentados
-- Dashboard de seguimiento de estudiantes
-
----
-
-## 🌟 Casos de Éxito
-
-> *En construcción - Próximamente compartiremos historias de impacto real*
-
----
-
-## ❓ Preguntas Frecuentes (FAQ)
-
-### ¿Es realmente gratuito?
-Sí, el proyecto es 100% código abierto bajo licencia MIT. Puedes usarlo, modificarlo y redistribuirlo libremente.
-
-### ¿Necesito hardware especializado?
-Para usar la plataforma web, solo necesitas un navegador. Para el laboratorio Edge, se requieren BeagleBone Black o similares (opcional).
-
-### ¿Funciona sin conexión a internet?
-El Edge computing permite funcionamiento parcial sin internet. Los datos se almacenan localmente y se sincronizan cuando hay conexión.
-
-### ¿Puedo usar otros cultivos además de tomate y papa?
-Actualmente el modelo está entrenado para tomate y papa. Puedes reentrenar el modelo con tus propios datos siguiendo los notebooks incluidos.
-
-### ¿Cómo puedo contribuir sin saber programar?
-Puedes ayudar con:
-- Documentación
-- Traducción a otros idiomas
-- Pruebas de usuario
-- Difusión del proyecto
-- Feedback y sugerencias
-
-### ¿El proyecto tiene soporte técnico?
-Como proyecto académico, el soporte es limitado. Puedes abrir Issues en GitHub o enviar email. La comunidad también ayuda.
-
-### ¿Puedo usar esto en mi finca/empresa?
-Sí, la licencia MIT lo permite. El software se proporciona "tal cual" sin garantías. Recomendamos hacer pruebas exhaustivas antes de uso en producción.
+Actualmente está entrenado para tomate y papa. Puedes reentrenar el modelo con tus propios datos siguiendo los notebooks incluidos.
+</details>
 
 ---
 
@@ -1020,21 +729,9 @@ Sí, la licencia MIT lo permite. El software se proporciona "tal cual" sin garan
 
 ---
 
-**¿Te gusta este proyecto?** ⭐ **Dale una estrella en GitHub** y ayúdanos a llegar a más estudiantes y agricultores.
-
-**¿Tienes ideas?** 💡 **Abre un Issue** o únete a las **Discussions**.
-
-**¿Quieres colaborar?** 🤝 **Envía un Pull Request** o **contáctanos por email**.
-
----
-
-### Hecho con ❤️ en Colombia 🇨🇴 para el mundo 🌍
-
-**SIGC&T Rural** - Democratizando la tecnología agrícola
+**Hecho con ❤️ en Colombia 🇨🇴 para el mundo 🌍**
 
 © 2025 Bernardo A. Gómez Montoya | Licencia MIT
-
----
 
 [🔝 Volver arriba](#-sigct-rural)
 
