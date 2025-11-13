@@ -1,0 +1,7 @@
+stateDiagram-v2
+  [*] --> Normal
+  Normal --> Warning: Anomalía leve
+  Warning --> Alert: Umbral crítico
+  Alert --> Escalated: Confirmación admin
+  Escalated --> Resolved: Mitigación aplicada
+  Resolved --> Normal

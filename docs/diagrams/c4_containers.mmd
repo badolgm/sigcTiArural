@@ -1,0 +1,40 @@
+flowchart TB
+  %% C4: Contenedores (Nivel 2)
+  subgraph Web
+    direction TB
+    %% Frontend (React + Vite + Tailwind)
+    UI[SPA / Dashboard]
+    Labs[Catálogo de Labs]
+  end
+
+  subgraph API
+    direction TB
+    %% Backend (Django REST)
+    Endpoints[API Endpoints]
+    Auth[Auth/JWT]
+    Media[Almacenamiento de imágenes]
+  end
+
+  subgraph Data
+    direction TB
+    %% Persistencia
+    DB[(PostgreSQL)]
+    Logs[(S3/FS Logs)]
+    Datasets[(Datasets IA)]
+  end
+
+  subgraph Edge
+    direction TB
+    %% Clúster BBB
+    GW[Gateway MQTT]
+    IA[TFLite Inference]
+    Sensors[Sensores/Cámara]
+  end
+
+  UI --> Endpoints
+  Labs --> Endpoints
+  Endpoints --> DB
+  Endpoints --> Media
+  GW --> Endpoints
+  IA --> Endpoints
+  Sensors --> GW

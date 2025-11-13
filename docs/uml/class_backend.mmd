@@ -1,0 +1,46 @@
+classDiagram
+  direction LR
+  class User {
+    +id: UUID
+    +email: string
+    +password_hash: string
+    +role: enum
+  }
+  class Project {
+    +id: UUID
+    +name: string
+    +owner_id: UUID
+    +created_at: datetime
+  }
+  class Telemetry {
+    +id: UUID
+    +project_id: UUID
+    +timestamp: datetime
+    +metric: string
+    +value: number
+  }
+  class ImageSample {
+    +id: UUID
+    +project_id: UUID
+    +path: string
+    +label: string
+    +captured_at: datetime
+  }
+  class Course {
+    +id: UUID
+    +title: string
+    +level: enum
+    +published: bool
+  }
+  class Lab {
+    +id: UUID
+    +title: string
+    +category: string
+    +difficulty: enum
+  }
+
+  User "1" -- "*" Project : owns
+  Project "1" -- "*" Telemetry : logs
+  Project "1" -- "*" ImageSample : has
+  User "*" -- "*" Course : enrolls
+  Course "1" -- "*" Lab : includes

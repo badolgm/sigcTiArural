@@ -1,0 +1,20 @@
+flowchart TB
+  subgraph Cloud[Cloud]
+    Nginx[Nginx/Static]
+    API[Django API]
+    Jobs[Workers]
+    DB[(PostgreSQL)]
+    Storage[(S3/MinIO)]
+  end
+  subgraph Edge[Laboratorio]
+    BBB01[BBB-01 Gateway]
+    BBB02[BBB-02 IA]
+    BBB03[BBB-03 Sensores]
+  end
+
+  Nginx --> API
+  API --> DB
+  API --> Storage
+  BBB01 --> API
+  BBB02 --> API
+  BBB03 --> BBB01

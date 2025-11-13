@@ -111,6 +111,8 @@ Ser plataforma referente en Latinoamérica para la transformación digital del c
 
 ## 🏗️ Arquitectura del Sistema
 
+![Arquitectura del Sistema](docs/diagrams/architecture.svg)
+
 ```mermaid
 graph TB
     subgraph CLOUD
@@ -507,6 +509,8 @@ graph TD
 
 Nivel 2 C4: Descompone el sistema en contenedores principales.
 
+![C4 Contenedores](docs/diagrams/c4_containers.svg)
+
 ```mermaid
 graph TB
     subgraph "🌐 Internet"
@@ -585,6 +589,8 @@ IoT Node (BBB-03) | Python + Adafruit_BBIO | Sensores/cámara | N/A (cliente)
 ### 2.3 Vista de Despliegue
 
 Diagrama UML de Despliegue: Infraestructura física y software desplegado.
+
+![C4 Despliegue](docs/diagrams/c4_deployment.svg)
 
 ```mermaid
 graph TB

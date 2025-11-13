@@ -1,0 +1,22 @@
+flowchart TB
+  subgraph Presentation[Presentación]
+    React[React Components]
+    Tailwind[Tailwind CSS]
+  end
+  subgraph Application[Capa Aplicación]
+    Services[Servicios/Use Cases]
+    Validation[Validación]
+  end
+  subgraph Domain[Dominio]
+    Entities[Entidades]
+    ValueObjects[Value Objects]
+  end
+  subgraph Infrastructure[Infraestructura]
+    Django[Django REST]
+    Repo[Repositorios]
+    DB[(PostgreSQL)]
+  end
+  React --> Services
+  Services --> Django
+  Django --> Repo
+  Repo --> DB

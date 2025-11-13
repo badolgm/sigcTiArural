@@ -1,0 +1,13 @@
+sequenceDiagram
+  participant User
+  participant App as App.jsx
+  participant Router as PageContent
+  participant Page as Dashboard/LabCatalog/Lab
+
+  User->>App: Abre aplicación
+  App->>Router: setCurrentPage('dashboard')
+  Router->>Page: Render Dashboard
+  User->>Router: Click "Labs" en TopNav
+  Router->>Page: Render LabCatalog
+  User->>Router: Abrir "Matemáticas Avanzadas"
+  Router->>Page: Render AdvancedMathLab

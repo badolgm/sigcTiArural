@@ -1,0 +1,31 @@
+classDiagram
+  class App {
+    +state currentPage
+    +render PageContent()
+  }
+  class Dashboard {
+    +nodes: Node[]
+    +render ClusterCard
+    +render GlobalChart
+  }
+  class LabCatalog {
+    +categories: Category[]
+    +onNavigate(page)
+  }
+  class AdvancedMathLab {
+    +selectedFunction
+    +mathParameters
+    +render simulators
+  }
+  class ClusterCard {
+    +node: Node
+  }
+  class GlobalChart {
+    +data: Series[]
+  }
+
+  App --> Dashboard
+  App --> LabCatalog
+  LabCatalog --> AdvancedMathLab
+  Dashboard --> ClusterCard
+  Dashboard --> GlobalChart

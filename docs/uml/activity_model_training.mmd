@@ -1,0 +1,10 @@
+flowchart TD
+  A["Recolectar datasets (PV/Kaggle)"] --> B[Preprocesar: resize, augment]
+  B --> C[Particionar train/val/test]
+  C --> D["Entrenar modelo (TF)"]
+  D --> E[Evaluar metricas]
+  E --> F{Metricas aceptables}
+  F -->|Si| G[Exportar TFLite]
+  F -->|No| B
+  G --> H[Publicar en Storage]
+  H --> I[Desplegar en BBB-02]

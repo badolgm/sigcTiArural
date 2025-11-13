@@ -1,0 +1,27 @@
+flowchart LR
+  subgraph BBB01[BBB-01 Gateway]
+    MQTT[MQTT Client]
+    Sync[Sync Service]
+  end
+  subgraph BBB02[BBB-02 IA]
+    Camera[Camera]
+    TFLite[TFLite Inference]
+  end
+  subgraph BBB03[BBB-03 Sensores]
+    Temp[Temp Sensor]
+    Hum[Humidity]
+    Soil[Soil Moisture]
+  end
+  subgraph Cloud[API Cloud]
+    API[Django REST]
+    Store[(S3/MinIO)]
+  end
+
+  Camera --> TFLite
+  TFLite --> BBB01
+  Temp --> BBB03
+  Hum --> BBB03
+  Soil --> BBB03
+  BBB03 --> BBB01
+  BBB01 --> API
+  BBB01 --> Store

@@ -1,0 +1,29 @@
+flowchart LR
+  subgraph Client[Cliente Web]
+    UI[React/Vite]
+    Tailwind[CSS]
+  end
+  subgraph Server[Servidor]
+    Django[Django REST]
+    Auth[JWT/OAuth]
+    Workers[Jobs/Tasks]
+  end
+  subgraph Data[Datos]
+    PG[(PostgreSQL)]
+    S3[(S3/MinIO)]
+    Redis[(Redis Cache)]
+  end
+  subgraph Edge[Edge BBB]
+    GW[Gateway MQTT]
+    INF[TFLite Inference]
+    CAM[Camera]
+  end
+
+  UI --> Django
+  Django --> PG
+  Django --> S3
+  Django --> Redis
+  Workers --> PG
+  GW --> Django
+  INF --> Django
+  CAM --> GW

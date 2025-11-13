@@ -1,0 +1,13 @@
+sequenceDiagram
+  participant U as Usuario
+  participant FE as Frontend
+  participant API as Django API
+  participant DB as PostgreSQL
+  U->>FE: Ingresa credenciales
+  FE->>API: POST /auth/login
+  API->>DB: Verifica usuario y hash
+  DB-->>API: OK
+  API-->>FE: JWT Token
+  FE->>API: Accede a recurso protegido
+  API->>DB: Consulta datos
+  API-->>FE: Datos JSON

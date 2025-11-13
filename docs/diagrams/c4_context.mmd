@@ -1,0 +1,27 @@
+flowchart LR
+  %% C4: Contexto del sistema (Nivel 1)
+  subgraph Actors
+    direction TB
+    Farmer["Agricultor"]
+    Student["Estudiante SENA"]
+    Admin["Administrador"]
+  end
+
+  subgraph System
+    direction TB
+    Context["Plataforma Web Híbrida\nCloud + Edge"]
+  end
+
+  subgraph External
+    direction TB
+    BBB["Cluster BBB (Edge)"]
+    PV["PlantVillage/Kaggle"]
+    SENA["SENA SofiaPlus (futuro)"]
+  end
+
+  Farmer -->|HTTPS| Context
+  Student -->|HTTPS| Context
+  Admin -->|HTTPS| Context
+  BBB -->|MQTT/HTTPS| Context
+  Context --> PV
+  Context -.->|OAuth2 (futuro)| SENA

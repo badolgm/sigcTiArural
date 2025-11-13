@@ -1,0 +1,10 @@
+sequenceDiagram
+  participant BBB as BBB Gateway
+  participant API as Django API
+  participant MQ as MQTT Broker
+  participant DB as PostgreSQL
+  BBB->>MQ: Publish telemetry (topic: projects/{id}/metrics)
+  API->>MQ: Subscribe topic
+  MQ-->>API: Message telemetry
+  API->>DB: Store metric
+  API-->>BBB: 200 OK

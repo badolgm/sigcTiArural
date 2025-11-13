@@ -1,0 +1,30 @@
+flowchart LR
+  subgraph Frontend["Frontend (React + Tailwind + Vite)"]
+    A[App.jsx]
+    B[Dashboard.jsx]
+    C[LabCatalog.jsx]
+    D[AdvancedMathLab.jsx]
+    E[Components: ClusterCard, GlobalChart]
+  end
+
+  subgraph Backend["Backend (Django REST)"]
+    API[API Endpoints]
+    AUTH[Auth]
+    DB[(Storage/Logs/Datasets)]
+  end
+
+  subgraph Edge["Edge (BBB Nodes)"]
+    BBB1[Gateway/MQTT]
+    BBB2[IA Edge/TFLite]
+    BBB3[Sensors]
+  end
+
+  A --> B
+  A --> C
+  C --> D
+  B --> E
+  A <-->|Fetch| API
+  API --> DB
+  BBB1 --> API
+  BBB2 --> API
+  BBB3 --> API

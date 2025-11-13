@@ -1,0 +1,33 @@
+flowchart LR
+  %% C4: Componentes principales (Nivel 3)
+  subgraph Frontend[Frontend]
+    Router[Router]
+    Store[State Mgmt]
+    Views[Views/Components]
+  end
+
+  subgraph Backend[Backend]
+    UsersSvc[Users Service]
+    LabsSvc[Labs Service]
+    IoTSvc[IoT Telemetry Service]
+    ImgSvc[Image Upload/Processing]
+  end
+
+  subgraph Infra[Infra]
+    Cache[(Redis)]
+    Queue[(RQ/Celery)]
+    Storage[(S3/MinIO)]
+    DB[(PostgreSQL)]
+  end
+
+  Router --> Views
+  Views --> UsersSvc
+  Views --> LabsSvc
+  Views --> IoTSvc
+  Views --> ImgSvc
+  UsersSvc --> DB
+  LabsSvc --> DB
+  IoTSvc --> Queue
+  ImgSvc --> Storage
+  Queue --> LabsSvc
+  Cache --> UsersSvc

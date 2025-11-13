@@ -1,0 +1,49 @@
+@page { size: A4; margin: 18mm; }
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #111;
+  font-size: 12pt;
+  line-height: 1.6;
+}
+h1, h2, h3 { color: #0a7; }
+/* subtítulos */
+h4 { color: #0a7; margin-top: 16px; margin-bottom: 8px; }
+p { margin: 8px 0 12px; }
+ul, ol { padding-left: 22px; }
+li { margin-bottom: 6px; }
+img {
+  max-width: 100%;
+  display: block;
+  margin: 12px auto;
+}
+svg {
+  max-width: 100%;
+  display: block;
+  margin: 12px auto;
+}
+code, pre {
+  background: #f6f8fa;
+  font-family: Consolas, "SFMono-Regular", Menlo, Monaco, monospace;
+  font-size: 10pt;
+  line-height: 1.45;
+  padding: 6px 8px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 10.5pt; }
+th, td { border: 1px solid #e5e7eb; padding: 6px 8px; text-align: left; }
+thead th { background: #f3f4f6; }
+
+/* Mermaid blocks */
+.mermaid {
+  margin: 16px 0;
+}
+
+/* Page breaks for sections */
+.page-break {
+  page-break-before: always;
+}
+.blockquote { border-left: 3px solid #0a7; padding-left: 10px; color: #374151; }

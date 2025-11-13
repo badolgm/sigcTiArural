@@ -1,0 +1,24 @@
+flowchart TB
+  %% C4: Despliegue Cloud/Edge
+  subgraph Cloud
+    direction TB
+    FE["Frontend (Vite static)"]
+    BE["Django REST API"]
+    Worker["Workers/Jobs"]
+    DB[(PostgreSQL)]
+    S3[(S3/MinIO)]
+  end
+
+  subgraph Edge
+    direction TB
+    BBB1[BBB-01 Gateway]
+    BBB2[BBB-02 IA]
+    BBB3[BBB-03 Sensores]
+  end
+
+  FE --> BE
+  BE --> DB
+  BE --> S3
+  BBB1 --> BE
+  BBB2 --> BE
+  BBB3 --> BBB1
