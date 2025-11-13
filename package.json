@@ -1,5 +1,16 @@
 {
   "dependencies": {
     "grip": "^1.6.0"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^11.12.0",
+    "http-server": "^14.1.1",
+    "md-to-pdf": "^5.2.4",
+    "puppeteer": "^24.29.1"
+  },
+  "scripts": {
+    "generate:diagrams": "node scripts/generate-diagrams.mjs",
+    "report:full": "node scripts/generate-full-report.mjs && npx md-to-pdf docs/MASTER_REPORT_FULL.md --stylesheet docs/styles/report.css",
+    "preview:docs": "http-server -p 8000 ."
   }
 }

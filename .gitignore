@@ -70,3 +70,10 @@ db.sqlite3
 .vscode/
 *.swp
 *.swo
+ 
+# Docs artifacts (images and PDFs not needed in repo)
+docs/diagrams/*.png
+docs/uml/*.png
+docs/database/*.png
+docs/**/*.pdf
+docs/diagrams/manifest.json

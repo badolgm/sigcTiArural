@@ -116,20 +116,9 @@ graph TD
     actor1 -- "Consulta Dashboard/Alertas<br/>(HTTPS)" --> C4_Context
     actor2 -- "Consume Cursos/Labs<br/>(HTTPS)" --> C4_Context
     actor3 -- "Administra Contenido<br/>(HTTPS)" --> C4_Context
-    C4_Context -- "Obtiene datos de<br/>entrenamiento (Offline)" --> C4_Sys_PReintentarREADME.md218 líneasmdBAdisculpa se me olvidó , utiliza el README.md también para lo que te pedí🌾 SIGC&T Rural - Documento Maestro de Arquitectura
-<div align="center">
-Sistema Integrado de Gestión del Conocimiento y Tecnología Rural
-Proyecto Productivo ADSO - SENA
-Mostrar imagen
-Mostrar imagen
-Mostrar imagen
-Mostrar imagen
-Mostrar imagen
-Mostrar imagen
-Mostrar imagen
-Mostrar imagen
-Mostrar imagen
-</div>
+    C4_Context -- "Obtiene datos de<br/>entrenamiento (Offline)" --> C4_Sys_PV
+```
+
 
 📋 Información del Documento
 CampoValorVersión4.2EstadoArquitectura DefinitivaFecha02-Nov-2025AutorB. Gómez (Asistente: IA)TipoDocumento de Arquitectura de Software (DAS)FormatoMarkdown + Mermaid para GitHub
@@ -271,7 +260,8 @@ ActorRolDescripciónInteracciones Principales👨‍🌾 AgricultorUsuario Final
 🏗️ 2. Vistas de Arquitectura (Modelo C4)
 2.1. Vista de Contexto del Sistema
 Nivel 1 C4: Muestra el sistema como "caja negra" y sus interacciones con actores y sistemas externos.
-mermaidgraph TD
+```mermaid
+graph TD
     subgraph "👥 Actores Humanos"
         direction TB
         actor1[👨‍🌾 Agricultor<br/>Monitorea cultivos]
@@ -609,6 +599,7 @@ Contenido_Academico {
     datetime created_at
 }
 
+```
 ```
 ---
 
@@ -2440,7 +2431,8 @@ Latencia: 2-5 segundos
 Procesamiento on-demand
 
 B. Inferencia Edge (Alerta Temprana)
-mermaidsequenceDiagram
+```mermaid
+sequenceDiagram
     participant BBB3 as BBB-03 (Sensores)
     participant BBB2 as BBB-02 (IA Edge)
     participant BBB1 as BBB-01 (Gateway)
@@ -2467,6 +2459,7 @@ mermaidsequenceDiagram
 - Latencia ultra-baja: <500ms
 - Procesamiento automático continuo
 
+```
 ```
 ---
 
@@ -4471,4 +4464,4 @@ Para la comunidad rural y educativa del mundo 🌍
 ¿Listo para comenzar? → ⚡ Inicio Rápido
 ¿Tienes preguntas? → 💬 Abre un Discussion
 ¿Encontraste un bug? → 🐛 Reporta un Issue
-¿Quieres contribuir? → 🤝 Lee la Guía de Contribución 
+¿Quieres contribuir? → 🤝 Lee la Guía de Contribución

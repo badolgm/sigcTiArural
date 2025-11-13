@@ -1,0 +1,31 @@
+classDiagram
+  class User {
+    +id: UUID
+    +email: string
+    +password_hash: string
+    +role: enum
+  }
+  class Project {
+    +id: UUID
+    +name: string
+    +owner_id: UUID
+    +created_at: datetime
+  }
+  class Telemetry {
+    +id: UUID
+    +project_id: UUID
+    +timestamp: datetime
+    +metric: string
+    +value: number
+  }
+  class ImageSample {
+    +id: UUID
+    +project_id: UUID
+    +path: string
+    +label: string
+    +captured_at: datetime
+  }
+
+  User "1" -- "*" Project
+  Project "1" -- "*" Telemetry
+  Project "1" -- "*" ImageSample

@@ -1,0 +1,45 @@
+erDiagram
+  USER ||--o{ PROJECT : owns
+  PROJECT ||--o{ TELEMETRY : logs
+  PROJECT ||--o{ IMAGE_SAMPLE : has
+  USER }o--o{ COURSE : enrolls
+  COURSE ||--o{ LAB : includes
+
+  USER {
+    uuid id
+    string email
+    string password_hash
+    enum role
+  }
+  PROJECT {
+    uuid id
+    string name
+    uuid owner_id
+    datetime created_at
+  }
+  TELEMETRY {
+    uuid id
+    uuid project_id
+    datetime timestamp
+    string metric
+    float value
+  }
+  IMAGE_SAMPLE {
+    uuid id
+    uuid project_id
+    string path
+    string label
+    datetime captured_at
+  }
+  COURSE {
+    uuid id
+    string title
+    enum level
+    boolean published
+  }
+  LAB {
+    uuid id
+    string title
+    string category
+    enum difficulty
+  }
