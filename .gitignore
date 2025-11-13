@@ -77,3 +77,6 @@ docs/uml/*.png
 docs/database/*.png
 docs/**/*.pdf
 docs/diagrams/manifest.json
+
+# Ignorar reportes maestros en Markdown si son solo locales
+docs/MASTER_REPORT_*.md
