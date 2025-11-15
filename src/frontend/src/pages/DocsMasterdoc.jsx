@@ -7,7 +7,7 @@ const DocsMasterdoc = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const sourceUrl = 'https://raw.githubusercontent.com/badolgm/sigcTiArural/main/docs/MASTERDOC_v4.2_DAS.md';
+    const sourceUrl = 'https://raw.githubusercontent.com/badolgm/sigcTiArural/main/docs/MASTERDOC.md';
     fetch(sourceUrl)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -26,7 +26,7 @@ const DocsMasterdoc = () => {
   return (
     <div style={{ padding: '24px', color: '#eafffb', background: '#0b1220', minHeight: '100vh' }}>
       <h1 style={{ fontSize: '28px', marginBottom: '16px', textShadow: '0 0 10px #00e5ff' }}>
-        📚 MASTERDOC v4.2 (DAS)
+        📚 MASTERDOC v4.3 (DAS)
       </h1>
       {error && (
         <div style={{ color: '#ff6b6b', marginBottom: '12px' }}>Error: {error}</div>

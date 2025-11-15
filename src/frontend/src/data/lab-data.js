@@ -314,7 +314,7 @@ export const labCategories = [
         links: [
           { label: 'SENA', href: 'https://www.sena.edu.co/' },
           { label: 'SOFIA Plus', href: 'https://oferta.senasofiaplus.edu.co/sofia-oferta/' },
-          { label: '📚 Ver MASTERDOC v4.2 (Interno)', to: 'docs-masterdoc', internal: true },
+          { label: '📚 Ver MASTERDOC v4.3 (Interno)', to: 'docs-masterdoc', internal: true },
         ],
       },
       {
@@ -339,7 +339,7 @@ export const labCategories = [
     icon: '📑',
     links: [
       { label: 'README del Proyecto', to: 'docs-readme', internal: true },
-      { label: 'MASTERDOC v4.2 (DAS)', to: 'docs-masterdoc', internal: true },
+      { label: 'MASTERDOC v4.3 (DAS)', to: 'docs-masterdoc', internal: true },
       { label: 'Plan Maestro v4.2', to: 'docs-plan', internal: true },
       { label: 'API Reference', to: 'docs-api', internal: true },
       { label: 'Guía EDGE_SETUP', to: 'docs-edge-setup', internal: true },
