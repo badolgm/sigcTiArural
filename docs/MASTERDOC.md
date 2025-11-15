@@ -1,6 +1,6 @@
 🌾 SIGC&T Rural - Documento de Arquitectura de Software (DAS)
-Sistema Integrado de Gestión del Conocimiento y Tecnología Rural
-Proyecto Productivo ADSO - SENA
+Sistema Integrado de Gestión en Ciencia y Tecnología Rural
+Proyecto Productivo para el programa de formación en el SENA en  Análisis y Desarrolo de Software (ADSO)
 <div align="center">
 Mostrar imagen
 Mostrar imagen
@@ -21,6 +21,30 @@ CampoValorVersión4.2EstadoBorrador de ArquitecturaFecha02-Nov-2025AutorB. Góme
 
 
 2. Vistas de Arquitectura (Modelo C4)
+
+Galería de diagramas renderizados (SVG)
+
+- Contexto general del sistema
+  ![Arquitectura general](diagrams/architecture.svg)
+- Vista de Contenedores (Cloud/Edge)
+  ![C4 Contenedores](diagrams/c4_containers.svg)
+- Vista de Componentes principales
+  ![C4 Componentes](diagrams/c4_components.svg)
+- Vista de Despliegue (Cloud y Laboratorio Edge)
+  ![C4 Despliegue](diagrams/c4_deployment.svg)
+- Casos de uso del sistema
+  ![Casos de uso](diagrams/use_cases.svg)
+- Flujo de navegación de usuario
+  ![Secuencia navegación](diagrams/sequence_navigation.svg)
+- Catálogo de laboratorio y recursos
+  ![Catálogo de laboratorio](diagrams/class_lab_catalog.svg)
+- Modelo Entidad-Relación (Base de datos)
+  ![ER Schema](database/er_schema.svg)
+- Modelos y relaciones de datos
+  ![Modelos BD](database/class_db_models.svg)
+- Arquitectura del Edge (Clúster BBB)
+  ![Arquitectura Edge](diagrams/architecture_edge.svg)
+
 
 2.1. Vista de Contexto del Sistema
 2.2. Vista de Contenedores
