@@ -1,0 +1,287 @@
+$ErrorActionPreference = 'Stop'
+$reportDir = "C:\Users\bagm2\workspace_toshiba\reports\sigcTiArural"
+$timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+$baseName = "SIGCT_Rural_Database_Master_v5_" + $timestamp
+$htmlPath = Join-Path $reportDir ($baseName + ".html")
+New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
+$today = Get-Date -Format "yyyy-MM-dd"
+$repoPath = "C:\Users\bagm2\workspace_toshiba\Clone\sigcTiArural"
+
+$content = @"
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>SIGC&T Rural — Database Master Report v5.0</title>
+  <style>
+    :root {
+      --bg: #0b0f14; --text: #e6edf3; --muted: #a0b4c0;
+      --accent: #00e5ff; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
+      --panel: #111827; --border: #334155; --glow: rgba(0,229,255,0.35);
+    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 40px; background: radial-gradient(circle at 15% 10%, #0b1320, var(--bg) 35%); color: var(--text); line-height: 1.7; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    h1, h2, h3 { color: var(--accent); margin-top: 2rem; letter-spacing: .4px; }
+    h1 { border-bottom: 2px solid var(--accent); padding-bottom: 12px; font-size: 2.3rem; text-shadow: 0 0 14px var(--glow); }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.25rem; }
+    p  { color: var(--muted); }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin: 18px 0; box-shadow: 0 0 18px -6px var(--glow); backdrop-filter: blur(2px); }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-right: 8px; border: 1px solid var(--border); }
+    .bg-success { background-color: rgba(34,197,94,0.15); color: var(--success); border-color: var(--success); }
+    .bg-warning { background-color: rgba(245,158,11,0.15); color: var(--warning); border-color: var(--warning); }
+    .bg-danger  { background-color: rgba(239,68,68,0.15); color: var(--danger);  border-color: var(--danger); }
+    .muted { color: var(--muted); }
+    .kpi { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 12px; }
+    pre { background: #0a0a0a; padding: 16px; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border); }
+    code { background: rgba(255,255,255,0.08); padding: 3px 6px; border-radius: 6px; font-family: Consolas, monospace; color: #bfdbfe; }
+    .footnote { font-size: .85rem; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--accent); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: "dark" });</script>
+</head>
+<body>
+<div class="container">
+  <h1>SIGC&T Rural — Database Master & ER</h1>
+  <p><strong>Fecha:</strong> $today &nbsp;|&nbsp; <strong>Repositorio:</strong> <code>$repoPath</code></p>
+
+  <div class="card">
+    <h2>1. Motor de BD y Justificación</h2>
+    <ul>
+      <li><span class="badge bg-success">Dev</span> SQLite — simplicidad y cero configuración para desarrollo local.</li>
+      <li><span class="badge bg-success">Prod</span> PostgreSQL — tipos avanzados, rendimiento, integridad y ecosistema maduro.</li>
+      <li><span class="badge bg-warning">Export</span> MySQL — interoperabilidad y compatibilidad requerida por terceros.</li>
+    </ul>
+    <p class="muted">Se recomienda mantener SQLite para dev y PostgreSQL para producción. La exportación a MySQL se realiza por migración de esquema y carga de datos desde <code>dumpdata</code>.</p>
+  </div>
+
+  <h2>2. Modelo de Datos (Dominio)</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>2.1 Núcleo Cloud</h3>
+      <ul>
+        <li><code>SensorReading</code>: nodo, tipo, valor, unidad, timestamp</li>
+        <li><code>Project</code>: nombre, descripción, estado</li>
+        <li><code>AIModel</code>: nombre, versión, ruta, métricas</li>
+        <li><code>AIInference</code>: ref modelo, entrada, clase, confianza, ts</li>
+        <li><code>ClusterNode</code>: id, rol, estado, metadatos</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>2.2 Edge y Labs</h3>
+      <ul>
+        <li><code>EdgeEvent</code>: node_id, tipo, payload, ts</li>
+        <li><code>Lab</code>: nombre, tipo (virtual/físico), ubicación</li>
+        <li><code>Dataset</code>: origen, licencia, tamaño</li>
+        <li><code>Experiment</code>: dataset, modelo, métricas, notas</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>3. Diagramas ER (Mermaid)</h2>
+  <div class="card">
+    <h3>3.1 ER Cloud</h3>
+    <div class="mermaid">
+erDiagram
+  Project ||--o{ SensorReading : includes
+  Project ||--o{ AIInference   : generates
+  AIModel ||--o{ AIInference   : used_by
+  ClusterNode ||--o{ SensorReading : emits
+
+  Project {
+    int id PK
+    string name
+    string description
+    string status
+    datetime created_at
+  }
+  SensorReading {
+    int id PK
+    string node_id
+    string sensor_type
+    float value
+    string unit
+    datetime ts
+  }
+  AIModel {
+    int id PK
+    string name
+    string version
+    string path
+    json metrics
+    datetime created_at
+  }
+  AIInference {
+    int id PK
+    int model_id FK
+    string source_type
+    string source_ref
+    int top_class_index
+    float confidence
+    json raw
+    datetime ts
+  }
+  ClusterNode {
+    int id PK
+    string node_id
+    string role
+    string status
+    json meta
+  }
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>3.2 ER Edge + Labs</h3>
+    <div class="mermaid">
+erDiagram
+  Lab ||--o{ Experiment : hosts
+  Dataset ||--o{ Experiment : trains
+  ClusterNode ||--o{ EdgeEvent : produces
+
+  Lab {
+    int id PK
+    string name
+    string kind
+    string location
+    json config
+  }
+  Dataset {
+    int id PK
+    string name
+    string source
+    string license
+    int samples
+  }
+  Experiment {
+    int id PK
+    int lab_id FK
+    int dataset_id FK
+    int model_id FK
+    json metrics
+    text notes
+    datetime ts
+  }
+  EdgeEvent {
+    int id PK
+    string node_id
+    string event_type
+    json payload
+    datetime ts
+  }
+    </div>
+  </div>
+
+  <h2>4. Exportación a MySQL</h2>
+  <div class="card">
+    <h3>4.1 Prerrequisitos</h3>
+    <ul>
+      <li>MySQL Server instalado y base creada: <code>CREATE DATABASE sigct_rural CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</code></li>
+      <li>Dependencia Python: <code>pip install mysqlclient</code> (o <code>pip install PyMySQL</code> + <code>pymysql.install_as_MySQLdb()</code>).</li>
+      <li>Configurar <code>DATABASES</code> en <code>settings.py</code> con motor <code>django.db.backends.mysql</code>.</li>
+    </ul>
+    <h3>4.2 Esquema MySQL (DDL de ejemplo)</h3>
+    <pre>CREATE TABLE sensor_reading (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  node_id VARCHAR(50) NOT NULL,
+  sensor_type VARCHAR(50) NOT NULL,
+  value DOUBLE NOT NULL,
+  unit VARCHAR(16) NOT NULL DEFAULT '',
+  ts DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE ai_model (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  version VARCHAR(50) NOT NULL,
+  path VARCHAR(255) NOT NULL,
+  metrics JSON NULL,
+  created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE ai_inference (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  model_id INT NOT NULL,
+  source_type VARCHAR(32) NOT NULL,
+  source_ref VARCHAR(255) NOT NULL,
+  top_class_index INT NOT NULL,
+  confidence DOUBLE NOT NULL,
+  raw JSON NULL,
+  ts DATETIME NOT NULL,
+  CONSTRAINT fk_ai_model FOREIGN KEY (model_id) REFERENCES ai_model(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE cluster_node (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  node_id VARCHAR(50) NOT NULL,
+  role VARCHAR(50) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  meta JSON NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</pre>
+
+    <h3>4.3 Pasos (Django)</h3>
+    <pre># 1) Instalar dependencias y configurar MySQL en settings.py
+venv\Scripts\activate
+pip install mysqlclient
+# DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME':'sigct_rural','USER':'root','PASSWORD':'...', 'HOST':'localhost','PORT':'3306' } }
+
+# 2) Aplicar migraciones contra MySQL (crea tablas)
+python manage.py migrate
+
+# 3) Si tienes datos en dev (SQLite/Postgres), exporta e importa:
+python manage.py dumpdata --indent 2 > data_dump.json
+python manage.py loaddata data_dump.json
+
+# 4) Verificar CRUD:
+python manage.py shell
+# >>> from api.models import SensorReading; SensorReading.objects.count()</pre>
+  </div>
+
+  <h2>5. Lecturas Reales de IA y Persistencia</h2>
+  <div class="card">
+    <h3>5.1 Flujo</h3>
+    <ul>
+      <li>Edge envía imagen/lectura → FastAPI <code>/infer</code> → resultado {clase, confianza}.</li>
+      <li>Resultado se registra (log JSONL y/o tabla <code>ai_inference</code> en BD).</li>
+      <li>Métricas agregadas desde <code>/metrics</code> para dashboard.</li>
+    </ul>
+    <h3>5.2 Ejemplos</h3>
+    <pre>curl http://localhost:8000/health
+{"status":"ok","tf_available":true,"available_models":["plant_disease_v2.h5"]}
+
+curl -X POST http://localhost:8000/infer -F file=@leaf.jpg
+{"result":{"top_class_index":12,"confidence":0.96421,"raw":[...]}}</pre>
+  </div>
+
+  <h2>6. Preparación Web3/Blockchain</h2>
+  <div class="card">
+    <ul>
+      <li>Generar hash SHA-256 por cada lectura e inferencia; almacenar en columna <code>audit_hash</code> (opcional).</li>
+      <li>Exportar lotes JSONL firmados; preparar gateway para anclar hashes en cadena pública (futuro).</li>
+      <li>Mantener separación de preocupaciones: sin dependencias Web3 hasta aprobación.</li>
+    </ul>
+    <p class="footnote">Alineado con trazabilidad y auditoría, sin afectar flujo actual del sistema.</p>
+  </div>
+
+  <h2>7. Criterios de Éxito</h2>
+  <div class="card">
+    <ul>
+      <li>Django migrando correctamente contra MySQL; tablas presentes.</li>
+      <li>CRUD de <code>SensorReading</code> y <code>AIInference</code> operativos.</li>
+      <li>FastAPI <code>/infer</code> y <code>/metrics</code> coherentes; eventos SSE en vivo.</li>
+      <li>Dashboard con datos reales (latencia &lt; 2s).</li>
+      <li>Auditoría con hash por registro habilitada (si se activa).</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
+"@
+
+Set-Content -Path $htmlPath -Value $content -Encoding UTF8
+Write-Output "Informe BD HTML generado: $htmlPath"

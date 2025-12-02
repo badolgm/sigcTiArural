@@ -1,0 +1,239 @@
+$ErrorActionPreference = 'Stop'
+$reportDir = "C:\Users\bagm2\workspace_toshiba\reports\sigcTiArural"
+$timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+$baseName = "SIGCT_Rural_Master_Status_v5_" + $timestamp
+$htmlPath = Join-Path $reportDir ($baseName + ".html")
+New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
+$today = Get-Date -Format "yyyy-MM-dd"
+$repoPath = "C:\Users\bagm2\workspace_toshiba\Clone\sigcTiArural"
+
+$content = @"
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>SIGC&T Rural — Master Status Report v5.0</title>
+  <style>
+    :root {
+      --bg: #0b0f14; --text: #e6edf3; --muted: #a0b4c0;
+      --accent: #00e5ff; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
+      --panel: #111827; --border: #334155; --glow: rgba(0,229,255,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0; padding: 40px; background: radial-gradient(circle at 20% 20%, #0b1320, var(--bg) 35%);
+      color: var(--text); line-height: 1.7;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    h1, h2, h3 { color: var(--accent); margin-top: 2rem; letter-spacing: .5px; }
+    h1 { border-bottom: 2px solid var(--accent); padding-bottom: 12px; font-size: 2.4rem; text-shadow: 0 0 14px var(--glow); }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.25rem; }
+    p { color: var(--muted); }
+    code { background: rgba(255,255,255,0.08); padding: 3px 6px; border-radius: 6px; font-family: Consolas, monospace; color: #bfdbfe; }
+    pre { background: #0a0a0a; padding: 16px; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border); }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin: 18px 0;
+      box-shadow: 0 0 18px -6px var(--glow); backdrop-filter: blur(2px);
+    }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-right: 8px; border: 1px solid var(--border); }
+    .bg-success { background-color: rgba(34,197,94,0.15); color: var(--success); border-color: var(--success); }
+    .bg-warning { background-color: rgba(245,158,11,0.15); color: var(--warning); border-color: var(--warning); }
+    .bg-danger  { background-color: rgba(239,68,68,0.15); color: var(--danger);  border-color: var(--danger); }
+    .muted { color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--accent); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .kpi { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 12px; }
+    .row { display: flex; flex-wrap: wrap; gap: 16px; }
+    .row .flex-1 { flex: 1 1 300px; }
+    .footnote { font-size: .85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>SIGC&T Rural — Master Status & Plan</h1>
+  <p><strong>Fecha:</strong> $today &nbsp;|&nbsp; <strong>Repositorio:</strong> <code>$repoPath</code> &nbsp;|&nbsp; <strong>Estado General:</strong> <span class="badge bg-warning">EN CONSTRUCCIÓN</span></p>
+
+  <div class="card">
+    <h2>1. Resumen Ejecutivo</h2>
+    <p>Se consolida diagnóstico y ruta crítica. Estrategia: <strong>Backend Django (persistencia y auth)</strong> + <strong>Microservicio IA FastAPI</strong> + <strong>Frontend React</strong>, con preparación para <strong>integraciones Web3/Blockchain</strong> en auditoría de datos y trazabilidad futura.</p>
+    <div class="row">
+      <div class="kpi"><span>🧠 IA:</span><code>/infer</code> + <code>/metrics</code></div>
+      <div class="kpi"><span>🌐 Front:</span>React + Vite + Tailwind</div>
+      <div class="kpi"><span>⚙️ Back:</span>Django + DRF</div>
+      <div class="kpi"><span>📦 Contenedores:</span>Compose</div>
+    </div>
+  </div>
+
+  <h2>2. Estado de Componentes</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>🎨 Frontend</h3>
+      <span class="badge bg-success">ALTO</span>
+      <p class="muted">Interfaz moderna; requiere conectar datos reales y ajustar estilos dinámicos Tailwind.</p>
+      <ul>
+        <li>✅ UI y navegación implementadas</li>
+        <li>⚠️ Conectar <code>services/cloud.js</code> a API local</li>
+        <li>⚠️ Sustituir clases <code>text-[...]</code>/<code>shadow-[...]</code> dinámicas</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🧠 Microservicio IA</h3>
+      <span class="badge bg-success">ALTO</span>
+      <p class="muted">FastAPI con endpoints de salud, modelos, inferencia, SSE y métricas.</p>
+      <ul>
+        <li>✅ <code>GET /health</code>, <code>GET /models</code>, <code>POST /infer</code>, <code>GET /events</code>, <code>GET /metrics</code></li>
+        <li>⚠️ Colocar modelo <code>.h5/.keras</code> en <code>src/ai_models/production_models</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>⚙️ Backend Django</h3>
+      <span class="badge bg-danger">CRÍTICO</span>
+      <p class="muted">Implementar settings/urls/models/views/serializers/urls DRF. Integrar auth y endpoints de dominio.</p>
+      <ul>
+        <li>🚀 Habilitar ORM + API REST</li>
+        <li>🚀 Configurar CORS y JWT</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>3. Plan de Implementación (Ruta A)</h2>
+  <table>
+    <thead><tr><th>Fase</th><th>Tarea</th><th>Archivos</th><th>Criterios de Éxito</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td><td>Base Django</td>
+        <td><code>src/backend/sigct_backend/settings.py</code>, <code>urls.py</code></td>
+        <td>Servidor corre en <code>http://localhost:8000</code>; <code>/api/health</code> OK</td>
+      </tr>
+      <tr>
+        <td>2</td><td>Modelo Sensores</td>
+        <td><code>src/backend/api/models.py</code>, <code>serializers.py</code></td>
+        <td>Migraciones aplicadas; <code>/api/sensors/</code> lista y crea registros</td>
+      </tr>
+      <tr>
+        <td>3</td><td>Vistas/URLs</td>
+        <td><code>src/backend/api/views.py</code>, <code>urls.py</code></td>
+        <td>CRUD funcional; filtros por fecha/nodo</td>
+      </tr>
+      <tr>
+        <td>4</td><td>Conexión Frontend</td>
+        <td><code>src/frontend/src/services/cloud.js</code></td>
+        <td>Dashboard muestra datos reales (<2s latencia)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Lecturas Reales de IA</h2>
+  <div class="card">
+    <h3>4.1 Salud y Modelos</h3>
+    <pre>curl http://localhost:8000/health
+{"status":"ok","tf_available":true,"models_dir":".../src/ai_models/production_models","available_models":["plant_disease_v2.h5"]}</pre>
+    <h3>4.2 Inferencia (archivo)</h3>
+    <pre>curl -X POST http://localhost:8000/infer -F file=@leaf.jpg
+{"source":{"type":"upload","filename":"leaf.jpg"},"result":{"model":"plant_disease_v2.h5","top_class_index":12,"confidence":0.96421,"raw":[...]}}</pre>
+    <h3>4.3 Eventos SSE y Métricas</h3>
+    <pre>curl http://localhost:8000/events   # stream de líneas JSONL
+curl http://localhost:8000/metrics
+{"class_counts":{"12":7,"3":1},"avg_confidence":0.88142,"events":8}</pre>
+  </div>
+
+  <h2>5. Códigos de Reemplazo (Sin aplicar aún)</h2>
+  <div class="card">
+    <h3>5.1 Django — Modelo/Serializer/Vistas</h3>
+    <pre># models.py
+from django.db import models
+class SensorReading(models.Model):
+  node_id = models.CharField(max_length=50)
+  sensor_type = models.CharField(max_length=50)
+  value = models.FloatField()
+  unit = models.CharField(max_length=16, default="")
+  ts = models.DateTimeField(auto_now_add=True)
+  class Meta: ordering = ["-ts"]</pre>
+    <pre># serializers.py
+from rest_framework import serializers
+from .models import SensorReading
+class SensorReadingSerializer(serializers.ModelSerializer):
+  class Meta: model = SensorReading; fields = "__all__"</pre>
+    <pre># views.py
+from rest_framework import viewsets
+from .models import SensorReading
+from .serializers import SensorReadingSerializer
+class SensorReadingViewSet(viewsets.ModelViewSet):
+  queryset = SensorReading.objects.all()
+  serializer_class = SensorReadingSerializer</pre>
+    <pre># urls.py
+from rest_framework.routers import DefaultRouter
+from .views import SensorReadingViewSet
+router = DefaultRouter(); router.register(r"sensors", SensorReadingViewSet)
+urlpatterns = router.urls</pre>
+  </div>
+
+  <div class="card">
+    <h3>5.2 Frontend — Estilos y Servicios</h3>
+    <pre>// Reemplazo de clases Tailwind dinámicas por estilos inline
+const NEON = { primary:"#00FFFF", secondary:"#39FF14" }
+&lt;h1 style="color: #00FFFF; text-shadow: 0 0 15px #00FFFF, 0 0 10px #00FFFFAA"&gt;...&lt;/h1&gt;
+&lt;div style="box-shadow: 0 0 15px #39FF14"&gt;...&lt;/div&gt;</pre>
+    <pre>// cloud.js parametrizado
+const API = import.meta.env.VITE_API_URL
+export async function fetchBackendHealth() {
+  const u = `${API}/health`
+  const res = await fetch(u); if (!res.ok) return { ok:false }
+  const data = await res.json(); return { ok:true, source:u, data }
+}</pre>
+  </div>
+
+  <h2>6. Tooling y Calidad</h2>
+  <div class="card">
+    <h3>6.1 ESLint Básico</h3>
+    <pre>{
+  "env": { "browser": true, "es2021": true },
+  "extends": ["eslint:recommended","plugin:react/recommended"],
+  "plugins": ["react","react-hooks"],
+  "parserOptions": { "ecmaFeatures": { "jsx": true }, "sourceType": "module" }
+}</pre>
+    <h3>6.2 Criterios de Éxito</h3>
+    <ul>
+      <li>Build: sin advertencias CSS por estilos dinámicos</li>
+      <li>Lint: 0 errores, 0 warnings</li>
+      <li>Backend: <code>/api/health</code> y <code>/api/sensors/</code> operativos</li>
+      <li>IA: <code>/infer</code> y <code>/metrics</code> con resultados consistentes</li>
+      <li>Dashboard: latencia &lt; 2s; datos reales visibles</li>
+    </ul>
+  </div>
+
+  <h2>7. Preparación Web3/Blockchain</h2>
+  <div class="card">
+    <ul>
+      <li>Huella criptográfica: registrar hash SHA-256 de cada lectura y resultado de inferencia para auditoría</li>
+      <li>Futuro gateway: capa opcional para anclar lotes de hashes en una red pública (p. ej., transacciones con datos mínimos)</li>
+      <li>Identidad: explorar auth federada + wallet como 2FA (sin cambiar el modelo actual hasta decisión)</li>
+      <li>Interoperabilidad: exponer export JSONL firmado para verificación offline</li>
+    </ul>
+    <p class="footnote">Sin introducir dependencias ni librerías Web3 ahora; se documenta arquitectura de preparación.</p>
+  </div>
+
+  <h2>8. Próximos Pasos</h2>
+  <div class="card">
+    <ol>
+      <li>Confirmar Ruta A/B y crear rama de trabajo (no <code>main</code>)</li>
+      <li>Aplicar correcciones de estilos y ESLint (commit en rama)</li>
+      <li>Implementar Django básico y endpoints de dominio</li>
+      <li>Conectar frontend y validar criterios de éxito</li>
+      <li>Definir contrato Edge BBB y publicar primeras lecturas reales</li>
+    </ol>
+  </div>
+</div>
+</body>
+</html>
+"@
+
+Set-Content -Path $htmlPath -Value $content -Encoding UTF8
+Write-Output "Informe HTML generado: $htmlPath"

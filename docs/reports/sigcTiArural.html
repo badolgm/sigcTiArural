@@ -1,0 +1,232 @@
+$ErrorActionPreference = 'Stop'
+$reportDir = "C:\Users\bagm2\workspace_toshiba\reports\sigcTiArural"
+$timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+$baseName = "SIGCT_Rural_Auditoria_y_Plan_" + $timestamp
+$htmlPath = Join-Path $reportDir ($baseName + ".html")
+New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
+$today = Get-Date -Format "yyyy-MM-dd"
+$repoPath = "C:\Users\bagm2\workspace_toshiba\Clone\sigcTiArural"
+
+$content = @"
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>SIGC&T Rural — Auditoría Técnica y Plan de Acción</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; margin: 32px; color: #0b0f14; }
+    h1 { color: #00e5ff; }
+    h2 { color: #39FF14; margin-top: 28px; }
+    h3 { color: #00e5ff; margin-top: 20px; }
+    a { color: #0ea5e9; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { margin-top: 8px; }
+    code { background: #f3f4f6; padding: 2px 4px; border-radius: 4px; }
+    .section { margin-bottom: 16px; }
+    .small { color: #64748b; }
+    .box { border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; background: #fafafa; }
+  </style>
+</head>
+<body>
+  <h1>SIGC&T Rural — Auditoría Técnica y Plan de Acción</h1>
+  <div class="small">Fecha: $today • Ubicación del repo auditado: <code>$repoPath</code></div>
+
+  <h2 id="indice">Índice</h2>
+  <ul>
+    <li><a href="#resumen">1. Resumen Ejecutivo</a></li>
+    <li><a href="#metodologia">2. Alcance y Metodología</a></li>
+    <li><a href="#estructura">3. Auditoría de Estructura</a></li>
+    <li><a href="#stack">4. Verificación de Stack Tecnológico</a></li>
+    <li><a href="#frontend">5. Frontend: Estado y Observaciones</a></li>
+    <li><a href="#backend">6. Backend: Estado real vs. documentación</a></li>
+    <li><a href="#edge">7. Módulos Edge: Estado y brechas</a></li>
+    <li><a href="#docs">8. Documentación: Coherencia y calidad</a></li>
+    <li><a href="#tooling">9. Tooling, Build y Calidad</a></li>
+    <li><a href="#seguridad">10. Seguridad y Configuración</a></li>
+    <li><a href="#riesgos">11. Riesgos y Priorización</a></li>
+    <li><a href="#plan">12. Plan de Acción (rutas posibles)</a></li>
+    <li><a href="#hoja">13. Hoja de Ruta y Criterios de Aceptación</a></li>
+    <li><a href="#comandos">14. Comandos Propuestos por Fase</a></li>
+    <li><a href="#referencias">15. Anexos: Referencias a Código</a></li>
+    <li><a href="#glosario">16. Glosario</a></li>
+  </ul>
+
+  <h2 id="resumen">1. Resumen Ejecutivo</h2>
+  <div class="section">
+    <ul>
+      <li>Frontend React + Vite compila correctamente; requiere ajustes de Tailwind para evitar advertencias.</li>
+      <li>Microservicio IA FastAPI operativo: salud, modelos, inferencia, SSE, métricas.</li>
+      <li>Backend Django descrito en docs no está implementado (archivos vacíos).</li>
+      <li>Módulos Edge BBB placeholders sin lógica.</li>
+      <li>Documentación amplia con desalineaciones respecto al código.</li>
+    </ul>
+  </div>
+
+  <h2 id="metodologia">2. Alcance y Metodología</h2>
+  <div class="section box">
+    <ul>
+      <li>Exploración del árbol y lectura de archivos clave.</li>
+      <li>Ejecución mínima de verificación del frontend (instalación y build) sin cambios en código.</li>
+      <li>Revisión de FastAPI y contraste con documentación.</li>
+      <li>Referencias por archivo y línea para trazabilidad.</li>
+    </ul>
+  </div>
+
+  <h2 id="estructura">3. Auditoría de Estructura</h2>
+  <div class="section">
+    <ul>
+      <li>Raíz con <code>README.md</code>, <code>docker-compose.yml</code>, <code>.env.example</code>, <code>package.json</code>.</li>
+      <li>Frontend completo en <code>src/frontend</code>.</li>
+      <li>FastAPI IA en <code>src/backend/ai_service</code> operativo.</li>
+      <li>Django en <code>src/backend/sigct_backend</code> y <code>src/backend/api</code> sin implementación.</li>
+      <li>Edge en <code>src/embedded</code> con BBB-01/02/03 placeholders.</li>
+    </ul>
+  </div>
+
+  <h2 id="stack">4. Verificación de Stack Tecnológico</h2>
+  <div class="section">
+    <ul>
+      <li>Frontend: React 18, Vite 5, Tailwind 3, Recharts, ESLint.</li>
+      <li>Backend IA: FastAPI, Uvicorn, Pillow, numpy, opcional TensorFlow CPU.</li>
+      <li>Docker Compose: <code>ai_service</code> y <code>frontend</code>.</li>
+      <li>.env de frontend presente.</li>
+    </ul>
+  </div>
+
+  <h2 id="frontend">5. Frontend: Estado y Observaciones</h2>
+  <div class="section">
+    <ul>
+      <li>Advertencias de CSS por clases Tailwind dinámicas: recomendar estilos inline o tokens estáticos.</li>
+      <li>Configurar <code>.eslintrc</code> para <code>npm run lint</code>.</li>
+    </ul>
+  </div>
+
+  <h2 id="backend">6. Backend: Estado real vs. documentación</h2>
+  <div class="section">
+    <ul>
+      <li>Django/DRF/Channels no implementados; archivos centrales vacíos.</li>
+      <li>FastAPI IA completo con endpoints: salud, modelos, inferencia, eventos, métricas.</li>
+    </ul>
+  </div>
+
+  <h2 id="edge">7. Módulos Edge: Estado y brechas</h2>
+  <div class="section">
+    <ul>
+      <li>BBB-01/02/03 sin lógica; definir contratos y luego implementar.</li>
+    </ul>
+  </div>
+
+  <h2 id="docs">8. Documentación: Coherencia y calidad</h2>
+  <div class="section">
+    <ul>
+      <li>Docs sólidas; ajustar según ruta de backend elegida.</li>
+    </ul>
+  </div>
+
+  <h2 id="tooling">9. Tooling, Build y Calidad</h2>
+  <div class="section">
+    <ul>
+      <li><code>npm run build</code> OK con advertencias.</li>
+      <li><code>npm run lint</code> falla; falta configuración.</li>
+      <li><code>scripts/generate-readme.mjs</code> integra docs.</li>
+    </ul>
+  </div>
+
+  <h2 id="seguridad">10. Seguridad y Configuración</h2>
+  <div class="section">
+    <ul>
+      <li>CORS <code>*</code> en FastAPI: restringir en producción.</li>
+      <li>Usar variables <code>VITE_API_URL</code>, <code>VITE_AI_API_BASE</code>.</li>
+    </ul>
+  </div>
+
+  <h2 id="riesgos">11. Riesgos y Priorización</h2>
+  <div class="section">
+    <ul>
+      <li>Críticos: backend Django ausente; Edge sin lógica.</li>
+      <li>Altos: lint; Tailwind dinámico.</li>
+      <li>Medios: desalineación docs; CORS amplio.</li>
+    </ul>
+  </div>
+
+  <h2 id="plan">12. Plan de Acción (rutas posibles)</h2>
+  <div class="section box">
+    <h3>Ruta A — Django/DRF/Channels</h3>
+    <ul>
+      <li>Implementar proyecto Django (settings, urls, manage, app api, JWT).</li>
+      <li>Servicio <code>backend</code> en Compose y conexión con frontend.</li>
+    </ul>
+    <h3>Ruta B — FastAPI como backend</h3>
+    <ul>
+      <li>Extender REST (auth, proyectos, telemetría).</li>
+      <li>Actualizar docs y parametrizar frontend con env.</li>
+    </ul>
+  </div>
+
+  <h2 id="hoja">13. Hoja de Ruta y Criterios de Aceptación</h2>
+  <div class="section">
+    <ul>
+      <li>F1: Decidir backend. Aceptación: decisión registrada.</li>
+      <li>F2: Calidad frontend. Aceptación: build sin advertencias; lint verde.</li>
+      <li>F3: Backend básico. Aceptación: endpoints esenciales OK.</li>
+      <li>F4: Edge mínimo. Aceptación: datos publicados y visibles.</li>
+      <li>F5: Pruebas y seguridad. Aceptación: tests y CORS restringido.</li>
+    </ul>
+  </div>
+
+  <h2 id="comandos">14. Comandos Propuestos por Fase</h2>
+  <div class="section">
+    <h3>Frontend</h3>
+    <ul>
+      <li><code>cd src/frontend && npm install && npm run build</code></li>
+      <li><code>npm run lint</code> (requiere <code>.eslintrc</code>)</li>
+    </ul>
+    <h3>FastAPI</h3>
+    <ul>
+      <li><code>cd src/backend && pip install -r requirements.txt</code></li>
+      <li><code>python -m uvicorn src.backend.ai_service.fastapi_app:app --host 0.0.0.0 --port 8000</code></li>
+      <li><code>curl http://localhost:8000/health</code></li>
+      <li><code>curl -X POST http://localhost:8000/infer -F file=@imagen.jpg</code></li>
+    </ul>
+    <h3>Django (Ruta A)</h3>
+    <ul>
+      <li><code>python -m venv venv && venv\Scripts\activate && pip install django djangorestframework</code></li>
+      <li><code>django-admin startproject sigct_backend .</code></li>
+      <li><code>python manage.py startapp api</code></li>
+      <li><code>python manage.py migrate && python manage.py runserver 0.0.0.0:8000</code></li>
+    </ul>
+    <h3>Docker Compose</h3>
+    <ul>
+      <li><code>docker compose up --build</code></li>
+    </ul>
+  </div>
+
+  <h2 id="referencias">15. Anexos: Referencias a Código</h2>
+  <div class="section">
+    <ul>
+      <li>FastAPI IA: <code>src/backend/ai_service/fastapi_app.py:114</code>, <code>124</code>, <code>138</code>, <code>232</code>, <code>237</code>.</li>
+      <li>Compose: <code>docker-compose.yml:6–17</code>, <code>18–30</code>.</li>
+      <li>Frontend (Tailwind): <code>src/frontend/src/App.jsx:111–125</code>, <code>src/frontend/src/pages/Dashboard.jsx:115–118</code>, <code>src/frontend/src/components/TopNav.jsx:57–58</code>.</li>
+      <li>Tailwind config: <code>src/frontend/tailwind.config.js:6–20</code>.</li>
+      <li>Django faltante: <code>src/backend/manage.py</code>, <code>src/backend/sigct_backend/settings.py</code>, <code>src/backend/sigct_backend/urls.py</code>, <code>src/backend/api/urls.py</code>, <code>src/backend/api/views.py</code>.</li>
+    </ul>
+  </div>
+
+  <h2 id="glosario">16. Glosario</h2>
+  <div class="section">
+    <ul>
+      <li><b>DRF</b>: Django REST Framework.</li>
+      <li><b>Channels</b>: Extensión de Django para websockets.</li>
+      <li><b>FastAPI</b>: Framework Python para APIs.</li>
+      <li><b>Vite</b>: Bundler y dev server.</li>
+      <li><b>Tailwind</b>: Framework CSS utilitario.</li>
+    </ul>
+  </div>
+
+  <div class="small">Este informe no modifica el repositorio; acciones solo con autorización. Backup creado por separado.</div>
+</body>
+</html>
+"@
+
+Set-Content -Path $htmlPath -Value $content -Encoding UTF8
+Write-Output "Informe HTML generado: $htmlPath"
