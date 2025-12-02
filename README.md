@@ -203,6 +203,7 @@ Este README.md es la portada del proyecto. Toda la ingeniería, diagramas C4, Mo
 | 🚀 **[PLAN MAESTRO](docs/PLAN_MAESTRO.md)** | Las fases, tareas y cronograma (Gantt) del proyecto. |
 | 🔧 **API REFERENCE** | *(En construcción)* Documentación de todos los endpoints de la API RESTful. |
 | 🖥️ **EDGE SETUP** | *(En construcción)* Guía de configuración del hardware BeagleBone Black. |
+| 📑 **[REPORTES](docs/reports/)** | Auditorías técnicas, estado maestro y anexos (PDF/HTML). |
 
 ---
 

@@ -84,3 +84,11 @@ docs/diagrams/manifest.json
 
 # Ignorar reportes maestros en Markdown si son solo locales
 docs/MASTER_REPORT_*.md
+docs/MASTERDOC_v4.2_DAS.md
+docs/MASTERDOC.html
+docs/MASTERDOC_legacy.md
+
+# Ignorar scripts y reportes locales no destinados a la nube
+audit_project.py
+map_project.py
+reporte_codigo.txt
