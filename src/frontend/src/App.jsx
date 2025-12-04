@@ -20,6 +20,9 @@ import AIPredictiva from './pages/AIPredictiva.jsx';
 import DataScienceLab from './pages/DataScienceLab.jsx';
 import { fetchClusterNodesReal, fetchTelemetrySeriesReal } from './services/cloud.js';
 
+// --- NUEVO: Importar el Asistente de Voz ---
+import VoiceAssistant from './components/VoiceAssistant.jsx'; // <--- AGREGADO AQUÍ
+
 // Importaciones de otras páginas (Placeholders)
 // import Labs from './pages/Labs'; 
 // import AIPredictiva from './pages/AIPredictiva';
@@ -162,6 +165,9 @@ const App = () => {
                 
                 {/* 2. Contenido de la Página (Lógica de Ruteo) */}
                 <PageContent page={currentPage} nodes={nodes} chartData={chartData} onNavigate={setCurrentPage} />
+
+                {/* 3. ASISTENTE DE VOZ (Línea agregada al final) */}
+                <VoiceAssistant onNavigate={setCurrentPage} /> {/* <--- AGREGADO AQUÍ */}
             </div>
         </AuthProvider>
     );
