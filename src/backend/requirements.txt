@@ -6,3 +6,8 @@ requests>=2.31
 
 # Opcional (para inferencia con Keras/TensorFlow CPU)
 tensorflow-cpu>=2.13
+ 
+# Backend Django
+Django>=4.2
+djangorestframework>=3.14
+django-cors-headers>=4.4

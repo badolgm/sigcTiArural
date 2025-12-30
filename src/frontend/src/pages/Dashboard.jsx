@@ -24,7 +24,7 @@ const initialNodes = [
 // --- TARJETAS DE INTEGRACIONES FUTURAS (Placeholders "En construcción") ---
 const futureNodes = [
   {
-    id: 'RPi-05',
+    id: 'RPI-05',
     name: 'Raspberry Pi 5 / Edge AI',
     role: 'SBC',
     status: 'construction',
@@ -48,6 +48,20 @@ const futureNodes = [
       { label: 'AMD Adaptive SoCs & FPGAs', href: 'https://www.amd.com/en/products/adaptive-socs-and-fpgas' },
       { label: 'Intel FPGAs', href: 'https://www.intel.com/content/www/us/en/products/details/fpga.html' },
       { label: 'Yosys (FPGA Open Source)', href: 'https://yosyshq.net/yosys/' },
+    ],
+  },
+  {
+    id: 'ARDUINO-UNO-Q',
+    name: 'Arduino UNO Q',
+    role: 'SBC/MCU',
+    status: 'construction',
+    data: { cpu: '—', temp: '—' },
+    icon: '⚡',
+    banner: 'Placeholder de integración',
+    links: [
+      { label: 'Arduino Docs', href: 'https://docs.arduino.cc/' },
+      { label: 'Arduino Cloud', href: 'https://cloud.arduino.cc/' },
+      { label: 'Qualcomm Developer', href: 'https://developer.qualcomm.com/' },
     ],
   },
   {
@@ -88,11 +102,11 @@ const Dashboard = ({ nodes = initialNodes, chartData }) => { // Usamos initialNo
     const [loginOpen, setLoginOpen] = React.useState(false);
     const onRequireAuth = () => setLoginOpen(true);
     return (
-        <div className="p-8 pt-24 min-h-screen text-white" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
+        <div className="p-6 pt-20 min-h-screen text-white" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
             <div className="max-w-7xl mx-auto">
                 {/* Título Principal Neón con icono contextual */}
                 <h1 
-                    className={`text-4xl sm:text-5xl font-bold mb-10 uppercase text-center`}
+                    className={`text-3xl sm:text-4xl font-bold mb-8 uppercase text-center`}
                     style={{ 
                         color: NEON_COLORS.primary,
                         textShadow: `0 0 15px ${NEON_COLORS.primary}, 0 0 10px ${NEON_COLORS.primary}AA`
@@ -101,36 +115,36 @@ const Dashboard = ({ nodes = initialNodes, chartData }) => { // Usamos initialNo
                     🌱 Dashboard Científico (Edge)
                 </h1>
                 
-                <p className="text-lg text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+                <p className="text-base text-center text-gray-400 mb-10 max-w-2xl mx-auto">
                     Visualización en tiempo real del estado, carga y telemetría de los 3 Nodos BeagleBone Black RevC.
                 </p>
 
                 {/* Grid de las Tarjetas del Clúster BBB */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {nodes.map(node => (
                         <ClusterCard key={node.id} node={node} onRequireAuth={onRequireAuth} />
                     ))}
                 </div>
 
                 {/* Sección de Telemetría Global (Gráficos) */}
-                <div className={`mt-16 p-8 rounded-xl border-2 bg-gray-900 bg-opacity-70`}
+                <div className={`mt-12 p-6 rounded-xl border bg-gray-900 bg-opacity-70`}
                     style={{ borderColor: NEON_COLORS.secondary, boxShadow: `0 0 15px ${NEON_COLORS.secondary}80` }}
                 >
                     <h2 className={`text-2xl font-bold uppercase mb-4`} style={{ color: NEON_COLORS.secondary, textShadow: `0 0 8px ${NEON_COLORS.secondary}80` }}>
                         📈 Telemetría Global
                     </h2>
-                    <GlobalChart data={chartData} />
+                    <GlobalChart data={chartData} compact={true} />
                 </div>
 
                 {/* Integraciones Futuras (Placeholders) */}
-                <div className={`mt-16 p-8 rounded-xl border-2 bg-gray-900 bg-opacity-70`}
+                <div className={`mt-12 p-6 rounded-xl border bg-gray-900 bg-opacity-70`}
                     style={{ borderColor: NEON_COLORS.primary, boxShadow: `0 0 15px ${NEON_COLORS.primary}80` }}
                 >
                     <h2 className={`text-2xl font-bold uppercase mb-6`} style={{ color: NEON_COLORS.primary, textShadow: `0 0 8px ${NEON_COLORS.primary}80` }}>
                         🧩 Integraciones Futuras
                     </h2>
                     <p className="text-sm text-gray-400 mb-6">Tarjetas presentacionales para SBC, FPGA, asistentes de voz e interfaces UAV. Listas para conectar cuando se integre el backend.</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                         {futureNodes.map(node => (
                             <ClusterCard key={node.id} node={node} />
                         ))}

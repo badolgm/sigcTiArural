@@ -12,13 +12,13 @@ const NEON_COLORS = {
 const getStatusStyle = (status) => {
   switch (status) {
     case 'online':
-      return { borderColor: NEON_COLORS.secondary, boxShadow: `0 0 15px ${NEON_COLORS.secondary}80` };
+      return { borderColor: NEON_COLORS.secondary, boxShadow: `0 0 10px ${NEON_COLORS.secondary}70` };
     case 'alert':
-      return { borderColor: NEON_COLORS.alert, boxShadow: `0 0 15px ${NEON_COLORS.alert}80` };
+      return { borderColor: NEON_COLORS.alert, boxShadow: `0 0 10px ${NEON_COLORS.alert}70` };
     case 'offline':
       return { borderColor: '#374151', boxShadow: 'none', color: '#6b7280' };
     case 'construction':
-      return { borderColor: '#f59e0b', boxShadow: '0 0 15px #f59e0b80' };
+      return { borderColor: '#f59e0b', boxShadow: '0 0 10px #f59e0b70' };
     default:
       return { borderColor: NEON_COLORS.primary };
   }
@@ -39,7 +39,7 @@ const ClusterCard = ({ node, onRequireAuth }) => {
 
     const ControlButton = ({ label, danger, onClick, disabled }) => (
       <button
-        className={`px-3 py-2 text-xs rounded border neon-btn transition-all duration-200 hover:scale-105 ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+        className={`px-2 py-1.5 text-[11px] rounded border neon-btn transition-all duration-200 hover:scale-105 ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
         style={{ borderColor: danger ? `${NEON_COLORS.alert}80` : `${NEON_COLORS.primary}60`, color: danger ? NEON_COLORS.alert : '#e6edf3' }}
         onClick={onClick}
         disabled={disabled}
@@ -54,39 +54,39 @@ const ClusterCard = ({ node, onRequireAuth }) => {
 
     return (
         <div
-          className={`p-6 bg-gray-900 bg-opacity-80 rounded-xl border-2 transition-all duration-700 ease-in-out transform hover:-translate-y-1`}
+          className={`p-3 md:p-5 bg-gray-900 bg-opacity-80 rounded-xl border transition-all duration-700 ease-in-out transform hover:-translate-y-1`}
           style={statusStyle}
         >
             {/* Cabecera y ID */}
-            <div className="flex justify-between items-start mb-4 border-b border-gray-700 pb-2">
-                <h3 className="text-xl font-bold uppercase" style={{ color: NEON_COLORS.primary, textShadow: `0 0 5px ${NEON_COLORS.primary}80` }}>
+            <div className="flex justify-between items-start mb-3 md:mb-4 border-b border-gray-700 pb-2">
+                <h3 className="text-lg md:text-xl font-bold uppercase" style={{ color: NEON_COLORS.primary, textShadow: `0 0 5px ${NEON_COLORS.primary}80` }}>
                     {id}
                 </h3>
-                <span className={`px-3 py-1 text-xs font-semibold rounded-full uppercase ${isAlert ? 'bg-red-800' : status === 'online' ? 'bg-green-800' : 'bg-gray-800'}`}>
+                <span className={`px-2 md:px-3 py-1 text-[10px] md:text-xs font-semibold rounded-full uppercase whitespace-nowrap tracking-wide ${isAlert ? 'bg-red-800' : status === 'online' ? 'bg-green-800' : status === 'construction' ? 'bg-yellow-800' : 'bg-gray-800'}`}>
                     {statusText}
                 </span>
             </div>
             
             {/* Rol y Nombre */}
-            <p className="text-sm text-gray-400 mb-2">
+            <p className="text-xs md:text-sm text-gray-400 mb-2">
                 <span className='font-semibold'>Rol:</span> {role}
             </p>
-            <p className="text-lg font-medium mb-4" style={{ color: NEON_COLORS.primary }}>
+            <p className="text-base md:text-lg font-medium mb-3 md:mb-4" style={{ color: NEON_COLORS.primary }}>
                 {name}
             </p>
 
             {/* Icono/Imagen opcional */}
             {icon && (
-              <div className="text-4xl mb-3" aria-hidden="true">{icon}</div>
+              <div className="text-3xl md:text-4xl mb-2 md:mb-3" aria-hidden="true">{icon}</div>
             )}
             {image && (
               <div className="rounded-lg overflow-hidden mb-3 border" style={{ borderColor: '#334155' }}>
-                <img src={image} alt={name} className="w-full h-28 object-cover" />
+                <img src={image} alt={name} className="w-full h-24 md:h-28 object-cover" />
               </div>
             )}
 
             {/* Datos de Telemetría */}
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-xs md:text-sm">
                 <p className="flex justify-between items-center text-gray-300">
                     <span className="font-semibold">CPU Load:</span>
                     <span style={isAlert ? { color: NEON_COLORS.alert } : {}}>{data.cpu}</span>
@@ -112,9 +112,9 @@ const ClusterCard = ({ node, onRequireAuth }) => {
 
             {/* Enlaces opcionales */}
             {Array.isArray(links) && links.length > 0 && (
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="mt-3 md:mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {links.map((l) => (
-                  <a key={l.href} href={l.href} target="_blank" rel="noreferrer" className="px-3 py-2 text-xs rounded border neon-btn transition-all duration-200 hover:scale-105" style={{ borderColor: `${NEON_COLORS.primary}60`, color: '#e6edf3' }}>
+                  <a key={l.href} href={l.href} target="_blank" rel="noreferrer" className="px-2 md:px-3 py-1.5 md:py-2 text-[11px] md:text-xs rounded border neon-btn transition-all duration-200 hover:scale-105" style={{ borderColor: `${NEON_COLORS.primary}60`, color: '#e6edf3' }}>
                     {l.label}
                   </a>
                 ))}
@@ -123,11 +123,11 @@ const ClusterCard = ({ node, onRequireAuth }) => {
 
             {/* Banda informativa */}
             {banner && (
-              <div className="mt-3 text-xs text-yellow-300 font-semibold">{banner}</div>
+              <div className="mt-2 md:mt-3 text-[11px] md:text-xs text-yellow-300 font-semibold">{banner}</div>
             )}
 
             {/* Controles estilo panel gamer (acciones restringidas) */}
-            <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="mt-3 md:mt-4 grid grid-cols-2 gap-2">
               <ControlButton label="Iniciar adquisición" onClick={() => requireAuth({ node: id, action: 'start-acq' })} />
               <ControlButton label="Detener adquisición" danger onClick={() => requireAuth({ node: id, action: 'stop-acq' })} />
               <ControlButton label="Reiniciar servicio" danger onClick={() => requireAuth({ node: id, action: 'restart-service' })} />

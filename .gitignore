@@ -92,3 +92,7 @@ docs/MASTERDOC_legacy.md
 audit_project.py
 map_project.py
 reporte_codigo.txt
+auditoria_completa.txt
+
+# Ignorar planes de trabajo locales (versionados solo en PC)
+docs/session_plans/SESSION_PLAN_*.md
