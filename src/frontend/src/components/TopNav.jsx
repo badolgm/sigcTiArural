@@ -1,48 +1,41 @@
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-// Colores Neón definidos según la especificación
 const NEON_COLORS = {
   primary: '#00FFFF', // Azul Ciber
-  alert: '#FF3131', // Rojo Plasma (para alertas)
+  alert: '#FF3131', // Rojo Plasma
   secondary: '#39FF14', // Verde Neón
   darkBackground: '#0a0a0a',
 };
 
-// Datos Simulados (Debe venir del estado global o API en producción)
+// Datos Simulados por defecto (si no llegan props)
 const initialNodes = [
-  { id: 'BBB-01', name: 'Gateway / MQTT Broker', role: 'Gateway', status: 'online' },
-  { id: 'BBB-02', name: 'IA Edge / TFLite', role: 'Analista', status: 'alert' }, // Alerta simulada
-  { id: 'BBB-03', name: 'Adquisición de Datos / IoT', role: 'Sensor', status: 'offline' },
+  { id: 'BBB-01', name: 'Gateway', role: 'Gateway', status: 'online' },
+  { id: 'BBB-02', name: 'IA Edge', role: 'Analista', status: 'alert' },
+  { id: 'BBB-03', name: 'IoT', role: 'Sensor', status: 'offline' },
 ];
 
-
-/**
- * TopNav: Barra de Navegación Superior con estética Neón.
- * Incluye el estado del Clúster para cumplimiento de MASTERDOC.
- */
-const TopNav = ({ currentPage, setCurrentPage, clusterNodes }) => {
+const TopNav = ({ clusterNodes }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  // Definición de enlaces de navegación
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  // Definición de enlaces con Rutas Reales
   const navItems = [
-    { name: 'Dashboard', page: 'dashboard' },
-    { name: 'Laboratorios', page: 'labs' },
-    { name: 'Matemáticas Avanzadas', page: 'advanced-math' },
-    { name: 'Ciencia de Datos', page: 'data-lab' },
-    { name: 'IA Predictiva', page: 'ai' },
-    { name: 'Biblioteca', page: 'library' },
-    { name: 'Docs (v5.0)', page: 'docs' },
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Laboratorios', path: '/labs' },
+    { name: 'Robótica', path: '/labs/robotics' },      // Acceso directo
+    { name: 'IA Predictiva', path: '/ai-predictive' },
+    { name: 'Docs (v5.0)', path: '/docs/masterdoc' },
   ];
 
-  // Estilo para el botón de alerta (simulación de un estado crítico)
-  const dotStyle = (color) => ({ backgroundColor: color, boxShadow: `0 0 8px ${color}` });
-
-  // Lógica para determinar el estado general del clúster (si hay alguna alerta)
+  // Lógica de estado del clúster
   const srcNodes = Array.isArray(clusterNodes) && clusterNodes.length ? clusterNodes : initialNodes;
   const clusterStatus = srcNodes.some(n => n.status === 'alert') ? 'alert' : 'online';
+  
+  const dotStyle = (color) => ({ backgroundColor: color, boxShadow: `0 0 8px ${color}` });
 
   return (
-    // Contenedor principal de la navegación con el fondo oscuro y un borde neón inferior
     <nav
       className={"fixed top-0 left-0 w-full z-50 border-b-2 backdrop-blur-sm bg-opacity-90"}
       style={{ backgroundColor: NEON_COLORS.darkBackground, borderColor: NEON_COLORS.primary, boxShadow: `0 4px 15px -5px ${NEON_COLORS.primary}` }}
@@ -50,28 +43,29 @@ const TopNav = ({ currentPage, setCurrentPage, clusterNodes }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo y Título del Proyecto (Fuente de Título Neón) */}
+          {/* LOGO */}
           <div className="flex items-center">
-            <button 
-                onClick={() => setCurrentPage('home')}
+            <Link 
+                to="/dashboard"
                 className={`text-2xl font-extrabold tracking-widest text-[${NEON_COLORS.primary}] cursor-pointer transition-all duration-300 hover:text-white hover:shadow-[0_0_10px_${NEON_COLORS.primary}]`}
+                style={{ textDecoration: 'none', color: NEON_COLORS.primary }}
             >
               SIGC&T RURAL
-            </button>
+            </Link>
           </div>
 
-          {/* Menú de Escritorio (Desktop) */}
+          {/* MENÚ DE ESCRITORIO */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               {navItems.map((item) => (
-                <button
+                <Link
                   key={item.name}
-                  onClick={() => setCurrentPage(item.page)}
-                  className={"px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 " + (currentPage === item.page ? "bg-gray-800 text-white border" : "text-gray-300 hover:bg-gray-700")}
-                  style={currentPage === item.page ? { borderColor: NEON_COLORS.primary, boxShadow: `0 0 8px ${NEON_COLORS.primary}` } : { color: undefined }}
+                  to={item.path}
+                  className={"px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 " + (currentPath.startsWith(item.path) ? "bg-gray-800 text-white border" : "text-gray-300 hover:bg-gray-700")}
+                  style={currentPath.startsWith(item.path) ? { borderColor: NEON_COLORS.primary, boxShadow: `0 0 8px ${NEON_COLORS.primary}` } : { color: undefined }}
                 >
                   {item.name}
-                </button>
+                </Link>
               ))}
 
               {/* Indicador de Estado del Clúster */}
@@ -85,7 +79,7 @@ const TopNav = ({ currentPage, setCurrentPage, clusterNodes }) => {
             </div>
           </div>
 
-          {/* Botón para Abrir Menú Móvil (Hamburguesa) */}
+          {/* BOTÓN MÓVIL (Hamburguesa) */}
           <div className="-mr-2 flex md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -103,19 +97,20 @@ const TopNav = ({ currentPage, setCurrentPage, clusterNodes }) => {
         </div>
       </div>
 
-      {/* Menú Móvil Desplegable */}
+      {/* MENÚ MÓVIL DESPLEGABLE */}
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-700">
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.name}
-                onClick={() => {setCurrentPage(item.page); setIsMenuOpen(false);}}
-                className={"block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-all duration-300 " + (currentPage === item.page ? "bg-gray-800 text-white border" : "text-gray-300 hover:bg-gray-700")}
-                style={currentPage === item.page ? { borderColor: NEON_COLORS.primary, boxShadow: `0 0 8px ${NEON_COLORS.primary}` } : {}}
+                to={item.path}
+                onClick={() => setIsMenuOpen(false)}
+                className={"block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-all duration-300 " + (currentPath.startsWith(item.path) ? "bg-gray-800 text-white border" : "text-gray-300 hover:bg-gray-700")}
+                style={currentPath.startsWith(item.path) ? { borderColor: NEON_COLORS.primary, boxShadow: `0 0 8px ${NEON_COLORS.primary}` } : {}}
               >
                 {item.name}
-              </button>
+              </Link>
             ))}
              <div className="py-2 px-3 text-sm font-semibold text-gray-400 border-t border-gray-700 mt-2 flex items-center">
                 Cluster Status: 
