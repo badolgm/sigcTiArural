@@ -1,13 +1,38 @@
+# ======================================================
+# Backend – Servidor de IA (FastAPI)
+# ======================================================
+
 fastapi==0.115.5
 uvicorn[standard]==0.32.0
-numpy>=1.24
-Pillow>=10.0
+python-multipart
 requests>=2.31
 
-# Opcional (para inferencia con Keras/TensorFlow CPU)
-tensorflow-cpu>=2.13
- 
-# Backend Django
+
+# ======================================================
+# Procesamiento Numérico y de Imágenes
+# ======================================================
+
+numpy>=1.24
+Pillow>=10.0
+
+
+# ======================================================
+# Backend Principal – Django
+# ======================================================
+
 Django>=4.2
 djangorestframework>=3.14
 django-cors-headers>=4.4
+
+
+# ======================================================
+# Motor de IA REAL – TensorFlow
+# ======================================================
+# Python fijado en 3.11.9
+# NO se realizarán actualizaciones de Python
+# Compatible y estable en Windows
+
+tensorflow>=2.15.0
+
+
+
