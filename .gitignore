@@ -1,44 +1,38 @@
----------------------------------.gitignore para SIGC&T Rural(Python/Django + Node/React)---------------------------------Entornos Virtuales de Pythonvenv/env/*.venv/.virtualenv/Cache de Pythonpycache/*.pyc*.pyo*.pydArchivos de OS.DS_StoreThumbs.dbdesktop.iniEntorno de Node.jsnode_modules/npm-debug.log*yarn-debug.log*yarn-error.log*pnpm-debug.log*Archivos de Buildbuild/dist/.next/.out/Logs*.loglogs/Archivos de configuración locales (¡MUY IMPORTANTE!).env.env.local.env.development.local.env.test.local.env.production.localconfig/secrets.ini.env.Bases de Datos Locales*.sqlite*.sqlite3db.sqlite3Notebooks.ipynb_checkpoints/IDEs.idea/.vscode/*.swp*.swo
-# Ignorar versiones viejas de README (mantener locales)
-READMEV2.md
-READMEV3.md
-READMEV4.md
-README1.1.md
 
-# Ignorar node_modules a cualquier nivel
-node_modules/
-src/frontend/node_modules/
-
-# Ignorar artefactos de Vite/React
-dist/
-build/
-.vite-cache/
-
-# Ignorar respaldos locales pesados
-backups/
-
-### Normalized ignore patterns (Python/Django + Node/React)
-# Python environments and cache
+# ==========================
+# Entornos Virtuales de Python
+# ==========================
 venv/
 .venv/
 env/
+.virtualenv/
+
+# Cache de Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# OS files
+# ==========================
+# Archivos del Sistema Operativo
+# ==========================
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Node.js
+# ==========================
+# Entorno de Node.js
+# ==========================
+node_modules/
+src/frontend/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Build artifacts
+# ==========================
+# Artefactos de Build
+# ==========================
 dist/
 build/
 .next/
@@ -46,15 +40,22 @@ build/
 .vite-cache/
 coverage/
 
+# ==========================
 # Logs
+# ==========================
 *.log
 logs/
 
-# Local backups (no commit)
+# ==========================
+# Respaldos locales pesados
+# ==========================
+backups/
 *.bak
 docs/**/*.bak
 
-# Local env and secrets
+# ==========================
+# Archivos de configuración locales (¡MUY IMPORTANTE!)
+# ==========================
 .env
 .env.local
 .env.development.local
@@ -62,55 +63,85 @@ docs/**/*.bak
 .env.production.local
 config/secrets.ini
 
-# Databases
+# ==========================
+# Bases de Datos Locales
+# ==========================
 *.sqlite
 *.sqlite3
 db.sqlite3
 
-# Jupyter notebooks
+# ==========================
+# Jupyter Notebooks
+# ==========================
 .ipynb_checkpoints/
 
-# IDE/editor
+# ==========================
+# IDE / Editor
+# ==========================
 .idea/
 .vscode/
 *.swp
 *.swo
- 
-# Docs artifacts (images and PDFs not needed in repo)
+
+# ==========================
+# Documentación (assets pesados)
+# ==========================
 docs/diagrams/*.png
 docs/uml/*.png
 docs/database/*.png
 docs/**/*.pdf
 docs/diagrams/manifest.json
 
+# ==========================
+# Ignorar versiones viejas de README (mantener locales)
+# ==========================
+READMEV2.md
+READMEV3.md
+READMEV4.md
+README1.1.md
+
+# ==========================
 # Ignorar reportes maestros en Markdown si son solo locales
+# ==========================
 docs/MASTER_REPORT_*.md
 docs/MASTERDOC_v4.2_DAS.md
 docs/MASTERDOC.html
 docs/MASTERDOC_legacy.md
 
+# ==========================
 # Ignorar scripts y reportes locales no destinados a la nube
+# ==========================
 audit_project.py
 map_project.py
 reporte_codigo.txt
 auditoria_completa.txt
 
+# ==========================
 # Ignorar planes de trabajo locales (versionados solo en PC)
+# ==========================
 docs/session_plans/SESSION_PLAN_*.md
 
 # ==========================
 # Documentación sensible
 # ==========================
-
 docs/**/MASTERDOC_*.md
 docs/**/MASTERDOC_*.pdf
 docs/**/MASTERDOC_*.docx
 docs/**/MASTERDOC_*.pptx
+docs/**/MASTERDOC*.html
+docs/**/MASTER_STATUS_REPORT*.html
 
 docs/borradores/
 docs/private/
 docs/internal/
 
+# ==========================
 # Mantener SOLO el MASTERDOC oficial
+# ==========================
 !docs/MASTERDOC.md
 !docs/PLAN_MAESTRO.md
+``
+
+# Datos y modelos locales (no versionar)
+data/
+src/ai_models/production_models/
