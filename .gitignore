@@ -3,6 +3,7 @@
 READMEV2.md
 READMEV3.md
 READMEV4.md
+README1.1.md
 
 # Ignorar node_modules a cualquier nivel
 node_modules/
@@ -96,3 +97,20 @@ auditoria_completa.txt
 
 # Ignorar planes de trabajo locales (versionados solo en PC)
 docs/session_plans/SESSION_PLAN_*.md
+
+# ==========================
+# Documentación sensible
+# ==========================
+
+docs/**/MASTERDOC_*.md
+docs/**/MASTERDOC_*.pdf
+docs/**/MASTERDOC_*.docx
+docs/**/MASTERDOC_*.pptx
+
+docs/borradores/
+docs/private/
+docs/internal/
+
+# Mantener SOLO el MASTERDOC oficial
+!docs/MASTERDOC.md
+!docs/PLAN_MAESTRO.md

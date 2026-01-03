@@ -93,6 +93,22 @@ El proyecto se alinea con los **Objetivos de Desarrollo Sostenible** de la ONU:
 
 ## 🏗️ Arquitectura del Sistema
 
+Nota técnica clave (ACLARACIÓN CRÍTICA)
+
+⚠️ Aclaración de Ingeniería (muy importante):
+El entrenamiento de modelos de IA y la inferencia pesada se realizan en PCs o servidores (Cloud o Local) con capacidad computacional suficiente.
+
+Las BeagleBone Black actúan como nodos Edge inteligentes, encargados de:
+
+Adquisición de datos (sensores, cámaras)
+
+Preprocesamiento ligero
+
+Inferencia optimizada con TensorFlow Lite
+
+Comunicación con el backend central
+
+Esto garantiza estabilidad, eficiencia energética y viabilidad real del sistema en entornos rurales.
 Esta plataforma utiliza una **arquitectura híbrida Cloud-Edge**.
 
 ### Nivel 1: Vista de Contexto del Sistema
@@ -136,57 +152,71 @@ Descompone el sistema en sus componentes principales (Cloud vs. Edge).
 
 ```mermaid
 graph TB
-    subgraph "🌐 Internet"
-        actor1["👤 Usuario<br/>(Navegador Web)"]
+
+%% =====================
+%% Internet
+%% =====================
+subgraph INTERNET["🌐 Internet"]
+    Usuario["👤 Usuario<br/>(Navegador Web)"]
+end
+
+%% =====================
+%% Nube
+%% =====================
+subgraph CLOUD["☁️ Proveedor de nube<br/>(Render / Railway)"]
+    direction TB
+
+    subgraph FRONTEND["Contenedor Frontend"]
+        WebApp["⚛️ Aplicación React<br/>(Vite + TailwindCSS)"]
     end
 
-    subgraph "☁️ Cloud Provider (Render / Railway)"
-        direction TB
-        
-        subgraph "Frontend Container"
-            WebApp["⚛️ <b>React App</b><br/>(Vite + TailwindCSS)"]
-        end
-        
-        subgraph "Backend Container"
-            APIServer["🐍 <b>Django API</b><br/>(DRF + Channels)"]
-        end
-        
-        subgraph "AI Service"
-            AI_Service["🤖 <b>Servicio IA</b><br/>(TensorFlow/Keras)"]
-        end
-        
-        subgraph "Database"
-            Database[("💾 <b>PostgreSQL 15</b><br/>(Datos y Telemetría)")]
-        end
-        
-        WebApp -- "Consume<br/>REST API" --> APIServer
-        APIServer -- "Lee/Escribe<br/>SQL" --> Database
-        APIServer -- "Ejecuta<br/>Inferencia" --> AI_Service
+    subgraph BACKEND["Contenedor Backend"]
+        API["🐍 API Django<br/>(DRF + Channels)"]
     end
 
-    subgraph "🏠 Laboratorio Edge (Red Local)"
-        direction TB
-        
-        subgraph "BBB-01 Gateway"
-            Cluster_GW["🌐 <b>Gateway</b><br/>(Broker Mosquitto + Sync)"]
-        end
-        
-        subgraph "BBB-02 IA-Edge"
-            Cluster_IA["🧠 <b>IA Local</b><br/>(API Flask + TFLite)"]
-        end
-        
-        subgraph "BBB-03 Sensores"
-            Cluster_IoT["📡 <b>IoT Node</b><br/>(Sensores + Cámara)"]
-        end
-        
-        Cluster_IoT -- "Publica<br/>MQTT (LAN)" --> Cluster_GW
-        Cluster_IoT -- "POST Imagen<br/>HTTP (LAN)" --> Cluster_IA
-        Cluster_IA -- "Reporta<br/>MQTT (LAN)" --> Cluster_GW
+    subgraph IA_CLOUD["Servicio de IA"]
+        IAService["🤖 Servicio IA<br/>(TensorFlow / Keras)"]
     end
 
-    actor1 -- "HTTPS<br/>443" --> WebApp
-    actor1 -- "HTTPS/WSS" --> APIServer
-    Cluster_GW -- "HTTPS<br/>POST /api/readings/" --> APIServer
+    subgraph DATABASE["Base de Datos"]
+        DB[("💾 PostgreSQL 15<br/>(Datos y Telemetría)")]
+    end
+
+    WebApp -->|"API REST"| API
+    API -->|"SQL"| DB
+    API -->|"Inferencia"| IAService
+end
+
+%% =====================
+%% Edge / Laboratorio
+%% =====================
+subgraph EDGE["🏠 Laboratorio Edge (Red Local)"]
+    direction TB
+
+    subgraph BBB_GW["BBB-01 Gateway"]
+        GW["🌐 Gateway<br/>(Mosquitto + Sync)"]
+    end
+
+    subgraph BBB_IA["BBB-02 IA Edge"]
+        IAEdge["🧠 IA Local<br/>(Flask + TFLite)"]
+    end
+
+    subgraph BBB_IOT["BBB-03 Sensores"]
+        IoT["📡 Nodo IoT<br/>(Sensores + Cámara)"]
+    end
+
+    IoT -->|"MQTT (LAN)"| GW
+    IoT -->|"HTTP POST Imagen"| IAEdge
+    IAEdge -->|"MQTT Reporte"| GW
+end
+
+%% =====================
+%% Conexiones globales
+%% =====================
+Usuario -->|"HTTPS 443"| WebApp
+Usuario -->|"HTTPS / WSS"| API
+GW -->|"HTTPS POST /api/lecturas/"| API
+
 ```
 
 > 📘 **Para más detalles:** Consulta el [MASTERDOC.md](docs/MASTERDOC.md) con todos los diagramas C4, el Modelo Entidad-Relación y las especificaciones técnicas completas.
@@ -310,6 +340,28 @@ sigcTiArural/
 
 ## 🤖 Inteligencia Artificial
 
+Los modelos de IA utilizados en SIGC&T Rural se emplean de forma diferenciada según el entorno:
+
+Entrenamiento / Inferencia Cloud o Local (PC / Servidor):
+
+MobileNet
+
+EfficientNet
+
+ResNet
+
+TensorFlow / Keras
+
+PyTorch (experimental)
+
+Inferencia Edge (BeagleBone Black):
+
+MobileNetV2 / MobileNetV3
+
+Modelos convertidos y optimizados con TensorFlow Lite
+
+Esta separación garantiza bajo consumo, baja latencia y operación continua en campo.
+
 Modelo base de clasificación (PlantVillage) con **MobileNetV2 + Transfer Learning**:
 
 ```
@@ -399,7 +451,7 @@ in the Software without restriction...
 </td>
 <td>
 
-**Rol:** Líder del Proyecto, Arquitecto de Software
+**Rol:** Líder Arquitecto del proyecto y del equipo de Software : Bernardo Gómez
 
 **Responsabilidades:**
 - Diseño de arquitectura Cloud-Edge
@@ -416,6 +468,17 @@ in the Software without restriction...
 </table>
 
 ---
+📦 Uso como Plantilla Pública (Public Template)
+
+Este repositorio está marcado como Public Template en GitHub para facilitar la replicabilidad académica y tecnológica del proyecto.
+
+✔️ No implica pérdida de autoría
+
+✔️ No afecta la licencia MIT
+
+✔️ No altera la ejecución del sistema
+
+✔️ Permite a otros crear proyectos basados en esta arquitectura
 
 <div align="center">
 
@@ -438,6 +501,6 @@ in the Software without restriction...
 
 **© 2025 Bernardo A. Gómez Montoya | Proyecto SIGC&T Rural | MIT License**
 
-<sub>Última actualización: 14 de Noviembre, 2025 | Versión 1.0</sub>
+<sub>Última actualización: 01 de Enero, 2026 | Versión 1.0</sub>
 
 </div>
