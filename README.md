@@ -1,255 +1,197 @@
+# SIGC&T Rural: Sistema Inteligente de Gestión, Control y Telemetría para el Entorno Rural
 
-![SIGC&T Rural Banner](docs/diagrams/banner.svg)
+![Banner](docs/diagrams/banner.svg)
 
-# 🌾 SIGC&T Rural
-### Sistema Integrado de Gestión en Ciencia y Tecnología Rural
+**SIGC&T Rural** es un proyecto integral que fusiona la agricultura de precisión, la tecnología educativa (EdTech) y los sistemas embebidos inteligentes para fortalecer el desarrollo sostenible en entornos rurales. La plataforma ofrece herramientas de telemetría, control de actuadores y análisis de datos mediante inteligencia artificial, todo gestionado desde una interfaz web moderna e intuitiva.
 
-[![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge)](https://www.sena.edu.co/)
-[![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo-blue?style=for-the-badge)](https://github.com/badolgm/sigcTiArural)
-[![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/Django-4.x-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![React](https://img.shields.io/badge/React-18%2B-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3%2B-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![BeagleBone Black](https://img.shields.io/badge/BeagleBone%20Black-Rev%20C-FF7F00?style=for-the-badge)](https://beagleboard.org/black)
-[![IA](https://img.shields.io/badge/IA-TensorFlow%20%7C%20TFLite-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
+## 🧩 Arquitectura General del Sistema
 
----
+El sistema sigue una arquitectura de microservicios distribuida, compuesta por tres componentes principales que pueden ser desplegados de forma independiente o conjunta a través de Docker.
 
-**Plataforma web híbrida (Cloud/Edge) que integra IoT, Inteligencia Artificial y educación técnica para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.**
+![Arquitectura C4](docs/diagrams/c4_components.svg)
 
-📚 [Documentación completa (MASTERDOC)](docs/MASTERDOC.md) • 🚀 [Plan Maestro](docs/PLAN_MAESTRO.md) • 🐞 [Reportar bug](https://github.com/badolgm/sigcTiArural/issues) • 💡 [Solicitar mejora](https://github.com/badolgm/sigcTiArural/issues/new)
+1.  **Frontend (React + Vite)**: Una aplicación de una sola página (SPA) que proporciona la interfaz de usuario. Incluye dashboards de visualización de datos, paneles de control para actuadores y laboratorios virtuales interactivos.
+2.  **Backend (Django REST Framework)**: El núcleo del sistema. Gestiona la lógica de negocio, la autenticación de usuarios, el almacenamiento de datos en una base de datos MySQL y expone una API REST para la comunicación con el frontend y los dispositivos de campo.
+3.  **AI Service (FastAPI)**: Un microservicio dedicado que aloja los modelos de inteligencia artificial (ej. detección de enfermedades en plantas). Expone endpoints para realizar inferencias y se comunica con el backend.
 
----
+## 🚀 Tecnologías Principales
 
-## 📖 Descripción General
-SIGC&T Rural es una plataforma **open source** con enfoque académico, científico y social, que integra **IoT**, **IA** y **educación técnica**. Nace como **Proyecto Productivo SENA** del programa **Tecnología en ADSO**, proponiendo una arquitectura híbrida **Cloud/Edge** que conecta un backend **Django** y un frontend **React + TailwindCSS** con dispositivos **BeagleBone Black**.
-
----
-
-## 🧭 Tabla de Contenidos
-- 🎯 [Visión y Objetivos](#-visión-y-objetivos)
-- 🌍 [Impacto Social (ODS)](#-impacto-social-ods)
-- ✨ [Características Principales](#-características-principales)
-- 🏗️ [Arquitectura del Sistema](#️-arquitectura-del-sistema)
-- 📚 [Documentación Técnica](#-documentación-técnica)
-- 🚀 [Inicio Rápido](#-inicio-rápido)
-- 🧱 [Estructura del Proyecto](#-estructura-del-proyecto)
-- 📊 [Stack Tecnológico](#-stack-tecnológico)
-- 🤖 [Inteligencia Artificial](#-inteligencia-artificial)
-- 🧩 [Edge Computing](#-edge-computing)
-- 🤝 [Contribuciones](#-contribuciones)
-- 🎓 [Contexto Académico SENA](#-contexto-académico-sena)
-- 📄 [Licencia](#-licencia)
-- 👤 [Autor](#-autor)
+| Área                | Tecnologías                                                              |
+| ------------------- | ------------------------------------------------------------------------ |
+| **Frontend**        | `React`, `Vite`, `TailwindCSS`, `JavaScript`                             |
+| **Backend**         | `Python`, `Django`, `Django REST Framework`, `MySQL`                     |
+| **AI Service**      | `Python`, `FastAPI`, `TensorFlow/TFLite`, `Scikit-learn`                 |
+| **Base de Datos**   | `MySQL`                                                                  |
+| **Contenerización** | `Docker`, `Docker Compose`                                               |
+| **Embebidos (Edge)**| `BeagleBone`, `Raspberry Pi`, `Python`, `MQTT`                           |
+| **Documentación**   | `Markdown`, `Mermaid`                                                    |
 
 ---
 
-## 🎯 Visión y Objetivos
-### ⭐ Misión
-Democratizar el acceso a tecnologías de agricultura inteligente, ofreciendo herramientas de monitoreo IoT, diagnóstico con IA y educación técnica gratuita.
+## ⚙️ Configuración de Variables de Entorno
 
-### 🎯 Objetivos Académicos (ADSO)
-ID | Objetivo | Descripción | Criterio de Éxito
----|---|---|---
-O-01 | Dashboard centralizado | Visualizar datos de sensores en tiempo real | Latencia < 2s
-O-02 | Modelo de IA | Clasificación de enfermedades de plantas | Accuracy > 85%
-O-03 | Laboratorio hardware | Clúster de 3 BeagleBone Black operativo | Comunicación MQTT/HTTP
-O-04 | Biblioteca educativa | Repositorio de recursos curados | ≥ 20 recursos categorizados
-O-05 | Cumplimiento ADSO | Entregables del Proyecto Productivo | 100% aprobados
+Antes de iniciar cualquier servicio (manual o con Docker Compose), es fundamental configurar las variables de entorno necesarias.
 
----
+1.  Copia el archivo `.env.example` a un nuevo archivo llamado `.env` en la raíz del proyecto:
+    ```bash
+    cp .env.example .env
+    ```
+    (En Windows, puedes usar `copy .env.example .env`)
 
-## 🌍 Impacto Social (ODS)
-ODS | Objetivo | Contribución
----|---|---
-ODS 2 | Hambre Cero | Optimización productiva mediante datos y diagnóstico temprano
-ODS 4 | Educación de Calidad | Acceso abierto a formación técnica avanzada
-ODS 9 | Industria e Innovación | Infraestructura tecnológica en contextos rurales
-ODS 17 | Alianzas | Articulación academia–agricultura–tecnología
+2.  Edita el archivo `.env` y ajusta los valores según sea necesario para tu entorno local. Esto incluye credenciales de base de datos, URLs de API, etc.
+    *   **Nota:** Si utilizas Docker Compose, algunas variables de entorno (como `DB_HOST`) serán manejadas internamente por Docker, pero otras (como claves secretas o URLs de servicios externos) aún pueden ser necesarias aquí.
 
 ---
 
-## ✨ Características Principales
-- 📈 **Dashboard IoT:** Visualización en tiempo real.
-- 🤖 **Diagnóstico IA:** Clasificación de enfermedades (Cloud y Edge).
-- 📚 **Biblioteca Educativa:** Cursos, videos y laboratorios.
-- 🔌 **Arquitectura Híbrida:** Lógica *store-and-forward* tolerante a fallos.
-- 📡 **Comunicaciones:** API REST + WebSockets.
-- 📱 **Responsive Design:** Interfaz moderna con React + TailwindCSS.
+## 🏁 Instalación y Ejecución Local
+
+Para ejecutar el proyecto en tu entorno local, necesitarás tener instalado **Git**, **Node.js (v18+)**, **Python (v3.10+)** y **Docker**.
+
+### Método 1: Ejecución Manual (Componente por Componente)
+
+Este método es ideal para desarrollar y depurar un componente específico. Para ejecutar el sistema completo manualmente, **necesitarás abrir *tres terminales separadas* (ventanas de Git Bash o PowerShell en Windows) y ejecutar los comandos en el orden correcto en cada una.**
+
+**¡Paso Cero - Configuración Inicial y Variables de Entorno!**
+
+Antes de iniciar cualquier servicio, asegúrate de haber realizado los siguientes pasos **UNA SOLA VEZ** desde la raíz del proyecto en tu terminal principal (o cualquier terminal que uses para Git):
+
+1.  **Clonar el repositorio (si aún no lo has hecho):**
+    ```bash
+    git clone https://github.com/tu-usuario/sigcTiArural.git # Reemplaza con la URL correcta de tu repo
+    cd sigcTiArural
+    ```
+2.  **Configurar Variables de Entorno:**
+    *   Ve a la sección "⚙️ Configuración de Variables de Entorno" (más arriba en este documento) y sigue las instrucciones.
+    *   **¡Este paso es CRÍTICO!** El archivo `.env` debe estar configurado en la raíz del proyecto para que los servicios encuentren sus configuraciones (credenciales de base de datos, URLs de APIs internas, etc.).
+
+**¡Importante!** Asegúrate de haber completado la sección "⚙️ Configuración de Variables de Entorno" antes de continuar, para que los archivos `.env` estén configurados.
+
+**Orden Sugerido de Inicio (en terminales separadas):**
+
+1.  **Backend (Django)**
+2.  **AI Service (FastAPI)**
+3.  **Frontend (React)**
 
 ---
 
-## 🏗️ Arquitectura del Sistema
-> **Nota técnica:** El entrenamiento de IA se realiza en Cloud/Local; las BBB actúan como nodos Edge para adquisición, preprocesamiento e inferencia optimizada con TFLite.
+#### 1. Iniciar el Backend (Django)
 
-### Nivel 1: Vista de Contexto
-```mermaid
-%%{init: {'flowchart': {'htmlLabels': true, 'useMaxWidth': true}} }%%
-flowchart TD
-  subgraph Usuarios
-    A["Agricultor"]
-    B["Estudiante SENA"]
-    C["Administrador"]
-  end
+**Abre tu PRIMERA terminal de Git Bash (o PowerShell) y sigue estos pasos con atención:**
 
-  subgraph SIGCT_Rural
-    S["Plataforma Web Hibrida\nCloud + Edge"]
-  end
-
-  subgraph Sistemas_Externos
-    E1["Cluster 3-BBB (Edge)"]
-    E2["PlantVillage (Datasets)"]
-    E3["SENA SofiaPlus (futuro)"]
-  end
-
-  A -->|"Consulta Dashboard"| S
-  B -->|"Cursos y Labs"| S
-  C -->|"Administra Plataforma"| S
-  E1 -->|"MQTT/HTTPS"| S
-  S -->|"Uso offline"| E2
-  S -.->|"OAuth 2.0 (futuro)"| E3
-```
-
-### Nivel 2: Vista de Contenedores
-```mermaid
-%%{init: {'flowchart': {'htmlLabels': true, 'useMaxWidth': true}} }%%
-flowchart TB
-
-U["Usuario - Navegador Web"]
-
-subgraph CLOUD["Cloud Provider"]
-  direction TB
-  subgraph FRONTEND["Frontend"]
-    FE["React App - Vite + TailwindCSS"]
-  end
-  subgraph BACKEND["Backend"]
-    API["Django API - DRF + Channels"]
-  end
-  subgraph AI_SVC["AI Service"]
-    AIS["TensorFlow / Keras"]
-  end
-  subgraph DB_LAYER["Database Layer"]
-    DB[("PostgreSQL 15")]
-  end
-  FE -->|"REST"| API
-  API -->|"SQL"| DB
-  API -->|"Inferencia"| AIS
-end
-
-subgraph EDGE["Laboratorio Edge (LAN)"]
-  direction TB
-  GW["BBB-01 Gateway - Mosquitto + Sync"]
-  IA["BBB-02 IA Edge - Flask + TFLite"]
-  IOT["BBB-03 Sensores - Cámara + Lecturas"]
-  IOT -->|"MQTT (LAN)"| GW
-  IOT -->|"HTTP POST imagen"| IA
-  IA  -->|"MQTT reporte"| GW
-end
-
-U  -->|"HTTPS 443"| FE
-U  -->|"HTTPS/WSS"| API
-GW -->|"HTTPS POST /api/readings/"| API
-```
-
-> Diagramas completos (Componentes, Despliegue, ERD) en [docs/MASTERDOC.md](docs/MASTERDOC.md).
-
----
-
-## 📚 Documentación Técnica
-Documento | Propósito
----|---
-[MASTERDOC.md](docs/MASTERDOC.md) | Documento Maestro (DAS): diagramas, ERD, especificaciones.
-[PLAN_MAESTRO.md](docs/PLAN_MAESTRO.md) | Cronograma y fases del proyecto.
-
----
-
-## 🚀 Inicio Rápido
-### Requisitos
-- Git 2.30+
-- Python 3.10+
-- Node.js 18+ y npm 9+
-
-### Backend (Django)
 ```bash
+# Paso 1: Navega a la raíz del proyecto.
+# Si ya estás en 'c:\Users\bagm2\workspace_toshiba\Clone\sigcTiArural', no necesitas ejecutar este comando.
+# Si no, usa el comando 'cd' apropiado para llegar a la raíz de 'sigcTiArural'.
+# Ejemplo: cd /c/Users/bagm2/workspace_toshiba/Clone/sigcTiArural
+
+# Paso 2: Navega al directorio específico del Backend
 cd src/backend
+
+# Paso 3: Crea y Activa el entorno virtual (si no lo has hecho antes).
+# Un entorno virtual aísla las dependencias de este proyecto de otros.
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scriptsctivate     # Windows
+source venv/Scripts/activate  # <--- EJECUTA ESTE COMANDO para Windows (Git Bash o PowerShell)
+
+# CONFIRMACIÓN: DEBES VER "(venv)" al inicio de tu línea de comando, por ejemplo:
+# (venv) user@hostname /c/Users/bagm2/workspace_toshiba/Clone/sigcTiArural/src/backend $
+
+# Paso 4: Instala las dependencias de Python del Backend.
+# Este paso solo es necesario la primera vez o si se actualiza 'requirements.txt'.
 pip install -r requirements.txt
+
+# Paso 5: Aplica las migraciones de la base de datos.
+# Esto crea las tablas necesarias en tu base de datos MySQL.
+# ¡IMPORTANTE! Asegúrate de que tu base de datos MySQL esté ejecutándose y sea accesible.
+# Si tienes problemas, verifica la configuración en tu archivo '.env'.
 python manage.py migrate
+
+# Paso 6: Inicia el servidor de desarrollo de Django.
+# Este comando dejará esta terminal "ocupada" ejecutando el servidor.
+# ¡NO CIERRES ESTA TERMINAL! Déjala abierta y ve a la siguiente.
+# El servidor Backend se ejecutará en: http://127.0.0.1:8000
 python manage.py runserver
+
+# CONFIRMACIÓN: Espera a ver un mensaje como:
+# "Starting development server at http://127.0.0.1:8000/"
+# Si ves errores aquí, revísalos cuidadosamente. Los más comunes son:
+# - Problemas con la base de datos (MySQL no corriendo o credenciales incorrectas en .env)
+# - Dependencias de Python faltantes.
 ```
 
-### Frontend (React + Vite)
+---
+
+#### 2. AI Service (FastAPI)
+
+En tu **segunda terminal (Git Bash)**:
+
 ```bash
+# 1. Navega al directorio del módulo de IA desde la raíz del proyecto
+cd src/ai_models
+
+# 2. (Recomendado) Crea un entorno virtual si no existe
+python -m venv venv
+
+# 3. Activa el entorno virtual
+source venv/Scripts/activate  # Para Windows (Git Bash o PowerShell)
+# source venv/bin/activate    # Para macOS/Linux
+
+# 4. Instala las dependencias de Python del AI Service
+pip install -r requirements.txt
+
+# 5. Inicia el servidor de IA (FastAPI). Se ejecutará en http://127.0.0.1:8081
+# Este comando usa --reload, lo que reiniciará el servidor automáticamente si detecta cambios.
+python -m uvicorn fastapi_app:app --host 0.0.0.0 --port 8081 --reload
+
+# Si estás en Linux/macOS y quieres usar el script de ayuda (asegúrate de que sea ejecutable):
+# sh ../../scripts/start_ai_server.sh
+```
+
+---
+
+#### 3. Frontend (React)
+
+En tu **tercera terminal (Git Bash)**:
+
+```bash
+# 1. Navega al directorio del frontend desde la raíz del proyecto
 cd src/frontend
+
+# 2. Instala las dependencias de Node.js (esto solo es necesario la primera vez o si package.json cambia)
 npm install
-echo "VITE_API_URL=http://localhost:8000" > .env.local
+
+# 3. Inicia el servidor de desarrollo de React. Se ejecutará en http://localhost:5173
 npm run dev
 ```
 
 ---
 
-## 🧱 Estructura del Proyecto
+### Método 2: Orquestación con Docker Compose (¡Método Altamente Recomendado!)
+
+Este es el método más sencillo y robusto para levantar todo el entorno de desarrollo. Con un solo comando, Docker Compose se encarga de construir (si es necesario) e iniciar todos los servicios interconectados (Backend, Frontend, AI Service, y la Base de Datos MySQL), simulando un entorno de producción de manera controlada.
+
+**Prerrequisito:** Asegúrate de que Docker Desktop esté en ejecución en tu sistema operativo antes de proceder.
+
+```bash
+# 1. Asegúrate de que Docker Desktop esté en ejecución.
+
+# 2. Desde la raíz del proyecto, ejecuta:
+docker-compose up --build
+
+# 3. Los servicios estarán disponibles en:
+#    - Frontend: http://localhost:5173
+#    - Backend: http://localhost:8000
+#    - AI Service: http://localhost:8081
+
+# 4. Para detener todos los servicios:
+docker-compose down
 ```
-sigcTiArural/
-├── docs/          # Documentación técnica
-│   ├── MASTERDOC.md
-│   └── PLAN_MAESTRO.md
-├── src/
-│   ├── backend/   # Django API
-│   ├── frontend/  # React App
-│   └── embedded/  # Scripts BBB
-└── README.md
-```
 
----
+## 🛠️ Scripts Útiles
 
-## 📊 Stack Tecnológico
-- **Backend:** Python, Django, DRF, Channels, PostgreSQL
-- **Frontend:** React, Vite, TailwindCSS
-- **IA:** TensorFlow, TensorFlow Lite, Keras
-- **Edge:** BeagleBone Black, Paho-MQTT
-- **DevOps:** Docker, GitHub Actions (futuro)
+*   `scripts/generate-diagrams.mjs`: Genera diagramas SVG/PNG a partir de archivos `.mmd` (Mermaid).
+*   `scripts/start_ai_server.sh`: Script de ayuda para iniciar el servidor FastAPI de IA (incluye inferencia de imágenes y asistente de voz con contexto conversacional).
+*   `fix_and_clean.py`: Herramienta de auditoría y limpieza de código.
 
----
+## 📄 Documentación Adicional
 
-## 🤖 Inteligencia Artificial
-- **Cloud:** MobileNet/EfficientNet con TensorFlow/Keras.
-- **Edge:** MobileNetV2 optimizado con TFLite.
-- **Dataset:** PlantVillage.
-
----
-
-## 🧩 Edge Computing
-- BBB-01: Gateway MQTT + Sync
-- BBB-02: IA Edge (Flask + TFLite)
-- BBB-03: Sensores + Cámara
-
----
-
-## 🤝 Contribuciones
-1. Fork del proyecto
-2. Crear rama feature
-3. Commit claro
-4. Push
-5. Pull Request
-
----
-
-## 🎓 Contexto Académico SENA
-Proyecto Productivo del programa **Tecnología en ADSO (SENA Colombia)**.
-
----
-
-## 📄 Licencia
-Código abierto bajo [MIT License](https://opensource.org/licenses/MIT).
-
----
-
-## 👤 Autor
-**Bernardo Adolfo Gómez Montoya**  
-📧 [badolfogm@gmail.com](mailto:badolfogm@gmail.com) • 🔗 [GitHub](https://github.com/badolgm)
-
-> Hecho con ❤️ en Colombia. Para la comunidad rural y educativa del mundo.
+Para una visión más profunda de la arquitectura, decisiones de diseño y planificación, consulta el **[PLAN MAESTRO](docs/PLAN_MAESTRO.md)**.

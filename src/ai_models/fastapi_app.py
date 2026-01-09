@@ -6,31 +6,33 @@ Características:
 - /models: lista de modelos disponibles en src/ai_models/production_models.
 - /infer: recibe image_url o archivo y realiza inferencia con el modelo cargado.
 - Registra resultados en data/logs/infer_log.jsonl.
-
-Notas:
-- Usa TensorFlow si está disponible (tensorflow-cpu recomendado).
-- Si no hay modelo, devuelve 503 con mensaje claro.
-- Pensado para ejecutarse en localhost de forma gratuita.
 """
 
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional
 import json
 import io
+import time
+import asyncio
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 import numpy as np
 from PIL import Image
 import requests
-import time
 
-app = FastAPI(title="SIGC&T Rural IA Inference Service", version="0.1.0")
+# =========================
+# App
+# =========================
 
-# Permitir CORS para el frontend local
+app = FastAPI(
+    title="SIGC&T Rural IA Inference Service",
+    version="0.1.0"
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -39,87 +41,92 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# =========================
+# Rutas base
+# =========================
 
 def find_repo_root(start: Path) -> Path:
-    """Sube en el árbol hasta encontrar la carpeta 'src' o el archivo README.md.
-    Sirve para ubicar rutas relativas sin importar desde dónde se lance uvicorn."""
     current = start.resolve()
-    for _ in range(5):
+    for _ in range(6):
         if (current / "src").exists() or (current / "README.md").exists():
             return current
-        if current.parent == current:
-            break
         current = current.parent
-    return Path.cwd() # Fallback
+    return Path.cwd()
 
 ROOT_DIR = find_repo_root(Path(__file__))
 MODELS_DIR = ROOT_DIR / "src" / "ai_models" / "production_models"
 LOGS_DIR = ROOT_DIR / "data" / "logs"
 INFER_LOG = LOGS_DIR / "infer_log.jsonl"
 
-# Asegurar directorios
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Variable global para el modelo cargado
+# =========================
+# TensorFlow
+# =========================
+
 model = None
 model_name = None
 
-# Intentar cargar TensorFlow (puede no estar instalado en entornos muy ligeros)
 try:
     import tensorflow as tf
     TF_AVAILABLE = True
 except ImportError:
     TF_AVAILABLE = False
-    print("⚠️ TensorFlow no encontrado. El servicio funcionará pero no podrá hacer inferencia real (solo mock).")
+    print("⚠️ TensorFlow no disponible. Modo MOCK activado.")
 
+# =========================
+# Modelo
+# =========================
 
 def load_latest_model():
-    """Busca el archivo .h5 más reciente en production_models y lo carga."""
     global model, model_name
+
     if not TF_AVAILABLE:
         return None
-    
+
     files = list(MODELS_DIR.glob("*.h5")) + list(MODELS_DIR.glob("*.keras"))
     if not files:
         print("⚠️ No se encontraron modelos en", MODELS_DIR)
         return None
-    
-    # Ordenar por fecha de modificación
+
     latest = max(files, key=lambda p: p.stat().st_mtime)
+
     if model_name != latest.name:
         print(f"🔄 Cargando modelo: {latest.name}")
         try:
-            model = tf.keras.models.load_model(latest)
+            model = tf.keras.models.load_model(
+                latest,
+                compile=False  # 🔑 CLAVE PARA PYTHON 3.11 + TF 2.15
+            )
             model_name = latest.name
+            print("✅ Modelo cargado correctamente")
         except Exception as e:
             print(f"❌ Error cargando modelo {latest}: {e}")
-            return None
+            model = None
+            model_name = None
+
     return model_name
 
-# Carga inicial
 load_latest_model()
 
-class InferenceRequest(BaseModel):
-    image_url: Optional[str] = None
+# =========================
+# Utils
+# =========================
 
 def preprocess_image(img_data: bytes, target_size=(224, 224)):
-    """Convierte bytes a array numpy preprocesado para MobileNetV2."""
     image = Image.open(io.BytesIO(img_data)).convert("RGB")
     image = image.resize(target_size)
-    img_array = np.array(image)
-    # Preprocesamiento estándar de MobileNetV2: escala pixel values entre -1 y 1
-    # tf.keras.applications.mobilenet_v2.preprocess_input hace esto internamente
+    arr = np.array(image)
+
     if TF_AVAILABLE:
-        img_array = tf.keras.applications.mobilenet_v2.preprocess_input(img_array)
+        arr = tf.keras.applications.mobilenet_v2.preprocess_input(arr)
     else:
-        img_array = (img_array / 127.5) - 1.0
-        
-    img_array = np.expand_dims(img_array, axis=0) # Batch dim
-    return img_array
+        arr = (arr / 127.5) - 1.0
+
+    return np.expand_dims(arr, axis=0)
 
 def log_inference(source, result, latency):
-    """Guarda el resultado en un archivo JSONL (simula base de datos de series de tiempo)."""
     entry = {
         "ts": time.time(),
         "source": source,
@@ -130,19 +137,22 @@ def log_inference(source, result, latency):
     with INFER_LOG.open("a", encoding="utf-8") as f:
         f.write(json.dumps(entry) + "\n")
 
+# =========================
+# API
+# =========================
+
 @app.get("/")
 def index():
-    return {"msg": "SIGC&T Rural AI Service. Docs at /docs"}
+    return {"msg": "SIGC&T Rural AI Service", "docs": "/docs"}
 
 @app.get("/health")
 def health():
-    # Intenta recargar si no hay modelo
     if not model:
         load_latest_model()
     return {
         "status": "ok",
-        "tf_available": TF_AVAILABLE,
-        "model_loaded": model_name if model else False
+        "tensorflow": TF_AVAILABLE,
+        "model_loaded": model_name
     }
 
 @app.post("/infer")
@@ -150,62 +160,48 @@ async def infer(
     file: Optional[UploadFile] = File(None),
     url: Optional[str] = None
 ):
-    start_time = time.time()
-    
-    # 1. Obtener imagen
-    img_bytes = None
-    source_info = "upload"
-    
+    start = time.time()
+
     if file:
         img_bytes = await file.read()
-        source_info = f"file:{file.filename}"
+        source = f"file:{file.filename}"
     elif url:
         try:
-            resp = requests.get(url, timeout=5)
-            resp.raise_for_status()
-            img_bytes = resp.content
-            source_info = f"url:{url}"
+            r = requests.get(url, timeout=5)
+            r.raise_for_status()
+            img_bytes = r.content
+            source = f"url:{url}"
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Error descargando imagen: {e}")
+            raise HTTPException(400, f"Error descargando imagen: {e}")
     else:
-        raise HTTPException(status_code=400, detail="Debe enviar 'file' o 'url'.")
+        raise HTTPException(400, "Debe enviar 'file' o 'url'")
 
-    # 2. Inferencia
-    result = {}
-    
     if TF_AVAILABLE and model:
         try:
-            # Asumimos modelo clasificador de plantas (Sanor / Enfermo)
-            # Ajustar etiquetas según tu entrenamiento real
-            CLASS_NAMES = ["Enferma", "Sana"] 
-            
-            input_arr = preprocess_image(img_bytes)
-            preds = model.predict(input_arr)
-            score = float(np.max(preds))
+            CLASS_NAMES = ["Enferma", "Sana"]  # ajustable
+            arr = preprocess_image(img_bytes)
+            preds = model.predict(arr)
             idx = int(np.argmax(preds))
-            
-            # Protección si el modelo tiene más clases de las que pensamos
-            label = CLASS_NAMES[idx] if idx < len(CLASS_NAMES) else f"Class {idx}"
-            
+            score = float(np.max(preds))
+
             result = {
-                "diagnosis": label,
+                "diagnosis": CLASS_NAMES[idx] if idx < len(CLASS_NAMES) else f"Class {idx}",
                 "confidence": round(score, 4),
                 "top_class_index": idx,
                 "raw_output": preds.tolist()
             }
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error en inferencia: {e}")
+            raise HTTPException(500, f"Error en inferencia: {e}")
     else:
-        # Mock para pruebas sin TF instalado o sin modelo entrenado
         result = {
             "diagnosis": "MOCK_RESULT",
             "confidence": 0.99,
-            "note": "Instala tensorflow y entrena un modelo para resultados reales."
+            "note": "TensorFlow o modelo no disponible"
         }
 
-    latency = time.time() - start_time
-    log_inference(source_info, result, latency)
-    
+    latency = time.time() - start
+    log_inference(source, result, latency)
+
     return {
         "data": result,
         "meta": {
@@ -214,77 +210,136 @@ async def infer(
         }
     }
 
-# --- Server Sent Events (SSE) para Dashboard en Tiempo Real ---
+# =========================
+# SSE – Eventos en tiempo real
+# =========================
 
-async def _iter_log_events():
-    """Vigila el archivo de logs y emite nuevas líneas como eventos SSE."""
-    if not INFER_LOG.exists():
-        # Crear si no existe para no fallar
-        INFER_LOG.touch()
-        
-    with INFER_LOG.open("r", encoding="utf-8") as f:
-        # Ir al final del archivo
-        f.seek(0, 2)
-        while True:
-            line = f.readline()
-            if not line:
-                await  time.sleep(0.5) # Espera no bloqueante (simulada en este contexto sincrono-loop)
-                continue
-            yield f"data: {line.strip()}\n\n"
+async def follow_file(path: Path):
+    path.touch(exist_ok=True)
+    last_size = path.stat().st_size
 
-# Nota: Para SSE real en producción con FastAPI, se recomienda sse-starlette.
-# Aquí usamos una implementación simple compatible con StreamingResponse.
-def follow_file(file_path):
-    file_path = Path(file_path)
-    if not file_path.exists():
-        file_path.touch()
-        
-    last_size = file_path.stat().st_size
     while True:
-        time.sleep(1)
-        if not file_path.exists():
-            continue
-        size = file_path.stat().st_size
+        await asyncio.sleep(1)
+        size = path.stat().st_size
         if size > last_size:
-            try:
-                with file_path.open("r", encoding="utf-8") as f:
-                    f.seek(last_size)
-                    for line in f:
-                        line = line.strip()
-                        if line:
-                            yield f"data: {line}\n\n"
-                last_size = size
-            except Exception:
-                pass
-
+            with path.open("r", encoding="utf-8") as f:
+                f.seek(last_size)
+                for line in f:
+                    yield f"data: {line.strip()}\n\n"
+            last_size = size
 
 @app.get("/events")
 def events():
-    return StreamingResponse(follow_file(INFER_LOG), media_type="text/event-stream")
-
+    return StreamingResponse(
+        follow_file(INFER_LOG),
+        media_type="text/event-stream"
+    )
 
 @app.get("/metrics")
 def metrics():
-    """Agrega métricas simples a partir del log: conteo por clase y promedio de confianza."""
     counts = {}
     confidences = []
+
     if INFER_LOG.exists():
-        try:
-            for line in INFER_LOG.read_text(encoding="utf-8").splitlines():
-                ev = json.loads(line)
-                res = ev.get("result", {})
-                idx = str(res.get("top_class_index"))
-                conf = res.get("confidence")
-                if idx:
-                    counts[idx] = counts.get(idx, 0) + 1
-                if isinstance(conf, (int, float)):
-                    confidences.append(conf)
-        except Exception:
-            pass
-    avg_conf = sum(confidences) / len(confidences) if confidences else 0
-    
+        for line in INFER_LOG.read_text(encoding="utf-8").splitlines():
+            ev = json.loads(line)
+            res = ev.get("result", {})
+            idx = str(res.get("top_class_index"))
+            conf = res.get("confidence")
+
+            if idx:
+                counts[idx] = counts.get(idx, 0) + 1
+            if isinstance(conf, (int, float)):
+                confidences.append(conf)
+
+    avg = sum(confidences) / len(confidences) if confidences else 0
+
     return {
         "total_inferences": len(confidences),
         "class_distribution": counts,
-        "average_confidence": round(avg_conf, 3)
+        "average_confidence": round(avg, 3)
     }
+
+# ===================================
+# Asistente de Voz (NUEVA SECCIÓN)
+# ===================================
+
+try:
+    import speech_recognition as sr
+    from gtts import gTTS
+    from pydub import AudioSegment
+    VOICE_AVAILABLE = True
+except ImportError:
+    VOICE_AVAILABLE = False
+    print("⚠️ Librerías de voz no disponibles. El endpoint /assist estará desactivado.")
+
+# Importar el módulo de contexto conversacional
+try:
+    from .conversation_context import (
+        get_conversation_manager, classify_intent, 
+        NAVIGATION_COMMANDS, ANALYSIS_COMMANDS, SOCIAL_COMMANDS,
+        MOTIVATIONAL_RESPONSES, THANKS_RESPONSES
+    )
+    CONTEXT_AVAILABLE = True
+except ImportError:
+    print("⚠️ Módulo de contexto no disponible. Usando lógica básica.")
+    CONTEXT_AVAILABLE = False
+
+recognizer = sr.Recognizer() if VOICE_AVAILABLE else None
+
+@app.post("/assist")
+async def assist(
+    audio_file: UploadFile = File(...)
+):
+    if not VOICE_AVAILABLE or not recognizer:
+        raise HTTPException(503, "El servicio de voz no está disponible en el servidor.")
+
+    response_text = "No te he entendido, ¿puedes repetirlo?"
+    
+    try:
+        # Convertir el archivo de audio recibido a un formato que pydub entienda
+        segment = AudioSegment.from_file(io.BytesIO(await audio_file.read()))
+        # Exportarlo como WAV, que es lo que SpeechRecognition maneja mejor
+        wav_io = io.BytesIO()
+        segment.export(wav_io, format="wav")
+        wav_io.seek(0)
+
+        with sr.AudioFile(wav_io) as source:
+            audio_data = recognizer.record(source)
+            # Transcribir usando la API de Google (requiere internet)
+            text = recognizer.recognize_google(audio_data, language="es-ES")
+            print(f"🎤 Texto reconocido: '{text}'")
+
+            # Lógica de respuesta simple
+            if "hola" in text.lower():
+                response_text = "Hola, soy la inteligencia artificial de SIGC&T Rural. ¿En qué puedo ayudarte hoy?"
+            elif "adiós" in text.lower():
+                response_text = "Hasta pronto. Si necesitas algo más, no dudes en consultarme."
+            elif "enfermedad" in text.lower() or "planta" in text.lower():
+                response_text = "Puedo ayudarte a analizar imágenes de plantas. Por favor, sube una foto en el laboratorio de ciencia de datos."
+            else:
+                response_text = f"He entendido que has dicho: {text}. Aún estoy aprendiendo a mantener una conversación."
+
+    except sr.UnknownValueError:
+        print("🚫 El audio no fue claro o estaba vacío.")
+        response_text = "No he podido entender lo que has dicho. Por favor, habla más claro."
+    except sr.RequestError as e:
+        print(f"❌ Error con el servicio de reconocimiento de voz: {e}")
+        response_text = "Hay un problema con el servicio de reconocimiento de voz. Inténtalo más tarde."
+    except Exception as e:
+        print(f"💥 Error inesperado en el procesamiento de audio: {e}")
+        raise HTTPException(500, f"Error procesando el audio: {e}")
+
+    # Convertir la respuesta de texto a audio (MP3)
+    try:
+        tts = gTTS(text=response_text, lang='es', slow=False)
+        mp3_io = io.BytesIO()
+        tts.write_to_fp(mp3_io)
+        mp3_io.seek(0)
+        
+        # Devolver el audio como una respuesta que el navegador puede reproducir
+        return StreamingResponse(mp3_io, media_type="audio/mpeg")
+
+    except Exception as e:
+        print(f"💥 Error generando el audio de respuesta: {e}")
+        raise HTTPException(500, f"Error generando la respuesta de audio: {e}")

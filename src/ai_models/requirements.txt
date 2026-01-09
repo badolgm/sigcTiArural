@@ -1,18 +1,10 @@
-# ==========================
-# API IA (FastAPI)
-# ==========================
 fastapi==0.115.5
 uvicorn[standard]==0.32.0
-python-multipart>=0.0.9
-
-# ==========================
-# Machine Learning
-# ==========================
-tensorflow>=2.15.0
+python-multipart
+requests>=2.31
 numpy>=1.24
 Pillow>=10.0
-
-# ==========================
-# Utilidades
-# ==========================
-requests>=2.31
+tensorflow>=2.15.0
+SpeechRecognition
+gTTS
+pydub

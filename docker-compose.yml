@@ -1,30 +1,70 @@
-# docker-compose — Desarrollo local con contenedores
-# Servicios: ai_service (FastAPI) y frontend (Nginx)
+version: '3.9'
 
-version: "3.9"
 services:
-  ai_service:
+  # Servicio de Base de Datos (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: sigct_db
+    environment:
+      MYSQL_ROOT_PASSWORD: 'rootpassword'
+      MYSQL_DATABASE: 'sigct_db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+  # Servicio de Backend (Django)
+  backend:
     build:
-      context: .
-      dockerfile: src/backend/ai_service/Dockerfile
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: sigct_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./src/backend:/app
     ports:
       - "8000:8000"
     environment:
-      PYTHONUNBUFFERED: "1"
-    volumes:
-      - ./data/logs:/app/data/logs
+      - DB_NAME=sigct_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_HOST=db
+    depends_on:
+      - db
     restart: unless-stopped
 
+  # Servicio de IA (FastAPI)
+  ai_service:
+    build:
+      context: ./src/ai_models
+      dockerfile: Dockerfile
+    container_name: sigct_ai_service
+    # El comando se define en el Dockerfile del ai_service
+    # command: uvicorn fastapi_app:app --host 0.0.0.0 --port 8081 --reload
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./src/ai_models:/app
+    restart: unless-stopped
+
+  # Servicio de Frontend (React + Vite)
   frontend:
     build:
       context: ./src/frontend
       dockerfile: Dockerfile
       args:
-        # Ajusta estos endpoints para tu entorno local o cloud
-        VITE_API_URL: "http://localhost:8000"
-        VITE_AI_API_BASE: "http://localhost:8000"
+        VITE_API_URL: "http://backend:8000" # Apunta al backend de Django DENTRO de la red Docker
+        VITE_AI_API_BASE: "http://ai_service:8081" # Apunta al AI Service DENTRO de la red Docker
+    container_name: sigct_frontend
     ports:
-      - "5175:80"
+      - "5173:5173" # Mapea al puerto de desarrollo de Vite
     depends_on:
+      - backend
       - ai_service
     restart: unless-stopped
+
+volumes:
+  mysql_data:

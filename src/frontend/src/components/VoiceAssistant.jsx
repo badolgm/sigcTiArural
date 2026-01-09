@@ -1,113 +1,108 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
-// Recibimos 'onNavigate' como prop para conectarnos con tu App.jsx
-const VoiceAssistant = ({ onNavigate }) => {
+// La URL base de la API de IA, cargada desde variables de entorno
+const API_BASE = import.meta.env.VITE_AI_API_BASE || 'http://localhost:8081';
+
+const VoiceAssistant = () => {
   const [isListening, setIsListening] = useState(false);
-  const [lastCommand, setLastCommand] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false); // Nuevo estado para la carga
+  const mediaRecorder = useRef(null);
+  const audioChunks = useRef([]);
 
-  // Verificar soporte del navegador
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const synthesis = window.speechSynthesis;
+  const startRecording = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        mediaRecorder.current = new MediaRecorder(stream);
+        mediaRecorder.current.start();
+        
+        mediaRecorder.current.ondataavailable = event => {
+          audioChunks.current.push(event.data);
+        };
 
-  // Si no hay soporte, no renderizamos nada (para no causar errores)
-  if (!SpeechRecognition) return null;
-
-  const recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.lang = 'es-CO';
-
-  const speak = (text) => {
-    synthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'es-CO';
-    synthesis.speak(utterance);
+        setIsListening(true);
+      })
+      .catch(err => {
+        console.error("Error al acceder al micrófono:", err);
+        alert("No se pudo acceder al micrófono. Por favor, verifica los permisos en tu navegador.");
+      });
   };
 
-  const handleCommand = (command) => {
-    const lower = command.toLowerCase();
-    setLastCommand(command);
+  const stopRecordingAndProcess = () => {
+    if (mediaRecorder.current) {
+      mediaRecorder.current.onstop = async () => {
+        setIsProcessing(true); // Empezar a mostrar que está procesando
 
-    // --- CEREBRO COMPATIBLE CON TU MENÚ ---
-    
-    // 1. Navegación (Usando las claves de tu switch en App.jsx)
-    if (lower.includes('dashboard') || lower.includes('inicio')) {
-      speak('Yendo al Dashboard.');
-      onNavigate('dashboard');
-    }
-    else if (lower.includes('laboratorio')) {
-      speak('Abriendo catálogo de laboratorios.');
-      onNavigate('labs');
-    }
-    else if (lower.includes('matemática')) {
-      speak('Abriendo matemáticas avanzadas.');
-      onNavigate('advanced-math');
-    }
-    else if (lower.includes('inteligencia') || lower.includes('ia')) {
-      speak('Abriendo módulo de predicción.');
-      onNavigate('ai');
-    }
-    else if (lower.includes('documentación') || lower.includes('docs')) {
-      speak('Abriendo documentación maestra.');
-      onNavigate('docs-masterdoc');
-    }
+        const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
+        audioChunks.current = [];
 
-    // 2. Comandos Generales
-    else if (lower.includes('hola')) {
-      speak('Hola Bernardo. Sistema listo. ¿A dónde vamos?');
-    }
-    else if (lower.includes('estado')) {
-      speak('El sistema está operativo. Revisa el dashboard para detalles.');
-    }
-    else {
-      speak('No reconocí ese comando. Intenta decir: Ir al Dashboard.');
+        const formData = new FormData();
+        formData.append("audio_file", audioBlob, "recording.webm");
+
+        try {
+          const response = await fetch(`${API_BASE}/assist`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.statusText}`);
+          }
+
+          const responseAudioBlob = await response.blob();
+          const responseAudioUrl = URL.createObjectURL(responseAudioBlob);
+          const audio = new Audio(responseAudioUrl);
+          audio.play();
+
+        } catch (error) {
+          console.error("Error al procesar el audio:", error);
+          // Opcional: podrías usar TTS local para decir el error
+        } finally {
+          setIsProcessing(false); // Terminar la carga
+        }
+      };
+      
+      mediaRecorder.current.stop();
+      setIsListening(false);
+
+      // Detener el stream de audio para que el ícono del micrófono desaparezca del navegador
+      mediaRecorder.current.stream.getTracks().forEach(track => track.stop());
     }
   };
 
   const toggleListen = () => {
     if (isListening) {
-      recognition.stop();
-      setIsListening(false);
+      stopRecordingAndProcess();
     } else {
-      try {
-        recognition.start();
-        setIsListening(true);
-        speak('Te escucho...');
-      } catch (error) {
-        setIsListening(false);
-      }
+      startRecording();
     }
   };
 
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    setIsListening(false);
-    handleCommand(transcript);
-  };
-
-  recognition.onend = () => setIsListening(false);
+  const buttonState = isListening || isProcessing;
+  const buttonColorClass = isListening 
+    ? 'bg-red-900/80 border-red-500 animate-pulse scale-110' 
+    : isProcessing
+      ? 'bg-yellow-900/80 border-yellow-500 animate-spin scale-110'
+      : 'bg-gray-900/90 border-cyan-400 hover:scale-110 hover:shadow-[0_0_20px_#00FFFF]';
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-      {lastCommand && (
-        <div className="bg-black/90 text-cyan-400 px-4 py-2 rounded-lg border border-cyan-500/50 text-sm backdrop-blur mb-2 animate-bounce">
-          " {lastCommand} "
-        </div>
-      )}
-      
+    <div className="fixed bottom-6 right-6 z-50">
       <button
         onClick={toggleListen}
+        disabled={isProcessing}
         className={`
           flex items-center justify-center w-16 h-16 rounded-full border-2 transition-all duration-300 shadow-2xl
-          ${isListening 
-            ? 'bg-red-900/80 border-red-500 animate-pulse scale-110' 
-            : 'bg-gray-900/90 border-cyan-400 hover:scale-110 hover:shadow-[0_0_20px_#00FFFF]'
-          }
+          ${buttonColorClass}
         `}
       >
-        {/* Icono Micrófono */}
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-        </svg>
+        {isProcessing ? (
+          // Icono de carga
+          <svg className="h-8 w-8 text-yellow-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.99988V5.99988M6.34277 6.34277L8.4641 8.4641M2.99988 12H5.99988M6.34277 17.6568L8.4641 15.5355M12 20.9999V17.9999M17.6568 17.6568L15.5355 15.5355M20.9999 12H17.9999M17.6568 6.34277L15.5355 8.4641" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        ) : (
+          // Icono de micrófono
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+        )}
       </button>
     </div>
   );
