@@ -1,7 +1,7 @@
 # Dockerfile para el Backend de Django
 
 # Usa una imagen base de Python
-FROM python:3.11-slim-buster
+FROM python:3.11-slim-bullseye
 
 # Establece variables de entorno para Python
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -13,6 +13,7 @@ WORKDIR /app
 # Instala las dependencias del sistema necesarias
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+    pkg-config \
     build-essential \
     default-libmysqlclient-dev \
     && rm -rf /var/lib/apt/lists/*

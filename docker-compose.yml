@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # Servicio de Base de Datos (MySQL)
   db:
@@ -11,7 +9,7 @@ services:
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped
@@ -60,7 +58,7 @@ services:
         VITE_AI_API_BASE: "http://ai_service:8081" # Apunta al AI Service DENTRO de la red Docker
     container_name: sigct_frontend
     ports:
-      - "5173:5173" # Mapea al puerto de desarrollo de Vite
+      - "5173:80" # Mapea el puerto del host 5173 al puerto 80 de Nginx en el contenedor
     depends_on:
       - backend
       - ai_service

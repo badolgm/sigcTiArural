@@ -1,22 +1,4 @@
 # ======================================================
-# Backend – Servidor de IA (FastAPI)
-# ======================================================
-
-fastapi==0.115.5
-uvicorn[standard]==0.32.0
-python-multipart
-requests>=2.31
-
-
-# ======================================================
-# Procesamiento Numérico y de Imágenes
-# ======================================================
-
-numpy>=1.24
-Pillow>=10.0
-
-
-# ======================================================
 # Backend Principal – Django
 # ======================================================
 
@@ -26,13 +8,9 @@ django-cors-headers>=4.4
 
 
 # ======================================================
-# Motor de IA REAL – TensorFlow
+# Base de Datos y Entorno
 # ======================================================
-# Python fijado en 3.11.9
-# NO se realizarán actualizaciones de Python
-# Compatible y estable en Windows
-
-tensorflow>=2.15.0
-
-
-
+dj-database-url  # Para leer config de BD desde URL
+psycopg2-binary  # Driver para PostgreSQL
+mysqlclient      # Driver para MySQL
+python-dotenv    # Para leer variables de entorno desde .env

@@ -81,7 +81,7 @@ Decisión: Django/React/PostgreSQL/BBB/TensorFlow
 
  Tarea: Desarrollar MASTERDOC_v4.2_DAS.md
 
-Responsable: B. Gómez + Asistente IA
+Responsable: B. Gómez
 Fecha: 02-Nov-2025
 Estado: ✅ Completado
 Archivo: docs/MASTERDOC.md

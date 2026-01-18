@@ -50,9 +50,6 @@ logs/
 # Respaldos locales pesados
 # ==========================
 backups/
-backups/**
-_local_docs_backup/
-_local_docs_backup/**
 *.bak
 docs/**/*.bak
 
@@ -104,12 +101,13 @@ READMEV4.md
 README1.1.md
 
 # ==========================
-# Legacy documentation (local only)
-docs/MASTERDOC*
+# Ignorar reportes maestros en Markdown si son solo locales
+# ==========================
 docs/MASTER_REPORT_*.md
-docs/PLAN_MAESTRO_v*
-docs/README_HEADER.md
-docs/*STATUS_REPORT*.html
+docs/MASTERDOC_v4.2_DAS.md
+docs/MASTERDOC.html
+docs/MASTERDOC_legacy.md
+
 # ==========================
 # Ignorar scripts y reportes locales no destinados a la nube
 # ==========================
