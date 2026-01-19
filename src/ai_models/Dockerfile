@@ -21,7 +21,7 @@ COPY . /app
 
 # Instalar dependencias del AI Service
 # Nota: Asegúrate de añadir 'pydub', 'SpeechRecognition' y 'gTTS' a tu requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --default-timeout=1000 --no-cache-dir -r requirements.txt
 
 # Crear directorios esperados por el servicio
 RUN mkdir -p /app/production_models

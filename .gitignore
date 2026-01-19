@@ -50,6 +50,7 @@ logs/
 # Respaldos locales pesados
 # ==========================
 backups/
+_local_docs_backup/
 *.bak
 docs/**/*.bak
 
@@ -144,4 +145,4 @@ docs/internal/
 
 # Datos y modelos locales (no versionar)
 data/
-src/ai_models/production_models/
+src/ai_models/production_models/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md

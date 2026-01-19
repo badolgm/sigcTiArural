@@ -8,3 +8,5 @@ tensorflow>=2.15.0
 SpeechRecognition
 gTTS
 pydub
+mysql-connector-python
+psycopg2-binary

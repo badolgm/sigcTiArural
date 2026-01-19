@@ -1,20 +1,24 @@
+
 services:
-  # Servicio de Base de Datos (MySQL)
+  # ======================================================
+  # 1. Base de Datos (PostgreSQL v15)
+  # ======================================================
   db:
-    image: mysql:8.0
+    image: postgres:15-alpine
     container_name: sigct_db
     environment:
-      MYSQL_ROOT_PASSWORD: 'rootpassword'
-      MYSQL_DATABASE: 'sigct_db'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
+      POSTGRES_DB: sigct_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
-  # Servicio de Backend (Django)
+  # ======================================================
+  # 2. Backend (Django)
+  # ======================================================
   backend:
     build:
       context: ./src/backend
@@ -30,39 +34,52 @@ services:
       - DB_USER=user
       - DB_PASSWORD=password
       - DB_HOST=db
+      - DB_PORT=5432
+      - DATABASE_URL=postgres://user:password@db:5432/sigct_db
     depends_on:
       - db
     restart: unless-stopped
 
-  # Servicio de IA (FastAPI)
+  # ======================================================
+  # 3. Servicio de IA (FastAPI)
+  # ======================================================
   ai_service:
     build:
       context: ./src/ai_models
       dockerfile: Dockerfile
     container_name: sigct_ai_service
-    # El comando se define en el Dockerfile del ai_service
-    # command: uvicorn fastapi_app:app --host 0.0.0.0 --port 8081 --reload
     ports:
       - "8081:8081"
     volumes:
       - ./src/ai_models:/app
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=sigct_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+    depends_on:
+      - db
     restart: unless-stopped
 
-  # Servicio de Frontend (React + Vite)
+  # ======================================================
+  # 4. Frontend (React + Vite)
+  # ======================================================
   frontend:
     build:
       context: ./src/frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: "http://backend:8000" # Apunta al backend de Django DENTRO de la red Docker
-        VITE_AI_API_BASE: "http://ai_service:8081" # Apunta al AI Service DENTRO de la red Docker
+        # IMPORTANTE: localhost para que el navegador del host conecte
+        VITE_API_URL: "http://localhost:8000"
+        VITE_AI_API_BASE: "http://localhost:8081"
     container_name: sigct_frontend
     ports:
-      - "5173:80" # Mapea el puerto del host 5173 al puerto 80 de Nginx en el contenedor
+      - "5173:80"
     depends_on:
       - backend
       - ai_service
     restart: unless-stopped
 
 volumes:
-  mysql_data:
+  postgres_data:

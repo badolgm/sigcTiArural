@@ -12,5 +12,4 @@ django-cors-headers>=4.4
 # ======================================================
 dj-database-url  # Para leer config de BD desde URL
 psycopg2-binary  # Driver para PostgreSQL
-mysqlclient      # Driver para MySQL
 python-dotenv    # Para leer variables de entorno desde .env
