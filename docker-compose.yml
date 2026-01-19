@@ -1,30 +1,85 @@
-# docker-compose — Desarrollo local con contenedores
-# Servicios: ai_service (FastAPI) y frontend (Nginx)
 
-version: "3.9"
 services:
-  ai_service:
+  # ======================================================
+  # 1. Base de Datos (PostgreSQL v15)
+  # ======================================================
+  db:
+    image: postgres:15-alpine
+    container_name: sigct_db
+    environment:
+      POSTGRES_DB: sigct_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # ======================================================
+  # 2. Backend (Django)
+  # ======================================================
+  backend:
     build:
-      context: .
-      dockerfile: src/backend/ai_service/Dockerfile
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: sigct_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./src/backend:/app
     ports:
       - "8000:8000"
     environment:
-      PYTHONUNBUFFERED: "1"
-    volumes:
-      - ./data/logs:/app/data/logs
+      - DB_NAME=sigct_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DATABASE_URL=postgres://user:password@db:5432/sigct_db
+    depends_on:
+      - db
     restart: unless-stopped
 
+  # ======================================================
+  # 3. Servicio de IA (FastAPI)
+  # ======================================================
+  ai_service:
+    build:
+      context: ./src/ai_models
+      dockerfile: Dockerfile
+    container_name: sigct_ai_service
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./src/ai_models:/app
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=sigct_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # ======================================================
+  # 4. Frontend (React + Vite)
+  # ======================================================
   frontend:
     build:
       context: ./src/frontend
       dockerfile: Dockerfile
       args:
-        # Ajusta estos endpoints para tu entorno local o cloud
+        # IMPORTANTE: localhost para que el navegador del host conecte
         VITE_API_URL: "http://localhost:8000"
-        VITE_AI_API_BASE: "http://localhost:8000"
+        VITE_AI_API_BASE: "http://localhost:8081"
+    container_name: sigct_frontend
     ports:
-      - "5175:80"
+      - "5173:80"
     depends_on:
+      - backend
       - ai_service
     restart: unless-stopped
+
+volumes:
+  postgres_data:

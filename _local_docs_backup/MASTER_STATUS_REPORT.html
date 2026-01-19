@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>SIGC&T Rural — Master Status Report v5.0</title>
+  <style>
+    :root { --bg: #0f172a; --text: #e2e8f0; --accent: #00e5ff; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --panel: #1e293b; }
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 40px; background-color: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    h1, h2, h3 { color: var(--accent); margin-top: 2em; }
+    h1 { border-bottom: 2px solid var(--accent); padding-bottom: 10px; font-size: 2.5rem; }
+    code { background: rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 4px; font-family: 'Consolas', monospace; color: #bfdbfe; }
+    pre { background: #000; padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid #334155; }
+    .card { background-color: var(--panel); border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin-right: 8px; }
+    .bg-success { background-color: rgba(34, 197, 94, 0.2); color: var(--success); border: 1px solid var(--success); }
+    .bg-warning { background-color: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+    .bg-danger { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; }
+    th { color: var(--accent); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>SIGC&T Rural — Master Status & Plan</h1>
+  <p><strong>Fecha:</strong> Noviembre 2025 &nbsp;|&nbsp; <strong>Estado General:</strong> <span class="badge bg-warning">EN CONSTRUCCIÓN (Fase de Integración)</span></p>
+  
+  <div class="card">
+    <h2>1. Resumen Ejecutivo</h2>
+    <p>Este documento consolida la auditoría técnica y define la ruta crítica para la finalización del proyecto. Se ha seleccionado la <strong>Ruta A (Arquitectura Estándar SENA)</strong>, implementando un backend Django robusto para soportar la persistencia de datos y la autenticación, complementado por servicios de IA en FastAPI.</p>
+  </div>
+
+  <h2>2. Estado de Componentes</h2>
+  
+  <div class="card">
+    <h3>🎨 Frontend (La Carrocería)</h3>
+    <span class="badge bg-success">ESTADO: ALTO</span>
+    <p><strong>Tecnología:</strong> React 18 + Vite + TailwindCSS (Tema Neon).</p>
+    <ul>
+      <li>✅ Interfaz visual completa y moderna.</li>
+      <li>✅ Componentes de navegación y laboratorios implementados.</li>
+      <li>⚠️ <strong>Acción Requerida:</strong> Desconectar de datos simulados/externos y conectar a la API local de Django.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🧠 Microservicio IA (El Copiloto)</h3>
+    <span class="badge bg-success">ESTADO: ALTO</span>
+    <p><strong>Tecnología:</strong> FastAPI + TensorFlow/Keras.</p>
+    <ul>
+      <li>✅ Endpoints de inferencia listos (<code>/infer</code>).</li>
+      <li>✅ Sistema de eventos en tiempo real (SSE).</li>
+      <li>⚠️ <strong>Nota:</strong> Requiere modelo <code>.h5</code> en <code>src/ai_models/production_models/</code>.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Backend Principal (El Motor)</h3>
+    <span class="badge bg-danger">ESTADO: CRÍTICO (En Implementación)</span>
+    <p><strong>Tecnología:</strong> Django 4.x + DRF + PostgreSQL (o SQLite en dev).</p>
+    <ul>
+      <li>❌ Archivos base (<code>settings.py</code>, <code>models.py</code>, <code>views.py</code>) detectados vacíos en la auditoría.</li>
+      <li>🚀 <strong>Plan de Acción Inmediato:</strong> Inyectar código base para habilitar ORM y API REST.</li>
+    </ul>
+  </div>
+
+  <h2>3. Plan de Implementación (Ruta A)</h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Fase</th>
+        <th>Tarea</th>
+        <th>Archivos Afectados</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Configuración Base Django</td>
+        <td><code>src/backend/sigct_backend/settings.py</code><br><code>src/backend/sigct_backend/urls.py</code></td>
+        <td>🔄 Pendiente</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Modelo de Datos (Sensores)</td>
+        <td><code>src/backend/api/models.py</code><br><code>src/backend/api/serializers.py</code></td>
+        <td>🔄 Pendiente</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Lógica de Negocio (Vistas)</td>
+        <td><code>src/backend/api/views.py</code><br><code>src/backend/api/urls.py</code></td>
+        <td>🔄 Pendiente</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Conexión Frontend</td>
+        <td><code>src/frontend/src/services/cloud.js</code></td>
+        <td>🔄 Pendiente</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Arquitectura de Directorios Validada</h2>
+  <pre>
+src/
+├── backend/                # Django (Puerto 8000)
+│   ├── sigct_backend/      # Configuración Global
+│   ├── api/                # Endpoints REST (Datos)
+│   └── ai_service/         # FastAPI (Puerto 8000 -> Proxy o Puerto distinto en Prod)
+├── frontend/               # React + Vite (Puerto 5173)
+└── embedded/               # Scripts Python para BeagleBone
+  </pre>
+</div>
+</body>
+</html>

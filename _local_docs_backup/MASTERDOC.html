@@ -1,0 +1,942 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MASTERDOC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-dark.min.css">
+  <style>
+    body { background:#0b1220; color:#eafffb; }
+    .markdown-body {
+      background:#0f1629; border:1px solid #1f2a44; border-radius:12px; padding:28px;
+      box-shadow:0 0 20px rgba(0,229,255,0.15); max-width:1000px; margin:24px auto;
+      line-height:1.75; font-size:16px; letter-spacing:0.2px;
+    }
+    pre code { font-size: 14px; }
+    img { max-width: 100%; }
+  </style>
+</head>
+<body>
+<div class="markdown-body"><h1>ðŸŒ¾ SIGC&amp;T Rural - Documento de Arquitectura de Software (DAS)</h1>
+<p><strong>Sistema Integrado de Gestión en Ciencia y Tecnología Rural</strong><br><em>Proyecto Productivo para el programa de formación en el SENA en Análisis y Desarrollo de Software (ADSO)</em></p>
+<div align="center">
+
+<p><img src="https://img.shields.io/badge/SENA-Colombia-green?style=for-the-badge" alt="SENA">
+<img src="https://img.shields.io/badge/Django-4.2+-092E20?style=for-the-badge&logo=django" alt="Django">
+<img src="https://img.shields.io/badge/React-18+-61DAFB?style=for-the-badge&logo=react" alt="React"></p>
+</div>
+
+<hr>
+<h2>ðŸ&quot;‹ Información del Documento</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Versión</strong></td>
+<td>4.3</td>
+</tr>
+<tr>
+<td><strong>Estado</strong></td>
+<td>Arquitectura Definitiva</td>
+</tr>
+<tr>
+<td><strong>Fecha</strong></td>
+<td>14-Nov-2025</td>
+</tr>
+<tr>
+<td><strong>Autor</strong></td>
+<td>B. Gómez (Asistente: Claude AI)</td>
+</tr>
+<tr>
+<td><strong>Formato</strong></td>
+<td>Markdown + Mermaid (GitHub)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>ðŸ&quot;&#39; Tabla de Contenidos</h2>
+<ul>
+<li><a href="#1-visi%C3%B3n-y-alcance">1. Visión y Alcance</a><ul>
+<li><a href="#11-prop%C3%B3sito-del-sistema">1.1. Propósito del Sistema</a></li>
+<li><a href="#12-objetivos-del-negocio">1.2. Objetivos del Negocio</a></li>
+<li><a href="#13-alcance-y-l%C3%ADmites">1.3. Alcance y Límites</a></li>
+<li><a href="#14-actores-y-roles">1.4. Actores y Roles</a></li>
+</ul>
+</li>
+<li><a href="#2-vistas-de-arquitectura-modelo-c4">2. Vistas de Arquitectura (Modelo C4)</a><ul>
+<li><a href="#21-vista-de-contexto-del-sistema">2.1. Vista de Contexto del Sistema</a></li>
+<li><a href="#22-vista-de-contenedores">2.2. Vista de Contenedores</a></li>
+<li><a href="#23-vista-de-componentes">2.3. Vista de Componentes</a></li>
+<li><a href="#24-vista-de-despliegue">2.4. Vista de Despliegue</a></li>
+</ul>
+</li>
+<li><a href="#3-vista-de-casos-de-uso">3. Vista de Casos de Uso</a></li>
+<li><a href="#4-vista-de-datos">4. Vista de Datos</a><ul>
+<li><a href="#41-modelo-entidad-relaci%C3%B3n">4.1. Modelo Entidad-Relación</a></li>
+<li><a href="#42-diccionario-de-datos">4.2. Diccionario de Datos</a></li>
+</ul>
+</li>
+<li><a href="#5-vista-de-implementaci%C3%B3n">5. Vista de Implementación</a><ul>
+<li><a href="#51-estructura-del-repositorio">5.1. Estructura del Repositorio</a></li>
+<li><a href="#52-backend-cloud">5.2. Backend (Cloud)</a></li>
+<li><a href="#53-frontend-cloud">5.3. Frontend (Cloud)</a></li>
+<li><a href="#54-edge-computing">5.4. Edge Computing</a></li>
+</ul>
+</li>
+<li><a href="#6-arquitectura-de-inteligencia-artificial">6. Arquitectura de Inteligencia Artificial</a><ul>
+<li><a href="#61-pipeline-de-entrenamiento">6.1. Pipeline de Entrenamiento</a></li>
+<li><a href="#62-pipeline-de-inferencia-h%C3%ADbrida">6.2. Pipeline de Inferencia Híbrida</a></li>
+<li><a href="#63-modelo-seleccionado">6.3. Modelo Seleccionado</a></li>
+</ul>
+</li>
+<li><a href="#7-infraestructura-y-servicios">7. Infraestructura y Servicios</a><ul>
+<li><a href="#71-redis-cach%C3%A9">7.1. Redis (Caché)</a></li>
+<li><a href="#72-celery-tareas-as%C3%ADncronas">7.2. Celery (Tareas Asíncronas)</a></li>
+<li><a href="#73-s3minio-almacenamiento">7.3. S3/MinIO (Almacenamiento)</a></li>
+<li><a href="#74-api-gateway-nginx">7.4. API Gateway (Nginx)</a></li>
+</ul>
+</li>
+<li><a href="#8-recursos-y-referencias">8. Recursos y Referencias</a></li>
+</ul>
+<hr>
+<h1>1. Visión y Alcance</h1>
+<h2>1.1. Propósito del Sistema</h2>
+<p><strong>SIGC&amp;T Rural</strong> es una plataforma web híbrida (Cloud/Edge) de propósito académico, científico y social que impulsa la educación técnica aplicada al campo colombiano mediante la integración de:</p>
+<ul>
+<li>ðŸŒ± <strong>Monitoreo agrícola inteligente</strong> con IoT y sensores embebidos</li>
+<li>ðŸ¤– <strong>Diagnóstico de enfermedades de plantas</strong> mediante Inteligencia Artificial</li>
+<li>ðŸ&quot;š <strong>Ecosistema educativo abierto</strong> con recursos digitales y laboratorios virtuales</li>
+<li>ðŸ&quot;¬ <strong>Laboratorio de hardware embebido</strong> (Clúster BeagleBone Black de 3 nodos)</li>
+<li>â˜ï¸ <strong>Arquitectura híbrida Cloud-Edge</strong> para procesamiento distribuido</li>
+</ul>
+<p>El sistema actúa como un <strong>laboratorio digital accesible</strong> desde cualquier institución educativa o centro rural, permitiendo experimentación científica remota, toma de decisiones basadas en datos, y formación técnica de calidad.</p>
+<h3>ðŸŒ Impacto Social</h3>
+<p>El proyecto se alinea con los <strong>Objetivos de Desarrollo Sostenible (ODS)</strong>:</p>
+<ul>
+<li><strong>ODS 2</strong>: Hambre Cero - Optimización de producción agrícola</li>
+<li><strong>ODS 4</strong>: Educación de Calidad - Formación técnica abierta</li>
+<li><strong>ODS 9</strong>: Industria, Innovación e Infraestructura - Tecnología rural</li>
+<li><strong>ODS 17</strong>: Alianzas para lograr los objetivos - Colaboración institucional</li>
+</ul>
+<hr>
+<h2>1.2. Objetivos del Negocio</h2>
+<h3>Objetivos Académicos (SENA - Proyecto Productivo ADSO)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Objetivo</th>
+<th>Descripción</th>
+<th>Criterio de Éxito</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>O-01</strong></td>
+<td>Dashboard Centralizado</td>
+<td>Proveer visualización web de datos de sensores en tiempo real</td>
+<td>Dashboard funcional con latencia &lt;2s</td>
+</tr>
+<tr>
+<td><strong>O-02</strong></td>
+<td>Modelo de IA</td>
+<td>Implementar clasificación de enfermedades de plantas con alta precisión</td>
+<td>Accuracy &gt;85% en dataset de validación</td>
+</tr>
+<tr>
+<td><strong>O-03</strong></td>
+<td>Laboratorio Hardware</td>
+<td>Establecer clúster de 3 BeagleBone Black operacional</td>
+<td>3 nodos comunicados vía MQTT/HTTP</td>
+</tr>
+<tr>
+<td><strong>O-04</strong></td>
+<td>Biblioteca Educativa</td>
+<td>Crear repositorio de recursos educativos curados</td>
+<td>Mínimo 20 recursos categorizados</td>
+</tr>
+<tr>
+<td><strong>O-05</strong></td>
+<td>Cumplimiento ADSO</td>
+<td>Entregar artefactos completos del Proyecto Productivo</td>
+<td>100% de entregables aprobados</td>
+</tr>
+</tbody></table>
+<h3>Objetivos Técnicos</h3>
+<ul>
+<li><strong>Arquitectura Escalable</strong>: Sistema capaz de soportar 100+ nodos Edge sin degradación</li>
+<li><strong>Alta Disponibilidad</strong>: Uptime &gt;99% en componentes Cloud</li>
+<li><strong>Seguridad</strong>: Implementar autenticación JWT, encriptación HTTPS/TLS</li>
+<li><strong>Documentación</strong>: Cobertura completa de código, APIs y procesos</li>
+</ul>
+<hr>
+<h2>1.3. Alcance y Límites</h2>
+<h3>âœ… Dentro del Alcance</h3>
+<table>
+<tr>
+<td width="50%">
+
+<p><strong>Cloud (Plataforma Web)</strong></p>
+<ul>
+<li>Frontend React responsive (mobile-first)</li>
+<li>Backend Django con API RESTful</li>
+<li>Base de datos PostgreSQL + PostGIS</li>
+<li>Autenticación y autorización (roles)</li>
+<li>Dashboard con gráficos en tiempo real</li>
+<li>Sistema de alertas (email/push)</li>
+<li>Módulo de IA (inferencia cloud)</li>
+<li>CRUD de contenido académico</li>
+<li><strong>Redis</strong> para caché y sessions</li>
+<li><strong>Celery</strong> para tareas asíncronas</li>
+<li><strong>S3/MinIO</strong> para almacenamiento de objetos</li>
+</ul>
+</td>
+<td width="50%">
+
+<p><strong>Edge (Laboratorio Físico)</strong></p>
+<ul>
+<li>Clúster 3x BeagleBone Black Rev C</li>
+<li>Broker MQTT (Mosquitto)</li>
+<li>Lectura de sensores (DHT22, humedad suelo)</li>
+<li>Captura de imágenes (cámara USB)</li>
+<li>Inferencia local con TensorFlow Lite</li>
+<li>Sincronización cloud automática</li>
+<li>Lógica de &quot;store-and-forward&quot;</li>
+</ul>
+</td>
+</tr>
+</table>
+
+<p><strong>Inteligencia Artificial</strong></p>
+<ul>
+<li>Modelo CNN para clasificación de enfermedades</li>
+<li>Dataset: PlantVillage (tomate, papa, pimiento)</li>
+<li>Transfer Learning con MobileNetV2</li>
+<li>Modelos: <code>.h5</code> (cloud) y <code>.tflite</code> (edge)</li>
+<li>Pipeline de reentrenamiento documentado</li>
+</ul>
+<p><strong>Contenido Educativo</strong></p>
+<ul>
+<li>Cursos sobre IoT, IA, agricultura 4.0</li>
+<li>Videos tutoriales (embebidos de YouTube)</li>
+<li>Laboratorios virtuales interactivos</li>
+<li>Documentación técnica completa</li>
+<li>Enlaces a recursos externos (SENA, PlantVillage, etc.)</li>
+</ul>
+<h3>âŒ Fuera del Alcance</h3>
+<ul>
+<li>âš ï¸ Creación de hardware personalizado (PCBs, sensores propios)</li>
+<li>âš ï¸ Aplicación móvil nativa (iOS/Android) - solo web responsive</li>
+<li>âš ï¸ Integración directa con SofiaPlus del SENA (fase futura)</li>
+<li>âš ï¸ Comercialización del producto o soporte empresarial</li>
+<li>âš ï¸ Procesamiento de pagos o e-commerce</li>
+<li>âš ï¸ Soporte 24/7 en producción</li>
+</ul>
+<hr>
+<h2>1.4. Actores y Roles</h2>
+<table>
+<thead>
+<tr>
+<th>Actor</th>
+<th>Rol</th>
+<th>Descripción</th>
+<th>Interacciones Principales</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ðŸ&#39;¨â€ðŸŒ¾ <strong>Agricultor</strong></td>
+<td>Usuario Final</td>
+<td>Propietario/operador de cultivo que monitorea producción</td>
+<td>• Ver Dashboard de su proyecto<br>• Recibir alertas de anomalías<br>• Solicitar análisis IA de imágenes<br>• Consultar históricos</td>
+</tr>
+<tr>
+<td>ðŸŽ&quot; <strong>Estudiante SENA</strong></td>
+<td>Aprendiz</td>
+<td>Usuario que consume contenido educativo y experimenta</td>
+<td>• Acceder a Biblioteca de Cursos<br>• Usar Laboratorios Virtuales<br>• Ver tutoriales y videos<br>• Descargar recursos (PDFs, datasets)</td>
+</tr>
+<tr>
+<td>ðŸ&#39;¨â€ðŸ&#39;¼ <strong>Administrador</strong></td>
+<td>Gestor del Sistema</td>
+<td>B. Gómez - Mantiene plataforma y contenido</td>
+<td>• CRUD de Contenido Académico<br>• Gestión de usuarios<br>• Ver logs y métricas<br>• Configurar nodos Edge</td>
+</tr>
+<tr>
+<td>ðŸ–¥ï¸ <strong>Clúster BBB</strong></td>
+<td>Sistema Externo (Hardware)</td>
+<td>3 nodos BeagleBone Black en red local</td>
+<td>• Enviar telemetría vía MQTT<br>• Ejecutar inferencia IA local<br>• Sincronizar con Cloud<br>• Reportar estado (health checks)</td>
+</tr>
+<tr>
+<td>ðŸŒ <strong>PlantVillage</strong></td>
+<td>Sistema Externo (Datos)</td>
+<td>Repositorio académico de Penn State University</td>
+<td>• N/A (uso offline)<br>• Fuente de datasets de entrenamiento</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>2. Vistas de Arquitectura (Modelo C4)</h1>
+<h2>2.1. Vista de Contexto del Sistema</h2>
+<p><strong>Nivel 1 C4</strong>: Muestra el sistema como &quot;caja negra&quot; y sus interacciones con actores y sistemas externos.</p>
+<div class="mermaid">graph TD
+    subgraph &quot;ðŸ&#39;¥ Actores Humanos&quot;
+        direction TB
+        actor1[ðŸ&#39;¨â€ðŸŒ¾ Agricultor&lt;br/&gt;Monitorea cultivos]
+        actor2[ðŸŽ&quot; Estudiante SENA&lt;br/&gt;Aprende y experimenta]
+        actor3[ðŸ&#39;¨â€ðŸ&#39;¼ Administrador&lt;br/&gt;Gestiona plataforma]
+    end
+
+    subgraph &quot;ðŸŒ¾ Sistema SIGC&amp;T Rural&quot;
+        direction LR
+        C4_Context[&quot;&lt;b&gt;Plataforma Web Híbrida&lt;/b&gt;&lt;br/&gt;Cloud + Edge&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Dashboard IoT&lt;br/&gt;• IA para diagnóstico&lt;br/&gt;• Biblioteca educativa&lt;br/&gt;• Gestión de nodos&quot;]
+    end
+
+    subgraph &quot;ðŸ&quot;— Sistemas Externos&quot;
+        direction TB
+        C4_Sys_BBB[&quot;ðŸ–¥ï¸ &lt;b&gt;Clúster 3-BBB&lt;/b&gt;&lt;br/&gt;Hardware Edge&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Sensores IoT&lt;br/&gt;• Cámara&lt;br/&gt;• IA local TFLite&quot;]
+        C4_Sys_PV[&quot;ðŸŒ &lt;b&gt;PlantVillage&lt;/b&gt;&lt;br/&gt;Penn State Univ.&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Datasets plantas&lt;br/&gt;• Imágenes etiquetadas&quot;]
+        C4_Sys_SENA[&quot;ðŸ&quot;š &lt;b&gt;SENA SofiaPlus&lt;/b&gt;&lt;br/&gt;Plataforma SENA&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Integración futura&lt;br/&gt;• SSO potencial&quot;]
+    end
+
+    actor1 -- &quot;Consulta Dashboard&lt;br/&gt;Recibe Alertas&lt;br/&gt;(HTTPS)&quot; --&gt; C4_Context
+    actor2 -- &quot;Consume Cursos&lt;br/&gt;Usa Labs Virtuales&lt;br/&gt;(HTTPS)&quot; --&gt; C4_Context
+    actor3 -- &quot;Administra&lt;br/&gt;Contenido/Usuarios&lt;br/&gt;(HTTPS)&quot; --&gt; C4_Context
+    
+    C4_Context -- &quot;Descarga Datasets&lt;br/&gt;(Offline, HTTP)&quot; --&gt; C4_Sys_PV
+    C4_Sys_BBB -- &quot;Envía Telemetría&lt;br/&gt;(MQTT/HTTPS)&lt;br/&gt;Sube Imágenes&quot; --&gt; C4_Context
+    
+    C4_Context -. &quot;Integración Futura&lt;br/&gt;(OAuth 2.0)&quot; .-&gt; C4_Sys_SENA
+
+    style C4_Context fill:#2e8b57,stroke:#fff,stroke-width:3px,color:#fff
+    style C4_Sys_BBB fill:#ff6f00,stroke:#fff,stroke-width:2px
+    style C4_Sys_PV fill:#4285f4,stroke:#fff,stroke-width:2px
+    style C4_Sys_SENA fill:#ffd700,stroke:#333,stroke-width:2px
+</div>
+<hr>
+<h2>2.2. Vista de Contenedores</h2>
+<p><strong>Nivel 2 C4</strong>: Descompone el sistema en sus componentes principales (contenedores de software).</p>
+<div class="mermaid">graph TB
+    subgraph &quot;ðŸŒ Internet / Usuarios&quot;
+        actor1[&quot;ðŸ&#39;¤ Usuario Final&lt;br/&gt;(Navegador Web)&lt;br/&gt;Chrome / Firefox / Safari&quot;]
+    end
+
+    subgraph &quot;â˜ï¸ Cloud Infrastructure (Render / Railway)&quot;
+        direction TB
+        
+        subgraph &quot;Frontend Layer&quot;
+            WebApp[&quot;âš›ï¸ &lt;b&gt;React SPA&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Vite Build&lt;br/&gt;• TailwindCSS&lt;br/&gt;• React Router&lt;br/&gt;• Axios Client&lt;br/&gt;• WebSocket Client&quot;]
+        end
+        
+        subgraph &quot;Backend Layer&quot;
+            direction LR
+            
+            APIGateway[&quot;ðŸšª &lt;b&gt;API Gateway&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Nginx Reverse Proxy&lt;br/&gt;• Rate Limiting&lt;br/&gt;• SSL Termination&quot;]
+            
+            subgraph &quot;Django Services&quot;
+                direction TB
+                AuthService[&quot;ðŸ&quot;&#39; &lt;b&gt;Auth Service&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• JWT Authentication&lt;br/&gt;• User Management&lt;br/&gt;• Role-Based Access&quot;]
+                
+                APIServer[&quot;ðŸ&quot;¡ &lt;b&gt;API Service&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Django REST Framework&lt;br/&gt;• Proyectos CRUD&lt;br/&gt;• Nodos/Sensores CRUD&lt;br/&gt;• Lecturas IoT&quot;]
+                
+                IoTService[&quot;ðŸ&quot;¡ &lt;b&gt;IoT Telemetry&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• MQTT Bridge&lt;br/&gt;• Data Validation&lt;br/&gt;• Time-Series Storage&lt;br/&gt;• WebSocket Broadcast&quot;]
+                
+                ImageService[&quot;ðŸ–¼ï¸ &lt;b&gt;Image Processing&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Upload Handler&lt;br/&gt;• Validation&lt;br/&gt;• Resize/Optimize&lt;br/&gt;• S3 Upload&quot;]
+                
+                LabsService[&quot;ðŸ§ª &lt;b&gt;Labs Service&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Contenido Académico&lt;br/&gt;• Laboratorios Virtuales&lt;br/&gt;• CRUD Recursos&quot;]
+            end
+            
+            AIService[&quot;ðŸ¤– &lt;b&gt;AI Service&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• TensorFlow Serving&lt;br/&gt;• Modelo .h5&lt;br/&gt;• Endpoint /classify/&lt;br/&gt;• Result Storage&quot;]
+            
+            WorkerService[&quot;âš™ï¸ &lt;b&gt;Celery Workers&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Async Tasks&lt;br/&gt;• Email Notifications&lt;br/&gt;• Data Aggregation&lt;br/&gt;• Scheduled Jobs&quot;]
+        end
+        
+        subgraph &quot;Data &amp; Cache Layer&quot;
+            direction LR
+            
+            Database[(&quot;ðŸ&#39;¾ &lt;b&gt;PostgreSQL 15&lt;/b&gt;&lt;br/&gt;+ PostGIS&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Usuarios&lt;br/&gt;• Proyectos&lt;br/&gt;• Nodos/Sensores&lt;br/&gt;• Lecturas (TSDB)&lt;br/&gt;• Análisis IA&lt;br/&gt;• Contenido&quot;)]
+            
+            Redis[(&quot;ðŸ&quot;´ &lt;b&gt;Redis 7&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Session Cache&lt;br/&gt;• Query Cache&lt;br/&gt;• Celery Broker&lt;br/&gt;• Rate Limit Store&quot;)]
+            
+            S3Storage[(&quot;ðŸ&quot;¦ &lt;b&gt;S3 / MinIO&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Imágenes Usuarios&lt;br/&gt;• Modelos IA (.h5)&lt;br/&gt;• Logs Persistentes&lt;br/&gt;• Backups DB&quot;)]
+        end
+    end
+
+    subgraph &quot;ðŸ  Edge Computing (Laboratorio - LAN)&quot;
+        direction TB
+        
+        subgraph &quot;BBB-01: Gateway Node&quot;
+            MQTT_Broker[&quot;ðŸ&quot;¡ &lt;b&gt;Mosquitto MQTT&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Broker Local&lt;br/&gt;• Port 1883&lt;br/&gt;• Topic Management&quot;]
+            
+            Gateway_Sync[&quot;ðŸ&quot;„ &lt;b&gt;Sync Service&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• MQTT Subscriber&lt;br/&gt;• Store-and-Forward&lt;br/&gt;• HTTPS Client&lt;br/&gt;• Systemd Daemon&quot;]
+        end
+        
+        subgraph &quot;BBB-02: IA Edge Node&quot;
+            Edge_AI_API[&quot;ðŸ§  &lt;b&gt;Flask API&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• /classify_local&lt;br/&gt;• Port 5000&lt;br/&gt;• TensorFlow Lite&quot;]
+            
+            TFLite_Model[&quot;ðŸ&quot;¦ &lt;b&gt;Model TFLite&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• model.tflite&lt;br/&gt;• labels.txt&lt;br/&gt;• ARM Optimized&quot;]
+        end
+        
+        subgraph &quot;BBB-03: Sensor Node&quot;
+            Sensor_Reader[&quot;ðŸ&quot;¡ &lt;b&gt;Sensor Reader&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Adafruit_BBIO&lt;br/&gt;• DHT22 Driver&lt;br/&gt;• ADC Reader&lt;br/&gt;• MQTT Publisher&quot;]
+            
+            Camera_Service[&quot;ðŸ&quot;· &lt;b&gt;Camera Capture&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• OpenCV&lt;br/&gt;• V4L2 Driver&lt;br/&gt;• HTTP POST&lt;br/&gt;• Scheduled (30min)&quot;]
+        end
+    end
+
+    %% Conexiones Usuario - Frontend
+    actor1 -- &quot;HTTPS:443&lt;br/&gt;TLS 1.3&quot; --&gt; WebApp
+    
+    %% Conexiones Frontend - Backend
+    WebApp -- &quot;REST API&lt;br/&gt;HTTPS&quot; --&gt; APIGateway
+    WebApp -- &quot;WebSocket&lt;br/&gt;WSS&quot; --&gt; APIGateway
+    
+    %% API Gateway a Servicios
+    APIGateway --&gt; AuthService
+    APIGateway --&gt; APIServer
+    APIGateway --&gt; IoTService
+    APIGateway --&gt; ImageService
+    APIGateway --&gt; LabsService
+    APIGateway --&gt; AIService
+    
+    %% Servicios a Base de Datos
+    AuthService -- &quot;SQL&quot; --&gt; Database
+    APIServer -- &quot;SQL&quot; --&gt; Database
+    IoTService -- &quot;SQL&lt;br/&gt;(TSDB)&quot; --&gt; Database
+    ImageService -- &quot;SQL&quot; --&gt; Database
+    LabsService -- &quot;SQL&quot; --&gt; Database
+    AIService -- &quot;SQL&quot; --&gt; Database
+    
+    %% Servicios a Redis
+    AuthService -- &quot;Session&lt;br/&gt;Cache&quot; --&gt; Redis
+    APIServer -- &quot;Query&lt;br/&gt;Cache&quot; --&gt; Redis
+    IoTService -- &quot;Pub/Sub&quot; --&gt; Redis
+    
+    %% Servicios a S3
+    ImageService -- &quot;Upload&lt;br/&gt;Images&quot; --&gt; S3Storage
+    AIService -- &quot;Load&lt;br/&gt;Models&quot; --&gt; S3Storage
+    
+    %% Celery
+    APIServer -- &quot;Queue&lt;br/&gt;Tasks&quot; --&gt; Redis
+    Redis -- &quot;Consume&lt;br/&gt;Tasks&quot; --&gt; WorkerService
+    WorkerService -- &quot;Read/Write&quot; --&gt; Database
+    
+    %% Edge - Gateway
+    Sensor_Reader -- &quot;MQTT Publish&lt;br/&gt;sigct/sensors/#&quot; --&gt; MQTT_Broker
+    Camera_Service -- &quot;HTTP POST&lt;br/&gt;Image Binary&quot; --&gt; Edge_AI_API
+    
+    Edge_AI_API -- &quot;TFLite&lt;br/&gt;Inference&quot; --&gt; TFLite_Model
+    Edge_AI_API -- &quot;MQTT Publish&lt;br/&gt;sigct/ai/results&quot; --&gt; MQTT_Broker
+    
+    MQTT_Broker -- &quot;Subscribe&lt;br/&gt;All Topics&quot; --&gt; Gateway_Sync
+    
+    %% Edge - Cloud
+    Gateway_Sync -- &quot;HTTPS POST&lt;br/&gt;/api/v1/readings/&lt;br/&gt;X-API-Key&quot; --&gt; APIGateway
+    
+    %% Estilos
+    style WebApp fill:#61dafb,stroke:#000,stroke-width:2px
+    style APIGateway fill:#4a5568,stroke:#fff,stroke-width:2px,color:#fff
+    style AuthService fill:#805ad5,stroke:#fff,stroke-width:2px,color:#fff
+    style APIServer fill:#0c4b33,stroke:#fff,stroke-width:2px,color:#fff
+    style IoTService fill:#ed8936,stroke:#fff,stroke-width:2px,color:#fff
+    style ImageService fill:#38b2ac,stroke:#fff,stroke-width:2px,color:#fff
+    style LabsService fill:#9f7aea,stroke:#fff,stroke-width:2px,color:#fff
+    style AIService fill:#ff6f00,stroke:#fff,stroke-width:2px
+    style WorkerService fill:#e53e3e,stroke:#fff,stroke-width:2px,color:#fff
+    style Database fill:#336791,stroke:#fff,stroke-width:2px,color:#fff
+    style Redis fill:#dc2626,stroke:#fff,stroke-width:2px,color:#fff
+    style S3Storage fill:#f59e0b,stroke:#000,stroke-width:2px
+    style MQTT_Broker fill:#3c5a99,stroke:#fff,stroke-width:2px,color:#fff
+    style Gateway_Sync fill:#ffa500,stroke:#000,stroke-width:2px
+    style Edge_AI_API fill:#000,stroke:#fff,stroke-width:2px,color:#fff
+    style TFLite_Model fill:#ff6f00,stroke:#fff,stroke-width:2px
+    style Sensor_Reader fill:#4444ff,stroke:#fff,stroke-width:2px,color:#fff
+    style Camera_Service fill:#06b6d4,stroke:#fff,stroke-width:2px,color:#fff
+</div>
+<h3>Descripción de Contenedores</h3>
+<table>
+<thead>
+<tr>
+<th>Contenedor</th>
+<th>Tecnología</th>
+<th>Propósito</th>
+<th>Puerto</th>
+<th>Dependencias</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>React SPA</strong></td>
+<td>Vite + React 18 + TailwindCSS</td>
+<td>Interfaz de usuario, renderizado en navegador</td>
+<td>443 (HTTPS)</td>
+<td>API Gateway</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>Nginx 1.24</td>
+<td>Reverse proxy, SSL termination, rate limiting</td>
+<td>443 → 8000</td>
+<td>Todos los servicios Django</td>
+</tr>
+<tr>
+<td><strong>Auth Service</strong></td>
+<td>Django 4 + JWT</td>
+<td>Autenticación, autorización, gestión de usuarios</td>
+<td>8000 (interno)</td>
+<td>PostgreSQL, Redis</td>
+</tr>
+<tr>
+<td><strong>API Service</strong></td>
+<td>Django REST Framework</td>
+<td>CRUD de Proyectos, Nodos, Sensores, Lecturas</td>
+<td>8000 (interno)</td>
+<td>PostgreSQL, Redis</td>
+</tr>
+<tr>
+<td><strong>IoT Telemetry</strong></td>
+<td>Django Channels + WebSockets</td>
+<td>Recepción MQTT, broadcast en tiempo real</td>
+<td>8000 (interno)</td>
+<td>PostgreSQL, Redis</td>
+</tr>
+<tr>
+<td><strong>Image Processing</strong></td>
+<td>Django + Pillow</td>
+<td>Validación, resize, upload a S3</td>
+<td>8000 (interno)</td>
+<td>PostgreSQL, S3</td>
+</tr>
+<tr>
+<td><strong>Labs Service</strong></td>
+<td>Django REST Framework</td>
+<td>Gestión de contenido académico</td>
+<td>8000 (interno)</td>
+<td>PostgreSQL</td>
+</tr>
+<tr>
+<td><strong>AI Service</strong></td>
+<td>TensorFlow 2.15 + Keras</td>
+<td>Inferencia de modelos de clasificación</td>
+<td>8000 (interno)</td>
+<td>PostgreSQL, S3</td>
+</tr>
+<tr>
+<td><strong>Celery Workers</strong></td>
+<td>Celery 5 + Python</td>
+<td>Tareas asíncronas (emails, agregación)</td>
+<td>N/A</td>
+<td>PostgreSQL, Redis</td>
+</tr>
+<tr>
+<td><strong>PostgreSQL</strong></td>
+<td>PostgreSQL 15 + PostGIS</td>
+<td>Almacenamiento persistente relacional</td>
+<td>5432 (interno)</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Redis</strong></td>
+<td>Redis 7</td>
+<td>Cache, session store, Celery broker</td>
+<td>6379 (interno)</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>S3 / MinIO</strong></td>
+<td>AWS S3 / MinIO</td>
+<td>Almacenamiento de objetos (imágenes, modelos)</td>
+<td>443 / 9000</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Mosquitto MQTT</strong></td>
+<td>Mosquitto 2.x</td>
+<td>Broker MQTT local en Edge</td>
+<td>1883 (LAN)</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Gateway Sync</strong></td>
+<td>Python 3.10 + Paho-MQTT</td>
+<td>Sincronización Edge → Cloud</td>
+<td>N/A</td>
+<td>MQTT Broker, API Gateway</td>
+</tr>
+<tr>
+<td><strong>Flask IA Edge</strong></td>
+<td>Flask + TensorFlow Lite</td>
+<td>Inferencia local de baja latencia</td>
+<td>5000 (LAN)</td>
+<td>TFLite Model</td>
+</tr>
+<tr>
+<td><strong>Sensor Reader</strong></td>
+<td>Python + Adafruit_BBIO</td>
+<td>Lectura de sensores físicos</td>
+<td>N/A</td>
+<td>MQTT Broker</td>
+</tr>
+<tr>
+<td><strong>Camera Capture</strong></td>
+<td>Python + OpenCV</td>
+<td>Captura y envío de imágenes</td>
+<td>N/A</td>
+<td>Flask IA Edge</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>2.3. Vista de Componentes</h2>
+<p><strong>Nivel 3 C4</strong>: Descompone los contenedores principales en sus componentes internos.</p>
+<h3>Frontend (React) - Componentes</h3>
+<div class="mermaid">graph TB
+    subgraph &quot;React Application&quot;
+        App[&quot;&lt;b&gt;App.jsx&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Router Setup&lt;br/&gt;• Auth Context&lt;br/&gt;• Global State&quot;]
+        
+        subgraph &quot;Pages&quot;
+            Dashboard[&quot;&lt;b&gt;Dashboard.jsx&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Proyecto Selector&lt;br/&gt;• Real-time Updates&lt;br/&gt;• WebSocket Connection&quot;]
+            
+            LabCatalog[&quot;&lt;b&gt;LabCatalog.jsx&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Category Navigation&lt;br/&gt;• Resource Listing&lt;br/&gt;• Filter/Search&quot;]
+            
+            AdvancedMathLab[&quot;&lt;b&gt;AdvancedMathLab.jsx&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Interactive Simulators&lt;br/&gt;• Math Parameters&lt;br/&gt;• Result Visualization&quot;]
+            
+            LaboratorioIA[&quot;&lt;b&gt;LaboratorioIA.jsx&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Image Upload&lt;br/&gt;• AI Classification&lt;br/&gt;• Result Display&quot;]
+        end
+        
+        subgraph &quot;Components&quot;
+            ClusterCard[&quot;&lt;b&gt;ClusterCard.jsx&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Node Status&lt;br/&gt;• Health Metrics&lt;br/&gt;• Last Heartbeat&quot;]
+            
+            GlobalChart[&quot;&lt;b&gt;GlobalChart.jsx&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Recharts Integration&lt;br/&gt;• Time-Series Data&lt;br/&gt;• Multi-Sensor View&quot;]
+            
+            SensorCard[&quot;&lt;b&gt;SensorCard.jsx&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Current Value&lt;br/&gt;• Alert Indicator&lt;br/&gt;• Historical Trend&quot;]
+        end
+        
+        subgraph &quot;Services&quot;
+            API[&quot;&lt;b&gt;api.js&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Axios Instance&lt;br/&gt;• JWT Interceptor&lt;br/&gt;• Error Handling&quot;]
+            
+            WS[&quot;&lt;b&gt;websocket.js&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• WebSocket Client&lt;br/&gt;• Reconnection Logic&lt;br/&gt;• Event Dispatcher&quot;]
+        end
+    end
+    
+    App --&gt; Dashboard
+    App --&gt; LabCatalog
+    App --&gt; AdvancedMathLab
+    App --&gt; LaboratorioIA
+    
+    Dashboard --&gt; ClusterCard
+    Dashboard --&gt; GlobalChart
+    Dashboard --&gt; SensorCard
+    
+    Dashboard --&gt; API
+    Dashboard --&gt; WS
+    LaboratorioIA --&gt; API
+    
+    style App fill:#61dafb,stroke:#000,stroke-width:2px
+    style Dashboard fill:#4ade80,stroke:#000,stroke-width:2px
+    style LabCatalog fill:#9f7aea,stroke:#000,stroke-width:2px
+    style AdvancedMathLab fill:#f59e0b,stroke:#000,stroke-width:2px
+    style LaboratorioIA fill:#ff6f00,stroke:#000,stroke-width:2px
+    style ClusterCard fill:#38b2ac,stroke:#000,stroke-width:2px
+    style GlobalChart fill:#3b82f6,stroke:#000,stroke-width:2px
+    style SensorCard fill:#10b981,stroke:#000,stroke-width:2px
+    style API fill:#6366f1,stroke:#000,stroke-width:2px
+    style WS fill:#8b5cf6,stroke:#000,stroke-width:2px
+</div>
+<h3>Backend (Django) - Componentes</h3>
+<div class="mermaid">graph TB
+    subgraph &quot;Django Backend Services&quot;
+        direction TB
+        
+        subgraph &quot;Auth Service Components&quot;
+            AuthViews[&quot;&lt;b&gt;AuthViews&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• RegisterView&lt;br/&gt;• LoginView&lt;br/&gt;• RefreshTokenView&quot;]
+            
+            AuthSerializers[&quot;&lt;b&gt;Serializers&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• UserSerializer&lt;br/&gt;• TokenSerializer&lt;br/&gt;• RegisterSerializer&quot;]
+            
+            CustomUser[&quot;&lt;b&gt;CustomUser Model&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• AbstractUser&lt;br/&gt;• Role Field&lt;br/&gt;• Permissions&quot;]
+        end
+        
+        subgraph &quot;API Service Components&quot;
+            APIViews[&quot;&lt;b&gt;ViewSets&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• ProyectoViewSet&lt;br/&gt;• NodoViewSet&lt;br/&gt;• SensorViewSet&lt;br/&gt;• LecturaViewSet&quot;]
+            
+            APISerializers[&quot;&lt;b&gt;Serializers&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• ProyectoSerializer&lt;br/&gt;• NodoSerializer&lt;br/&gt;• LecturaSensorSerializer&quot;]
+            
+            APIModels[&quot;&lt;b&gt;Models&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Proyecto&lt;br/&gt;• NodoEdge&lt;br/&gt;• Sensor&lt;br/&gt;• LecturaSensor&quot;]
+            
+            Filters[&quot;&lt;b&gt;Filters&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• DjangoFilterBackend&lt;br/&gt;• Date Range&lt;br/&gt;• Sensor Type&quot;]
+            
+            Permissions[&quot;&lt;b&gt;Permissions&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• IsOwnerOrAdmin&lt;br/&gt;• IsAuthenticated&lt;br/&gt;• RoleBasedAccess&quot;]
+        end
+        
+        subgraph &quot;IoT Telemetry Components&quot;
+            IoTConsumer[&quot;&lt;b&gt;WebSocket Consumer&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Django Channels&lt;br/&gt;• Group Management&lt;br/&gt;• Broadcast Updates&quot;]
+            
+            IoTViews[&quot;&lt;b&gt;Telemetry Views&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• CreateReadingView&lt;br/&gt;• LatestReadingsView&lt;br/&gt;• HistoricalDataView&quot;]
+            
+            MQTTBridge[&quot;&lt;b&gt;MQTT Bridge&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Paho-MQTT Client&lt;br/&gt;• Topic Subscriber&lt;br/&gt;• Data Validator&quot;]
+        end
+        
+        subgraph &quot;Image Processing Components&quot;
+            ImageUpload[&quot;&lt;b&gt;Upload Handler&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• File Validation&lt;br/&gt;• Size Check&lt;br/&gt;• Format Check&quot;]
+            
+            ImageProcessor[&quot;&lt;b&gt;Processor&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Pillow Resize&lt;br/&gt;• Optimization&lt;br/&gt;• Thumbnail Gen&quot;]
+            
+            S3Uploader[&quot;&lt;b&gt;S3 Uploader&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Boto3 Client&lt;br/&gt;• Presigned URLs&lt;br/&gt;• Error Handling&quot;]
+        end
+        
+        subgraph &quot;AI Service Components&quot;
+            AIViews[&quot;&lt;b&gt;AI Views&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• ClassifyView&lt;br/&gt;• AnalysisListView&lt;br/&gt;• FeedbackView&quot;]
+            
+            InferenceEngine[&quot;&lt;b&gt;Inference Engine&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• TensorFlow Model&lt;br/&gt;• Preprocessing&lt;br/&gt;• Postprocessing&quot;]
+            
+            AIModels[&quot;&lt;b&gt;AI Models&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• AnalisisIA&lt;br/&gt;• ModelMetadata&lt;br/&gt;• FeedbackLog&quot;]
+        end
+        
+        subgraph &quot;Labs Service Components&quot;
+            LabsViews[&quot;&lt;b&gt;Labs Views&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• ContenidoViewSet&lt;br/&gt;• CategoryListView&lt;br/&gt;• ResourceDetailView&quot;]
+            
+            LabsModels[&quot;&lt;b&gt;Labs Models&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• ContenidoAcademico&lt;br/&gt;• Category&lt;br/&gt;• Tag&quot;]
+        end
+        
+        subgraph &quot;Celery Tasks&quot;
+            EmailTasks[&quot;&lt;b&gt;Email Tasks&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• send_alert_email&lt;br/&gt;• send_weekly_report&lt;br/&gt;• send_welcome_email&quot;]
+            
+            DataTasks[&quot;&lt;b&gt;Data Tasks&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• aggregate_daily_stats&lt;br/&gt;• cleanup_old_readings&lt;br/&gt;• generate_reports&quot;]
+            
+            ScheduledTasks[&quot;&lt;b&gt;Scheduled Tasks&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━&lt;br/&gt;• Celery Beat&lt;br/&gt;• Periodic Tasks&lt;br/&gt;• Cron Jobs&quot;]
+        end
+    end
+    
+    %% Auth Flow
+    AuthViews --&gt; AuthSerializers
+    AuthSerializers --&gt; CustomUser
+    
+    %% API Flow
+    APIViews --&gt; APISerializers
+    APIViews --&gt; Filters
+    APIViews --&gt; Permissions
+    APISerializers --&gt; APIModels
+    
+    %% IoT Flow
+    IoTViews --&gt; APIModels
+    MQTTBridge --&gt; IoTConsumer
+    IoTConsumer --&gt; IoTViews
+    
+    %% Image Processing Flow
+    ImageUpload --&gt; ImageProcessor
+    ImageProcessor --&gt; S3Uploader
+    
+    %% AI Flow
+    AIViews --&gt; ImageUpload
+    AIViews --&gt; InferenceEngine
+    InferenceEngine --&gt; AIModels
+    
+    %% Labs Flow
+    LabsViews --&gt; LabsModels
+    
+    %% Celery Flow
+    APIViews -.-&gt;|Queue Tasks| EmailTasks
+    AIViews -.-&gt;|Queue Tasks| EmailTasks
+    ScheduledTasks --&gt; DataTasks
+    
+    style AuthViews fill:#805ad5,stroke:#fff,stroke-width:2px,color:#fff
+    style APIViews fill:#0c4b33,stroke:#fff,stroke-width:2px,color:#fff
+    style IoTViews fill:#ed8936,stroke:#fff,stroke-width:2px,color:#fff
+    style ImageUpload fill:#38b2ac,stroke:#fff,stroke-width:2px,color:#fff
+    style AIViews fill:#ff6f00,stroke:#fff,stroke-width:2px
+    style LabsViews fill:#9f7aea,stroke:#fff,stroke-width:2px,color:#fff
+    style EmailTasks fill:#e53e3e,stroke:#fff,stroke-width:2px,color:#fff
+</div>
+<hr>
+<h2>2.4. Vista de Despliegue</h2>
+<p><strong>Diagrama UML de Despliegue</strong>: Muestra la infraestructura física y software desplegado.</p>
+<div class="mermaid">graph TB
+    subgraph &quot;ðŸŒ Cliente (Anywhere)&quot;
+        client[&quot;ðŸ&#39;» &lt;b&gt;Dispositivo del Usuario&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━━━━━━&lt;br/&gt;• PC / Laptop&lt;br/&gt;• Tablet / Móvil&lt;br/&gt;• Navegador moderno&quot;]
+    end
+
+    subgraph &quot;â˜ï¸ Cloud Infrastructure (PaaS - Render)&quot;
+        direction LR
+        
+        subgraph &quot;ðŸ³ Compute Node (Docker Container)&quot;
+            direction TB
+            artifact_react[&quot;ðŸ&quot;¦ &lt;b&gt;frontend-build/&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• index.html&lt;br/&gt;• bundle.js&lt;br/&gt;• assets/&quot;]
+            artifact_django[&quot;ðŸ&quot;¦ &lt;b&gt;Django App&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Gunicorn WSGI&lt;br/&gt;• Django Channels&lt;br/&gt;• Celery Workers&quot;]
+        end
+        
+        subgraph &quot;ðŸ&#39;¾ Database Node (Managed Service)&quot;
+            node_db[&quot;ðŸ—„ï¸ &lt;b&gt;PostgreSQL 15&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Persistent Volume&lt;br/&gt;• Automated Backups&lt;br/&gt;• Connection Pooling&quot;]
+        end
+        
+        subgraph &quot;ðŸ&quot;´ Cache Node (Managed Service)&quot;
+            node_redis[&quot;ðŸ&quot;´ &lt;b&gt;Redis 7&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• In-Memory Cache&lt;br/&gt;• Pub/Sub&lt;br/&gt;• Celery Broker&quot;]
+        end
+        
+        subgraph &quot;ðŸ&quot;¦ Storage Node (S3)&quot;
+            node_s3[&quot;☁ï¸ &lt;b&gt;AWS S3&lt;/b&gt;&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Bucket: sigct-rural&lt;br/&gt;• Versioning Enabled&lt;br/&gt;• Lifecycle Policies&quot;]
+        end
+        
+        artifact_django -- &quot;TCP/IP:5432&lt;br/&gt;psycopg2&quot; --&gt; node_db
+        artifact_django -- &quot;TCP/IP:6379&lt;br/&gt;redis-py&quot; --&gt; node_redis
+        artifact_django -- &quot;HTTPS:443&lt;br/&gt;boto3&quot; --&gt; node_s3
+    end
+
+    subgraph &quot;ðŸ  Laboratorio Físico (LAN 192.168.1.x)&quot;
+        direction TB
+        
+        subgraph &quot;ðŸ–¥ï¸ BBB-01 (Gateway Node)&quot;
+            hw1[&quot;&lt;b&gt;Hardware:&lt;/b&gt; BeagleBone Black Rev C&lt;br/&gt;&lt;b&gt;OS:&lt;/b&gt; Debian 11 (ARM)&lt;br/&gt;&lt;b&gt;RAM:&lt;/b&gt; 512 MB | &lt;b&gt;Storage:&lt;/b&gt; 8GB eMMC&quot;]
+            artifact_mqtt[&quot;ðŸ&quot;¡ Mosquitto 2.x&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Broker MQTT&lt;br/&gt;• Port 1883&quot;]
+            artifact_sync[&quot;ðŸ&quot;„ sync_service.py&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Paho-MQTT Client&lt;br/&gt;• Requests Library&lt;br/&gt;• Systemd Service&quot;]
+        end
+        
+        subgraph &quot;ðŸ–¥ï¸ BBB-02 (AI Edge Node)&quot;
+            hw2[&quot;&lt;b&gt;Hardware:&lt;/b&gt; BeagleBone Black Rev C&lt;br/&gt;&lt;b&gt;OS:&lt;/b&gt; Debian 11 (ARM)&lt;br/&gt;&lt;b&gt;RAM:&lt;/b&gt; 512 MB | &lt;b&gt;Storage:&lt;/b&gt; 16GB µSD&quot;]
+            artifact_flask[&quot;ðŸŒ¶ï¸ Flask API&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• /classify_local&lt;br/&gt;• Port 5000&quot;]
+            artifact_tflite[&quot;ðŸ§  TensorFlow Lite&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Interpreter ARM&lt;br/&gt;• model.tflite&quot;]
+        end
+        
+        subgraph &quot;ðŸ–¥ï¸ BBB-03 (Sensor Node)&quot;
+            hw3[&quot;&lt;b&gt;Hardware:&lt;/b&gt; BeagleBone Black Rev C&lt;br/&gt;&lt;b&gt;OS:&lt;/b&gt; Debian 11 (ARM)&lt;br/&gt;&lt;b&gt;RAM:&lt;/b&gt; 512 MB | &lt;b&gt;Storage:&lt;/b&gt; 8GB eMMC&quot;]
+            artifact_gpio[&quot;âš¡ sensor_reader.py&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• Adafruit_BBIO&lt;br/&gt;• DHT22 Driver&lt;br/&gt;• I2C/GPIO&quot;]
+            artifact_cam[&quot;ðŸ&quot;· camera_capture.py&lt;br/&gt;━━━━━━━━━━━&lt;br/&gt;• OpenCV&lt;br/&gt;• V4L2 Driver&quot;]
+        end
+    end
+
+    client -- &quot;HTTPS:443&lt;br/&gt;TLS 1.3&quot; --&gt; artifact_react
+    client -- &quot;HTTPS:443 + WSS&lt;br/&gt;API Requests&quot; --&gt; artifact_django
+    
+    artifact_sync -- &quot;HTTPS:443&lt;br/&gt;POST /api/v1/readings/&quot; --&gt; artifact_django
+    
+    artifact_gpio -- &quot;MQTT:1883&lt;br/&gt;Topic: sigct/sensors/#&quot; --&gt; artifact_mqtt
+    artifact_gpio -- &quot;HTTP:5000&lt;br/&gt;POST /classify_local&quot; --&gt; artifact_flask
+    artifact_flask -- &quot;MQTT:1883&lt;br/&gt;Topic: sigct/ai/results&quot; --&gt; artifact_mqtt
+    
+    artifact_cam -.- artifact_gpio
+
+    style client fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style artifact_react fill:#61dafb,stroke:#000,stroke-width:2px
+    style artifact_django fill:#0c4b33,stroke:#fff,stroke-width:2px,color:#fff
+    style node_db fill:#336791,stroke:#fff,stroke-width:2px,color:#fff
+    style node_redis fill:#dc2626,stroke:#fff,stroke-width:2px,color:#fff
+    style node_s3 fill:#f59e0b,stroke:#000,stroke-width:2px
+    style artifact_mqtt fill:#3c5a99,stroke:#fff,stroke-width:2px,color:#fff
+    style artifact_flask fill:#000,stroke:#fff,stroke-width:2px,color:#fff
+    style artifact_tflite fill:#ff6f00,stroke:#fff,stroke-width:2px
+</div>
+<h3>Especificaciones de Hardware</h3>
+<table>
+<thead>
+<tr>
+<th>Nodo</th>
+<th>Hardware</th>
+<th>CPU</th>
+<th>RAM</th>
+<th>Storage</th>
+<th>Red</th>
+<th>Función</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>BBB-01</strong></td>
+<td>BeagleBone Black Rev C</td>
+<td>AM335x 1GHz ARM Cortex-A8</td>
+<td>512 MB DDR3</td>
+<td>8GB eMMC</td>
+<td>Ethernet 10/100</td>
+<td>Gateway MQTT</td>
+</tr>
+<tr>
+<td><strong>BBB-02</strong></td>
+<td>BeagleBone Black Rev C</td>
+<td>AM335x 1GHz ARM Cortex-A8</td>
+<td>512 MB DDR3</td>
+<td>16GB µSD</td>
+<td>Ethernet 10/100</td>
+<td>IA Edge</td>
+</tr>
+<tr>
+<td><strong>BBB-03</strong></td>
+<td>BeagleBone Black Rev C</td>
+<td>AM335x 1GHz ARM Cortex-A8</td>
+<td>512 MB DDR3</td>
+<td>8GB eMMC + µSD</td>
+<td>Ethernet 10/100</td>
+<td>Sensores IoT</td>
+</tr>
+</tbody></table>
+<hr>
+<h1>3. Vista de Casos de Uso</h1>
+<h2>3.1. Casos de Uso Principales</h2>
+<div class="mermaid">graph TB
+    subgraph &quot;ðŸŒ¾ Sistema SIGC&amp;T Rural&quot;
+        U1((&quot;ðŸ&quot;Š Ver Dashboard&lt;br/&gt;de Cultivo&quot;))
+        U2((&quot;ðŸš¨ Recibir Alertas&lt;br/&gt;de IA&quot;))
+        U3((&quot;ðŸ&quot; Solicitar Análisis&lt;br/&gt;IA de Imagen&quot;))
+        U4((&quot;ðŸ&quot;š Acceder a Biblioteca&lt;br/&gt;de Cursos&quot;))
+        U5((&quot;ðŸ§ª Usar Laboratorio&lt;br/&gt;Virtual&quot;))
+        U6((&quot;âš™ï¸ Administrar&lt;br/&gt;Contenido&quot;))
+        U7((&quot;ðŸ&quot;¡ Enviar Telemetría&lt;br/&gt;de Sensor&quot;))
+        U8((&quot;ðŸ¤– Reportar Anomalía&lt;br/&gt;IA-Edge&quot;))
+    end
+
+    actorA[&quot;ðŸ&#39;¨â€ðŸŒ¾&lt;br/&gt;&lt;b&gt;Agricultor&lt;/b&gt;&quot;]
+    actorB[&quot;ðŸŽ&quot;&lt;br/&gt;&lt;b&gt;Estudiante SENA&lt;/b&gt;&quot;]
+    actorC[&quot;ðŸ&#39;¨â€ðŸ&#39;¼&lt;br/&gt;&lt;b&gt;Administrador&lt;/b&gt;&quot;]
+    actorS[&quot;ðŸ–¥ï¸&lt;br/&gt;&lt;b&gt;Clúster BBB&lt;/b&gt;&lt;br/&gt;(Sistema)&quot;]
+
+    actorA --&gt; U1
+    actorA --&gt; U2
+    actorA --&gt; U3
+    actorB --&gt; U4
+    actorB --&gt; U5
+    actorC --&gt; U6
+    actorC --&gt; U1
+    actorS --&gt; U7
+    actorS --&gt; U8
+    
+    U2 -.-&gt; U3
+    U7 -.-&gt; U1
+    U8 -.-&gt; U2
+
+    style U1 fill:#4caf50,stroke:#000,stroke-width:2px
+    style U2 fill:#ff9800,stroke:#000,stroke-width:2px
+    style U3 fill:#2196f3,stroke:#000,stroke-width:2px
+    style U4 fill:#9c27b0,stroke:#fff,stroke-width:2px,color:#fff
+    style U5 fill:#e91e63,stroke:#fff,stroke-width:2px,color:#fff
+    style U6 fill:#607d8b,stroke:#fff,stroke-width:2px,color:#fff
+    style U7 fill:#ff5722,stroke:#fff,stroke-width:2px,color:#fff
+    style U8 fill:#f44336,stroke:#fff,stroke-width:2px,color:#fff
+</div>
+<h2>3.2. Diagramas de Secuencia</h2>
+<h3>Flujo 1: Telemetría (Edge → Cloud → Dashboard)</h3>
+<div class="mermaid">sequenceDiagram
+    participant S as Sensor Reader (BBB-03)
+    participant M as MQTT Broker (BBB-01)
+    participant G as Gateway Sync (BBB-01)
+    participant API as API Gateway (Cloud)
+    participant IoT as IoT Telemetry Service
+    participant DB as PostgreSQL
+    participant WS as WebSocket
+    participant React as Dashboard (React)
+
+    S-&gt;&gt;M: MQTT Publish&lt;br/&gt;Topic: sigct/sensors/bbb03/temperatura&lt;br/&gt;{&quot;valor&quot;: 25.3, &quot;timestamp&quot;: &quot;...&quot;}
+    M-&gt;&gt;G: MQTT Subscribe (Local LAN)
+    G-&gt;&gt;G: Buffer 1 min&lt;br/&gt;Aggregate 6 readings
+    G-&gt;&gt;API: HTTPS POST /api/v1/readings/&lt;br/&gt;X-API-Key: ***&lt;br/&gt;[{...}, {...}, ...]
+    API-&gt;&gt;IoT: Route request
+    IoT-&gt;&gt;IoT: Validate data
+    IoT-&gt;&gt;DB: INSERT INTO Lecturas_Sensores
+    DB--&gt;&gt;IoT: Success
+    IoT-&gt;&gt;WS: Broadcast to channel&lt;br/&gt;proyecto_&lt;uuid&gt;
+    WS--&gt;&gt;React: WebSocket message&lt;br/&gt;{&quot;sensor&quot;: &quot;temp&quot;, &quot;valor&quot;: 25.3}
+    React-&gt;&gt;React: Update chart&lt;br/&gt;No page refresh
+</div>
+<h3>Flujo 2: Análisis IA Cloud (Usuario → Backend)</h3>
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/+esm';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  mermaid.run({ querySelector: '.mermaid' });
+</script>
+</body>
+</html>
