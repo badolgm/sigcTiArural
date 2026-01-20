@@ -13,7 +13,7 @@ import time
 import asyncio
 import os
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -52,6 +52,7 @@ app.add_middleware(
 )
 
 # Configuración dinámica para PostgreSQL (Alineado con tu Guía de Migración)
+# ASEGÚRATE de que estos datos coincidan con tu docker-compose.yml
 db_config = {
     'dbname': 'sigct_db',
     'user': 'user',
@@ -98,7 +99,6 @@ def get_latest_sensor_data_pg():
             conn = psycopg2.connect(**local_config, connect_timeout=3)
             
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        # Nombre de tabla según Django
         query = 'SELECT temperature, humidity FROM api_sensorreading ORDER BY timestamp DESC LIMIT 1'
         cur.execute(query)
         result = cur.fetchone()
@@ -111,7 +111,7 @@ def get_latest_sensor_data_pg():
         if conn: conn.close()
 
 # =========================
-# TensorFlow (Tu lógica original de Inferencia)
+# TensorFlow
 # =========================
 
 model = None
@@ -164,66 +164,83 @@ def health():
         "model_loaded": model_name
     }
 
-@app.post("/infer")
-async def infer(file: Optional[UploadFile] = File(None), url: Optional[str] = None):
-    start = time.time()
-    if file:
-        img_bytes = await file.read()
-        source = f"file:{file.filename}"
-    elif url:
-        r = requests.get(url, timeout=5)
-        img_bytes = r.content
-        source = f"url:{url}"
-    
-    if TF_AVAILABLE and model:
-        CLASS_NAMES = ["Enferma", "Sana"]
-        arr = preprocess_image(img_bytes)
-        preds = model.predict(arr)
-        idx = int(np.argmax(preds))
-        result = {"diagnosis": CLASS_NAMES[idx], "confidence": round(float(np.max(preds)), 4)}
-    else:
-        result = {"diagnosis": "MOCK", "confidence": 0.0}
-
-    latency = time.time() - start
-    return {"data": result, "latency": f"{latency:.3f}s"}
+def generar_audio_error(mensaje):
+    """Función auxiliar para responder por voz ante errores"""
+    tts = gTTS(text=mensaje, lang='es')
+    error_io = io.BytesIO()
+    tts.write_to_fp(error_io)
+    error_io.seek(0)
+    return error_io
 
 # ===================================
 # Asistente de Voz Inteligente (Postgres)
 # ===================================
 
 @app.post("/assist")
-async def assist(audio_file: UploadFile = File(...)):
-    if not VOICE_AVAILABLE:
-        raise HTTPException(503, "Servicio de voz no disponible")
-
-    response_text = "No te he entendido, ¿puedes repetirlo?"
+async def assist(
+    request: Request, 
+    audio: Optional[UploadFile] = File(None),
+    audio_file: Optional[UploadFile] = File(None)
+):
+    """Asistente de voz mejorado: Soporta 'audio' (Nuevo Frontend) y 'audio_file' (Viejo Frontend)"""
     
-    try:
-        # 1. Procesamiento de Audio (WebM del navegador -> WAV)
-        segment = AudioSegment.from_file(io.BytesIO(await audio_file.read()))
-        wav_io = io.BytesIO()
-        segment.export(wav_io, format="wav")
-        wav_io.seek(0)
+    # 1. Unificar entrada de archivo
+    incoming_file = audio or audio_file
+    
+    if not VOICE_AVAILABLE:
+        raise HTTPException(503, "Servicios de voz no configurados en el servidor")
 
+    try:
+        # Debug: Verificar campos recibidos
+        form_data = await request.form()
+        print(f"DEBUG INCOMING: Form keys: {list(form_data.keys())}")
+        
+        # Validar si el archivo llegó
+        if incoming_file is None:
+            print("⚠️ No se recibió archivo de audio (ni 'audio' ni 'audio_file').")
+            raise HTTPException(400, "No se recibió archivo de audio. Verifique el FormData.")
+
+        audio_bytes = await incoming_file.read()
+        if len(audio_bytes) == 0:
+            return {"error": "Audio vacío"}
+
+        webm_audio = io.BytesIO(audio_bytes)
+        
+        # 1. Decodificación
+        try:
+            audio_segment = AudioSegment.from_file(webm_audio)
+            wav_io = io.BytesIO()
+            audio_segment.export(wav_io, format="wav")
+            wav_io.seek(0)
+        except Exception as e:
+            print(f"❌ Error decodificando audio: {e}")
+            return StreamingResponse(generar_audio_error("No pude procesar tu audio"), media_type="audio/mpeg")
+
+        # 2. Reconocimiento de voz
         recognizer = sr.Recognizer()
         with sr.AudioFile(wav_io) as source:
             audio_data = recognizer.record(source)
-            text = recognizer.recognize_google(audio_data, language="es-ES").lower()
+            try:
+                text = recognizer.recognize_google(audio_data, language="es-ES").lower()
+            except sr.UnknownValueError:
+                return StreamingResponse(generar_audio_error("No te entendí bien"), media_type="audio/mpeg")
 
-        # 2. Lógica de Negocio con datos de Postgres
-        if any(word in text for word in ["estado", "nodos", "cultivo", "temperatura"]):
+        # 3. Lógica de respuesta (Conexión a PostgreSQL corregida)
+        response_text = ""
+        if any(word in text for word in ["estado", "nodos", "temperatura", "humedad"]):
+            # USAMOS la función correcta definida arriba
             data = get_latest_sensor_data_pg()
             if data:
                 response_text = (f"El sistema informa: El Nodo 3 detecta {data['temperature']} grados "
                                 f"y {data['humidity']}% de humedad.")
             else:
-                response_text = "Gateway conectado, pero no hay datos recientes en PostgreSQL."
+                response_text = "He conectado a Postgres, pero no encontré datos recientes en la tabla de sensores."
         elif "hola" in text:
-            response_text = "Hola, soy la inteligencia artificial de SIGC&T Rural. ¿Quieres saber el estado del cultivo?"
+            response_text = "Hola Bernardo, soy la inteligencia artificial de SIGC&T Rural. Todo el sistema está operativo."
         else:
-            response_text = f"He entendido: {text}. ¿Deseas consultar la telemetría?"
+            response_text = f"He escuchado: {text}. ¿En qué más puedo ayudarte?"
 
-        # 3. Generar respuesta de audio
+        # 4. Generar respuesta de audio
         tts = gTTS(text=response_text, lang='es')
         mp3_io = io.BytesIO()
         tts.write_to_fp(mp3_io)
@@ -232,7 +249,8 @@ async def assist(audio_file: UploadFile = File(...)):
         return StreamingResponse(mp3_io, media_type="audio/mpeg")
 
     except Exception as e:
-        raise HTTPException(500, f"Error en asistente: {e}")
+        print(f"🔥 Error crítico en /assist: {e}")
+        return {"error": str(e)}
 
 # SSE - Eventos
 @app.get("/events")

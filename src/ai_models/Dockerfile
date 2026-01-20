@@ -1,32 +1,29 @@
-# Dockerfile — FastAPI IA Service (SSE + inferencia + Procesamiento de Audio)
-# Contexto de build: src/ai_models/
+# 1. Definir la imagen base primero
+FROM python:3.11-slim
 
-FROM python:3.11-slim AS base
-
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
+# 2. Establecer el directorio de trabajo
 WORKDIR /app
 
-# --- INTEGRACIÓN SIGC&T: SOPORTE MULTIMEDIA ---
-# Añadimos ffmpeg para procesar audio WebM del navegador y build-essential para librerías de Python
+# 3. Instalar dependencias del sistema (FFmpeg y librerías de audio)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
     ffmpeg \
-    libavcodec-extra \
+    libespeak-dev \
+    gcc \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiamos el contenido de src/ai_models al directorio /app del contenedor
-COPY . /app
-
-# Instalar dependencias del AI Service
-# Nota: Asegúrate de añadir 'pydub', 'SpeechRecognition' y 'gTTS' a tu requirements.txt
+# 4. Copiar los archivos de requerimientos e instalar dependencias de Python
+COPY requirements.txt .
 RUN pip install --default-timeout=1000 --no-cache-dir -r requirements.txt
 
-# Crear directorios esperados por el servicio
-RUN mkdir -p /app/production_models
+# 5. Copiar el resto del código del microservicio
+COPY . .
 
+# 6. Crear directorios necesarios (como los mencionados en fastapi_app.py)
+RUN mkdir -p /app/production_models /app/data/logs
+
+# 7. Exponer el puerto del servicio de IA
 EXPOSE 8081
 
-# Ejecuta el servicio FastAPI con Uvicorn
-CMD ["python", "-m", "uvicorn", "fastapi_app:app", "--host", "0.0.0.0", "--port", "8081", "--reload"]
+# 8. Comando para arrancar la aplicación
+CMD ["uvicorn", "fastapi_app:app", "--host", "0.0.0.0", "--port", "8081"]

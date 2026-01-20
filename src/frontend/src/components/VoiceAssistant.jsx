@@ -1,42 +1,77 @@
 import React, { useState, useRef } from 'react';
 
-// La URL base de la API de IA, cargada desde variables de entorno
 const API_BASE = import.meta.env.VITE_AI_API_BASE || 'http://localhost:8081';
 
 const VoiceAssistant = () => {
   const [isListening, setIsListening] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false); // Nuevo estado para la carga
+  const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
 
-  const startRecording = () => {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
-        mediaRecorder.current = new MediaRecorder(stream);
-        mediaRecorder.current.start();
-        
-        mediaRecorder.current.ondataavailable = event => {
+  const startRecording = async () => {
+    // 1. Limpieza absoluta antes de empezar
+    audioChunks.current = [];
+    
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // Detectar el mejor tipo MIME soportado
+      const mimeTypes = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/ogg;codecs=opus',
+        'audio/mp4'
+      ];
+      
+      let selectedMimeType = 'audio/webm'; // Fallback
+      for (const type of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+          selectedMimeType = type;
+          break;
+        }
+      }
+      
+      console.log(`🎙️ Usando formato de grabación: ${selectedMimeType}`);
+      mediaRecorder.current = new MediaRecorder(stream, { mimeType: selectedMimeType });
+      
+      mediaRecorder.current.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
           audioChunks.current.push(event.data);
-        };
+          console.log(`📦 Datos capturados: ${event.data.size} bytes`);
+        }
+      };
 
-        setIsListening(true);
-      })
-      .catch(err => {
-        console.error("Error al acceder al micrófono:", err);
-        alert("No se pudo acceder al micrófono. Por favor, verifica los permisos en tu navegador.");
-      });
+      // 2. CAMBIO VITAL: Solicitamos datos cada 500ms (no esperamos al final)
+      mediaRecorder.current.start(500);
+      setIsListening(true);
+      console.log("🎙️ Micrófono activado y escuchando...");
+    } catch (err) {
+      console.error("❌ Error al abrir micrófono:", err);
+      alert("Revisa que el navegador tenga permiso para usar el micrófono.");
+    }
   };
 
   const stopRecordingAndProcess = () => {
-    if (mediaRecorder.current) {
+    if (mediaRecorder.current && isListening) {
       mediaRecorder.current.onstop = async () => {
-        setIsProcessing(true); // Empezar a mostrar que está procesando
+        setIsProcessing(true);
+        
+        // 3. Verificación de seguridad: ¿Hay audio?
+        if (audioChunks.current.length === 0) {
+          console.error("⚠️ El buffer de audio está vacío. Abortando...");
+          setIsProcessing(false);
+          return;
+        }
 
-        const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
-        audioChunks.current = [];
+        // Usar el tipo MIME del recorder o fallback
+        const mimeType = mediaRecorder.current.mimeType || 'audio/webm';
+        const audioBlob = new Blob(audioChunks.current, { type: mimeType });
+        console.log(`📤 Enviando archivo de ${audioBlob.size} bytes (${mimeType}) a la IA...`);
 
         const formData = new FormData();
-        formData.append("audio_file", audioBlob, "recording.webm");
+        // Extensión dinámica según el tipo
+        const extension = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+        formData.append("audio", audioBlob, `grabacion.${extension}`);
 
         try {
           const response = await fetch(`${API_BASE}/assist`, {
@@ -44,65 +79,45 @@ const VoiceAssistant = () => {
             body: formData,
           });
 
-          if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.statusText}`);
+          if (response.ok) {
+            const resAudioBlob = await response.blob();
+            console.log("✅ Respuesta de voz recibida del servidor.");
+            const audioUrl = URL.createObjectURL(resAudioBlob);
+            const audio = new Audio(audioUrl);
+            
+            // Forzamos la reproducción e indicamos éxito
+            await audio.play();
+          } else {
+            console.error("❌ Error en la IA:", response.statusText);
           }
-
-          const responseAudioBlob = await response.blob();
-          const responseAudioUrl = URL.createObjectURL(responseAudioBlob);
-          const audio = new Audio(responseAudioUrl);
-          audio.play();
-
         } catch (error) {
-          console.error("Error al procesar el audio:", error);
-          // Opcional: podrías usar TTS local para decir el error
+          console.error("❌ Fallo de conexión:", error);
         } finally {
-          setIsProcessing(false); // Terminar la carga
+          setIsProcessing(false);
+          audioChunks.current = []; // Reset total
         }
       };
-      
+
       mediaRecorder.current.stop();
       setIsListening(false);
-
-      // Detener el stream de audio para que el ícono del micrófono desaparezca del navegador
+      // Liberar el micrófono físicamente
       mediaRecorder.current.stream.getTracks().forEach(track => track.stop());
     }
   };
 
-  const toggleListen = () => {
-    if (isListening) {
-      stopRecordingAndProcess();
-    } else {
-      startRecording();
-    }
-  };
-
-  const buttonState = isListening || isProcessing;
-  const buttonColorClass = isListening 
-    ? 'bg-red-900/80 border-red-500 animate-pulse scale-110' 
-    : isProcessing
-      ? 'bg-yellow-900/80 border-yellow-500 animate-spin scale-110'
-      : 'bg-gray-900/90 border-cyan-400 hover:scale-110 hover:shadow-[0_0_20px_#00FFFF]';
+  const toggleListen = () => isListening ? stopRecordingAndProcess() : startRecording();
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <button
         onClick={toggleListen}
         disabled={isProcessing}
-        className={`
-          flex items-center justify-center w-16 h-16 rounded-full border-2 transition-all duration-300 shadow-2xl
-          ${buttonColorClass}
-        `}
+        className={`w-16 h-16 rounded-full border-2 transition-all flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.5)] ${
+          isListening ? 'bg-red-600 animate-pulse border-white' : 
+          isProcessing ? 'bg-yellow-600 border-yellow-400' : 'bg-gray-900 border-cyan-400'
+        }`}
       >
-        {isProcessing ? (
-          // Icono de carga
-          <svg className="h-8 w-8 text-yellow-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.99988V5.99988M6.34277 6.34277L8.4641 8.4641M2.99988 12H5.99988M6.34277 17.6568L8.4641 15.5355M12 20.9999V17.9999M17.6568 17.6568L15.5355 15.5355M20.9999 12H17.9999M17.6568 6.34277L15.5355 8.4641" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        ) : (
-          // Icono de micrófono
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
-        )}
+        <span className="text-white text-xl">{isProcessing ? '⏳' : isListening ? '⏹️' : '🎤'}</span>
       </button>
     </div>
   );

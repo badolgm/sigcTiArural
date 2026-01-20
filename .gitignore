@@ -98,50 +98,10 @@ docs/diagrams/manifest.json
 READMEV2.md
 READMEV3.md
 READMEV4.md
-README1.1.md
 
 # ==========================
-# Ignorar reportes maestros en Markdown si son solo locales
+# Archivos de Audio/Video Temporales (Tests)
 # ==========================
-docs/MASTER_REPORT_*.md
-docs/MASTERDOC_v4.2_DAS.md
-docs/MASTERDOC.html
-docs/MASTERDOC_legacy.md
-
-# ==========================
-# Ignorar scripts y reportes locales no destinados a la nube
-# ==========================
-audit_project.py
-map_project.py
-reporte_codigo.txt
-auditoria_completa.txt
-
-# ==========================
-# Ignorar planes de trabajo locales (versionados solo en PC)
-# ==========================
-docs/session_plans/SESSION_PLAN_*.md
-
-# ==========================
-# Documentación sensible
-# ==========================
-docs/**/MASTERDOC_*.md
-docs/**/MASTERDOC_*.pdf
-docs/**/MASTERDOC_*.docx
-docs/**/MASTERDOC_*.pptx
-docs/**/MASTERDOC*.html
-docs/**/MASTER_STATUS_REPORT*.html
-
-docs/borradores/
-docs/private/
-docs/internal/
-
-# ==========================
-# Mantener SOLO el MASTERDOC oficial
-# ==========================
-!docs/MASTERDOC.md
-!docs/PLAN_MAESTRO.md
-``
-
-# Datos y modelos locales (no versionar)
-data/
-src/ai_models/production_models/
+*.mp3
+*.webm
+*.wav
