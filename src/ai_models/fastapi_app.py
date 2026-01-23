@@ -85,6 +85,42 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 # Lógica de Datos (Cerebro Nodos)
 # =========================
 
+# --- MEMORIA DE CORTO PLAZO (Contexto) ---
+class ConversationMemory:
+    def __init__(self):
+        self.last_data = None  # Último dato de sensores leído
+        self.last_intent = None # Última intención (ej: "consulta_clima")
+        self.last_response = "" # Última respuesta dada (para repetir)
+
+    def update(self, data=None, intent=None, response=None):
+        if data: self.last_data = data
+        if intent: self.last_intent = intent
+        if response: self.last_response = response
+
+    def get_context_advice(self):
+        """Genera consejo basado en el último dato guardado"""
+        if not self.last_data:
+            return "No tengo datos recientes para analizar."
+        
+        temp = self.last_data.get('temperature', 0)
+        hum = self.last_data.get('humidity', 0)
+        
+        advice = []
+        if temp > 30:
+            advice.append("La temperatura es muy alta. Sugiero activar riego.")
+        elif temp < 10:
+            advice.append("Hace frío, cuidado con las heladas.")
+        else:
+            advice.append("La temperatura es óptima.")
+            
+        if hum < 30:
+            advice.append("La humedad es baja.")
+        
+        return " ".join(advice)
+
+# Instancia global (Simulación de sesión única)
+memory = ConversationMemory()
+
 def get_latest_sensor_data_pg():
     """Consulta optimizada para PostgreSQL - Soporte Dual (Docker/Local)"""
     conn = None
@@ -225,20 +261,48 @@ async def assist(
             except sr.UnknownValueError:
                 return StreamingResponse(generar_audio_error("No te entendí bien"), media_type="audio/mpeg")
 
-        # 3. Lógica de respuesta (Conexión a PostgreSQL corregida)
+        # 3. Lógica de respuesta (Con Inteligencia Contextual)
         response_text = ""
-        if any(word in text for word in ["estado", "nodos", "temperatura", "humedad"]):
-            # USAMOS la función correcta definida arriba
+        intent = "unknown"
+        
+        # Palabras clave
+        is_greeting = any(w in text for w in ["hola", "buenos días", "buenas tardes"])
+        is_sensor_query = any(w in text for w in ["estado", "nodos", "temperatura", "humedad", "clima", "cómo está"])
+        is_followup = any(w in text for w in ["y la humedad", "y el nodo", "qué opinas", "es bueno", "es malo", "analiza"])
+        is_repeat = "repite" in text or "qué dijiste" in text
+
+        if is_greeting:
+            response_text = "Hola, soy la inteligencia artificial de SIGC&T Rural. Puedo informarte sobre el estado de los cultivos."
+            memory.update(intent="greeting", response=response_text)
+            
+        elif is_sensor_query:
             data = get_latest_sensor_data_pg()
             if data:
-                response_text = (f"El sistema informa: El Nodo 3 detecta {data['temperature']} grados "
-                                f"y {data['humidity']}% de humedad.")
+                response_text = (f"El último reporte indica: Temperatura de {data['temperature']} grados "
+                                f"y Humedad del {data['humidity']}%.")
+                memory.update(data=data, intent="sensor_query", response=response_text)
             else:
-                response_text = "He conectado a Postgres, pero no encontré datos recientes en la tabla de sensores."
-        elif "hola" in text:
-            response_text = "Hola Bernardo, soy la inteligencia artificial de SIGC&T Rural. Todo el sistema está operativo."
+                response_text = "Conecté a la base de datos, pero no encontré lecturas recientes."
+                
+        elif is_followup:
+            # Aquí es donde ocurre la MAGIA del contexto
+            if memory.last_data:
+                advice = memory.get_context_advice()
+                response_text = f"Analizando los datos anteriores: {advice}"
+            else:
+                response_text = "No tengo datos recientes en memoria para analizar. Pregúntame primero por el estado de los nodos."
+        
+        elif is_repeat:
+            if memory.last_response:
+                response_text = f"Te decía que: {memory.last_response}"
+            else:
+                response_text = "No he dicho nada todavía."
+
         else:
-            response_text = f"He escuchado: {text}. ¿En qué más puedo ayudarte?"
+            response_text = f"Escuché: {text}. Intenta preguntar por el 'estado del sistema'."
+
+        # Guardar última respuesta por si pide repetir
+        memory.update(response=response_text)
 
         # 4. Generar respuesta de audio
         tts = gTTS(text=response_text, lang='es')

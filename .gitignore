@@ -47,6 +47,11 @@ coverage/
 logs/
 
 # ==========================
+# Datos Locales (Datasets, Logs, etc)
+# ==========================
+data/
+
+# ==========================
 # Respaldos locales pesados
 # ==========================
 backups/
