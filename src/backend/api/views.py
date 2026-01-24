@@ -1,11 +1,27 @@
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from .models import SensorReading
-from .serializers import SensorReadingSerializer
+from .models import SensorReading, Robot, RobotTelemetry, RobotCommand
+from .serializers import SensorReadingSerializer, RobotSerializer, RobotTelemetrySerializer, RobotCommandSerializer
 from django.utils import timezone
 from datetime import timedelta
 import random
+
+class RobotViewSet(viewsets.ModelViewSet):
+    queryset = Robot.objects.all()
+    serializer_class = RobotSerializer
+    permission_classes = [AllowAny]
+
+class RobotTelemetryViewSet(viewsets.ModelViewSet):
+    queryset = RobotTelemetry.objects.all()
+    serializer_class = RobotTelemetrySerializer
+    permission_classes = [AllowAny]
+
+class RobotCommandViewSet(viewsets.ModelViewSet):
+    queryset = RobotCommand.objects.all()
+    serializer_class = RobotCommandSerializer
+    permission_classes = [AllowAny]
 
 class TelemetryHistoryView(APIView):
     permission_classes = [AllowAny]
