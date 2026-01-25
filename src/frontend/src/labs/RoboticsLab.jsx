@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, Suspense } from 'react';
 import Telemetry3DScene from '../components/Telemetry3DScene';
+import ErrorBoundary from '../components/ErrorBoundary';
 import { useRoboticsApi } from '../hooks/useRoboticsApi';
 
 const NEON_COLORS = {
@@ -84,9 +85,11 @@ const RoboticsLab = () => {
         <Section title="Telemetría en Vivo (Backend Django + Three.js)">
           <p className="text-sm text-gray-400 mb-2">Visualizando datos del robot <b>PHYSICS-BOT-01</b> transmitidos al backend.</p>
           <div className="rounded-lg overflow-hidden border relative" style={{ borderColor: '#334155', minHeight: '400px' }}>
-             <Suspense fallback={<div className="text-center p-10">Cargando motor 3D...</div>}>
-                <Telemetry3DScene telemetryData={telemetry} />
-             </Suspense>
+             <ErrorBoundary>
+                <Suspense fallback={<div className="text-center p-10">Cargando motor 3D...</div>}>
+                   <Telemetry3DScene telemetryData={telemetry} />
+                </Suspense>
+             </ErrorBoundary>
              {loadingTelemetry && !telemetry && (
                <div className="absolute top-2 right-2 text-xs text-yellow-400">Esperando datos...</div>
              )}
