@@ -888,3 +888,36 @@ curl http://localhost:8081/health
 - Validar flujo de datos real desde Webots a través del endpoint de telemetría.
 - Refinar visualización de métricas en tiempo real.
 
+---
+
+#### 📅 **24 de Enero 2026 | 10:45 AM - INCIDENTE CRÍTICO**
+**Sesión**: Recuperación de Integridad del Repositorio (.gitignore)
+**Responsable**: Bernardo Gómez + Gemini AI
+**Rama**: `feature/laboratorios-integracion-2026`
+
+##### 🚨 Problema Crítico Identificado
+Se detectó que la carpeta vital `src/frontend/src/data/` (que contiene `lab-data.js`) estaba siendo ignorada por Git de forma silenciosa. Esto causó que el dashboard perdiera las tarjetas de los laboratorios al desplegarse en otros entornos, ya que el archivo de datos no se subía.
+
+**Causa Raíz**:
+Una regla en `.gitignore` estaba mal formulada por exceso de celo:
+```gitignore
+# INCORRECTO:
+data/
+```
+Esta regla es recursiva e ignora **cualquier** carpeta llamada "data" en todo el proyecto, bloqueando inadvertidamente la del frontend.
+
+##### ✅ Solución Aplicada (Recuperación)
+Se modificó la regla en `.gitignore` para usar una **ruta absoluta** ("anclada" a la raíz):
+
+```gitignore
+# CORRECTO:
+/data/
+```
+
+**Resultado de la Intervención**:
+1.  **Seguridad**: La carpeta pesada de datasets (`/data/` en la raíz) sigue protegida y no se sube.
+2.  **Integridad**: La carpeta del frontend (`src/frontend/src/data/`) ahora es rastreada correctamente por Git.
+3.  **Corrección**: Se restauró `lab-data.js` al control de versiones.
+
+##### 💡 Lección Aprendida (Para Sección 24)
+> "Al configurar `.gitignore`, siempre usar la barra inicial (`/carpeta/`) cuando se quiera ignorar algo solo en la raíz. Omitir la barra hace que la regla sea 'greedy' (codiciosa) y elimine carpetas homónimas en subdirectorios vitales."
