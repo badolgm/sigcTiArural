@@ -24,7 +24,6 @@ const TopNav = ({ clusterNodes }) => {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Laboratorios', path: '/labs' },
-    { name: 'Robótica', path: '/labs/robotics' },      // Acceso directo
     { name: 'IA Predictiva', path: '/ai-predictive' },
     { name: 'Docs (v5.0)', path: '/docs/masterdoc' },
   ];

@@ -81,15 +81,25 @@ const RoboticsLab = () => {
           Integración con simuladores reales: Webots (player web), visor URDF y conexión opcional a ROSBridge para interactuar con robots.
         </p>
 
-        {/* NUEVA SECCIÓN: Visualización 3D en Tiempo Real */}
+        {/* NUEVA SECCIÓN: Visualización 3D en Tiempo Real (SAFE MODE v2) */}
         <Section title="Telemetría en Vivo (Backend Django + Three.js)">
           <p className="text-sm text-gray-400 mb-2">Visualizando datos del robot <b>PHYSICS-BOT-01</b> transmitidos al backend.</p>
           <div className="rounded-lg overflow-hidden border relative" style={{ borderColor: '#334155', minHeight: '400px' }}>
+             {/* 
              <ErrorBoundary>
                 <Suspense fallback={<div className="text-center p-10">Cargando motor 3D...</div>}>
                    <Telemetry3DScene telemetryData={telemetry} />
                 </Suspense>
              </ErrorBoundary>
+             */}
+             <div className="flex items-center justify-center h-full p-10 text-gray-400">
+                <div className="text-center">
+                    <p className="text-xl mb-2">🚧</p>
+                    <p>Visualización 3D en mantenimiento.</p>
+                    <p className="text-xs mt-2">Los datos de telemetría se siguen recibiendo: {loadingTelemetry ? 'Conectando...' : (telemetry ? 'Recibiendo datos' : 'Sin conexión')}</p>
+                </div>
+             </div>
+             
              {loadingTelemetry && !telemetry && (
                <div className="absolute top-2 right-2 text-xs text-yellow-400">Esperando datos...</div>
              )}
