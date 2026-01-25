@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copiar archivos del frontend
 COPY package.json package-lock.json* ./
-RUN npm ci || npm install 
+RUN npm install --legacy-peer-deps 
 
 COPY . .
 

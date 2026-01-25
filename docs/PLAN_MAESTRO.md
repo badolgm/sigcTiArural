@@ -197,7 +197,7 @@ gantt
 | Fase 3 | ██████████ 100% | ✅ Completado |
 | Fase 4 | ██████████ 100% | ✅ Completado |
 | Fase 5 | ████░░░░░░ 40% | 🟡 En Progreso |
-| Fase 6 | ░░░░░░░░░░ 0% | 🟡 En Inicio |
+| Fase 6 | ██░░░░░░░░ 20% | 🟢 En Progreso |
 
 ### ⚠️ Riesgos y Mitigaciones
 | Riesgo | Probabilidad | Impacto | Mitigación |
@@ -231,6 +231,7 @@ gantt
 | Documento | Enlace | Propósito |
 |---|---|---|
 | MASTERDOC.md | docs/MASTERDOC.md | Arquitectura completa |
+| robotics_contracts.md | docs/architecture/robotics_contracts.md | Contratos JSON Robótica |
 | README.md | Raíz del proyecto | Introducción y setup |
 | API_REFERENCE.md | docs/API_REFERENCE.md | Documentación de APIs |
 | DEPLOYMENT.md | docs/DEPLOYMENT.md | Guía de despliegue |
