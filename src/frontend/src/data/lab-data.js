@@ -13,12 +13,14 @@ export const labCategories = [
     title: 'Robótica',
     accent: '#00e5ff',
     icon: '🤖',
+    description: 'Control de brazos robóticos, telemetría en tiempo real, gemelos digitales 3D y conexión con ROS2/Webots.',
     sections: [
       {
-        title: 'Plataforma ROS',
+        title: 'Plataforma ROS & Gemelo Digital',
         accent: '#00bcd4',
         links: [
-          { label: '🧪 Abrir Laboratorio (SIGC&T)', to: 'lab-robotics', internal: true },
+          { label: 'Laboratorio de Robótica', to: '/labs/robotics', internal: true },
+          { label: '📄 Contratos de Arquitectura (Docs)', to: '/docs/architecture/robotics_contracts.md', internal: false, href: '/docs/architecture/robotics_contracts.md' },
           { label: 'ROS Wiki', href: 'http://wiki.ros.org/' },
           { label: 'Docs ROS2 (Humble)', href: 'https://docs.ros.org/en/humble/' },
           { label: 'ROSBridge Suite', href: 'https://wiki.ros.org/rosbridge_suite' },
@@ -28,6 +30,8 @@ export const labCategories = [
         title: 'Simulación y Mundos',
         accent: '#00e5ff',
         links: [
+          { label: 'NVIDIA Omniverse', href: 'https://www.nvidia.com/en-us/omniverse/' },
+          { label: 'Newton Physics (GitHub)', href: 'https://github.com/newton-physics/newton.git' },
           { label: 'Gazebo Simulator', href: 'https://gazebosim.org/' },
           { label: 'Gazebo Fuel Worlds', href: 'https://fuel.gazebosim.org/' },
           { label: 'Webots Player (Cloud)', href: 'https://play.webots.cloud/' },
@@ -52,7 +56,7 @@ export const labCategories = [
         title: 'Hardware y Placas',
         accent: '#9fff2f',
         links: [
-          { label: '🧪 Abrir Laboratorio (SIGC&T)', to: 'lab-embedded', internal: true },
+          { label: 'Laboratorio de Hardware', to: 'lab-embedded', internal: true },
           { label: 'BeagleBoard.org', href: 'https://beagleboard.org/' },
           { label: 'BeagleBone Black', href: 'https://beagleboard.org/black' },
           { label: 'Arduino IDE', href: 'https://www.arduino.cc/en/software' },
@@ -279,7 +283,7 @@ export const labCategories = [
     accent: '#ffd32a',
     icon: '📊',
     links: [
-      { label: '🧪 Abrir Laboratorio de Datos (SIGC&T)', to: 'data-lab', internal: true },
+      { label: 'Laboratorio de Datos', to: 'data-lab', internal: true },
       { label: 'Pyodide (Python en Web)', href: 'https://pyodide.org/en/stable/' },
       { label: 'Plotly.js', href: 'https://plotly.com/javascript/' },
       { label: 'GitHub Open Data', href: 'https://github.com/search?q=dataset&type=Repositories' },

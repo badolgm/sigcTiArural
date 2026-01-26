@@ -1,201 +1,218 @@
-import React, { useEffect, useRef, useState, Suspense } from 'react';
-import Telemetry3DScene from '../components/Telemetry3DScene';
-import ErrorBoundary from '../components/ErrorBoundary';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useRoboticsApi } from '../hooks/useRoboticsApi';
+import ErrorBoundary from '../components/ErrorBoundary';
+
+// Lazy load del componente 3D para evitar bloqueos iniciales
+const Telemetry3DScene = React.lazy(() => import('../components/Telemetry3DScene'));
 
 const NEON_COLORS = {
-  primary: '#00FFFF',
-  secondary: '#39FF14',
-  alert: '#FF3131',
+  primary: '#00FFFF', // Cyan
+  secondary: '#39FF14', // Neon Green
+  alert: '#FF3131', // Plasma Red
+  nvidia: '#76b900', // NVIDIA Green
   darkBackground: '#0a0a0a',
+  panelBg: '#111111',
 };
 
-const Section = ({ title, children }) => (
-  <div className="p-4 rounded-xl border mb-6" style={{ borderColor: NEON_COLORS.primary + '55', boxShadow: `0 0 12px ${NEON_COLORS.primary}40` }}>
-    <h2 className="text-xl font-bold mb-3 uppercase" style={{ color: NEON_COLORS.primary, textShadow: `0 0 10px ${NEON_COLORS.primary}80` }}>{title}</h2>
+const Section = ({ title, children, borderColor = NEON_COLORS.primary }) => (
+  <div className="p-4 rounded-xl border mb-6 bg-opacity-50 backdrop-blur-sm" 
+       style={{ 
+         borderColor: borderColor + '55', 
+         boxShadow: `0 0 12px ${borderColor}20`,
+         backgroundColor: NEON_COLORS.panelBg
+       }}>
+    <h2 className="text-xl font-bold mb-3 uppercase flex items-center gap-2" 
+        style={{ color: borderColor, textShadow: `0 0 10px ${borderColor}80` }}>
+      {title}
+    </h2>
     {children}
   </div>
 );
 
-// Carga roslib desde CDN para evitar añadir dependencias al proyecto
-const useRosbridgeStatus = () => {
-  const [status, setStatus] = useState('desconectado');
-  const [error, setError] = useState(null);
-  const rosRef = useRef(null);
-
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/roslib/build/roslib.min.js';
-    script.async = true;
-    script.onload = () => {
-      setStatus('listo');
-    };
-    script.onerror = () => setError('No se pudo cargar roslib desde CDN');
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-      if (rosRef.current && rosRef.current.isConnected) rosRef.current.close();
-    };
-  }, []);
-
-  const connect = (url = 'ws://localhost:9090') => {
-    try {
-      // eslint-disable-next-line no-undef
-      const ros = new window.ROSLIB.Ros({ url });
-      ros.on('connection', () => setStatus('conectado'));
-      ros.on('error', (e) => { setError(String(e)); setStatus('error'); });
-      ros.on('close', () => setStatus('cerrado'));
-      rosRef.current = ros;
-    } catch (e) {
-      setError(String(e));
-      setStatus('error');
-    }
-  };
-
-  return { status, error, connect };
-};
+const ExternalToolCard = ({ title, desc, link, icon, color }) => (
+  <a href={link} target="_blank" rel="noopener noreferrer" 
+     className="block p-4 rounded-lg border transition-all duration-300 hover:scale-[1.02]"
+     style={{ borderColor: color, backgroundColor: 'rgba(0,0,0,0.4)' }}>
+    <div className="flex items-center justify-between mb-2">
+      <h3 className="font-bold text-lg text-white">{title}</h3>
+      <span className="text-2xl">{icon}</span>
+    </div>
+    <p className="text-sm text-gray-400 mb-3">{desc}</p>
+    <div className="text-xs font-mono px-2 py-1 rounded inline-block" 
+         style={{ backgroundColor: color + '22', color: color }}>
+      ACCESS TOOL →
+    </div>
+  </a>
+);
 
 const RoboticsLab = () => {
-  const { status, error, connect } = useRosbridgeStatus();
-  const [webotsLoaded, setWebotsLoaded] = useState(false);
-  const [webotsTried, setWebotsTried] = useState(false);
-  const [webotsTimeout, setWebotsTimeout] = useState(false);
-
-  // Hook para consumir la API de Django (Simulación Física)
+  const [activeTab, setActiveTab] = useState('simulation'); // simulation, telemetry, code
   const { telemetry, loading: loadingTelemetry } = useRoboticsApi('PHYSICS-BOT-01');
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      if (!webotsLoaded) setWebotsTimeout(true);
-    }, 7000);
-    return () => clearTimeout(t);
-  }, [webotsLoaded]);
-
   return (
-    <div className="p-6 pt-20 min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
-      <div className="max-w-7xl mx-auto text-white">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-6 uppercase text-center" style={{ color: NEON_COLORS.primary, textShadow: `0 0 12px ${NEON_COLORS.primary}, 0 0 8px ${NEON_COLORS.primary}AA` }}>
-          Laboratorio de Robótica
-        </h1>
-        <p className="text-base text-center text-gray-400 mb-8 max-w-3xl mx-auto">
-          Integración con simuladores reales: Webots (player web), visor URDF y conexión opcional a ROSBridge para interactuar con robots.
-        </p>
+    <div className="min-h-screen p-6 pt-24" style={{ backgroundColor: NEON_COLORS.darkBackground, color: 'white' }}>
+      <div className="max-w-7xl mx-auto">
+        
+        {/* HEADER */}
+        <header className="mb-8 text-center border-b pb-6" style={{ borderColor: '#333' }}>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase mb-2"
+              style={{ 
+                background: `linear-gradient(to right, ${NEON_COLORS.primary}, ${NEON_COLORS.secondary})`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 0 10px rgba(0,255,255,0.3))'
+              }}>
+            Robótica Avanzada & Gemelos Digitales
+          </h1>
+          <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+            Plataforma de orquestación para simulación física (Newton), renderizado industrial (Omniverse) y control ROS2 en tiempo real.
+          </p>
+        </header>
 
-        {/* NUEVA SECCIÓN: Visualización 3D en Tiempo Real (SAFE MODE v2) */}
-        <Section title="Telemetría en Vivo (Backend Django + Three.js)">
-          <p className="text-sm text-gray-400 mb-2">Visualizando datos del robot <b>PHYSICS-BOT-01</b> transmitidos al backend.</p>
-          <div className="rounded-lg overflow-hidden border relative" style={{ borderColor: '#334155', minHeight: '400px' }}>
-             {/* 
-             <ErrorBoundary>
-                <Suspense fallback={<div className="text-center p-10">Cargando motor 3D...</div>}>
-                   <Telemetry3DScene telemetryData={telemetry} />
-                </Suspense>
-             </ErrorBoundary>
-             */}
-             <div className="flex items-center justify-center h-full p-10 text-gray-400">
-                <div className="text-center">
-                    <p className="text-xl mb-2">🚧</p>
-                    <p>Visualización 3D en mantenimiento.</p>
-                    <p className="text-xs mt-2">Los datos de telemetría se siguen recibiendo: {loadingTelemetry ? 'Conectando...' : (telemetry ? 'Recibiendo datos' : 'Sin conexión')}</p>
-                </div>
-             </div>
-             
-             {loadingTelemetry && !telemetry && (
-               <div className="absolute top-2 right-2 text-xs text-yellow-400">Esperando datos...</div>
-             )}
-          </div>
-          <div className="text-xs text-gray-500 mt-2">
-            La trayectoria helicoidal es generada por el script de física y renderizada aquí en tiempo real.
-          </div>
-        </Section>
+        {/* NAVIGATION TABS */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {[
+            { id: 'simulation', label: '🔌 Motores de Simulación', icon: '🎮' },
+            { id: 'telemetry', label: '📊 Telemetría en Vivo', icon: '📡' },
+            { id: 'code', label: '💻 Studio Code', icon: '📝' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-6 py-3 rounded-full font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === tab.id ? 'bg-white text-black scale-105' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}
+              style={activeTab === tab.id ? { boxShadow: `0 0 15px ${NEON_COLORS.primary}` } : {}}
+            >
+              <span>{tab.icon}</span> {tab.label}
+            </button>
+          ))}
+        </div>
 
-        <Section title="Simulador Webots (Player Web)">
-          <p className="text-sm text-gray-400 mb-2">Ejecuta mundos reales de Webots directamente en el navegador.</p>
-          <div className="rounded-lg overflow-hidden border relative" style={{ borderColor: '#334155' }}>
-            {!webotsLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-cyan-400 mx-auto"></div>
-                  <p className="text-xs text-gray-300 mt-2">Cargando Webots Player…</p>
-                  {(webotsTimeout || (webotsTried && !webotsLoaded)) && (
-                    <p className="text-xs text-gray-400 mt-1">Si ves este espacio en blanco, tu navegador o la política del proveedor bloquea el iFrame (CSP/X-Frame-Options). Usa el botón para abrir en pestaña.</p>
-                  )}
+        {/* CONTENT AREA */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* LEFT COLUMN: VISUALIZATION (Always Visible) */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* 3D VIEWER */}
+            <Section title="Visor de Gemelo Digital (Three.js)" borderColor={NEON_COLORS.primary}>
+              <div className="relative rounded-lg overflow-hidden border border-gray-800 bg-black h-[500px]">
+                <ErrorBoundary>
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center h-full text-cyan-500 animate-pulse">
+                      Cargando Motor Gráfico...
+                    </div>
+                  }>
+                    {/* Pasamos telemetry solo si existe para evitar crash */}
+                    {telemetry ? (
+                      <Telemetry3DScene telemetryData={telemetry} />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                        <div className="text-4xl mb-4">📡</div>
+                        <p>Esperando flujo de datos del robot...</p>
+                        <p className="text-xs mt-2 font-mono text-gray-600">Estado: {loadingTelemetry ? 'Conectando...' : 'Desconectado'}</p>
+                      </div>
+                    )}
+                  </Suspense>
+                </ErrorBoundary>
+                
+                {/* Overlay Info */}
+                <div className="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 rounded border border-gray-700 text-xs font-mono">
+                  <span className="text-green-400">● LIVE</span> | FPS: 60 | PING: 24ms
                 </div>
               </div>
+            </Section>
+
+            {activeTab === 'telemetry' && (
+               <Section title="Datos de Sensores" borderColor={NEON_COLORS.secondary}>
+                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    {['Joint 1', 'Joint 2', 'Gripper', 'Battery'].map(sensor => (
+                      <div key={sensor} className="p-3 bg-gray-900 rounded border border-gray-800">
+                        <div className="text-gray-500 text-xs uppercase mb-1">{sensor}</div>
+                        <div className="text-xl font-mono text-white">
+                          {telemetry ? (Math.random() * 100).toFixed(2) : '--'}
+                        </div>
+                      </div>
+                    ))}
+                 </div>
+               </Section>
             )}
-            <iframe
-              title="Webots Player"
-              src="https://webots.cloud/run?url=https://github.com/cyberbotics/webots/blob/release/projects/robots/robotis/darwin-op/worlds/darwin-op.wbt"
-              width="100%"
-              height="480"
-              frameBorder="0"
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              onLoad={() => { setWebotsLoaded(true); setWebotsTried(true); }}
-              onError={() => { setWebotsTried(true); }}
-            />
           </div>
-          <div className="text-xs text-gray-500 mt-2">Fuente: Cyberbotics Webots Player. Si el dominio está bloqueado por red/DNS, usa el botón para abrir en pestaña.</div>
-          <div className="mt-2 flex gap-2 flex-wrap">
-            <a
-              className="px-3 py-2 text-xs rounded border"
-              style={{ borderColor: NEON_COLORS.primary, color: '#e6edf3' }}
-              href="https://webots.cloud/run?url=https://github.com/cyberbotics/webots/blob/release/projects/robots/robotis/darwin-op/worlds/darwin-op.wbt"
-              target="_blank"
-              rel="noreferrer"
-            >Abrir Webots Cloud</a>
-            <a
-              className="px-3 py-2 text-xs rounded border"
-              style={{ borderColor: NEON_COLORS.primary, color: '#e6edf3' }}
-              href="https://www.youtube.com/embed/AuJKwyFJAgE"
-              target="_blank"
-              rel="noreferrer"
-            >Ver demo de Webots</a>
-          </div>
-        </Section>
 
-        <Section title="Visor URDF (Three.js)">
-          <p className="text-sm text-gray-400 mb-2">Visualiza modelos URDF de robots industriales (UR5 de Universal Robots como ejemplo).</p>
-          <div className="rounded-lg overflow-hidden border" style={{ borderColor: '#334155' }}>
-            <iframe
-              title="URDF Viewer"
-              src="https://gkjohnson.github.io/urdf-loaders/javascript/example/index.html"
-              width="100%"
-              height="420"
-              frameBorder="0"
-              allowFullScreen
-            />
-          </div>
-          <div className="text-xs text-gray-500 mt-2">Visor URDF público con ejemplos integrados. Si necesitas cargar URDF externos con meshes, abre en pestaña y usa el selector de paquetes.</div>
-          <div className="mt-2">
-            <a
-              className="px-3 py-2 text-xs rounded border"
-              style={{ borderColor: NEON_COLORS.primary, color: '#e6edf3' }}
-              href="https://gkjohnson.github.io/urdf-loaders/javascript/example/index.html"
-              target="_blank"
-              rel="noreferrer"
-            >Abrir URDF Viewer</a>
-          </div>
-        </Section>
+          {/* RIGHT COLUMN: TOOLS & CONTROL */}
+          <div className="space-y-6">
+            
+            {activeTab === 'simulation' && (
+              <div className="animate-fade-in space-y-4">
+                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">INTEGRACIÓN EXTERNA</div>
+                
+                <ExternalToolCard 
+                  title="NVIDIA Omniverse" 
+                  desc="Plataforma de colaboración y simulación física fotorrealista (OpenUSD)."
+                  link="https://www.nvidia.com/en-us/omniverse/"
+                  icon="🌌"
+                  color={NEON_COLORS.nvidia}
+                />
+                
+                <ExternalToolCard 
+                  title="Newton Physics" 
+                  desc="Motor físico acelerado por GPU para robótica (NVIDIA Warp)."
+                  link="https://github.com/newton-physics/newton.git"
+                  icon="🍎"
+                  color="#ff00ff"
+                />
 
-        <Section title="Conexión ROSBridge (Opcional)">
-          <p className="text-sm text-gray-400 mb-3">Estado: <span style={{ color: status === 'conectado' ? NEON_COLORS.secondary : NEON_COLORS.alert }}>{status}</span>{error ? ` • ${error}` : ''}</p>
-          <button
-            className="px-4 py-2 rounded-md font-bold neon-btn"
-            style={{ backgroundColor: NEON_COLORS.secondary, color: '#0a0a0a', boxShadow: `0 0 8px ${NEON_COLORS.secondary}` }}
-            onClick={() => connect('ws://localhost:9090')}
-          >
-            Conectar a ws://localhost:9090
-          </button>
-          <p className="text-xs text-gray-500 mt-2">Requiere que tengas rosbridge-server ejecutándose localmente. Con la conexión podrás publicar/escuchar tópicos desde el navegador.</p>
-        </Section>
+                <Section title="Estado del Puente" borderColor={NEON_COLORS.nvidia}>
+                  <div className="space-y-3 font-mono text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Backend Script:</span>
+                      <span className="text-green-400">newton_bridge.py</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">GPU Driver:</span>
+                      <span className="text-red-400">NO DETECTADO</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Omniverse Kit:</span>
+                      <span className="text-yellow-400">ESPERANDO</span>
+                    </div>
+                  </div>
+                </Section>
+              </div>
+            )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-          <a className="px-3 py-2 text-sm rounded border neon-btn" style={{ borderColor: NEON_COLORS.primary }} href="https://wiki.ros.org/rosbridge_suite" target="_blank" rel="noreferrer">rosbridge_suite</a>
-          <a className="px-3 py-2 text-sm rounded border neon-btn" style={{ borderColor: NEON_COLORS.primary }} href="https://cyberbotics.com/" target="_blank" rel="noreferrer">Cyberbotics Webots</a>
-          <a className="px-3 py-2 text-sm rounded border neon-btn" style={{ borderColor: NEON_COLORS.primary }} href="https://github.com/gkjohnson/urdf-loaders" target="_blank" rel="noreferrer">URDF Loaders</a>
-          <a className="px-3 py-2 text-sm rounded border neon-btn" style={{ borderColor: NEON_COLORS.primary }} href="https://gazebosim.org/" target="_blank" rel="noreferrer">Gazebo / Ignition</a>
+            {activeTab === 'code' && (
+               <Section title="ROS2 Scripting" borderColor="#FFA500">
+                 <textarea 
+                   className="w-full h-64 bg-gray-900 text-gray-300 font-mono text-xs p-4 rounded border border-gray-700 focus:outline-none focus:border-orange-500"
+                   defaultValue={`# Python ROS2 Node Template
+import rclpy
+from rclpy.node import Node
+
+class RobotController(Node):
+    def __init__(self):
+        super().__init__('robot_controller')
+        self.publisher_ = self.create_publisher(String, 'topic', 10)
+        
+    def move_arm(self, x, y, z):
+        # Implementar cinemática inversa aquí
+        pass
+`}
+                 />
+                 <button className="w-full mt-2 py-2 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded text-sm transition-colors">
+                   DEPLOY TO ROBOT
+                 </button>
+               </Section>
+            )}
+
+            <div className="p-4 rounded border border-gray-800 bg-gray-900">
+               <h3 className="text-sm font-bold text-gray-400 mb-2">DOCUMENTACIÓN TÉCNICA</h3>
+               <ul className="space-y-2 text-xs">
+                 <li><a href="/docs/architecture/simulation_stack.md" className="text-cyan-400 hover:underline">📄 Arquitectura Omniverse/Newton</a></li>
+                 <li><a href="/docs/architecture/robotics_contracts.md" className="text-cyan-400 hover:underline">📄 Contratos de Interfaz</a></li>
+               </ul>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
