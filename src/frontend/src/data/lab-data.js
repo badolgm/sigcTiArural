@@ -368,4 +368,20 @@ export const labCategories = [
       { label: 'IPFS Desktop', href: 'https://github.com/ipfs/ipfs-desktop' },
     ],
   },
+  {
+    title: 'Ingeniería de Sistemas & DevOps',
+    accent: '#D946EF',
+    icon: '💻',
+    links: [
+      { label: 'Git SCM (Documentación)', href: 'https://git-scm.com/doc' },
+      { label: 'Docker Docs', href: 'https://docs.docker.com/' },
+      { label: 'Linux Kernel Archives', href: 'https://www.kernel.org/' },
+      { label: 'Python.org', href: 'https://www.python.org/' },
+      { label: 'Node.js Docs', href: 'https://nodejs.org/en/docs/' },
+      { label: 'MDN Web Docs', href: 'https://developer.mozilla.org/' },
+      { label: 'Stack Overflow', href: 'https://stackoverflow.com/' },
+      { label: 'FreeCodeCamp', href: 'https://www.freecodecamp.org/' },
+      { label: 'CS50 (Harvard)', href: 'https://cs50.harvard.edu/x/' },
+    ],
+  },
 ];
