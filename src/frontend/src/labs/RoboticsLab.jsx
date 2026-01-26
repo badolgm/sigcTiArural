@@ -1,4 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Suspense } from 'react';
+import Telemetry3DScene from '../components/Telemetry3DScene';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { useRoboticsApi } from '../hooks/useRoboticsApi';
 
 const NEON_COLORS = {
   primary: '#00FFFF',
@@ -58,6 +61,9 @@ const RoboticsLab = () => {
   const [webotsTried, setWebotsTried] = useState(false);
   const [webotsTimeout, setWebotsTimeout] = useState(false);
 
+  // Hook para consumir la API de Django (Simulación Física)
+  const { telemetry, loading: loadingTelemetry } = useRoboticsApi('PHYSICS-BOT-01');
+
   useEffect(() => {
     const t = setTimeout(() => {
       if (!webotsLoaded) setWebotsTimeout(true);
@@ -74,6 +80,34 @@ const RoboticsLab = () => {
         <p className="text-base text-center text-gray-400 mb-8 max-w-3xl mx-auto">
           Integración con simuladores reales: Webots (player web), visor URDF y conexión opcional a ROSBridge para interactuar con robots.
         </p>
+
+        {/* NUEVA SECCIÓN: Visualización 3D en Tiempo Real (SAFE MODE v2) */}
+        <Section title="Telemetría en Vivo (Backend Django + Three.js)">
+          <p className="text-sm text-gray-400 mb-2">Visualizando datos del robot <b>PHYSICS-BOT-01</b> transmitidos al backend.</p>
+          <div className="rounded-lg overflow-hidden border relative" style={{ borderColor: '#334155', minHeight: '400px' }}>
+             {/* 
+             <ErrorBoundary>
+                <Suspense fallback={<div className="text-center p-10">Cargando motor 3D...</div>}>
+                   <Telemetry3DScene telemetryData={telemetry} />
+                </Suspense>
+             </ErrorBoundary>
+             */}
+             <div className="flex items-center justify-center h-full p-10 text-gray-400">
+                <div className="text-center">
+                    <p className="text-xl mb-2">🚧</p>
+                    <p>Visualización 3D en mantenimiento.</p>
+                    <p className="text-xs mt-2">Los datos de telemetría se siguen recibiendo: {loadingTelemetry ? 'Conectando...' : (telemetry ? 'Recibiendo datos' : 'Sin conexión')}</p>
+                </div>
+             </div>
+             
+             {loadingTelemetry && !telemetry && (
+               <div className="absolute top-2 right-2 text-xs text-yellow-400">Esperando datos...</div>
+             )}
+          </div>
+          <div className="text-xs text-gray-500 mt-2">
+            La trayectoria helicoidal es generada por el script de física y renderizada aquí en tiempo real.
+          </div>
+        </Section>
 
         <Section title="Simulador Webots (Player Web)">
           <p className="text-sm text-gray-400 mb-2">Ejecuta mundos reales de Webots directamente en el navegador.</p>

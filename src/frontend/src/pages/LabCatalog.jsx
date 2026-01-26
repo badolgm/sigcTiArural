@@ -54,50 +54,48 @@ const Card = ({ title, accent, links, sections, icon, isExpanded, onNavigate }) 
           <span className="text-xl">{icon}</span>
           {title}
         </h3>
-        {sections && (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="text-xs px-2 py-1 rounded border transition-all"
-            style={{ borderColor: accent, color: accent }}
-          >
-            {expanded ? '▼' : '▶'}
-          </button>
-        )}
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-xs px-2 py-1 rounded border transition-all"
+          style={{ borderColor: accent, color: accent }}
+        >
+          {expanded ? '▼' : '▶'}
+        </button>
       </div>
       
-      {sections ? (
-        <div className={`transition-all duration-300 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-28 opacity-80 overflow-hidden'}`}>
-          {sections.map((section) => (
+      <div className={`transition-all duration-300 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-28 opacity-80 overflow-hidden'}`}>
+        {sections ? (
+          sections.map((section) => (
             <SubSection key={section.title} {...section} onNavigate={onNavigate} />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {links.map((l) => (
-            l.internal && l.to ? (
-              <button
-                key={l.label}
-                onClick={() => onNavigate && onNavigate(l.to)}
-                className="px-3 py-2 text-sm rounded border neon-btn transition-all duration-200 hover:scale-105"
-                style={{ borderColor: `${accent}60`, color: '#e6edf3' }}
-              >
-                {l.label}
-              </button>
-            ) : (
-              <a
-                key={l.href || l.label}
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                className="px-3 py-2 text-sm rounded border neon-btn transition-all duration-200 hover:scale-105"
-                style={{ borderColor: `${accent}60`, color: '#e6edf3' }}
-              >
-                {l.label}
-              </a>
-            )
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {links.map((l) => (
+              l.internal && l.to ? (
+                <button
+                  key={l.label}
+                  onClick={() => onNavigate && onNavigate(l.to)}
+                  className="px-3 py-2 text-sm rounded border neon-btn transition-all duration-200 hover:scale-105"
+                  style={{ borderColor: `${accent}60`, color: '#e6edf3' }}
+                >
+                  {l.label}
+                </button>
+              ) : (
+                <a
+                  key={l.href || l.label}
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3 py-2 text-sm rounded border neon-btn transition-all duration-200 hover:scale-105"
+                  style={{ borderColor: `${accent}60`, color: '#e6edf3' }}
+                >
+                  {l.label}
+                </a>
+              )
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
