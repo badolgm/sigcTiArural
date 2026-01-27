@@ -9,4 +9,4 @@ SpeechRecognition
 gTTS
 pydub
 mysql-connector-python
-psycopg2-binary
+psycopg2-binarylcapy

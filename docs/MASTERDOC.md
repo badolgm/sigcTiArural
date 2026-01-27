@@ -937,3 +937,36 @@ Se modificó la regla en `.gitignore` para usar una **ruta absoluta** ("anclada"
 4. **Despliegue Exitoso**: Contenedor frontend reconstruido con nuevas dependencias y comunicación verificada con Backend.
 
 **Estado**: ✅ Sistema estable y funcional. Visualización 3D operativa.
+📓 REGISTRO PARA LA BITÁCORA (INGENIERÍA)
+Fecha: 27 de Enero 2026 Proyecto: sigcTiArural Fase: Integración de Laboratorios de Alta Fidelidad.
+
+Análisis Técnico: Se define que la Dashbord de Electrónica debe ser el punto de entrada para el Gemelo Digital Rural.
+
+Entrada: Parámetros físicos (sensores en campo/sliders).
+
+Procesamiento Local: Simulación en tiempo real (Osciloscopio/Canvas).
+
+Procesamiento de IA: Microservicio FastAPI (fastapi_app.py) analizando topología.
+
+Salida/Escalado: Si el análisis requiere cálculo matemático como de potencia o transformada de Fourier compleja,etc,  se habilita el "Bridge" hacia las tarjetas especializadas o motores externos.
+
+Comandos de Control:
+
+Bash
+# Sincronización de dependencias para el Hub
+npm install zustand lucide-react reactflow
+
+# Verificación de integridad del microservicio IA
+curl -X GET http://localhost:8081/health
+
+# Registro de Hito en Git
+git commit -m "ARCH: Implementación de arquitectura de tránsito de datos para sigcTiArural"
+🚀 PRÓXIMOS PASOS (PLAN DE ACCIÓN)
+Unificación de la UI: Reconstruir el return de ElectronicsLab.jsx para que sea el marco maestro (Dashboard) donde las otras 11 tarjetas puedan "conectarse".
+
+Lógica de "Bridge": Programar los botones de "Análisis Superior" para que codifiquen los datos actuales y los envíen a las APIs de matemáticas avanzadas o sitios de ingeniería libre.
+
+Sincronización Masterdoc: Pegar este análisis en el documento para que el equipo (o yo en futuras sesiones) no pierda el contexto de sigcTiArural.
+
+Registro para el MASTERDOC.md (Mantenimiento de sigcTiArural)
+Incidencia: El archivo ext4.vhdx de Docker/WSL no reduce su tamaño tras el borrado de imágenes. Ruta detectada: ~/AppData/Local/Docker/wsl/main/ext4.vhdx. Procedimiento: Parada total de instancias WSL2 y ejecución de compact vdisk mediante la utilidad diskpart de Windows. Estado: Infraestructura recuperada para el desarrollo de la Dashboard de Ingeniería.
