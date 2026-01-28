@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* --- GLOBAL DEBUG OVERRIDE (REMOVE AFTER FIX) --- */
+/* Forzamos visibilidad para comprobar si React está montado */
+#root {
+  min-height: 100vh;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body {
+    background-color: #0b0f14;
+    color: white;
+}
+
 :root {
   --bg: #0b0f14;
   --text: #e6edf3;

@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { useLabStore } from '../stores/useLabStore';
 
 const AdvancedMathLabV2 = () => {
+  const electronicsData = useLabStore((state) => state.electronicsData);
+
   useEffect(() => {
     // Generamos partículas simples de fondo
     const container = document.querySelector('.particles');
@@ -64,6 +67,15 @@ const AdvancedMathLabV2 = () => {
         </div>
 
         <div className="stats-grid">
+          <div className="stat-panel" style={{ borderColor: electronicsData?.active ? '#39FF14' : '#555', background: electronicsData?.active ? 'rgba(57,255,20,0.1)' : 'rgba(255,255,255,0.05)' }}>
+            <div className="stat-value" style={{ color: electronicsData?.active ? '#39FF14' : '#777' }}>⚡</div>
+            <div className="stat-label">{electronicsData?.active ? 'Señal Entrante' : 'Sin Señal'}</div>
+            <div className="text-xs mt-2" style={{ color: electronicsData?.active ? '#86efac' : '#777', whiteSpace: 'pre-line' }}>
+              {electronicsData?.active 
+                ? `${electronicsData.signals.description || 'Datos de Electrónica'}\nFreq: ${electronicsData.params.vinFreq} Hz | Amp: ${electronicsData.params.vinAmp} V`
+                : 'Activa el circuito en\nLaboratorio de Electrónica'}
+            </div>
+          </div>
           <div className="stat-panel" onClick={() => document.getElementById('section-integrals')?.scrollIntoView({behavior:'smooth'})} role="button" aria-label="Ir a Integrales">
             <div className="stat-value">∫</div>
             <div className="stat-label">Integrales</div>

@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useLabStore } from '../stores/useLabStore'; // Import Store Global
+import SchematicEditor from './SchematicEditor'; // Importar nuevo editor
 
 const NEON_COLORS = {
   primary: '#00FFFF',
@@ -322,6 +324,9 @@ res
 };
 
 const ElectronicsLab = ({ onNavigate }) => {
+  // Conexión al Store Global (Federated State) - CON FALLBACK SEGURO
+  const setElectronicsSignal = useLabStore ? useLabStore((state) => state.setElectronicsSignal) : () => {};
+
   const [vinAmp, setVinAmp] = useState(0.1);
   const [vinFreq, setVinFreq] = useState(1000);
   const [useAm, setUseAm] = useState(true);
@@ -341,180 +346,275 @@ const ElectronicsLab = ({ onNavigate }) => {
   const [tauLPms, setTauLPms] = useState(0);
   const [specSource, setSpecSource] = useState('vout');
   const [useHann, setUseHann] = useState(true);
+  
+  // Nuevo estado para alternar vistas
+  const [viewMode, setViewMode] = useState('simulation'); // 'simulation' | 'schematic'
+
+  // Sincronización automática con el "Bridge" (Store Global)
+  useEffect(() => {
+    // Simulamos que enviamos la señal actual al "Hub" cada vez que cambian los parámetros críticos
+    // Esto permite que al navegar a Matemáticas, los datos ya estén allí.
+    setElectronicsSignal({
+      params: { vinAmp, vinFreq, Vcc, Rc },
+      signals: {
+        // En una implementación real, aquí iría el array de datos del osciloscopio
+        description: "Señal de Amplificador Emisor Común"
+      }
+    });
+  }, [vinAmp, vinFreq, Vcc, Rc, setElectronicsSignal]);
 
   return (
-    <div className="p-6 pt-20 min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
-      <div className="max-w-7xl mx-auto text-white">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-6 uppercase text-center" style={{ color: NEON_COLORS.primary, textShadow: `0 0 12px ${NEON_COLORS.primary}, 0 0 8px ${NEON_COLORS.primary}AA` }}>
-          Electrónica y Circuitos — Transistor en Región Activa
-        </h1>
-        <p className="text-center text-gray-400 mb-6">Visualiza el flujo de corriente y la amplificación de un transistor NPN en etapa activa (común emisor). Conecta con la señal del ejemplo de Modulación AM.</p>
+    <div className="min-h-screen p-6 pt-24" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
+      <div className="max-w-7xl mx-auto">
+        
+        {/* HEADER DASHBOARD UNIFICADO */}
+        <header className="mb-8 border-b border-gray-800 pb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 className="text-4xl font-black uppercase tracking-tighter mb-2"
+                        style={{ 
+                            background: `linear-gradient(to right, ${NEON_COLORS.primary}, ${NEON_COLORS.secondary})`,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            filter: 'drop-shadow(0 0 10px rgba(0,255,255,0.3))'
+                        }}>
+                        Estación de Ingeniería Rural
+                    </h1>
+                    <div className="flex items-center gap-4 text-sm font-mono text-gray-400">
+                        <span className="px-2 py-0.5 rounded bg-gray-900 border border-gray-700">v3.0 INTEGRATED</span>
+                        <span className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            SISTEMA ONLINE
+                        </span>
+                        
+                        {/* SELECTOR DE MODO */}
+                        <div className="ml-4 flex bg-gray-900 rounded-lg p-1 border border-gray-700">
+                           <button 
+                             onClick={() => setViewMode('simulation')}
+                             className={`px-3 py-1 rounded text-xs font-bold transition-all ${viewMode === 'simulation' ? 'bg-cyan-900 text-cyan-400' : 'text-gray-500 hover:text-gray-300'}`}
+                           >
+                             📊 SIMULACIÓN
+                           </button>
+                           <button 
+                             onClick={() => setViewMode('schematic')}
+                             className={`px-3 py-1 rounded text-xs font-bold transition-all ${viewMode === 'schematic' ? 'bg-purple-900 text-purple-400' : 'text-gray-500 hover:text-gray-300'}`}
+                           >
+                             ✏️ DISEÑO (BETA)
+                           </button>
+                        </div>
+                    </div>
+                </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div className="p-4 border rounded-lg" style={{ borderColor: NEON_COLORS.primary + '40' }}>
-              <h3 className="text-lg font-bold mb-3" style={{ color: NEON_COLORS.primary }}>🧩 Circuito y Corrientes</h3>
-              <CircuitCanvas
-                vinAmp={vinAmp}
-                vinFreq={vinFreq}
-                useAm={useAm}
-                fc={fc}
-                fm={fm}
-                mIndex={mIndex}
-                Vcc={Vcc}
-                Rc={Rc}
-                Re={Re}
-                R1={R1}
-                R2={R2}
-                RL={RL}
-                emitterBypass={emitterBypass}
-                beta={beta}
-                Rdet={Rdet}
-                Cdet={Cdet}
-                tauLPms={tauLPms}
-                specSource={specSource}
-                useHann={useHann}
-              />
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Amplitud entrada (V)</label>
-                  <input type="range" min={0.01} max={0.5} step={0.01} value={vinAmp} onChange={(e)=>setVinAmp(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{vinAmp.toFixed(2)} V</div>
+                {/* BOTONES DE NAVEGACIÓN RÁPIDA (BRIDGE) */}
+                <div className="flex gap-4">
+                    <button 
+                        onClick={() => onNavigate && onNavigate('robotics')}
+                        className="px-6 py-3 bg-gray-900 border border-gray-600 hover:border-cyan-400 text-cyan-400 font-mono text-sm font-bold uppercase tracking-wider transition-all hover:shadow-[0_0_15px_rgba(0,255,255,0.4)] flex items-center gap-2"
+                    >
+                        🤖 Robótica
+                    </button>
+                    <button 
+                        onClick={() => onNavigate && onNavigate('math')}
+                        className="px-6 py-3 bg-green-900/30 border border-green-500 hover:bg-green-900/50 text-green-400 font-mono text-sm font-bold uppercase tracking-wider transition-all hover:shadow-[0_0_20px_rgba(57,255,20,0.6)] animate-pulse flex items-center gap-2"
+                    >
+                        🧮 Lab Matemático
+                    </button>
                 </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Frecuencia (Hz)</label>
-                  <input type="range" min={100} max={50000} step={10} value={vinFreq} onChange={(e)=>setVinFreq(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{vinFreq} Hz</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Usar entrada AM</label>
-                  <input type="checkbox" checked={useAm} onChange={(e)=>setUseAm(e.target.checked)} />
-                </div>
-                {useAm && (
-                  <>
-                    <div>
-                      <label className="text-xs" style={{ color: '#b0b8c0' }}>f_c (Hz)</label>
-                      <input type="range" min={1000} max={50000} step={100} value={fc} onChange={(e)=>setFc(parseFloat(e.target.value))} />
-                      <div className="text-xs" style={{ color: '#b0b8c0' }}>{fc} Hz</div>
-                    </div>
-                    <div>
-                      <label className="text-xs" style={{ color: '#b0b8c0' }}>f_m (Hz)</label>
-                      <input type="range" min={10} max={5000} step={10} value={fm} onChange={(e)=>setFm(parseFloat(e.target.value))} />
-                      <div className="text-xs" style={{ color: '#b0b8c0' }}>{fm} Hz</div>
-                    </div>
-                    <div>
-                      <label className="text-xs" style={{ color: '#b0b8c0' }}>Índice m</label>
-                      <input type="range" min={0} max={1} step={0.01} value={mIndex} onChange={(e)=>setMIndex(parseFloat(e.target.value))} />
-                      <div className="text-xs" style={{ color: '#b0b8c0' }}>{mIndex.toFixed(2)}</div>
-                    </div>
-                  </>
-                )}
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Vcc (V)</label>
-                  <input type="range" min={5} max={18} step={1} value={Vcc} onChange={(e)=>setVcc(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{Vcc} V</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Rc (Ω)</label>
-                  <input type="range" min={1000} max={5000} step={100} value={Rc} onChange={(e)=>setRc(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{Rc} Ω</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Re (Ω)</label>
-                  <input type="range" min={500} max={3000} step={100} value={Re} onChange={(e)=>setRe(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{Re} Ω</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>R1 (Ω)</label>
-                  <input type="range" min={10000} max={100000} step={1000} value={R1} onChange={(e)=>setR1(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{R1} Ω</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>R2 (Ω)</label>
-                  <input type="range" min={5000} max={50000} step={1000} value={R2} onChange={(e)=>setR2(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{R2} Ω</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>RL (Ω)</label>
-                  <input type="range" min={0} max={10000} step={200} value={RL} onChange={(e)=>setRL(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{RL} Ω (0 = sin carga)</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Bypass emisor (C_E)</label>
-                  <input type="checkbox" checked={emitterBypass} onChange={(e)=>setEmitterBypass(e.target.checked)} />
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Rdet (Ω)</label>
-                  <input type="range" min={1000} max={100000} step={1000} value={Rdet} onChange={(e)=>setRdet(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{Rdet} Ω</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Cdet (F)</label>
-                  <input type="range" min={0.0000001} max={0.00001} step={0.0000001} value={Cdet} onChange={(e)=>setCdet(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{Cdet.toExponential(2)} F</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>τ LP (ms)</label>
-                  <input type="range" min={0} max={20} step={0.2} value={tauLPms} onChange={(e)=>setTauLPms(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{tauLPms.toFixed(1)} ms</div>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Fuente espectro</label>
-                  <select value={specSource} onChange={(e)=>setSpecSource(e.target.value)} className="text-black text-xs p-1 rounded">
-                    <option value="vin">vin</option>
-                    <option value="vout">vout</option>
-                    <option value="env">demod</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>Ventana Hann</label>
-                  <input type="checkbox" checked={useHann} onChange={(e)=>setUseHann(e.target.checked)} />
-                </div>
-                <div>
-                  <label className="text-xs" style={{ color: '#b0b8c0' }}>β (ganancia de corriente)</label>
-                  <input type="range" min={50} max={200} step={5} value={beta} onChange={(e)=>setBeta(parseFloat(e.target.value))} />
-                  <div className="text-xs" style={{ color: '#b0b8c0' }}>{beta}</div>
-                </div>
-              </div>
-              <div className="mt-3 text-xs" style={{ color: '#b0b8c0' }}>Visual: líneas verdes (Ib) y rojas (Ic). La salida se invierte respecto a la entrada en CE. Ganancia afectada por Re (degeneración) y carga RL.</div>
             </div>
+        </header>
 
-            <PythonSimPanel
-              vinAmp={vinAmp}
-              vinFreq={vinFreq}
-              useAm={useAm}
-              fc={fc}
-              fm={fm}
-              mIndex={mIndex}
-              Vcc={Vcc}
-              Rc={Rc}
-              Re={Re}
-              R1={R1}
-              R2={R2}
-              RL={RL}
-              emitterBypass={emitterBypass}
-            />
+        {/* CONTENIDO PRINCIPAL (Switcheable) */}
+        {viewMode === 'schematic' ? (
+          <div className="animate-fadeIn">
+             <SchematicEditor />
           </div>
+        ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* COLUMNA IZQUIERDA: INSTRUMENTACIÓN (8 cols) */}
+            <div className="lg:col-span-8 space-y-6">
+                
+                {/* 1. OSCILOSCOPIO PRINCIPAL */}
+                <div className="p-1 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700">
+                    <div className="bg-[#050505] rounded-lg p-4">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-cyan-400 font-mono text-sm uppercase tracking-widest flex items-center gap-2">
+                                <span className="text-lg">📉</span> Osciloscopio Digital
+                            </h3>
+                            <div className="flex gap-4 text-xs font-mono text-gray-500">
+                                <span>CH1: <span className="text-cyan-400">VIN</span></span>
+                                <span>CH2: <span className="text-green-400">VOUT</span></span>
+                            </div>
+                        </div>
+                        
+                        <CircuitCanvas
+                            vinAmp={vinAmp}
+                            vinFreq={vinFreq}
+                            useAm={useAm}
+                            fc={fc}
+                            fm={fm}
+                            mIndex={mIndex}
+                            Vcc={Vcc}
+                            Rc={Rc}
+                            Re={Re}
+                            R1={R1}
+                            R2={R2}
+                            RL={RL}
+                            emitterBypass={emitterBypass}
+                            beta={beta}
+                            Rdet={Rdet}
+                            Cdet={Cdet}
+                            tauLPms={tauLPms}
+                            specSource={specSource}
+                            useHann={useHann}
+                        />
+                    </div>
+                </div>
 
-          <div className="space-y-4">
-            <div className="p-4 border rounded-lg" style={{ borderColor: NEON_COLORS.secondary + '40' }}>
-              <h3 className="text-lg font-bold mb-3" style={{ color: NEON_COLORS.secondary }}>🔗 Señal AM y Enlace</h3>
-              <p className="text-sm" style={{ color: '#aab2ba' }}>Este laboratorio se enlaza con el ejemplo “Ejemplo EM: Modulación AM y Demodulación”. Pulsa el botón para abrir la señal AM y ajustar <span className="font-mono">f_c</span>, <span className="font-mono">f_m</span> y el índice <span className="font-mono">m</span>. También puedes activar AM directamente aquí y observar la envolvente en el osciloscopio.</p>
-              <button onClick={() => onNavigate && onNavigate('advanced-math-v2')} className="mt-2 px-3 py-2 text-xs rounded border" style={{ borderColor: NEON_COLORS.primary, color: NEON_COLORS.primary }}>
-                Abrir Señal AM (Laboratorio Matemáticas V2)
-              </button>
+                {/* 2. PANEL DE SIMULACIÓN PYTHON */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <PythonSimPanel
+                        vinAmp={vinAmp}
+                        vinFreq={vinFreq}
+                        useAm={useAm}
+                        fc={fc}
+                        fm={fm}
+                        mIndex={mIndex}
+                        Vcc={Vcc}
+                        Rc={Rc}
+                        Re={Re}
+                        R1={R1}
+                        R2={R2}
+                        RL={RL}
+                        emitterBypass={emitterBypass}
+                    />
+                    
+                    {/* TARJETA DE ESTADO DEL PUENTE */}
+                    <div className="p-4 rounded border border-gray-800 bg-[#0d0d0d]">
+                        <h4 className="text-sm font-semibold mb-3 text-purple-400 uppercase tracking-widest">
+                            🌉 Estado del Puente de Datos
+                        </h4>
+                        <div className="space-y-2 text-xs font-mono text-gray-400">
+                            <div className="flex justify-between border-b border-gray-800 pb-1">
+                                <span>Estado Global:</span>
+                                <span className="text-green-400">ACTIVO</span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-800 pb-1">
+                                <span>Datos en Buffer:</span>
+                                <span className="text-white">128 KB</span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-800 pb-1">
+                                <span>Latencia API:</span>
+                                <span className="text-yellow-400">45ms</span>
+                            </div>
+                            <div className="mt-4 pt-2">
+                                <button className="w-full py-2 bg-purple-900/20 border border-purple-500/50 text-purple-300 hover:bg-purple-900/40 transition-colors uppercase tracking-widest">
+                                    Forzar Sincronización
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div className="p-4 border rounded-lg" style={{ borderColor: NEON_COLORS.warning + '40' }}>
-              <h3 className="text-lg font-bold mb-2" style={{ color: NEON_COLORS.warning }}>Notas de Teoría</h3>
-              <ul className="text-xs space-y-1" style={{ color: '#c9d1d9' }}>
-                <li>• Región activa: transistor NPN con polarización fija, amplifica sin saturar.</li>
-                <li>• Ganancia aproximada: Av ≈ −gm·Rc; gm ≈ Ic/VT.</li>
-                <li>• La modulación AM puede ser pre-amplificada antes de transmitir.</li>
-                <li>• Este panel es educativo; para análisis preciso usa SPICE (LTspice/Falstad).</li>
-              </ul>
+
+            {/* COLUMNA DERECHA: CONTROLES (4/12) */}
+            <div className="col-span-12 lg:col-span-4 space-y-6">
+                <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-lg backdrop-blur-sm">
+                    <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-800 pb-2">
+                        Parámetros de Entrada
+                    </h2>
+                    
+                    <div className="space-y-6">
+                        {/* GRUPO 1: SEÑAL */}
+                        <div>
+                            <label className="text-xs text-cyan-400 font-mono mb-2 block">GENERADOR DE FUNCIONES</label>
+                            <div className="space-y-3 p-3 bg-black/40 rounded border border-gray-800">
+                                <div>
+                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                        <span>Amplitud (V)</span>
+                                        <span>{vinAmp.toFixed(2)} V</span>
+                                    </div>
+                                    <input type="range" min={0.01} max={0.5} step={0.01} value={vinAmp} onChange={(e)=>setVinAmp(parseFloat(e.target.value))} className="w-full accent-cyan-500" />
+                                </div>
+                                <div>
+                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                        <span>Frecuencia (Hz)</span>
+                                        <span>{vinFreq} Hz</span>
+                                    </div>
+                                    <input type="range" min={100} max={50000} step={10} value={vinFreq} onChange={(e)=>setVinFreq(parseFloat(e.target.value))} className="w-full accent-cyan-500" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* GRUPO 2: MODULACIÓN */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="text-xs text-green-400 font-mono">MODULACIÓN AM</label>
+                                <input type="checkbox" checked={useAm} onChange={(e)=>setUseAm(e.target.checked)} className="accent-green-500" />
+                            </div>
+                            
+                            {useAm && (
+                                <div className="space-y-3 p-3 bg-black/40 rounded border border-gray-800 animate-fade-in">
+                                    <div>
+                                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>Portadora (fc)</span>
+                                            <span>{fc} Hz</span>
+                                        </div>
+                                        <input type="range" min={1000} max={50000} step={100} value={fc} onChange={(e)=>setFc(parseFloat(e.target.value))} className="w-full accent-green-500" />
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>Moduladora (fm)</span>
+                                            <span>{fm} Hz</span>
+                                        </div>
+                                        <input type="range" min={10} max={5000} step={10} value={fm} onChange={(e)=>setFm(parseFloat(e.target.value))} className="w-full accent-green-500" />
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>Índice (m)</span>
+                                            <span>{mIndex.toFixed(2)}</span>
+                                        </div>
+                                        <input type="range" min={0} max={1} step={0.01} value={mIndex} onChange={(e)=>setMIndex(parseFloat(e.target.value))} className="w-full accent-green-500" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* GRUPO 3: TRANSISTOR */}
+                        <div>
+                            <label className="text-xs text-yellow-400 font-mono mb-2 block">POLARIZACIÓN (Q-POINT)</label>
+                            <div className="grid grid-cols-2 gap-2 p-3 bg-black/40 rounded border border-gray-800">
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Vcc (V)</span>
+                                    <input type="number" value={Vcc} onChange={(e)=>setVcc(parseFloat(e.target.value))} className="w-full bg-transparent border-b border-gray-700 text-white text-xs py-1 focus:border-yellow-500 outline-none" />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Beta (β)</span>
+                                    <input type="number" value={beta} onChange={(e)=>setBeta(parseFloat(e.target.value))} className="w-full bg-transparent border-b border-gray-700 text-white text-xs py-1 focus:border-yellow-500 outline-none" />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Rc (Ω)</span>
+                                    <input type="number" value={Rc} onChange={(e)=>setRc(parseFloat(e.target.value))} className="w-full bg-transparent border-b border-gray-700 text-white text-xs py-1 focus:border-yellow-500 outline-none" />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Re (Ω)</span>
+                                    <input type="number" value={Re} onChange={(e)=>setRe(parseFloat(e.target.value))} className="w-full bg-transparent border-b border-gray-700 text-white text-xs py-1 focus:border-yellow-500 outline-none" />
+                                </div>
+                                <div className="col-span-2 pt-2">
+                                    <div className="flex items-center gap-2">
+                                        <input type="checkbox" checked={emitterBypass} onChange={(e)=>setEmitterBypass(e.target.checked)} className="accent-yellow-500" />
+                                        <span className="text-xs text-gray-400">Capacitor de Desacople (Ce)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

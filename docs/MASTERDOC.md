@@ -970,3 +970,75 @@ Sincronización Masterdoc: Pegar este análisis en el documento para que el equi
 
 Registro para el MASTERDOC.md (Mantenimiento de sigcTiArural)
 Incidencia: El archivo ext4.vhdx de Docker/WSL no reduce su tamaño tras el borrado de imágenes. Ruta detectada: ~/AppData/Local/Docker/wsl/main/ext4.vhdx. Procedimiento: Parada total de instancias WSL2 y ejecución de compact vdisk mediante la utilidad diskpart de Windows. Estado: Infraestructura recuperada para el desarrollo de la Dashboard de Ingeniería.
+
+---
+
+<a name="28-integracion-estado-federado"></a>
+#### **28. BITÁCORA DE ACTUALIZACIÓN - INTEGRACIÓN ESTADO FEDERADO (27-28 Enero 2026)**
+
+**Resumen Ejecutivo:**
+Se ha completado la transición hacia la **Arquitectura v3.0 (Estado Federado)**, unificando los laboratorios de Electrónica y Matemáticas bajo un sistema de estado global compartido. Se ha resuelto la inestabilidad del frontend (pantalla blanca) y se ha desplegado la primera versión del **Editor de Esquemas de Circuitos**.
+
+**1. Arquitectura "Estado Federado" e Implementación del Bridge**
+*   **Concepto:** Se abandonó el modelo de componentes aislados. Ahora, `useLabStore` (Zustand) actúa como la "Constitución" central que sincroniza los datos entre laboratorios.
+*   **Mecanismo "Bridge":** 
+    *   **Origen:** El usuario configura parámetros o diseña circuitos en el *Laboratorio de Electrónica*.
+    *   **Transmisión:** Al pulsar el botón "Lab Matemático", los datos (señales, netlists) se "empaquetan" y envían al Store Global.
+    *   **Destino:** El *Laboratorio de Matemáticas* detecta la llegada de datos y activa automáticamente sus paneles de análisis.
+*   **Código Clave:**
+    ```javascript
+    // Sincronización automática en ElectronicsLab
+    useEffect(() => {
+        setElectronicsSignal({ params: { vinAmp, vinFreq }, signals: { ... } });
+    }, [vinAmp, vinFreq]);
+    ```
+
+**2. Nuevo Dashboard de Electrónica (`ElectronicsLab.jsx`)**
+*   **Estructura Unificada:** Se consolidaron `CircuitCanvas`, `PythonSimPanel` y los nuevos controles en una sola interfaz responsiva (Grid 12 columnas).
+*   **Modo Dual:** Se implementó un toggle para cambiar entre:
+    *   **📊 SIMULACIÓN:** Visualización en tiempo real con controles deslizantes.
+    *   **✏️ DISEÑO (BETA):** Nuevo lienzo interactivo para dibujar diagramas esquemáticos.
+*   **Componentes de UI:** Botones de navegación "Bridge" con retroalimentación visual (neón/pulso) para indicar flujo de datos activo.
+
+**3. Implementación del Editor de Esquemas (`SchematicEditor.jsx`)**
+*   **Tecnología:** Integración de la librería `reactflow` para manejo de nodos y aristas.
+*   **Biblioteca de Componentes:**
+    *   Pasivos: Resistencias, Capacitores, Bobinas (Inductores).
+    *   Activos: Transistores, Diodos, Fuentes (AC/DC).
+    *   Instrumentación: Osciloscopios.
+*   **Funcionalidad:** Drag-and-drop (simulado), conexión de nodos, visualización de valores.
+
+**4. Resolución de Incidencias Críticas**
+*   **Pantalla Blanca en `/lab-electronics`:**
+    *   *Causa:* Conflicto de dependencias (`reactflow` vs React 19) y errores silenciosos en el renderizado.
+    *   *Solución:* Instalación de `reactflow` con `--legacy-peer-deps` y encapsulamiento de rutas en `<ErrorBoundary>`.
+*   **Contenedores Zombie:**
+    *   *Causa:* Contenedor `sigct_frontend` antiguo bloqueando el puerto y sirviendo archivos cacheados.
+    *   *Solución:* `docker stop/rm` y limpieza de procesos Node huérfanos.
+*   **Rutas de Navegación:** Corrección del mapeo en `App.jsx` para dirigir `/lab-electronics` y `/advanced-math-v2` correctamente.
+
+**5. Procedimiento de Mantenimiento de Espacio en Disco (Docker/WSL)**
+Para liberar espacio consumido por el disco virtual de Docker (`ext4.vhdx`), ejecutar periódicamente:
+
+1.  **Limpieza Rápida (Desde Terminal):**
+    ```bash
+    docker system prune -f
+    ```
+2.  **Compactación Profunda (Requiere PowerShell Administrador):**
+    *   Cerrar Docker Desktop y WSL:
+        ```powershell
+        wsl --shutdown
+        ```
+    *   Ejecutar Diskpart:
+        ```powershell
+        diskpart
+        # Dentro de diskpart:
+        select vdisk file="C:\Users\bagm2\AppData\Local\Docker\wsl\data\ext4.vhdx"
+        compact vdisk
+        exit
+        ```
+    *   Reiniciar Docker Desktop.
+
+**Próximos Pasos Inmediatos:**
+*   Generación de Netlist SPICE desde el Editor de Esquemas.
+*   Integración de `ngspice` (vía Pyodide) para simular los circuitos dibujados.

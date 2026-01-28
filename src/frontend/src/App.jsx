@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 
 // --- IMPORTACIONES EXISTENTES (Mantenemos todo tu código) ---
 import TopNav from './components/TopNav.jsx';
@@ -76,6 +77,7 @@ const AppContent = () => {
       'robotics': '/labs/robotics',     // Voz: "Ir a robótica"
       'ai': '/ai-predictive',           // Voz: "Ir a Inteligencia Artificial"
       'docs': '/docs/masterdoc',
+      'math': '/advanced-math-v2', // FIX: 'math' key points to correct V2 lab
       'advanced-math': '/advanced-math',
       'advanced-math-v2': '/advanced-math-v2',
       'lab-embedded': '/lab-embedded',
@@ -92,6 +94,13 @@ const AppContent = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
       
+      {/* --- DEBUG: GLOBAL STATUS --- */}
+      <div className="fixed top-0 left-0 w-full z-50 pointer-events-none p-1 flex justify-center opacity-50">
+        <span className="bg-black/80 text-green-400 text-[10px] px-2 rounded border border-green-900">
+            SYSTEM ONLINE: {location.pathname}
+        </span>
+      </div>
+
       {/* 1. Barra de Navegación (Pasa los nodos para el status del cluster) */}
       <TopNav clusterNodes={nodes} />
 
