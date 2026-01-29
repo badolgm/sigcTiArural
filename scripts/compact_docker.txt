@@ -1,0 +1,6 @@
+
+select vdisk file="C:\Users\bagm2\AppData\Local\Docker\wsl\disk\docker_data.vhdx"
+compact vdisk
+select vdisk file="C:\Users\bagm2\AppData\Local\Docker\wsl\main\ext4.vhdx"
+compact vdisk
+exit
