@@ -9,7 +9,8 @@ import ReactFlow, {
   Handle, 
   Position,
   ConnectionLineType,
-  ConnectionMode
+  ConnectionMode,
+  useReactFlow
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useLabStore } from '../stores/useLabStore';
@@ -443,14 +444,30 @@ const ShiftRegisterNode = ({ data, selected }) => {
         };
 
         // 15. Karnaugh Map (Visual Tool)
-        const KarnaughMapNode = ({ data, selected }) => {
+        const KarnaughMapNode = ({ id, data, selected }) => {
+            const { setNodes } = useReactFlow();
+            const values = data.values || Array(16).fill(0);
+            
+            const toggleCell = (idx) => {
+                const newValues = [...values];
+                newValues[idx] = newValues[idx] === 0 ? 1 : 0;
+                setNodes(nds => nds.map(n => {
+                    if (n.id === id) {
+                        return { ...n, data: { ...n.data, values: newValues } };
+                    }
+                    return n;
+                }));
+            };
+
             return (
                 <NodeShell label="K-Map" value="4-Var" selected={selected}>
-                    <div className="relative w-32 h-32 bg-gray-100 border-2 border-blue-600 rounded flex flex-col items-center justify-center shadow-lg p-1">
+                    <div className="relative w-32 h-32 bg-gray-100 border-2 border-blue-600 rounded flex flex-col items-center justify-center shadow-lg p-1 nodrag">
                         <div className="w-full h-full grid grid-cols-4 grid-rows-4 gap-0.5 bg-gray-300">
-                            {[...Array(16)].map((_,i) => (
-                                <div key={i} className="bg-white flex items-center justify-center text-[8px] font-mono text-gray-800 hover:bg-yellow-200 cursor-pointer">
-                                    {Math.random() > 0.5 ? '1' : '0'}
+                            {values.map((v,i) => (
+                                <div key={i} 
+                                     onClick={(e) => { e.stopPropagation(); toggleCell(i); }}
+                                     className="bg-white flex items-center justify-center text-[8px] font-mono text-gray-800 hover:bg-yellow-200 cursor-pointer">
+                                    {v}
                                 </div>
                             ))}
                         </div>
@@ -497,13 +514,37 @@ const initialEdges = [
   { id: 'e_scope2', source: 'r1', sourceHandle: 'r', target: 'scope_out', targetHandle: 'l' },
 ];
 
-const SchematicEditor = ({ onRunSimulation }) => {
+const SchematicEditor = ({ onRunSimulation, labSignalParams }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [simResult, setSimResult] = useState(null);
   const [simData, setSimData] = useState([]); // For graphs
   const [simStatus, setSimStatus] = useState('idle');
   const [isEngineeringLines, setIsEngineeringLines] = useState(false); // Toggle line type
+  const [showNetlist, setShowNetlist] = useState(false);
+  const [netlistContent, setNetlistContent] = useState('');
+
+  // Sync Lab Generator to Source Nodes
+  useEffect(() => {
+      if (labSignalParams) {
+          setNodes((nds) => nds.map((n) => {
+              if (n.type === 'source' && n.data.useLab) {
+                  const { type, amp, freq } = labSignalParams;
+                  return { 
+                      ...n, 
+                      data: { 
+                          ...n.data, 
+                          value: `LAB (${type}): ${amp}V, ${freq}Hz`, 
+                          volt: parseFloat(amp), 
+                          freq: parseFloat(freq),
+                          waveType: type
+                      } 
+                  };
+              }
+              return n;
+          }));
+      }
+  }, [labSignalParams, setNodes]);
 
   const setSchematic = useLabStore((state) => state.setSchematic);
   const savedSchematic = useLabStore((state) => state.electronicsData?.schematic);
@@ -560,6 +601,14 @@ const SchematicEditor = ({ onRunSimulation }) => {
       a.href = url; a.download = 'netlist.json'; a.click();
       URL.revokeObjectURL(url);
     } catch {}
+  };
+
+  const toggleNetlist = () => {
+    if (!showNetlist) {
+        const { code } = generateNetlist(nodes, edges);
+        setNetlistContent(code);
+    }
+    setShowNetlist(!showNetlist);
   };
 
   const onConnect = useCallback((params) => {
@@ -678,21 +727,44 @@ const SchematicEditor = ({ onRunSimulation }) => {
             }));
         }
     } else if (node.type === 'source') {
-        const newVolt = window.prompt(`Amplitud de Voltaje (V) para ${node.data.label}:`, parseFloat(node.data.value) || 0);
-        if (newVolt !== null) {
-            let newFreq = 0;
-            if (node.data.type === 'ac') {
-                const f = window.prompt(`Frecuencia (Hz):`, node.data.freq || 60);
-                newFreq = parseFloat(f) || 60;
-            }
-            
-            setNodes((nds) => nds.map((n) => {
-                if (n.id === node.id) {
-                    const displayVal = node.data.type === 'ac' ? `${newVolt}V, ${newFreq}Hz` : `${newVolt}V`;
-                    return { ...n, data: { ...n.data, value: displayVal, volt: parseFloat(newVolt), freq: newFreq } };
+        const currentVal = node.data.useLab ? 'LAB' : parseFloat(node.data.value) || 0;
+        const input = window.prompt(`Amplitud (V) o escriba 'LAB' para usar generador:`, currentVal);
+        
+        if (input !== null) {
+            if (input.trim().toUpperCase() === 'LAB') {
+                 setNodes((nds) => nds.map((n) => {
+                    if (n.id === node.id) {
+                        return { 
+                            ...n, 
+                            data: { 
+                                ...n.data, 
+                                useLab: true, 
+                                label: 'V_LAB',
+                                // Will be updated by useEffect immediately if params exist
+                                value: 'Sincronizando...' 
+                            } 
+                        };
+                    }
+                    return n;
+                }));
+            } else {
+                const newVolt = parseFloat(input);
+                if (!isNaN(newVolt)) {
+                    let newFreq = 0;
+                    if (node.data.type === 'ac') {
+                        const f = window.prompt(`Frecuencia (Hz):`, node.data.freq || 60);
+                        newFreq = parseFloat(f) || 60;
+                    }
+                    
+                    setNodes((nds) => nds.map((n) => {
+                        if (n.id === node.id) {
+                            const displayVal = node.data.type === 'ac' ? `${newVolt}V, ${newFreq}Hz` : `${newVolt}V`;
+                            return { ...n, data: { ...n.data, useLab: false, value: displayVal, volt: newVolt, freq: newFreq, waveType: 'sine' } };
+                        }
+                        return n;
+                    }));
                 }
-                return n;
-            }));
+            }
         }
     } else if (node.type === 'scope') {
         const newLabel = window.prompt(`Etiqueta del Probe:`, node.data.label);
@@ -804,9 +876,33 @@ const SchematicEditor = ({ onRunSimulation }) => {
             const beta = n.data.beta || 100;
             const is = n.data.is || 1e-14;
             lines.push(`c.add_transistor("${name}", ${getHandleNet(n.id, 'c')}, ${getHandleNet(n.id, 'b')}, ${getHandleNet(n.id, 'e')}, ${beta}, ${is})`);
+        } else if (n.type === 'mosfet') {
+            const k = n.data.k || 0.001;
+            const vt = n.data.vt || 2.0;
+            lines.push(`c.add_mosfet("${name}", ${getHandleNet(n.id, 'd')}, ${getHandleNet(n.id, 'g')}, ${getHandleNet(n.id, 's')}, ${k}, ${vt})`);
+        } else if (n.type === 'opamp') {
+            const gain = n.data.gain || 100000;
+            lines.push(`c.add_opamp("${name}", ${getHandleNet(n.id, 'non')}, ${getHandleNet(n.id, 'inv')}, ${getHandleNet(n.id, 'out')}, ${gain})`);
+        } else if (n.type === 'transformer') {
+            const ratio = n.data.ratio || 1.0;
+            lines.push(`c.add_transformer("${name}", ${getHandleNet(n.id, 'p1')}, ${getHandleNet(n.id, 'p2')}, ${getHandleNet(n.id, 's1')}, ${getHandleNet(n.id, 's2')}, ${ratio})`);
+        } else if (n.type === 'logic') {
+            const kind = n.data.kind || 'AND';
+            if (kind === 'NOT') {
+                 lines.push(`c.add_logic("${name}", "${kind}", [${getHandleNet(n.id, 'b')}], ${getHandleNet(n.id, 'out')})`);
+            } else {
+                 lines.push(`c.add_logic("${name}", "${kind}", [${getHandleNet(n.id, 'a')}, ${getHandleNet(n.id, 'b')}], ${getHandleNet(n.id, 'out')})`);
+            }
+        } else if (n.type === 'flipflop') {
+            // D-Type FlipFlop: inputs=[clk, d], outputs=[q, qb]
+            lines.push(`c.add_flipflop("${name}", "D", [${getHandleNet(n.id, 'clk')}, ${getHandleNet(n.id, 'd')}], [${getHandleNet(n.id, 'q')}, ${getHandleNet(n.id, 'qb')}])`);
+        } else if (n.type === 'shiftreg') {
+            // Shift Register: inputs=[clk, data], outputs=[out]
+            lines.push(`c.add_shift_register("${name}", "8-bit", [${getHandleNet(n.id, 'clk')}, ${getHandleNet(n.id, 'data')}], [${getHandleNet(n.id, 'out')}])`);
         } else if (n.type === 'source') {
             const freq = n.data.freq !== undefined ? n.data.freq : (n.data.type === 'ac' ? 60 : 0); 
-            lines.push(`c.add_voltage("${name}", ${getHandleNet(n.id, 'pos')}, ${getHandleNet(n.id, 'neg')}, ${val}, ${freq})`);
+            const wave = n.data.waveType || 'sine';
+            lines.push(`c.add_voltage("${name}", ${getHandleNet(n.id, 'pos')}, ${getHandleNet(n.id, 'neg')}, ${val}, ${freq}, "${wave}")`);
         } else if (n.type === 'scope') {
             const net = getHandleNet(n.id, 'l');
             probes.push({ label: n.data.label, net: net });
@@ -849,8 +945,8 @@ class Circuit:
         self.components.append({'type':'L', 'name':name, 'n1':n1, 'n2':n2, 'val':val, 'i_prev':0})
         self.nodes.add(n1); self.nodes.add(n2)
 
-    def add_voltage(self, name, n1, n2, val, freq=0):
-        self.components.append({'type':'V', 'name':name, 'n1':n1, 'n2':n2, 'val':val, 'freq':freq})
+    def add_voltage(self, name, n1, n2, val, freq=0, wave_type='sine'):
+        self.components.append({'type':'V', 'name':name, 'n1':n1, 'n2':n2, 'val':val, 'freq':freq, 'wave':wave_type})
         self.nodes.add(n1); self.nodes.add(n2)
         
     def add_transistor(self, name, nc, nb, ne, beta, Is):
@@ -864,13 +960,46 @@ class Circuit:
         })
         self.nodes.add(nc); self.nodes.add(nb); self.nodes.add(ne)
 
+    def add_mosfet(self, name, nd, ng, ns, k, vt):
+        self.components.append({'type':'M', 'name':name, 'nd':nd, 'ng':ng, 'ns':ns, 'k':k, 'vt':vt})
+        self.nodes.add(nd); self.nodes.add(ng); self.nodes.add(ns)
+
+    def add_opamp(self, name, n_plus, n_minus, n_out, gain):
+        self.components.append({'type':'E', 'name':name, 'n_plus':n_plus, 'n_minus':n_minus, 'n_out':n_out, 'gain':gain})
+        self.nodes.add(n_plus); self.nodes.add(n_minus); self.nodes.add(n_out)
+
+    def add_transformer(self, name, p1, p2, s1, s2, ratio):
+        self.components.append({'type':'T', 'name':name, 'p1':p1, 'p2':p2, 's1':s1, 's2':s2, 'ratio':ratio})
+        self.nodes.add(p1); self.nodes.add(p2); self.nodes.add(s1); self.nodes.add(s2)
+
+    def add_logic(self, name, kind, inputs, n_out):
+        self.components.append({'type':'Logic', 'name':name, 'kind':kind, 'inputs':inputs, 'n_out':n_out})
+        for n in inputs: self.nodes.add(n)
+        self.nodes.add(n_out)
+        
+    def add_flipflop(self, name, kind, inputs, outputs):
+        self.components.append({'type':'FF', 'name':name, 'kind':kind, 'inputs':inputs, 'outputs':outputs, 'state':{'Q':0, 'clk_prev':0}})
+        for n in inputs: self.nodes.add(n)
+        for n in outputs: self.nodes.add(n)
+
+    def add_shift_register(self, name, kind, inputs, outputs):
+        # 8-bit Shift Register
+        self.components.append({'type':'SR', 'name':name, 'kind':kind, 'inputs':inputs, 'outputs':outputs, 'state':{'bits':[0]*8, 'clk_prev':0}})
+        for n in inputs: self.nodes.add(n)
+        for n in outputs: self.nodes.add(n)
+
     def solve_transient(self, t_end=0.05, dt=1e-4):
         node_list = sorted(list(self.nodes))
         self.node_map = {n:i for i,n in enumerate(node_list)} 
         N = len(node_list)
+        
+        # Calculate dimension
         v_sources = [c for c in self.components if c['type']=='V']
-        M = len(v_sources)
-        dim = N + M
+        opamps = [c for c in self.components if c['type']=='E']
+        transformers = [c for c in self.components if c['type']=='T']
+        
+        # Dimensions: N (nodes) + M (Voltage Sources) + E (OpAmps) + T (Transformers)
+        dim = N + len(v_sources) + len(opamps) + len(transformers)
         
         times = np.arange(0, t_end, dt)
         history = {str(n): [] for n in node_list}
@@ -880,10 +1009,229 @@ class Circuit:
         x = np.zeros(dim)
         
         for t in times:
+            # Update sequential logic states (FlipFlops) at start of step based on PREVIOUS x
+            for c in self.components:
+                if c['type'] == 'FF':
+                    clk_idx = self.node_map[c['inputs'][0]] # Assuming 1st input is CLK
+                    clk_val = x[clk_idx]
+                    prev_clk = c['state']['clk_prev']
+                    
+                    # Rising edge detection
+                    if clk_val > 2.5 and prev_clk <= 2.5:
+                        # Logic update
+                        if c['kind'] == 'JK':
+                            j = x[self.node_map[c['inputs'][1]]] > 2.5
+                            k = x[self.node_map[c['inputs'][2]]] > 2.5
+                            q = c['state']['Q']
+                            if j and k: q = 1 - q # Toggle
+                            elif j and not k: q = 1 # Set
+                            elif not j and k: q = 0 # Reset
+                            c['state']['Q'] = q
+                        elif c['kind'] == 'D':
+                            d = x[self.node_map[c['inputs'][1]]] > 2.5
+                            c['state']['Q'] = 1 if d else 0
+                        elif c['kind'] == 'T':
+                            t_in = x[self.node_map[c['inputs'][1]]] > 2.5
+                            if t_in: c['state']['Q'] = 1 - c['state']['Q']
+                            
+                    c['state']['clk_prev'] = clk_val
+
+                elif c['type'] == 'SR':
+                    # Shift Register Update
+                    clk_idx = self.node_map[c['inputs'][0]]
+                    clk_val = x[clk_idx]
+                    prev_clk = c['state']['clk_prev']
+                    
+                    if clk_val > 2.5 and prev_clk <= 2.5: # Rising Edge
+                        data_idx = self.node_map[c['inputs'][1]]
+                        d_val = 1 if x[data_idx] > 2.5 else 0
+                        # Shift right: Insert at 0, remove last
+                        c['state']['bits'].insert(0, d_val)
+                        c['state']['bits'].pop()
+                    
+                    c['state']['clk_prev'] = clk_val
+
             # Newton-Raphson Iteration (Max 20 iter per step)
             for iter in range(20):
                 G = np.zeros((dim, dim))
                 I = np.zeros(dim)
+                extra_idx = N
+                
+                # Build Matrix
+                for c in self.components:
+                    if c['type'] == 'R':
+                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
+                        g = 1.0 / (c['val'] + 1e-12)
+                        G[n1,n1]+=g; G[n2,n2]+=g; G[n1,n2]-=g; G[n2,n1]-=g
+                        
+                    elif c['type'] == 'C':
+                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
+                        gc = c['val'] / dt
+                        G[n1,n1]+=gc; G[n2,n2]+=gc; G[n1,n2]-=gc; G[n2,n1]-=gc
+                        i_src = gc * c['v_prev']
+                        I[n1] += i_src; I[n2] -= i_src
+                        
+                    elif c['type'] == 'L':
+                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
+                        gl = dt / (c['val'] + 1e-12)
+                        G[n1,n1]+=gl; G[n2,n2]+=gl; G[n1,n2]-=gl; G[n2,n1]-=gl
+                        I[n1] -= c['i_prev']; I[n2] += c['i_prev']
+                        
+                    elif c['type'] == 'V':
+                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
+                        val = c['val']
+                        if c['freq'] > 0:
+                            omega_t = 2 * np.pi * c['freq'] * t
+                            wave = c.get('wave', 'sine')
+                            if wave == 'sine':
+                                val = c['val'] * np.sin(omega_t)
+                            elif wave == 'square':
+                                val = c['val'] * np.sign(np.sin(omega_t))
+                            elif wave == 'triangle':
+                                val = c['val'] * (2.0 / np.pi) * np.arcsin(np.sin(omega_t))
+                        
+                        G[n1, extra_idx]+=1; G[n2, extra_idx]-=1; G[extra_idx, n1]+=1; G[extra_idx, n2]-=1
+                        I[extra_idx] = val
+                        extra_idx += 1
+                        
+                    elif c['type'] == 'Q':
+                        nc, nb, ne = self.node_map[c['nc']], self.node_map[c['nb']], self.node_map[c['ne']]
+                        vc = x[nc]; vb = x[nb]; ve = x[ne]
+                        vbe = vb - ve; vbc = vb - vc
+                        vbe = min(vbe, 2.0); vbc = min(vbc, 2.0)
+                        
+                        vt = c['Vt']; Is = c['Is']
+                        alpha_f = c['alpha_f']; alpha_r = c['alpha_r']
+                        
+                        exp_be = np.exp(vbe/vt); exp_bc = np.exp(vbc/vt)
+                        If = Is * (exp_be - 1); Ir = Is * (exp_bc - 1)
+                        g_be = (Is / vt) * exp_be; g_bc = (Is / vt) * exp_bc
+                        
+                        # Jacobian Stamp
+                        G[nb, nb] += (1-alpha_f)*g_be + (1-alpha_r)*g_bc
+                        G[nb, ne] -= (1-alpha_f)*g_be
+                        G[nb, nc] -= (1-alpha_r)*g_bc
+                        
+                        G[nc, nb] += alpha_f*g_be - g_bc
+                        G[nc, nc] += g_bc
+                        G[nc, ne] -= alpha_f*g_be
+                        
+                        G[ne, nb] += -g_be + alpha_r*g_bc
+                        G[ne, ne] += g_be
+                        G[ne, nc] -= alpha_r*g_bc
+                        
+                        Ib_val = (1-alpha_f)*If + (1-alpha_r)*Ir
+                        Ic_val = alpha_f*If - Ir
+                        Ie_val = -If + alpha_r*Ir
+                        
+                        I[nb] -= Ib_val - ((1-alpha_f)*g_be*vbe + (1-alpha_r)*g_bc*vbc)
+                        I[nc] -= Ic_val - (alpha_f*g_be*vbe - g_bc*vbc)
+                        I[ne] -= Ie_val - (-g_be*vbe + alpha_r*g_bc*vbc)
+
+                    elif c['type'] == 'M': # MOSFET (Shichman-Hodges)
+                        nd, ng, ns = self.node_map[c['nd']], self.node_map[c['ng']], self.node_map[c['ns']]
+                        vd = x[nd]; vg = x[ng]; vs = x[ns]
+                        vgs = vg - vs; vds = vd - vs
+                        vt = c['vt']; k = c['k']
+                        
+                        ids = 0; gm = 0; gds = 0
+                        
+                        if vgs > vt:
+                            if vds < (vgs - vt): # Linear
+                                ids = k * ((vgs - vt)*vds - 0.5*vds**2)
+                                gm = k * vds
+                                gds = k * (vgs - vt - vds)
+                            else: # Saturation
+                                ids = 0.5 * k * (vgs - vt)**2
+                                gm = k * (vgs - vt)
+                                gds = 0
+                        
+                        G[nd, ng] += gm; G[nd, nd] += gds; G[nd, ns] -= (gm + gds)
+                        G[ns, ng] -= gm; G[ns, nd] -= gds; G[ns, ns] += (gm + gds)
+                        
+                        ieq = ids - (gm * vgs + gds * vds)
+                        I[nd] -= ieq; I[ns] += ieq
+
+                    elif c['type'] == 'E': # OpAmp (VCVS)
+                        n_plus, n_minus, n_out = self.node_map[c['n_plus']], self.node_map[c['n_minus']], self.node_map[c['n_out']]
+                        gain = c['gain']
+                        
+                        G[extra_idx, n_plus] = 1; G[extra_idx, n_minus] = -1; G[extra_idx, n_out] = -1.0/gain
+                        G[n_out, extra_idx] = 1
+                        # I[extra_idx] = 0 (Ideal)
+                        extra_idx += 1
+
+                    elif c['type'] == 'T': # Transformer (Ideal)
+                        p1, p2 = self.node_map[c['p1']], self.node_map[c['p2']]
+                        s1, s2 = self.node_map[c['s1']], self.node_map[c['s2']]
+                        n = c['ratio']
+                        
+                        # Constraint: V_s - n*V_p = 0
+                        # V_s = s1-s2, V_p = p1-p2
+                        # s1 - s2 - n*p1 + n*p2 = 0
+                        
+                        G[extra_idx, s1] = 1; G[extra_idx, s2] = -1
+                        G[extra_idx, p1] = -n; G[extra_idx, p2] = n
+                        
+                        # Currents
+                        G[p1, extra_idx] = n; G[p2, extra_idx] = -n
+                        G[s1, extra_idx] = -1; G[s2, extra_idx] = 1
+                        
+                        extra_idx += 1
+
+                    elif c['type'] == 'Logic': # Logic Gate
+                        vals = [x[self.node_map[n]] for n in c['inputs']]
+                        out_val = 0.0
+                        threshold = 2.5; high = 5.0
+                        
+                        if c['kind'] == 'AND': out_val = high if all(v > threshold for v in vals) else 0.0
+                        elif c['kind'] == 'OR': out_val = high if any(v > threshold for v in vals) else 0.0
+                        elif c['kind'] == 'NAND': out_val = 0.0 if all(v > threshold for v in vals) else high
+                        elif c['kind'] == 'NOT': out_val = 0.0 if vals[0] > threshold else high
+                        elif c['kind'] == 'XOR':
+                             b1 = vals[0] > threshold
+                             b2 = vals[1] > threshold if len(vals)>1 else False
+                             out_val = high if (b1 != b2) else 0.0
+                        
+                        n_out = self.node_map[c['n_out']]
+                        g_logic = 1.0 / 10.0 # 10 ohm output impedance
+                        G[n_out, n_out] += g_logic
+                        I[n_out] += out_val * g_logic
+
+                    elif c['type'] == 'FF': # FlipFlop Output
+                        q_val = 5.0 if c['state']['Q'] == 1 else 0.0
+                        q_bar_val = 5.0 - q_val
+                        
+                        n_q = self.node_map[c['outputs'][0]]
+                        # n_qbar = self.node_map[c['outputs'][1]] # Handle if exists
+                        
+                        g_logic = 1.0 / 10.0
+                        G[n_q, n_q] += g_logic
+                        I[n_q] += q_val * g_logic
+                        
+                        if len(c['outputs']) > 1:
+                            n_qbar = self.node_map[c['outputs'][1]]
+                            G[n_qbar, n_qbar] += g_logic
+                            I[n_qbar] += q_bar_val * g_logic
+
+                    elif c['type'] == 'SR':
+                        # Output is Bit 7 (Last bit)
+                        out_val = 5.0 if c['state']['bits'][7] == 1 else 0.0
+                        n_out = self.node_map[c['outputs'][0]]
+                        g_logic = 1.0 / 10.0
+                        G[n_out, n_out] += g_logic
+                        I[n_out] += out_val * g_logic
+
+                    # --- TRANSFORMER (MNA) ---
+                    elif c['type'] == 'T':
+                        # Already handled in extra_idx loop above, 
+                        # but we need to ensure we don't double count if we moved it here.
+                        # Wait, the transformer was handled in the 'components' loop.
+                        # This section is inside 'components' loop too.
+                        # The previous T block was correct.
+                        pass
+
+
                 v_idx = N
                 
                 # Build Matrix
@@ -909,7 +1257,16 @@ class Circuit:
                     elif c['type'] == 'V':
                         n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
                         val = c['val']
-                        if c['freq'] > 0: val = c['val'] * np.sin(2 * np.pi * c['freq'] * t)
+                        if c['freq'] > 0:
+                            omega_t = 2 * np.pi * c['freq'] * t
+                            wave = c.get('wave', 'sine')
+                            if wave == 'sine':
+                                val = c['val'] * np.sin(omega_t)
+                            elif wave == 'square':
+                                val = c['val'] * np.sign(np.sin(omega_t))
+                            elif wave == 'triangle':
+                                val = c['val'] * (2.0 / np.pi) * np.arcsin(np.sin(omega_t))
+                        
                         G[n1, v_idx]+=1; G[n2, v_idx]-=1; G[v_idx, n1]+=1; G[v_idx, n2]-=1
                         I[v_idx] = val
                         v_idx += 1
@@ -1081,6 +1438,176 @@ class Circuit:
 
 c = Circuit()
 ${code}
+c.solve_transient()
+`;
+      try {
+          const res = await onRunSimulation(solverCode);
+          // Parse JSON result from python stdout
+          let data;
+          try {
+             data = JSON.parse(res);
+          } catch(e) {
+             // If parse fails, maybe it's just the old format or error
+             // Try to find the last valid JSON line if mixed with prints
+             const lines = res.trim().split('\n');
+             data = JSON.parse(lines[lines.length-1]);
+          }
+
+          const history = data.history || data; // Fallback for backward compat
+          const analysis = data.analysis || {};
+          
+          // Transform for Recharts
+          // { time: [...], "1": [...], "2": [...] } -> [{time: t0, "1": v0, "2": v0}, ...]
+          const chartData = history.time.map((t, i) => {
+              const point = { time: t * 1000 }; // ms
+              probes.forEach(p => {
+                  if (history[p.net]) point[p.label] = history[p.net][i];
+              });
+              return point;
+          });
+          
+          // Inject analysis data into the result string so ElectronicsLab can parse it
+          // We can attach it to the data object if we were passing objects, but here we pass string/data via callback usually
+          // But wait, ElectronicsLab calls this via onRunCode which returns string.
+          // ElectronicsLab needs the FULL object.
+          
+          // We are returning chartData to local state, but ElectronicsLab expects 'data' via its own 'runPythonCode' logic?
+          // Actually, 'SchematicEditor' calls 'onRunSimulation' which is 'runPythonCode' in 'ElectronicsLab'.
+          // 'runPythonCode' returns the raw string result.
+          // BUT 'ElectronicsLab' also parses it!
+          
+          // So if we change the JSON structure here, 'ElectronicsLab' needs to know.
+          
+          setSimData(chartData);
+          setSimResult(useCluster ? "Simulación completada en Cluster (12 Nodos) 🚀" : "Simulación completada.");
+          
+      } catch (e) {
+          setSimResult("Error en simulación: " + e.message);
+      } finally {
+          setSimStatus('idle');
+      }
+  };
+
+  const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7300", "#00C49F"];
+
+  return (
+    <div className="w-full h-full flex flex-col gap-4">
+      {/* EDITOR AREA */}
+      <div className="w-full h-[500px] flex flex-col border border-gray-700 rounded-lg overflow-hidden bg-gray-900 relative">
+        <div className="bg-gray-800 p-2 flex gap-2 border-b border-gray-700 overflow-x-auto items-center">
+            <span className="text-xs font-bold text-gray-400">BASIC:</span>
+            <button onClick={() => addComponent('resistor')} className="btn-tool">Resistencia</button>
+            <button onClick={() => addComponent('capacitor')} className="btn-tool">Capacitor</button>
+            <button onClick={() => addComponent('inductor')} className="btn-tool">Bobina</button>
+            <button onClick={() => addComponent('source')} className="btn-tool">Fuente</button>
+            <button onClick={() => addComponent('gnd')} className="btn-tool">GND</button>
+            
+            <div className="w-[1px] h-4 bg-gray-600 mx-1"></div>
+            <span className="text-xs font-bold text-gray-400">ACTIVE:</span>
+            <button onClick={() => addComponent('transistor')} className="btn-tool text-cyan-400 border-cyan-400">BJT</button>
+            <button onClick={() => addComponent('mosfet')} className="btn-tool text-cyan-400 border-cyan-400">MOSFET</button>
+            <button onClick={() => addComponent('opamp')} className="btn-tool text-cyan-400 border-cyan-400">OpAmp</button>
+            <button onClick={() => addComponent('transformer')} className="btn-tool text-yellow-400 border-yellow-400">Trafo</button>
+
+            <div className="w-[1px] h-4 bg-gray-600 mx-1"></div>
+            <span className="text-xs font-bold text-gray-400">DIGITAL:</span>
+            <div className="flex flex-col gap-0.5">
+                <div className="flex gap-1">
+                    <button onClick={() => addComponent('logic', 'AND')} className="btn-tool text-green-400 text-[9px] px-1">AND</button>
+                    <button onClick={() => addComponent('logic', 'OR')} className="btn-tool text-green-400 text-[9px] px-1">OR</button>
+                    <button onClick={() => addComponent('logic', 'NOT')} className="btn-tool text-green-400 text-[9px] px-1">NOT</button>
+                </div>
+                <div className="flex gap-1">
+                    <button onClick={() => addComponent('logic', 'NAND')} className="btn-tool text-green-400 text-[9px] px-1">NAND</button>
+                    <button onClick={() => addComponent('logic', 'XOR')} className="btn-tool text-green-400 text-[9px] px-1">XOR</button>
+                </div>
+            </div>
+            <button onClick={() => addComponent('flipflop')} className="btn-tool text-purple-400">FlipFlop</button>
+            <button onClick={() => addComponent('shiftreg')} className="btn-tool text-purple-400">ShiftReg</button>
+            <button onClick={() => addComponent('karnaugh')} className="btn-tool text-purple-400">K-Map</button>
+
+            <div className="w-[1px] h-4 bg-gray-600 mx-1"></div>
+            <button onClick={() => addComponent('scope')} className="btn-tool !border-cyan-700 !text-cyan-400">Probe</button>
+            <button onClick={deleteSelected} className="btn-tool text-red-400 border-red-800 hover:bg-red-900/50 ml-2">🗑️</button>
+            <button onClick={rotateSelected} className="btn-tool text-yellow-300 border-yellow-600 ml-2">↻</button>
+            <button onClick={mirrorSelected} className="btn-tool text-pink-300 border-pink-600 ml-2">⇄</button>
+            <button onClick={toggleLineType} className="btn-tool text-blue-300 border-blue-300 ml-2">
+                {isEngineeringLines ? '↱' : '∿'}
+            </button>
+            
+            <div className="flex-grow"></div>
+            <button onClick={saveLocal} className="btn-tool text-green-400 border-green-400">💾</button>
+            <label className="btn-tool cursor-pointer text-yellow-300 border-yellow-300">
+              📂
+              <input type="file" accept="application/json" onChange={loadLocal} className="hidden" />
+            </label>
+            <button onClick={exportNetlist} className="btn-tool text-purple-400 border-purple-400">Export</button>
+            <button onClick={toggleNetlist} className="btn-tool text-orange-400 border-orange-400">Netlist</button>
+            
+            <button 
+                onClick={handleSimulate}
+                disabled={simStatus === 'running'}
+                className={`px-4 py-1 text-white text-xs font-bold rounded flex items-center gap-1 ${simStatus === 'running' ? 'bg-gray-600' : 'bg-green-600 hover:bg-green-500 shadow-[0_0_10px_rgba(0,255,0,0.3)]'}`}
+            >
+                {simStatus === 'running' ? '⌛' : '▶ RUN'}
+            </button>
+        </div>
+
+        <div className="flex-grow relative">
+            <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeDoubleClick={onNodeDoubleClick}
+            nodeTypes={nodeTypes}
+            connectionLineType={isEngineeringLines ? ConnectionLineType.Step : ConnectionLineType.Bezier}
+            connectionMode={ConnectionMode.Loose}
+            fitView
+            >
+            <Background color="#222" gap={16} />
+            <Controls />
+            <MiniMap style={{background: '#111'}} nodeColor={() => '#444'} />
+            </ReactFlow>
+        </div>
+      </div>
+
+      {/* RESULTS AREA */}
+      {simData.length > 0 && (
+          <div className="w-full h-[300px] bg-gray-900 border border-gray-700 rounded-lg p-4">
+              <h3 className="text-green-400 text-sm font-bold mb-2">Osciloscopio (Resultados Transitorios)</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={simData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                      <XAxis dataKey="time" stroke="#888" label={{ value: 'Tiempo (ms)', position: 'insideBottomRight', offset: -5 }} />
+                      <YAxis stroke="#888" label={{ value: 'Voltaje (V)', angle: -90, position: 'insideLeft' }} />
+                      <Tooltip contentStyle={{ backgroundColor: '#111', borderColor: '#555' }} />
+                      <Legend />
+                      {Object.keys(simData[0] || {}).filter(k => k !== 'time').map((k, i) => (
+                          <Line key={k} type="monotone" dataKey={k} stroke={colors[i % colors.length]} dot={false} strokeWidth={2} />
+                      ))}
+                  </LineChart>
+              </ResponsiveContainer>
+          </div>
+      )}
+      
+      {simResult && typeof simResult === 'string' && !simData.length && (
+          <div className="p-4 bg-red-900/20 border border-red-500 text-red-400 rounded text-xs font-mono whitespace-pre-wrap">
+              {simResult}
+          </div>
+      )}
+
+      <style jsx>{`
+        .btn-tool {
+            @apply px-2 py-1 bg-gray-700/50 text-gray-300 text-[10px] border border-gray-600 rounded hover:bg-gray-600 transition-colors whitespace-nowrap;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default SchematicEditor;
 c.solve_transient()
 `;
       try {

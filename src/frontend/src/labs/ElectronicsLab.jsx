@@ -13,7 +13,7 @@ const NEON_COLORS = {
 
 const parallel = (a, b) => (a > 0 && b > 0) ? (a * b) / (a + b) : (a || b);
 
-const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mIndex, Vcc, Rc, Re, R1, R2, RL, emitterBypass, beta, Rdet, Cdet, tauLPms, specSource, useHann, showVin = true, showVout = true, showEnv = false, showSpectrum = true, onlySpectrum = false, externalData = null, analysisData = null, timeDiv = 0.002, voltsDiv = 1.0, lissajousMode = false }) => {
+const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mIndex, Vcc, Rc, Re, R1, R2, RL, emitterBypass, beta, Rdet, Cdet, tauLPms, specSource, useHann, showVin = true, showVout = true, showEnv = false, showSpectrum = true, onlySpectrum = false, externalData = null, selectedSignals = null, analysisData = null, timeDiv = 0.002, voltsDiv = 1.0, lissajousMode = false, ch1Offset = 0, ch2Offset = 0 }) => {
   const ref = useRef(null);
   const [time, setTime] = useState(0);
 
@@ -62,25 +62,20 @@ const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mInd
 
     // --- MODO EXTERNO (SPICE) ---
     if (externalData && externalData.time && externalData.time.length > 0) {
-        // ... (Mismo código de modo externo, simplificado para brevedad o mantener igual)
-        // Para este paso, mantendremos la lógica de renderizado externo básico pero adaptado a scope controls si es posible
-        // Por simplicidad, el modo externo lo dejo igual pero usando timeDiv si se desea zoom.
-        // ... (Restaurando lógica externa original por seguridad, o mejorando?)
-        // Mejorando:
         const { time: tData, ...nodes } = externalData;
         const keys = Object.keys(nodes);
         const pad = 40;
         
         if (!onlySpectrum) {
             // Escalas dinámicas o manuales
-            // Si timeDiv es muy pequeño, mostramos ventana. Si no, todo.
-            // Por defecto SPICE muestra todo.
             const tMax = tData[tData.length - 1];
             let vMin = -5, vMax = 5; // Default ranges
             
-            // Auto-scale vertical
+            // Auto-scale vertical based on VISIBLE signals
             let minFound = 0, maxFound = 0;
-            keys.forEach(k => {
+            const visibleKeys = selectedSignals ? keys.filter(k => selectedSignals.includes(k)) : keys;
+            
+            visibleKeys.forEach(k => {
                 const arr = nodes[k];
                 if(arr) arr.forEach(v => {
                     if(v < minFound) minFound = v;
@@ -114,16 +109,37 @@ const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mInd
             ctx.fillText(`${vMin.toFixed(1)}V`, 5, pad + graphH);
             
             const colors = [NEON_COLORS.primary, NEON_COLORS.secondary, NEON_COLORS.warning, '#ff00ff', '#ffff00', '#00ff00'];
-            keys.forEach((k, idx) => {
+            
+            visibleKeys.forEach((k, idx) => {
                 const arr = nodes[k];
                 if(!arr) return;
-                ctx.strokeStyle = colors[idx % colors.length];
+                
+                // Determine offset based on channel mapping or index
+                // For simplicity in external mode, we apply offsets if the signal matches typical names or just first/second
+                let offset = 0;
+                // If we want to control offsets for external signals, we need a mapping.
+                // For now, let's say 1st visible signal uses ch1Offset, 2nd uses ch2Offset
+                if (idx === 0) offset = ch1Offset;
+                if (idx === 1) offset = ch2Offset;
+
+                ctx.strokeStyle = colors[keys.indexOf(k) % colors.length];
                 ctx.lineWidth = 2; ctx.beginPath();
                 for(let i=0; i<tData.length; i++) {
                     const t = tData[i];
                     const v = arr[i];
                     const x = pad + (t / tMax) * graphW;
-                    const y = pad + graphH - ((v - vMin) / vRange) * graphH;
+                    
+                    // Apply offset (in divisions, assuming 8 vertical divisions)
+                    // vRange corresponds to 8 divisions approx in auto-scale? 
+                    // No, vRange is the full height.
+                    // offset * (graphH / 8) is the pixel shift.
+                    const pxOffset = offset * (graphH / 8);
+                    
+                    const y = pad + graphH - ((v - vMin) / vRange) * graphH - pxOffset;
+                    
+                    // Clamp drawing within graph area? Canvas clip needed.
+                    // For now, let it overflow slightly or handle clip.
+                    
                     if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
                 }
                 ctx.stroke();
@@ -154,10 +170,13 @@ const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mInd
              });
              
              const colors = [NEON_COLORS.primary, NEON_COLORS.secondary, NEON_COLORS.warning, '#ff00ff', '#ffff00', '#00ff00'];
-             keys.forEach((k, idx) => {
+             // Use visibleKeys for FFT as well to match user selection
+             const visibleKeys = selectedSignals ? keys.filter(k => selectedSignals.includes(k)) : keys;
+             
+             visibleKeys.forEach((k, idx) => {
                  if(!analysisData[k]?.Spectrum) return;
                  const spec = analysisData[k].Spectrum;
-                 ctx.strokeStyle = colors[idx % colors.length]; ctx.lineWidth = 2; ctx.beginPath();
+                 ctx.strokeStyle = colors[keys.indexOf(k) % colors.length]; ctx.lineWidth = 2; ctx.beginPath();
                  for(let i=0; i<spec.length; i++) {
                      const pt = spec[i];
                      const x = specX + (pt.f / maxFreq) * specW;
@@ -239,16 +258,10 @@ const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mInd
             // Ventana de tiempo total = 10 divisiones * timeDiv
             const timeWindow = 10 * timeDiv; 
             
-            const drawTrace = (color, gain = 1, isInput = false) => {
+            const drawTrace = (color, gain = 1, isInput = false, offset = 0) => {
                 ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath();
                 for (let i = 0; i < samples; i++) {
                     const tOffset = (i / (samples-1)) * timeWindow;
-                    // Dibujamos "hacia atrás" desde 'time' para efecto scroll, o estático?
-                    // Osciloscopios suelen mostrar buffer. Vamos a mostrar [time, time + window]
-                    // o mejor [time - window, time] para scroll. 
-                    // Mejor: Trigger estático visualmente es mejor. 
-                    // Usemos t relativo a trigger para estabilizar si es periodico.
-                    // Simple scroll:
                     const t = time + tOffset; 
                     
                     let val = 0;
@@ -264,7 +277,8 @@ const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mInd
                     // 1 division = scopeH / 8
                     const pxHeight = scopeH / 8;
                     
-                    const y = scopeY + scopeH/2 - yOffset * pxHeight;
+                    // offset is in divisions
+                    const y = scopeY + scopeH/2 - (yOffset + offset) * pxHeight;
                     const x = scopeX + (i / (samples-1)) * scopeW;
                     
                     if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
@@ -272,8 +286,8 @@ const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mInd
                 ctx.stroke();
             };
 
-            if (showVin) drawTrace(NEON_COLORS.primary, 1, true);
-            if (showVout) drawTrace(NEON_COLORS.secondary, Av, false);
+            if (showVin) drawTrace(NEON_COLORS.primary, 1, true, ch1Offset);
+            if (showVout) drawTrace(NEON_COLORS.secondary, Av, false, ch2Offset);
             
             ctx.restore();
         }
@@ -316,7 +330,7 @@ const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mInd
         ctx.stroke();
     }
 
-  }, [time, vinAmp, vinFreq, waveType, useAm, fc, fm, mIndex, Vcc, Rc, Re, R1, R2, RL, emitterBypass, beta, Av, Rdet, Cdet, tauLPms, specSource, useHann, showVin, showVout, showEnv, showSpectrum, onlySpectrum, externalData, timeDiv, voltsDiv, lissajousMode]);
+  }, [time, vinAmp, vinFreq, waveType, useAm, fc, fm, mIndex, Vcc, Rc, Re, R1, R2, RL, emitterBypass, beta, Av, Rdet, Cdet, tauLPms, specSource, useHann, showVin, showVout, showEnv, showSpectrum, onlySpectrum, externalData, timeDiv, voltsDiv, lissajousMode, ch1Offset, ch2Offset]);
 
   return (
     <canvas ref={ref} width={680} height={480} className="w-full rounded" style={{ border: '1px solid ' + NEON_COLORS.primary + '40', background: '#0d0d1f' }} />
@@ -577,6 +591,18 @@ const ElectronicsLab = ({ onNavigate }) => {
   const [triggerMode, setTriggerMode] = useState('auto'); // 'auto', 'normal'
   const [triggerLevel, setTriggerLevel] = useState(0);
   const [lissajousMode, setLissajousMode] = useState(false);
+  const [ch1Offset, setCh1Offset] = useState(0);
+  const [ch2Offset, setCh2Offset] = useState(0);
+  const [selectedSignals, setSelectedSignals] = useState([]);
+
+  // Auto-select signals when simulation data arrives
+  useEffect(() => {
+    if (externalSimData) {
+        const keys = Object.keys(externalSimData).filter(k => k !== 'time');
+        // Select first 2 signals by default to avoid clutter
+        setSelectedSignals(keys.slice(0, 2));
+    }
+  }, [externalSimData]);
 
   // Estados de visualización de gráficos (para reducir desorden)
   const [showVin, setShowVin] = useState(true);
@@ -673,7 +699,14 @@ const ElectronicsLab = ({ onNavigate }) => {
                  localStorage.removeItem('lab_electronics_schematic');
                  window.location.reload();
              }}>
-                <SchematicEditor onRunSimulation={runPythonCode} />
+                <SchematicEditor 
+                    onRunSimulation={runPythonCode}
+                    labSignalParams={{
+                        type: waveType,
+                        amp: vinAmp,
+                        freq: vinFreq
+                    }}
+                />
              </ErrorBoundary>
           </div>
         ) : (
@@ -694,7 +727,7 @@ const ElectronicsLab = ({ onNavigate }) => {
                                 <span className="text-xs px-2 py-1 rounded bg-gray-800 text-gray-400 font-mono">
                                     {externalSimData ? "MODO: EXTERNO (SPICE)" : "MODO: INTERNO (DEMO)"}
                                 </span>
-                                {viewMode === 'simulation' && (
+                                {viewMode === 'simulation' && !externalSimData && (
                                     <div className="flex gap-3 text-xs font-mono">
                                         <label className="flex items-center gap-1 cursor-pointer hover:text-white">
                                             <input type="checkbox" checked={showVin} onChange={e=>setShowVin(e.target.checked)} className="accent-cyan-400" />
@@ -712,6 +745,26 @@ const ElectronicsLab = ({ onNavigate }) => {
                                             <input type="checkbox" checked={showSpectrum} onChange={e=>setShowSpectrum(e.target.checked)} className="accent-purple-400" />
                                             <span style={{color: NEON_COLORS.secondary}}>FFT</span>
                                         </label>
+                                    </div>
+                                )}
+                                {viewMode === 'simulation' && externalSimData && (
+                                    <div className="flex gap-3 text-xs font-mono flex-wrap max-w-md justify-end">
+                                        {Object.keys(externalSimData).filter(k => k !== 'time').map((key, idx) => (
+                                            <label key={key} className="flex items-center gap-1 cursor-pointer hover:text-white">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={selectedSignals.includes(key)} 
+                                                    onChange={e => {
+                                                        if (e.target.checked) setSelectedSignals([...selectedSignals, key]);
+                                                        else setSelectedSignals(selectedSignals.filter(k => k !== key));
+                                                    }}
+                                                    className="accent-cyan-400" 
+                                                />
+                                                <span style={{color: idx === 0 ? NEON_COLORS.primary : idx === 1 ? NEON_COLORS.secondary : '#888'}}>
+                                                    {key}
+                                                </span>
+                                            </label>
+                                        ))}
                                     </div>
                                 )}
                             </div>
@@ -744,10 +797,13 @@ const ElectronicsLab = ({ onNavigate }) => {
                             showSpectrum={viewMode === 'spectrum' || showSpectrum}
                             onlySpectrum={viewMode === 'spectrum'}
                             externalData={externalSimData}
+                            selectedSignals={selectedSignals}
                             analysisData={analysisData}
                             timeDiv={timeDiv}
                             voltsDiv={voltsDiv}
                             lissajousMode={lissajousMode}
+                            ch1Offset={ch1Offset}
+                            ch2Offset={ch2Offset}
                         />
                     </div>
                 </div>
@@ -984,6 +1040,24 @@ const ElectronicsLab = ({ onNavigate }) => {
                                         className="w-full accent-purple-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
                                     />
                                     <span className="text-[10px] text-right block text-purple-300 font-mono">{voltsDiv.toFixed(1)} V</span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-cyan-500 block">Posición CH1</span>
+                                    <input 
+                                        type="range" min={-4} max={4} step={0.1} 
+                                        value={ch1Offset} 
+                                        onChange={(e) => setCh1Offset(parseFloat(e.target.value))} 
+                                        className="w-full accent-cyan-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                                    />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-green-500 block">Posición CH2</span>
+                                    <input 
+                                        type="range" min={-4} max={4} step={0.1} 
+                                        value={ch2Offset} 
+                                        onChange={(e) => setCh2Offset(parseFloat(e.target.value))} 
+                                        className="w-full accent-green-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                                    />
                                 </div>
                             </div>
                         </div>
