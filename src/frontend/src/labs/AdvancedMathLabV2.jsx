@@ -67,7 +67,7 @@ const AdvancedMathLabV2 = () => {
         </div>
 
         <div className="stats-grid">
-          <div className="stat-panel" style={{ borderColor: electronicsData?.active ? '#39FF14' : '#555', background: electronicsData?.active ? 'rgba(57,255,20,0.1)' : 'rgba(255,255,255,0.05)' }}>
+          <div className="stat-panel" style={{ borderColor: electronicsData?.active ? '#39FF14' : '#555', background: electronicsData?.active ? 'rgba(57,255,20,0.1)' : 'rgba(255,255,255,0.05)' }} onClick={() => document.getElementById('section-real-signal')?.scrollIntoView({behavior:'smooth'})} role="button">
             <div className="stat-value" style={{ color: electronicsData?.active ? '#39FF14' : '#777' }}>⚡</div>
             <div className="stat-label">{electronicsData?.active ? 'Señal Entrante' : 'Sin Señal'}</div>
             <div className="text-xs mt-2" style={{ color: electronicsData?.active ? '#86efac' : '#777', whiteSpace: 'pre-line' }}>
@@ -113,18 +113,79 @@ const AdvancedMathLabV2 = () => {
         </div>
 
         {/* Interactividad real */}
-        <DynamicSections />
+        <DynamicSections electronicsData={electronicsData} />
       </div>
     </div>
+  );
+};
+
+// --- Helper Components & Functions ---
+
+const downloadCSV = (history, selectedNode) => {
+  if (!history || !history[selectedNode]) return;
+  const time = history.time;
+  const signal = history[selectedNode];
+  let csvContent = "data:text/csv;charset=utf-8,Time,Value\n";
+  time.forEach((t, i) => {
+    csvContent += `${t},${signal[i]}\n`;
+  });
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `signal_${selectedNode}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const PhasePortraitPlot = ({ time, signal, width, height }) => {
+  if (!time || !signal || time.length < 2) return null;
+  
+  // Simple dV/dt calculation
+  const dVdt = signal.map((v, i) => {
+    if (i === 0) return 0;
+    const dt = time[i] - time[i-1];
+    return (v - signal[i-1]) / dt;
+  });
+
+  const minV = Math.min(...signal);
+  const maxV = Math.max(...signal);
+  const minDV = Math.min(...dVdt.slice(1));
+  const maxDV = Math.max(...dVdt.slice(1));
+  
+  const rangeV = maxV - minV || 1;
+  const rangeDV = maxDV - minDV || 1;
+
+  const padding = 20;
+  const mapX = (v) => padding + ((v - minV) / rangeV) * (width - 2*padding);
+  const mapY = (dv) => height - padding - ((dv - minDV) / rangeDV) * (height - 2*padding);
+
+  const path = signal.map((v, i) => {
+    if (i === 0) return `M ${mapX(v)} ${mapY(dVdt[i])}`;
+    return `L ${mapX(v)} ${mapY(dVdt[i])}`;
+  }).join(' ');
+
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+       <rect x="0" y="0" width={width} height={height} fill="#000" />
+       {/* Axis */}
+       <line x1={padding} y1={height/2} x2={width-padding} y2={height/2} stroke="#333" />
+       <line x1={width/2} y1={padding} x2={width/2} y2={height-padding} stroke="#333" />
+       {/* Plot */}
+       <path d={path} fill="none" stroke="#00ffff" strokeWidth="1" opacity="0.8" />
+       <text x={width-40} y={height/2-5} fill="#666" fontSize="10">V</text>
+       <text x={width/2+5} y={20} fill="#666" fontSize="10">dV/dt</text>
+    </svg>
   );
 };
 
 export default AdvancedMathLabV2;
 
 // --- Componentes Dinámicos ---
-const DynamicSections = () => {
+const DynamicSections = ({ electronicsData }) => {
   return (
     <div>
+      <RealSignalAnalysis electronicsData={electronicsData} />
       <IntegralsInteractive />
       <EigenvaluesInteractive />
       <DiffEqInteractive />
@@ -132,6 +193,298 @@ const DynamicSections = () => {
       <SignalsInteractive />
       <ComplexInteractive />
       <FormulasPanel />
+    </div>
+  );
+};
+
+// --- Componente de Análisis de Señal Real (Mejorado) ---
+const RealSignalAnalysis = ({ electronicsData }) => {
+  const [selectedNode, setSelectedNode] = useState('1');
+  const [inputNode, setInputNode] = useState('1'); // Para función de transferencia
+  const [showDiffEq, setShowDiffEq] = useState(false);
+  const [showTransfer, setShowTransfer] = useState(false);
+  const [harmonicsCount, setHarmonicsCount] = useState(10);
+
+  // Actualizar nodo seleccionado si no existe en los nuevos datos
+  useEffect(() => {
+    if (electronicsData?.simulationResults?.history) {
+      const nodes = Object.keys(electronicsData.simulationResults.history).filter(k => k !== 'time');
+      if (!nodes.includes(selectedNode) && nodes.length > 0) setSelectedNode(nodes[0]);
+      if (!nodes.includes(inputNode) && nodes.length > 0) setInputNode(nodes[0]);
+    }
+  }, [electronicsData, selectedNode, inputNode]);
+
+  if (!electronicsData?.active || !electronicsData?.simulationResults?.history) {
+    return (
+      <div className="interactive-section" id="section-real-signal">
+        <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>🔬 Análisis de Señal Real</h3>
+        <div className="p-4 border border-dashed border-gray-600 rounded text-center text-gray-400">
+          <p>No hay datos de simulación activos.</p>
+          <p className="text-sm mt-2">Ve al <strong>Laboratorio de Electrónica</strong>, diseña un circuito y ejecútalo.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const history = electronicsData.simulationResults.history;
+  const nodes = Object.keys(history).filter(k => k !== 'time');
+  const timeData = history.time;
+  
+  // --- CLIENT-SIDE MATH PROCESSING ---
+  // 1. FFT Calculation (Simple implementation for visualization)
+  const calculateFFT = (signal, time) => {
+      if(!signal || !time || signal.length < 2) return [];
+      const N = signal.length;
+      const dt = time[1] - time[0];
+      const fs = 1/dt;
+      
+      // Windowing (Hann)
+      const windowed = signal.map((v, i) => v * (0.5 * (1 - Math.cos(2 * Math.PI * i / (N - 1)))));
+      
+      // Simple DFT for first K harmonics (faster than full FFT for visualization)
+      const K = 100; // Max frequency bins to compute
+      const spectrum = [];
+      
+      for(let k=0; k<K; k++) {
+          let re = 0, im = 0;
+          for(let n=0; n<N; n+=4) { // Downsample calculation for speed
+              const angle = 2 * Math.PI * k * n / N;
+              re += windowed[n] * Math.cos(angle);
+              im -= windowed[n] * Math.sin(angle);
+          }
+          const mag = 2 * Math.sqrt(re*re + im*im) / N; // Normalized magnitude
+          const freq = k * fs / N;
+          if (freq > 0) spectrum.push({ f: freq, m: mag });
+      }
+      return spectrum;
+  };
+
+  const spectrumData = useMemo(() => calculateFFT(history[selectedNode], timeData), [history, selectedNode, timeData]);
+  
+  // 2. Transfer Function H(f) = Vout(f) / Vin(f)
+  const transferFunction = useMemo(() => {
+      if (!showTransfer || inputNode === selectedNode) return null;
+      const specIn = calculateFFT(history[inputNode], timeData);
+      const specOut = spectrumData; // Already calculated for selectedNode (assumed output)
+      
+      const tf = [];
+      for(let i=0; i<Math.min(specIn.length, specOut.length); i++) {
+          const minM = 1e-6;
+          const gain = specOut[i].m / (specIn[i].m + minM);
+          const gainDB = 20 * Math.log10(gain + minM);
+          tf.push({ f: specIn[i].f, gain: gain, db: gainDB });
+      }
+      return tf;
+  }, [showTransfer, inputNode, selectedNode, spectrumData, history, timeData]);
+
+
+  // SVG Helper
+  const width = 500;
+  const height = 200;
+  const padding = 30;
+  
+  const selectedSignal = history[selectedNode];
+  const minVal = Math.min(...selectedSignal);
+  const maxVal = Math.max(...selectedSignal);
+  const range = maxVal - minVal || 1;
+  
+  const mapX = (t) => padding + (t / (timeData[timeData.length-1])) * (width - 2*padding);
+  const mapY = (v) => height - padding - ((v - minVal) / range) * (height - 2*padding);
+  
+  const pathD = timeData.map((t, i) => 
+    `${i===0?'M':'L'} ${mapX(t)} ${mapY(history[selectedNode][i])}`
+  ).join(' ');
+
+  return (
+    <div className="interactive-section" id="section-real-signal">
+      <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+        <div className="flex items-center gap-2">
+            <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>🔬 Análisis de Señal Real</h3>
+            <span className="text-xs px-2 py-1 bg-green-900 text-green-300 rounded border border-green-700">Live Data</span>
+        </div>
+        
+        <div className="flex gap-4">
+            <div className="flex flex-col">
+                <label className="text-[10px] text-gray-400">Nodo Análisis</label>
+                <select 
+                  value={selectedNode} 
+                  onChange={(e) => setSelectedNode(e.target.value)}
+                  className="bg-black border border-cyan-500 text-cyan-500 rounded px-2 py-1 text-sm"
+                >
+                  {nodes.map(n => <option key={n} value={n}>Nodo {n}</option>)}
+                </select>
+            </div>
+            {showTransfer && (
+                <div className="flex flex-col">
+                    <label className="text-[10px] text-gray-400">Nodo Entrada (Ref)</label>
+                    <select 
+                      value={inputNode} 
+                      onChange={(e) => setInputNode(e.target.value)}
+                      className="bg-black border border-purple-500 text-purple-500 rounded px-2 py-1 text-sm"
+                    >
+                      {nodes.map(n => <option key={n} value={n}>Nodo {n}</option>)}
+                    </select>
+                </div>
+            )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Time Domain */}
+        <div className="bg-black/40 p-2 rounded border border-gray-800">
+          <h4 className="text-sm font-semibold mb-2 text-gray-400 flex justify-between">
+              <span>Dominio del Tiempo: V(t)</span>
+              <span className="text-xs text-cyan-400">T_max: {timeData[timeData.length-1].toFixed(3)}s</span>
+          </h4>
+          <div className="svg-wrap relative">
+            <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+              <rect x="0" y="0" width={width} height={height} fill="#0b0b1a" />
+              {/* Grid */}
+              <line x1={padding} y1={height/2} x2={width-padding} y2={height/2} stroke="#222" />
+              <line x1={width/2} y1={padding} x2={width/2} y2={height-padding} stroke="#222" />
+              <path d={pathD} fill="none" stroke="#39ff14" strokeWidth="2" />
+            </svg>
+            <div className="absolute top-2 right-2 text-[10px] bg-black/70 p-1 rounded text-green-400 font-mono border border-green-900">
+                Vpp: {(maxVal-minVal).toFixed(3)}V
+            </div>
+          </div>
+        </div>
+
+        {/* Frequency Domain (Enhanced) */}
+        <div className="bg-black/40 p-2 rounded border border-gray-800">
+          <h4 className="text-sm font-semibold mb-2 text-gray-400 flex justify-between">
+              <span>Dominio Frecuencia: FFT (Cliente)</span>
+              <div className="flex items-center gap-2">
+                  <span className="text-[10px]">Armónicos:</span>
+                  <input 
+                    type="range" min="5" max="50" step="5" 
+                    value={harmonicsCount} 
+                    onChange={(e) => setHarmonicsCount(Number(e.target.value))}
+                    className="w-20 accent-purple-500"
+                  />
+              </div>
+          </h4>
+          <div className="svg-wrap">
+             {spectrumData.length > 0 ? (
+               <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+                 <rect x="0" y="0" width={width} height={height} fill="#0b0b1a" />
+                 {(() => {
+                    const visibleSpectrum = spectrumData.slice(0, harmonicsCount * 2); // Show a bit more range
+                    const maxMag = Math.max(...visibleSpectrum.map(s => s.m)) || 1;
+                    const maxFreq = visibleSpectrum[visibleSpectrum.length-1]?.f || 1;
+                    
+                    return visibleSpectrum.map((s, i) => {
+                      const x = padding + (s.f / maxFreq) * (width - 2*padding);
+                      const h = (s.m / maxMag) * (height - 2*padding);
+                      return (
+                          <g key={i}>
+                            <line x1={x} y1={height-padding} x2={x} y2={height-padding-h} stroke="#ff00ff" strokeWidth="3" opacity="0.7" />
+                            {/* Hover effect could be added with more complex code */}
+                          </g>
+                      );
+                    });
+                 })()}
+                 {/* Axis Labels */}
+                 <text x={padding} y={height-5} fill="#666" fontSize="10">0 Hz</text>
+                 <text x={width-padding} y={height-5} fill="#666" fontSize="10" textAnchor="end">
+                     {(spectrumData[harmonicsCount*2]?.f || 0).toFixed(0)} Hz
+                 </text>
+               </svg>
+             ) : (
+               <div className="h-[200px] flex items-center justify-center text-gray-600">
+                 Calculando FFT...
+               </div>
+             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Math Tools Toolbar */}
+      <div className="mt-4 p-3 bg-gray-900/50 rounded border border-cyan-900/50 backdrop-blur-sm">
+        <h4 className="text-sm font-bold text-cyan-400 mb-2 flex items-center gap-2">
+            <span className="text-lg">🧮</span> Herramientas Matemáticas Avanzadas
+        </h4>
+        <div className="flex flex-wrap gap-2">
+           <button 
+             onClick={() => setShowDiffEq(!showDiffEq)}
+             className={`px-3 py-1 border rounded text-xs transition flex items-center gap-2 ${showDiffEq ? 'bg-cyan-900 border-cyan-400 text-white' : 'bg-cyan-900/20 border-cyan-700 text-cyan-200 hover:bg-cyan-800/50'}`}
+           >
+             <span>∂</span> Espacio de Fase (V vs dV/dt)
+           </button>
+           <button 
+             onClick={() => setShowTransfer(!showTransfer)}
+             className={`px-3 py-1 border rounded text-xs transition flex items-center gap-2 ${showTransfer ? 'bg-purple-900 border-purple-400 text-white' : 'bg-purple-900/20 border-purple-700 text-purple-200 hover:bg-purple-800/50'}`}
+           >
+             <span>ℱ</span> Función de Transferencia H(s)
+           </button>
+           <button 
+             onClick={() => downloadCSV(history, selectedNode)}
+             className="px-3 py-1 bg-green-900/20 border border-green-700 rounded text-xs hover:bg-green-800/50 transition text-green-200 flex items-center gap-2"
+           >
+             <span>⬇</span> Exportar CSV
+           </button>
+        </div>
+
+        {/* Phase Portrait Panel */}
+        {showDiffEq && (
+          <div className="mt-4 p-4 bg-black/60 rounded border border-cyan-500/30 animate-in fade-in zoom-in duration-300">
+             <h5 className="text-cyan-400 font-bold mb-2 text-sm">Análisis en el Espacio de Fases</h5>
+             <p className="text-xs text-gray-400 mb-4">
+               Visualización de la dinámica del sistema. Ciclos límite indican oscilaciones estables.
+             </p>
+             <div className="h-64 w-full bg-black rounded relative border border-gray-800">
+                <PhasePortraitPlot time={timeData} signal={history[selectedNode]} width={600} height={250} />
+             </div>
+          </div>
+        )}
+
+        {/* Transfer Function / Bode Analysis Panel */}
+        {showTransfer && transferFunction && (
+          <div className="mt-4 p-4 bg-black/60 rounded border border-purple-500/30 animate-in fade-in zoom-in duration-300">
+             <div className="flex justify-between items-start mb-4">
+                 <div>
+                     <h5 className="text-purple-400 font-bold text-sm">Diagrama de Bode (Magnitud Estimada)</h5>
+                     <p className="text-xs text-gray-400">
+                       H(f) = Output(Node {selectedNode}) / Input(Node {inputNode}). Muestra la respuesta en frecuencia del sistema.
+                     </p>
+                 </div>
+                 <div className="text-right text-xs text-purple-300 font-mono">
+                     Max Gain: {Math.max(...transferFunction.map(t=>t.db)).toFixed(2)} dB
+                 </div>
+             </div>
+             
+             <div className="h-64 w-full bg-black rounded relative border border-gray-800 overflow-hidden">
+                <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+                   <rect width={width} height={height} fill="#050510" />
+                   {/* Grid Lines */}
+                   {[0.25, 0.5, 0.75].map(p => (
+                       <line key={p} x1={0} y1={height*p} x2={width} y2={height*p} stroke="#222" strokeDasharray="2" />
+                   ))}
+                   
+                   {/* Bode Plot Line */}
+                   {(() => {
+                       const maxDB = 20; // Clamp visuals
+                       const minDB = -60;
+                       const rangeDB = maxDB - minDB;
+                       const maxFreq = transferFunction[transferFunction.length-1].f;
+                       
+                       const points = transferFunction.map(t => {
+                           const x = (t.f / maxFreq) * width;
+                           const y = height - ((t.db - minDB) / rangeDB) * height;
+                           return `${x},${y}`;
+                       }).join(' ');
+                       
+                       return <polyline points={points} fill="none" stroke="#d946ef" strokeWidth="2" vectorEffect="non-scaling-stroke" />;
+                   })()}
+                </svg>
+                <div className="absolute bottom-1 left-1 text-[10px] text-gray-500">0 Hz</div>
+                <div className="absolute bottom-1 right-1 text-[10px] text-gray-500">{(transferFunction[transferFunction.length-1]?.f/1000).toFixed(1)} kHz</div>
+                <div className="absolute top-1 left-1 text-[10px] text-gray-500">+20 dB</div>
+                <div className="absolute bottom-8 left-1 text-[10px] text-gray-500">-60 dB</div>
+             </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

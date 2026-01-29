@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 4. Copiar los archivos de requerimientos e instalar dependencias de Python
 COPY requirements.txt .
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install --default-timeout=1000 --no-cache-dir -r requirements.txt
 
 # 5. Copiar el resto del código del microservicio

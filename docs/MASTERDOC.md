@@ -1042,3 +1042,42 @@ Para liberar espacio consumido por el disco virtual de Docker (`ext4.vhdx`), eje
 **Próximos Pasos Inmediatos:**
 *   Generación de Netlist SPICE desde el Editor de Esquemas.
 *   Integración de `ngspice` (vía Pyodide) para simular los circuitos dibujados.
+
+## 29. Actualización v3.1: Motor de Simulación y Análisis de Circuitos (2026-01-28)
+
+**1. Motor de Simulación (Python/Pyodide)**
+*   Implementación de un solver de circuitos en Python puro (`circuit_solver.py` integrado en JS) que ejecuta análisis transitorios usando el método de **Newton-Raphson**.
+*   Soporte para componentes lineales (R, L, C, Fuentes) y no lineales (Diodos, Transistores BJT).
+*   **Modelo Ebers-Moll**: Simulación realista de transistores NPN con parámetros configurables (Beta, Is, Vt).
+
+**2. Visualización y Métricas**
+*   **Osciloscopio Digital**: Gráficas interactivas de voltaje vs. tiempo para múltiples nodos.
+*   **Métricas de Ingeniería**: Cálculo automático de Vmax, Vmin, Vpp, Vrms, Frecuencia y THD (Distorsión Armónica Total).
+*   **Tabla de Resultados**: Visualización dinámica de datos en el panel inferior, con soporte para copiar a portapapeles.
+
+## 30. Actualización v3.2: Integración de Laboratorios y Análisis Espectral (2026-01-28)
+
+**1. Bridge (Puente) de Datos Global**
+*   Uso de `Zustand` para compartir el estado de la simulación (`electronicsData`) entre el Laboratorio de Electrónica y el de Matemáticas Avanzadas.
+*   Persistencia de datos: El diseño del circuito y los resultados de simulación sobreviven a la navegación entre pestañas.
+
+**2. Análisis Espectral (FFT)**
+*   Implementación de Transformada Rápida de Fourier (FFT) en el motor de simulación.
+*   Visualización del espectro de frecuencia (Magnitud vs. Frecuencia) en el panel de resultados.
+*   Cálculo de THD basado en los armónicos detectados.
+
+**3. Laboratorio de Matemáticas Avanzadas (`AdvancedMathLabV2`)**
+*   Nueva pestaña dedicada al análisis matemático profundo de señales provenientes de electrónica.
+*   Herramientas de visualización: Retrato de Fase (V vs dV/dt) y Análisis de Señal Real.
+
+## 31. Actualización v3.3: Mejoras de Usabilidad en Diagramación (2026-01-28)
+
+**1. Herramientas de Edición Geométrica**
+*   **Rotación de Componentes**: Implementación de rotación de 90° para cualquier componente seleccionado (botón "Rotar").
+*   **Espejo/Reflexión**: Nueva función "Espejo" para invertir componentes horizontalmente (útil para transistores y configuración de circuitos complejos).
+*   **Manejo de Conexiones**:
+    *   **Alternancia de Estilo de Línea**: Opción para cambiar entre líneas curvas (Bezier) y líneas rectas ortogonales (estilo Ingeniería/Manhattan) para mejorar la legibilidad de diagramas profesionales.
+    *   **Mejora de Handles**: Aumento del área de interacción de los puertos de conexión (handles) para facilitar el cableado.
+
+**2. Persistencia de Preferencias**
+*   El estado del estilo de línea (Recta/Curva) se infiere automáticamente al cargar un esquema guardado para mantener la consistencia visual.

@@ -24,12 +24,22 @@ class ErrorBoundary extends React.Component {
             <summary className="cursor-pointer mb-1 text-red-400">Ver detalles técnicos</summary>
             {this.state.error && this.state.error.toString()}
           </details>
-          <button 
-            className="mt-4 px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-white text-xs transition-colors"
-            onClick={() => this.setState({ hasError: false })}
-          >
-            Intentar Recargar
-          </button>
+          <div className="flex gap-2 mt-4">
+            <button 
+              className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-white text-xs transition-colors"
+              onClick={() => this.setState({ hasError: false })}
+            >
+              Intentar Recargar
+            </button>
+            {this.props.onReset && (
+              <button 
+                className="px-3 py-1 bg-orange-600 hover:bg-orange-700 rounded text-white text-xs transition-colors"
+                onClick={this.props.onReset}
+              >
+                Restablecer Datos (Reset Factory)
+              </button>
+            )}
+          </div>
         </div>
       );
     }
