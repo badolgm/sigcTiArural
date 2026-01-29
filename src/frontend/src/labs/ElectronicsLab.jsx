@@ -720,6 +720,7 @@ const ElectronicsLab = ({ onNavigate }) => {
                         <CircuitCanvas
                             vinAmp={vinAmp}
                             vinFreq={vinFreq}
+                            waveType={waveType}
                             useAm={useAm}
                             fc={fc}
                             fm={fm}
@@ -744,6 +745,9 @@ const ElectronicsLab = ({ onNavigate }) => {
                             onlySpectrum={viewMode === 'spectrum'}
                             externalData={externalSimData}
                             analysisData={analysisData}
+                            timeDiv={timeDiv}
+                            voltsDiv={voltsDiv}
+                            lissajousMode={lissajousMode}
                         />
                     </div>
                 </div>
