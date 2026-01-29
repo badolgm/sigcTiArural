@@ -33,7 +33,7 @@ const CircuitCanvas = ({ vinAmp, vinFreq, waveType = 'sine', useAm, fc, fm, mInd
     const f = isAm ? fc : vinFreq;
     const w = 2 * Math.PI * f * t;
 
-    if (waveType === 'sine' || isAm) {
+    if (waveType === 'sine') {
         val = Math.sin(w);
     } else if (waveType === 'square') {
         val = Math.sign(Math.sin(w));
@@ -885,6 +885,22 @@ const ElectronicsLab = ({ onNavigate }) => {
                         {/* GRUPO 1: SEÑAL */}
                         <div>
                             <label className="text-xs text-cyan-400 font-mono mb-2 block">GENERADOR DE FUNCIONES</label>
+                            
+                            <div className="mb-3">
+                                <label className="text-[10px] text-gray-500 block mb-1">Tipo de Onda</label>
+                                <div className="flex gap-1 bg-black/40 p-1 rounded border border-gray-800">
+                                    {['sine', 'square', 'triangle'].map(type => (
+                                        <button
+                                            key={type}
+                                            onClick={() => setWaveType(type)}
+                                            className={`flex-1 py-1 text-[10px] uppercase font-bold rounded transition-all ${waveType === type ? 'bg-cyan-900 text-cyan-400 border border-cyan-700' : 'text-gray-600 hover:text-gray-400'}`}
+                                        >
+                                            {type === 'sine' ? 'Sen' : type === 'square' ? 'Cua' : 'Tri'}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
                             <div className="space-y-3 p-3 bg-black/40 rounded border border-gray-800">
                                 <div>
                                     <div className="flex justify-between text-xs text-gray-500 mb-1">
