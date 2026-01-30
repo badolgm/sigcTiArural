@@ -1155,5 +1155,3 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
 
 **3. Infraestructura**
 *   **Resolución de Conflictos de Puerto:** Se liberó el puerto 5173 (bloqueado por procesos Node.js huérfanos) para permitir el arranque correcto de Docker.
-
-dejar el MASTERDOC-
