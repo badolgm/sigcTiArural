@@ -626,6 +626,170 @@ const ElectronicsLab = ({ onNavigate }) => {
     });
   }, [vinAmp, vinFreq, Vcc, Rc, setElectronicsSignal]);
 
+  const renderControls = () => (
+                <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-lg backdrop-blur-sm">
+                    <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-800 pb-2">
+                        Parámetros de Entrada
+                    </h2>
+                    
+                    <div className="space-y-6">
+                        {/* GRUPO 1: SEÑAL */}
+                        <div>
+                            <label className="text-xs text-cyan-400 font-mono mb-2 block">GENERADOR DE FUNCIONES</label>
+                            
+                            <div className="mb-3">
+                                <label className="text-[10px] text-gray-500 block mb-1">Tipo de Onda</label>
+                                <div className="flex gap-1 bg-black/40 p-1 rounded border border-gray-800">
+                                    {['sine', 'square', 'triangle'].map(type => (
+                                        <button
+                                            key={type}
+                                            onClick={() => setWaveType(type)}
+                                            className={`flex-1 py-1 text-[10px] uppercase font-bold rounded transition-all ${waveType === type ? 'bg-cyan-900 text-cyan-400 border border-cyan-700' : 'text-gray-600 hover:text-gray-400'}`}
+                                        >
+                                            {type === 'sine' ? 'Sen' : type === 'square' ? 'Cua' : 'Tri'}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="space-y-3 p-3 bg-black/40 rounded border border-gray-800">
+                                <div>
+                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                        <span>Amplitud (V)</span>
+                                        <span>{vinAmp.toFixed(2)} V</span>
+                                    </div>
+                                    <input type="range" min={0.01} max={0.5} step={0.01} value={vinAmp} onChange={(e)=>setVinAmp(parseFloat(e.target.value))} className="w-full accent-cyan-500" />
+                                </div>
+                                <div>
+                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                        <span>Frecuencia (Hz)</span>
+                                        <span>{vinFreq} Hz</span>
+                                    </div>
+                                    <input type="range" min={100} max={50000} step={10} value={vinFreq} onChange={(e)=>setVinFreq(parseFloat(e.target.value))} className="w-full accent-cyan-500" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* GRUPO 2: MODULACIÓN */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="text-xs text-green-400 font-mono">MODULACIÓN AM</label>
+                                <input type="checkbox" checked={useAm} onChange={(e)=>setUseAm(e.target.checked)} className="accent-green-500" />
+                            </div>
+                            
+                            {useAm && (
+                                <div className="space-y-3 p-3 bg-black/40 rounded border border-gray-800 animate-fade-in">
+                                    <div>
+                                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>Portadora (fc)</span>
+                                            <span>{fc} Hz</span>
+                                        </div>
+                                        <input type="range" min={1000} max={50000} step={100} value={fc} onChange={(e)=>setFc(parseFloat(e.target.value))} className="w-full accent-green-500" />
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>Moduladora (fm)</span>
+                                            <span>{fm} Hz</span>
+                                        </div>
+                                        <input type="range" min={10} max={5000} step={10} value={fm} onChange={(e)=>setFm(parseFloat(e.target.value))} className="w-full accent-green-500" />
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>Índice (m)</span>
+                                            <span>{mIndex.toFixed(2)}</span>
+                                        </div>
+                                        <input type="range" min={0} max={1} step={0.01} value={mIndex} onChange={(e)=>setMIndex(parseFloat(e.target.value))} className="w-full accent-green-500" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* GRUPO 3: OSCILOSCOPIO */}
+                        <div className="pt-2 border-t border-gray-800">
+                            <label className="text-xs text-purple-400 font-mono mb-2 block flex justify-between items-center">
+                                <span>OSCILOSCOPIO</span>
+                                <button 
+                                    onClick={() => setLissajousMode(!lissajousMode)}
+                                    className={`text-[9px] px-2 py-0.5 rounded border transition-colors ${lissajousMode ? 'bg-purple-900 text-purple-300 border-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.3)]' : 'bg-gray-800 text-gray-500 border-gray-700 hover:text-gray-300'}`}
+                                >
+                                    {lissajousMode ? 'MODO X-Y (ON)' : 'MODO X-Y (OFF)'}
+                                </button>
+                            </label>
+                            <div className="grid grid-cols-2 gap-2 p-3 bg-black/40 rounded border border-gray-800">
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Time/Div (ms)</span>
+                                    <input 
+                                        type="range" min={0.1} max={10} step={0.1} 
+                                        value={timeDiv * 1000} 
+                                        onChange={(e) => setTimeDiv(parseFloat(e.target.value) / 1000)} 
+                                        className="w-full accent-purple-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                                    />
+                                    <span className="text-[10px] text-right block text-purple-300 font-mono">{(timeDiv * 1000).toFixed(1)} ms</span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Volts/Div (V)</span>
+                                    <input 
+                                        type="range" min={0.1} max={5} step={0.1} 
+                                        value={voltsDiv} 
+                                        onChange={(e) => setVoltsDiv(parseFloat(e.target.value))} 
+                                        className="w-full accent-purple-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                                    />
+                                    <span className="text-[10px] text-right block text-purple-300 font-mono">{voltsDiv.toFixed(1)} V</span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-cyan-500 block">Posición CH1</span>
+                                    <input 
+                                        type="range" min={-4} max={4} step={0.1} 
+                                        value={ch1Offset} 
+                                        onChange={(e) => setCh1Offset(parseFloat(e.target.value))} 
+                                        className="w-full accent-cyan-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                                    />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-green-500 block">Posición CH2</span>
+                                    <input 
+                                        type="range" min={-4} max={4} step={0.1} 
+                                        value={ch2Offset} 
+                                        onChange={(e) => setCh2Offset(parseFloat(e.target.value))} 
+                                        className="w-full accent-green-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* GRUPO 4: TRANSISTOR */}
+                        <div className="pt-2 border-t border-gray-800">
+                            <label className="text-xs text-yellow-400 font-mono mb-2 block">POLARIZACIÓN (Q-POINT)</label>
+                            <div className="grid grid-cols-2 gap-2 p-3 bg-black/40 rounded border border-gray-800">
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Vcc (V)</span>
+                                    <input type="number" value={Vcc} onChange={(e)=>setVcc(parseFloat(e.target.value))} className="w-full bg-transparent border-b border-gray-700 text-white text-xs py-1 focus:border-yellow-500 outline-none" />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Beta (β)</span>
+                                    <input type="number" value={beta} onChange={(e)=>setBeta(parseFloat(e.target.value))} className="w-full bg-transparent border-b border-gray-700 text-white text-xs py-1 focus:border-yellow-500 outline-none" />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Rc (Ω)</span>
+                                    <input type="number" value={Rc} onChange={(e)=>setRc(parseFloat(e.target.value))} className="w-full bg-transparent border-b border-gray-700 text-white text-xs py-1 focus:border-yellow-500 outline-none" />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Re (Ω)</span>
+                                    <input type="number" value={Re} onChange={(e)=>setRe(parseFloat(e.target.value))} className="w-full bg-transparent border-b border-gray-700 text-white text-xs py-1 focus:border-yellow-500 outline-none" />
+                                </div>
+                                <div className="col-span-2 pt-2">
+                                    <div className="flex items-center gap-2">
+                                        <input type="checkbox" checked={emitterBypass} onChange={(e)=>setEmitterBypass(e.target.checked)} className="accent-yellow-500" />
+                                        <span className="text-xs text-gray-400">Capacitor de Desacople (Ce)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+            </div>
+  );
+
   return (
     <div className="min-h-screen p-6 pt-24" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
       <div className="max-w-7xl mx-auto">
@@ -694,20 +858,41 @@ const ElectronicsLab = ({ onNavigate }) => {
 
         {/* CONTENIDO PRINCIPAL (Switcheable) */}
         {viewMode === 'schematic' ? (
-          <div className="animate-fadeIn">
-             <ErrorBoundary onReset={() => {
-                 localStorage.removeItem('lab_electronics_schematic');
-                 window.location.reload();
-             }}>
-                <SchematicEditor 
-                    onRunSimulation={runPythonCode}
-                    labSignalParams={{
-                        type: waveType,
-                        amp: vinAmp,
-                        freq: vinFreq
-                    }}
-                />
-             </ErrorBoundary>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fadeIn h-[calc(100vh-180px)]">
+             {/* COLUMNA IZQUIERDA: EDITOR (9 cols) */}
+             <div className="lg:col-span-9 h-full border border-gray-800 rounded-lg overflow-hidden relative bg-[#1a1a1a]">
+                 <ErrorBoundary onReset={() => {
+                     localStorage.removeItem('lab_electronics_schematic');
+                     window.location.reload();
+                 }}>
+                    <SchematicEditor 
+                        onRunSimulation={runPythonCode}
+                        labSignalParams={{
+                            type: waveType,
+                            amp: vinAmp,
+                            freq: vinFreq
+                        }}
+                    />
+                 </ErrorBoundary>
+             </div>
+
+             {/* COLUMNA DERECHA: CONTROLES (3 cols) */}
+             <div className="lg:col-span-3 space-y-4 h-full overflow-y-auto pr-2 custom-scrollbar">
+                 <div className="bg-gray-900/50 border border-orange-500/30 p-4 rounded-lg backdrop-blur-sm">
+                    <h2 className="text-xs font-bold text-orange-400 uppercase tracking-widest mb-2 border-b border-orange-500/30 pb-2">
+                        Modo Diseño
+                    </h2>
+                    <div className="text-[10px] text-gray-400 space-y-2 font-mono">
+                        <p>1. Arrastra componentes desde la barra superior.</p>
+                        <p>2. <span className="text-orange-400">Doble clic</span> para editar valores.</p>
+                        <p>3. Para usar este Generador, edita una fuente de voltaje y escribe <span className="text-cyan-400 font-bold">LAB</span> como valor.</p>
+                        <p>4. Usa <span className="text-white bg-gray-700 px-1 rounded">Supr</span> para borrar.</p>
+                    </div>
+                 </div>
+                 
+                 {/* Reutilizamos los controles existentes */}
+                 {renderControls()}
+             </div>
           </div>
         ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

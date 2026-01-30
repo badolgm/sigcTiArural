@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import ReactFlow, { 
   addEdge, 
   Background, 
@@ -56,7 +56,9 @@ const NodeShell = ({ children, label, value, selected }) => (
 
 // 1. Voltage Source (AC/DC)
 const SourceNode = ({ data, selected }) => {
+  if(!data) return null;
   const isAC = data.type === 'ac';
+  const isLab = data.useLab;
   const rot = data.rotation || 0;
   const mir = data.mirrored || false;
   
@@ -66,6 +68,11 @@ const SourceNode = ({ data, selected }) => {
   return (
     <NodeShell label={data.label} value={data.value} selected={selected}>
       <div className="relative w-12 h-12 flex items-center justify-center">
+        {isLab && (
+            <div className="absolute -top-3 -right-3 bg-cyan-900 text-cyan-400 text-[8px] px-1 rounded border border-cyan-500 font-bold z-50 shadow-[0_0_5px_rgba(34,211,238,0.5)] animate-pulse">
+                LAB
+            </div>
+        )}
         <Handle type="source" position={posPos} id="pos" className="w-3 h-3 !bg-red-500 opacity-0 hover:opacity-100 z-50" />
         <svg viewBox="0 0 40 40" className="w-full h-full drop-shadow-md z-0" 
              style={{ transform: `rotate(${rot}deg) scaleX(${mir ? -1 : 1})` }}>
@@ -90,6 +97,7 @@ const SourceNode = ({ data, selected }) => {
 
 // 2. Resistor
 const ResistorNode = ({ data, selected }) => {
+  if(!data) return null;
   const rot = data.rotation || 0;
   const mir = data.mirrored || false;
   const safeRot = parseInt(rot || 0);
@@ -118,6 +126,7 @@ const ResistorNode = ({ data, selected }) => {
 
 // 3. Capacitor
 const CapacitorNode = ({ data, selected }) => {
+  if(!data) return null;
   const rot = data.rotation || 0;
   const mir = data.mirrored || false;
   const safeRot = parseInt(rot || 0);
@@ -146,6 +155,7 @@ const CapacitorNode = ({ data, selected }) => {
 
 // 4. Inductor
 const InductorNode = ({ data, selected }) => {
+  if(!data) return null;
   const rot = data.rotation || 0;
   const mir = data.mirrored || false;
   const safeRot = parseInt(rot || 0);
@@ -174,6 +184,7 @@ const InductorNode = ({ data, selected }) => {
 
 // 5. Diode
 const DiodeNode = ({ data, selected }) => {
+  if(!data) return null;
   const rot = data.rotation || 0;
   const mir = data.mirrored || false;
   const safeRot = parseInt(rot || 0);
@@ -219,6 +230,7 @@ const GroundNode = ({ selected }) => {
 
 // 7. Transistor (NPN)
 const TransistorNode = ({ data, selected }) => {
+  if(!data) return null;
   const rot = data.rotation || 0;
   const mir = data.mirrored || false;
   
@@ -264,6 +276,7 @@ const TransistorNode = ({ data, selected }) => {
 
 // 8. Scope (Probe)
 const ScopeNode = ({ data, selected }) => {
+  if (!data) return null;
   return (
     <div className={`px-2 py-1 shadow-lg rounded bg-gray-900 border-2 ${selected ? 'border-cyan-400' : 'border-cyan-800'} min-w-[80px]`}>
       <Handle type="target" position={Position.Left} id="l" className="!bg-cyan-400" />
@@ -277,6 +290,7 @@ const ScopeNode = ({ data, selected }) => {
 
 // 9. MOSFET (N-Channel)
 const MosfetNode = ({ data, selected }) => {
+  if(!data) return null;
   const rot = data.rotation || 0;
   const mir = data.mirrored || false;
   const gPos = getRotatedPosition(Position.Left, rot, mir);
@@ -312,6 +326,7 @@ const MosfetNode = ({ data, selected }) => {
 
 // 10. OpAmp
 const OpAmpNode = ({ data, selected }) => {
+    if(!data) return null;
     const rot = data.rotation || 0;
     const mir = data.mirrored || false;
     const invPos = getRotatedPosition(Position.Left, rot, mir); // -
@@ -338,6 +353,7 @@ const OpAmpNode = ({ data, selected }) => {
 
 // 11. Digital Logic Gate
 const LogicGateNode = ({ data, selected }) => {
+    if(!data) return null;
     const rot = data.rotation || 0;
     const { kind } = data; // AND, OR, NAND, XOR, NOT
     
@@ -369,6 +385,7 @@ const LogicGateNode = ({ data, selected }) => {
 
 // 12. Transformer
 const TransformerNode = ({ data, selected }) => {
+    if(!data) return null;
     const rot = data.rotation || 0;
     const mir = data.mirrored || false;
 
@@ -400,6 +417,7 @@ const TransformerNode = ({ data, selected }) => {
 
 // 13. Flip-Flop (D-Type)
 const FlipFlopNode = ({ data, selected }) => {
+    if(!data) return null;
     return (
         <NodeShell label="D-FF" value="" selected={selected}>
             <div className="relative w-16 h-20 bg-gray-900 border-2 border-green-600 rounded flex flex-col justify-between py-2 shadow-lg">
@@ -423,6 +441,7 @@ const FlipFlopNode = ({ data, selected }) => {
 
 // 14. Shift Register (Simplified)
 const ShiftRegisterNode = ({ data, selected }) => {
+             if(!data) return null;
              return (
                 <NodeShell label="Shift Reg" value="8-bit" selected={selected}>
                     <div className="relative w-28 h-12 bg-gray-900 border-2 border-purple-600 rounded flex items-center justify-between px-2 shadow-lg">
@@ -445,8 +464,9 @@ const ShiftRegisterNode = ({ data, selected }) => {
 
         // 15. Karnaugh Map (Visual Tool)
         const KarnaughMapNode = ({ id, data, selected }) => {
+            if (!data) return null;
             const { setNodes } = useReactFlow();
-            const values = data.values || Array(16).fill(0);
+            const values = data?.values || Array(16).fill(0);
             
             const toggleCell = (idx) => {
                 const newValues = [...values];
@@ -551,7 +571,22 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams }) => {
 
   React.useEffect(() => {
     if (savedSchematic && Array.isArray(savedSchematic.nodes) && savedSchematic.nodes.length > 0) {
-      setNodes(savedSchematic.nodes);
+      // Validate nodes to prevent "Error en el componente" crashes
+      const validNodes = savedSchematic.nodes.filter(n => {
+         if (!n.type) return false;
+         // Check if the node type is registered
+         if (!nodeTypes[n.type]) {
+             console.warn(`[SchematicEditor] Ignorando nodo corrupto o desconocido: ${n.id} (tipo: ${n.type})`);
+             return false;
+         }
+         return true;
+      });
+
+      if (validNodes.length < savedSchematic.nodes.length) {
+          console.warn(`[SchematicEditor] Se eliminaron ${savedSchematic.nodes.length - validNodes.length} nodos inválidos del historial.`);
+      }
+      
+      setNodes(validNodes);
     }
     if (savedSchematic && Array.isArray(savedSchematic.edges) && savedSchematic.edges.length > 0) {
       setEdges(savedSchematic.edges);
@@ -1598,180 +1633,31 @@ c.solve_transient()
           </div>
       )}
 
-      <style jsx>{`
-        .btn-tool {
-            @apply px-2 py-1 bg-gray-700/50 text-gray-300 text-[10px] border border-gray-600 rounded hover:bg-gray-600 transition-colors whitespace-nowrap;
-        }
-      `}</style>
-    </div>
-  );
-};
-
-export default SchematicEditor;
-c.solve_transient()
-`;
-      try {
-          const res = await onRunSimulation(solverCode);
-          // Parse JSON result from python stdout
-          let data;
-          try {
-             data = JSON.parse(res);
-          } catch(e) {
-             // If parse fails, maybe it's just the old format or error
-             // Try to find the last valid JSON line if mixed with prints
-             const lines = res.trim().split('\n');
-             data = JSON.parse(lines[lines.length-1]);
-          }
-
-          const history = data.history || data; // Fallback for backward compat
-          const analysis = data.analysis || {};
-          
-          // Transform for Recharts
-          // { time: [...], "1": [...], "2": [...] } -> [{time: t0, "1": v0, "2": v0}, ...]
-          const chartData = history.time.map((t, i) => {
-              const point = { time: t * 1000 }; // ms
-              probes.forEach(p => {
-                  if (history[p.net]) point[p.label] = history[p.net][i];
-              });
-              return point;
-          });
-          
-          // Inject analysis data into the result string so ElectronicsLab can parse it
-          // We can attach it to the data object if we were passing objects, but here we pass string/data via callback usually
-          // But wait, ElectronicsLab calls this via onRunCode which returns string.
-          // ElectronicsLab needs the FULL object.
-          
-          // We are returning chartData to local state, but ElectronicsLab expects 'data' via its own 'runPythonCode' logic?
-          // Actually, 'SchematicEditor' calls 'onRunSimulation' which is 'runPythonCode' in 'ElectronicsLab'.
-          // 'runPythonCode' returns the raw string result.
-          // BUT 'ElectronicsLab' also parses it!
-          
-          // So if we change the JSON structure here, 'ElectronicsLab' needs to know.
-          
-          setSimData(chartData);
-          setSimResult(useCluster ? "Simulación completada en Cluster (12 Nodos) 🚀" : "Simulación completada.");
-          
-      } catch (e) {
-          setSimResult("Error en simulación: " + e.message);
-      } finally {
-          setSimStatus('idle');
-      }
-  };
-
-  const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7300", "#00C49F"];
-
-  return (
-    <div className="w-full h-full flex flex-col gap-4">
-      {/* EDITOR AREA */}
-      <div className="w-full h-[500px] flex flex-col border border-gray-700 rounded-lg overflow-hidden bg-gray-900 relative">
-        <div className="bg-gray-800 p-2 flex gap-2 border-b border-gray-700 overflow-x-auto items-center">
-            <span className="text-xs font-bold text-gray-400">BASIC:</span>
-            <button onClick={() => addComponent('resistor')} className="btn-tool">Resistencia</button>
-            <button onClick={() => addComponent('capacitor')} className="btn-tool">Capacitor</button>
-            <button onClick={() => addComponent('inductor')} className="btn-tool">Bobina</button>
-            <button onClick={() => addComponent('source')} className="btn-tool">Fuente</button>
-            <button onClick={() => addComponent('gnd')} className="btn-tool">GND</button>
-            
-            <div className="w-[1px] h-4 bg-gray-600 mx-1"></div>
-            <span className="text-xs font-bold text-gray-400">ACTIVE:</span>
-            <button onClick={() => addComponent('transistor')} className="btn-tool text-cyan-400 border-cyan-400">BJT</button>
-            <button onClick={() => addComponent('mosfet')} className="btn-tool text-cyan-400 border-cyan-400">MOSFET</button>
-            <button onClick={() => addComponent('opamp')} className="btn-tool text-cyan-400 border-cyan-400">OpAmp</button>
-            <button onClick={() => addComponent('transformer')} className="btn-tool text-yellow-400 border-yellow-400">Trafo</button>
-
-            <div className="w-[1px] h-4 bg-gray-600 mx-1"></div>
-            <span className="text-xs font-bold text-gray-400">DIGITAL:</span>
-            <div className="flex flex-col gap-0.5">
-                <div className="flex gap-1">
-                    <button onClick={() => addComponent('logic', 'AND')} className="btn-tool text-green-400 text-[9px] px-1">AND</button>
-                    <button onClick={() => addComponent('logic', 'OR')} className="btn-tool text-green-400 text-[9px] px-1">OR</button>
-                    <button onClick={() => addComponent('logic', 'NOT')} className="btn-tool text-green-400 text-[9px] px-1">NOT</button>
+      {/* NETLIST MODAL */}
+      {showNetlist && (
+        <div className="absolute inset-0 z-50 bg-black/80 flex items-center justify-center p-8">
+            <div className="bg-gray-900 border border-gray-600 rounded-lg p-4 w-full max-w-2xl h-3/4 flex flex-col shadow-2xl">
+                <div className="flex justify-between items-center mb-2 border-b border-gray-700 pb-2">
+                    <h3 className="text-orange-400 font-mono font-bold">Netlist (Spice-like)</h3>
+                    <button onClick={() => setShowNetlist(false)} className="text-gray-400 hover:text-white">✕</button>
                 </div>
-                <div className="flex gap-1">
-                    <button onClick={() => addComponent('logic', 'NAND')} className="btn-tool text-green-400 text-[9px] px-1">NAND</button>
-                    <button onClick={() => addComponent('logic', 'XOR')} className="btn-tool text-green-400 text-[9px] px-1">XOR</button>
+                <textarea 
+                    className="flex-grow bg-[#050505] text-green-400 font-mono text-xs p-2 resize-none focus:outline-none"
+                    value={netlistContent}
+                    readOnly
+                />
+                <div className="mt-2 flex justify-end">
+                    <button 
+                        onClick={() => navigator.clipboard.writeText(netlistContent)}
+                        className="px-3 py-1 bg-gray-800 text-gray-300 text-xs rounded hover:bg-gray-700 border border-gray-600"
+                    >
+                        Copiar al Portapapeles
+                    </button>
                 </div>
             </div>
-            <button onClick={() => addComponent('flipflop')} className="btn-tool text-purple-400">FlipFlop</button>
-            <button onClick={() => addComponent('shiftreg')} className="btn-tool text-purple-400">ShiftReg</button>
-            <button onClick={() => addComponent('karnaugh')} className="btn-tool text-purple-400">K-Map</button>
-
-            <div className="w-[1px] h-4 bg-gray-600 mx-1"></div>
-            <button onClick={() => addComponent('scope')} className="btn-tool !border-cyan-700 !text-cyan-400">Probe</button>
-            <button onClick={deleteSelected} className="btn-tool text-red-400 border-red-800 hover:bg-red-900/50 ml-2">🗑️</button>
-            <button onClick={rotateSelected} className="btn-tool text-yellow-300 border-yellow-600 ml-2">↻</button>
-            <button onClick={mirrorSelected} className="btn-tool text-pink-300 border-pink-600 ml-2">⇄</button>
-            <button onClick={toggleLineType} className="btn-tool text-blue-300 border-blue-300 ml-2">
-                {isEngineeringLines ? '↱' : '∿'}
-            </button>
-            
-            <div className="flex-grow"></div>
-            <button onClick={saveLocal} className="btn-tool text-green-400 border-green-400">💾</button>
-            <label className="btn-tool cursor-pointer text-yellow-300 border-yellow-300">
-              📂
-              <input type="file" accept="application/json" onChange={loadLocal} className="hidden" />
-            </label>
-            <button onClick={exportNetlist} className="btn-tool text-purple-400 border-purple-400">Export</button>
-            
-            <button 
-                onClick={handleSimulate}
-                disabled={simStatus === 'running'}
-                className={`px-4 py-1 text-white text-xs font-bold rounded flex items-center gap-1 ${simStatus === 'running' ? 'bg-gray-600' : 'bg-green-600 hover:bg-green-500 shadow-[0_0_10px_rgba(0,255,0,0.3)]'}`}
-            >
-                {simStatus === 'running' ? '⌛' : '▶ RUN'}
-            </button>
         </div>
-
-        <div className="flex-grow relative">
-            <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onNodeDoubleClick={onNodeDoubleClick}
-            nodeTypes={nodeTypes}
-            connectionLineType={isEngineeringLines ? ConnectionLineType.Step : ConnectionLineType.Bezier}
-            connectionMode={ConnectionMode.Loose}
-            fitView
-            >
-            <Background color="#222" gap={16} />
-            <Controls />
-            <MiniMap style={{background: '#111'}} nodeColor={() => '#444'} />
-            </ReactFlow>
-        </div>
-      </div>
-
-      {/* RESULTS AREA */}
-      {simData.length > 0 && (
-          <div className="w-full h-[300px] bg-gray-900 border border-gray-700 rounded-lg p-4">
-              <h3 className="text-green-400 text-sm font-bold mb-2">Osciloscopio (Resultados Transitorios)</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={simData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                      <XAxis dataKey="time" stroke="#888" label={{ value: 'Tiempo (ms)', position: 'insideBottomRight', offset: -5 }} />
-                      <YAxis stroke="#888" label={{ value: 'Voltaje (V)', angle: -90, position: 'insideLeft' }} />
-                      <Tooltip contentStyle={{ backgroundColor: '#111', borderColor: '#555' }} />
-                      <Legend />
-                      {Object.keys(simData[0] || {}).filter(k => k !== 'time').map((k, i) => (
-                          <Line key={k} type="monotone" dataKey={k} stroke={colors[i % colors.length]} dot={false} strokeWidth={2} />
-                      ))}
-                  </LineChart>
-              </ResponsiveContainer>
-          </div>
-      )}
-      
-      {simResult && typeof simResult === 'string' && !simData.length && (
-          <div className="p-4 bg-red-900/20 border border-red-500 text-red-400 rounded text-xs font-mono whitespace-pre-wrap">
-              {simResult}
-          </div>
       )}
 
-      <style jsx>{`
-        .btn-tool {
-            @apply px-2 py-1 bg-gray-700/50 text-gray-300 text-[10px] border border-gray-600 rounded hover:bg-gray-600 transition-colors whitespace-nowrap;
-        }
-      `}</style>
     </div>
   );
 };

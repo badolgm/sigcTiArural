@@ -47,5 +47,9 @@ body {
   border: 1px solid rgba(160,180,192,0.16);
 }
 
+/* Tool Button Style from SchematicEditor */
+.btn-tool {
+    @apply px-2 py-1 bg-gray-700/50 text-gray-300 text-[10px] border border-gray-600 rounded hover:bg-gray-600 transition-colors whitespace-nowrap;
+}
+
 /* Evitar desbordes en badges largos (ej: EN CONSTRUCCIÓN) */
-.badge-nowrap { white-space: nowrap; }

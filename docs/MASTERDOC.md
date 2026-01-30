@@ -1081,3 +1081,39 @@ Para liberar espacio consumido por el disco virtual de Docker (`ext4.vhdx`), eje
 
 **2. Persistencia de Preferencias**
 *   El estado del estilo de línea (Recta/Curva) se infiere automáticamente al cargar un esquema guardado para mantener la consistencia visual.
+
+## 32. INCIDENTE CRÍTICO Y RECUPERACIÓN (2026-01-29)
+
+**1. Descripción del Incidente**
+El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesible) y errores persistentes en el módulo de "DISEÑO" que impedían la simulación.
+*   **Síntomas:**
+    *   Error de "Pantalla Blanca" o "Error en el componente" al cargar el Editor de Esquemas.
+    *   Fallo al levantar Docker (`bind: Only one usage of each socket address`).
+    *   Confusión sobre la existencia de un supuesto script `fix_schematic.py`.
+
+**2. Análisis de Causa Raíz**
+*   **Infraestructura:** Un proceso huérfano (PID 1164) mantenía bloqueado el puerto 5173, impidiendo el arranque de Vite/React.
+*   **Código:** El componente `ScopeNode` en `SchematicEditor.jsx` carecía de validación de datos nulos (`if (!data) return null;`), provocando un crash inmediato al renderizar sondas sin etiqueta.
+*   **Alucinación de IA Externa:** La referencia a `fix_schematic.py` fue un diagnóstico erróneo de una herramienta externa; dicho archivo nunca existió en el repositorio.
+
+**3. Acciones Correctivas**
+*   **Infraestructura:** Eliminación forzada del proceso zombie (`taskkill /PID 1164 /F`) y reinicio limpio de contenedores.
+*   **Código:** Implementación de "Blindaje" en `SchematicEditor.jsx`:
+    *   Validación de nulidad en todos los componentes (`SourceNode`, `ScopeNode`, `OpAmpNode`, etc.).
+    *   Filtrado automático de nodos corruptos al cargar el historial (`localStorage`).
+
+**4. Plan de Consolidación (En Progreso)**
+*   **Visibilidad de Controles:** Habilitar el panel de Generador de Señales y Osciloscopio dentro del modo "DISEÑO" para permitir ajustes en tiempo real.
+*   **Integración de Señales:** Conectar los parámetros del Generador (Amplitud, Frecuencia, Tipo de Onda) directamente a las fuentes de voltaje (`SourceNode`) del esquema.
+
+## 33. ESTABILIZACIÓN DEL MODO DISEÑO Y RECUPERACIÓN FINAL (2026-01-29)
+
+**1. Incidente de Regresión en Diseño**
+*   Tras intentar visualizar los controles del osciloscopio, el modo DISEÑO volvió a fallar ("Pantalla Blanca").
+*   **Causa Raíz:**
+    1.  **Vulnerabilidad de Componentes:** Los nuevos componentes `FlipFlopNode` y `ShiftRegisterNode` carecían de la validación de seguridad contra datos nulos (`if (!data) return null;`).
+    2.  **Estado Inconsistente:** Posible caché de Docker/Vite manteniendo versiones antiguas.
+
+**2. Solución Implementada**
+*   **Código:** Se agregó `if (!data) return null;` a `FlipFlopNode`, `ShiftRegisterNode` y `KarnaughMapNode` en `SchematicEditor.jsx`.
+*   **Infraestructura:** Reinicio forzado del contenedor frontend para asegurar despliegue de cambios.
