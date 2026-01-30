@@ -534,7 +534,7 @@ const initialEdges = [
   { id: 'e_scope2', source: 'r1', sourceHandle: 'r', target: 'scope_out', targetHandle: 'l' },
 ];
 
-const SchematicEditor = ({ onRunSimulation, labSignalParams }) => {
+const SchematicEditor = ({ onRunSimulation, labSignalParams, timeDiv, voltsDiv, ch1Offset, ch2Offset }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [simResult, setSimResult] = useState(null);
@@ -544,12 +544,52 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams }) => {
   const [showNetlist, setShowNetlist] = useState(false);
   const [netlistContent, setNetlistContent] = useState('');
 
+  // --- OSCILLOSCOPE DATA PROCESSING ---
+  const processedData = useMemo(() => {
+    if (!simData || simData.length === 0) return [];
+    
+    const vDiv = voltsDiv || 1.0;
+    // Identify keys (excluding time)
+    const keys = Object.keys(simData[0] || {}).filter(k => k !== 'time');
+    const ch1Key = keys[0];
+    const ch2Key = keys[1];
+
+    return simData.map(pt => {
+        const newPt = { ...pt };
+        
+        // Scale time to ms for display
+        if (newPt.time !== undefined) {
+            newPt.time = parseFloat(newPt.time) * 1000;
+        }
+
+        // Apply offsets: RealValue + (OffsetDivs * VoltsPerDiv)
+        if (ch1Key) newPt[ch1Key] = (parseFloat(pt[ch1Key]) || 0) + ((ch1Offset || 0) * vDiv);
+        if (ch2Key) newPt[ch2Key] = (parseFloat(pt[ch2Key]) || 0) + ((ch2Offset || 0) * vDiv);
+        return newPt;
+    });
+  }, [simData, voltsDiv, ch1Offset, ch2Offset]);
+
+  const maxTime = (timeDiv || 0.002) * 10 * 1000; // in ms
+  const maxVolts = (voltsDiv || 1.0) * 4;
+
+  const xTicks = Array.from({length: 11}, (_, i) => i * (maxTime / 10));
+  const yTicks = Array.from({length: 9}, (_, i) => -maxVolts + i * (voltsDiv || 1.0));
+
   // Sync Lab Generator to Source Nodes
   useEffect(() => {
       if (labSignalParams) {
           setNodes((nds) => nds.map((n) => {
               if (n.type === 'source' && n.data.useLab) {
                   const { type, amp, freq } = labSignalParams;
+                  // Avoid unnecessary updates if values are identical
+                  if (
+                      n.data.waveType === type && 
+                      Math.abs(n.data.volt - parseFloat(amp)) < 0.001 && 
+                      Math.abs(n.data.freq - parseFloat(freq)) < 0.001
+                  ) {
+                      return n;
+                  }
+                  
                   return { 
                       ...n, 
                       data: { 
@@ -786,15 +826,22 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams }) => {
                 const newVolt = parseFloat(input);
                 if (!isNaN(newVolt)) {
                     let newFreq = 0;
+                    let newWave = node.data.waveType || 'sine';
+
                     if (node.data.type === 'ac') {
                         const f = window.prompt(`Frecuencia (Hz):`, node.data.freq || 60);
                         newFreq = parseFloat(f) || 60;
+                        
+                        const w = window.prompt(`Tipo de Onda (sine, square, triangle):`, newWave);
+                        if (w && ['sine', 'square', 'triangle'].includes(w.toLowerCase())) {
+                            newWave = w.toLowerCase();
+                        }
                     }
                     
                     setNodes((nds) => nds.map((n) => {
                         if (n.id === node.id) {
-                            const displayVal = node.data.type === 'ac' ? `${newVolt}V, ${newFreq}Hz` : `${newVolt}V`;
-                            return { ...n, data: { ...n.data, useLab: false, value: displayVal, volt: newVolt, freq: newFreq, waveType: 'sine' } };
+                            const displayVal = node.data.type === 'ac' ? `${newVolt}V, ${newFreq}Hz, ${newWave}` : `${newVolt}V`;
+                            return { ...n, data: { ...n.data, useLab: false, value: displayVal, volt: newVolt, freq: newFreq, waveType: newWave } };
                         }
                         return n;
                     }));
@@ -907,6 +954,10 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams }) => {
             lines.push(`c.add_capacitor("${name}", ${getHandleNet(n.id, 'l')}, ${getHandleNet(n.id, 'r')}, ${val})`);
         } else if (n.type === 'inductor') {
             lines.push(`c.add_inductor("${name}", ${getHandleNet(n.id, 'l')}, ${getHandleNet(n.id, 'r')}, ${val})`);
+        } else if (n.type === 'diode') {
+            const is = n.data.is || 1e-14;
+            const vt = n.data.vt || 0.02585;
+            lines.push(`c.add_diode("${name}", ${getHandleNet(n.id, 'l')}, ${getHandleNet(n.id, 'r')}, ${is}, ${vt})`);
         } else if (n.type === 'transistor') {
             const beta = n.data.beta || 100;
             const is = n.data.is || 1e-14;
@@ -982,6 +1033,10 @@ class Circuit:
 
     def add_voltage(self, name, n1, n2, val, freq=0, wave_type='sine'):
         self.components.append({'type':'V', 'name':name, 'n1':n1, 'n2':n2, 'val':val, 'freq':freq, 'wave':wave_type})
+        self.nodes.add(n1); self.nodes.add(n2)
+
+    def add_diode(self, name, n1, n2, Is, Vt):
+        self.components.append({'type':'D', 'name':name, 'n1':n1, 'n2':n2, 'Is':Is, 'Vt':Vt})
         self.nodes.add(n1); self.nodes.add(n2)
         
     def add_transistor(self, name, nc, nb, ne, beta, Is):
@@ -1128,6 +1183,23 @@ class Circuit:
                         G[n1, extra_idx]+=1; G[n2, extra_idx]-=1; G[extra_idx, n1]+=1; G[extra_idx, n2]-=1
                         I[extra_idx] = val
                         extra_idx += 1
+
+                    elif c['type'] == 'D':
+                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
+                        vd = x[n1] - x[n2]
+                        # Limit exponential
+                        vd = min(vd, 2.0)
+                        
+                        vt = c['Vt']; Is = c['Is']
+                        exp_d = np.exp(vd/vt)
+                        Id = Is * (exp_d - 1)
+                        gd = (Is / vt) * exp_d
+                        
+                        G[n1, n1] += gd; G[n2, n2] += gd; G[n1, n2] -= gd; G[n2, n1] -= gd
+                        
+                        I_rhs = Id - gd * vd
+                        I[n1] -= I_rhs
+                        I[n2] += I_rhs
                         
                     elif c['type'] == 'Q':
                         nc, nb, ne = self.node_map[c['nc']], self.node_map[c['nb']], self.node_map[c['ne']]
@@ -1267,98 +1339,7 @@ class Circuit:
                         pass
 
 
-                v_idx = N
-                
-                # Build Matrix
-                for c in self.components:
-                    if c['type'] == 'R':
-                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
-                        g = 1.0 / (c['val'] + 1e-12)
-                        G[n1,n1]+=g; G[n2,n2]+=g; G[n1,n2]-=g; G[n2,n1]-=g
-                        
-                    elif c['type'] == 'C':
-                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
-                        gc = c['val'] / dt
-                        G[n1,n1]+=gc; G[n2,n2]+=gc; G[n1,n2]-=gc; G[n2,n1]-=gc
-                        i_src = gc * c['v_prev']
-                        I[n1] += i_src; I[n2] -= i_src
-                        
-                    elif c['type'] == 'L':
-                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
-                        gl = dt / (c['val'] + 1e-12)
-                        G[n1,n1]+=gl; G[n2,n2]+=gl; G[n1,n2]-=gl; G[n2,n1]-=gl
-                        I[n1] -= c['i_prev']; I[n2] += c['i_prev']
-                        
-                    elif c['type'] == 'V':
-                        n1, n2 = self.node_map[c['n1']], self.node_map[c['n2']]
-                        val = c['val']
-                        if c['freq'] > 0:
-                            omega_t = 2 * np.pi * c['freq'] * t
-                            wave = c.get('wave', 'sine')
-                            if wave == 'sine':
-                                val = c['val'] * np.sin(omega_t)
-                            elif wave == 'square':
-                                val = c['val'] * np.sign(np.sin(omega_t))
-                            elif wave == 'triangle':
-                                val = c['val'] * (2.0 / np.pi) * np.arcsin(np.sin(omega_t))
-                        
-                        G[n1, v_idx]+=1; G[n2, v_idx]-=1; G[v_idx, n1]+=1; G[v_idx, n2]-=1
-                        I[v_idx] = val
-                        v_idx += 1
-                        
-                    elif c['type'] == 'Q':
-                        nc, nb, ne = self.node_map[c['nc']], self.node_map[c['nb']], self.node_map[c['ne']]
-                        # Current voltages
-                        vc = x[nc]; vb = x[nb]; ve = x[ne]
-                        vbe = vb - ve
-                        vbc = vb - vc
-                        
-                        # Limit exponential to avoid overflow
-                        vbe = min(vbe, 2.0); vbc = min(vbc, 2.0)
-                        
-                        vt = c['Vt']; Is = c['Is']
-                        alpha_f = c['alpha_f']; alpha_r = c['alpha_r']
-                        
-                        # Ebers-Moll Currents
-                        exp_be = np.exp(vbe/vt)
-                        exp_bc = np.exp(vbc/vt)
-                        
-                        If = Is * (exp_be - 1)
-                        Ir = Is * (exp_bc - 1)
-                        
-                        # Conductances
-                        g_be = (Is / vt) * exp_be
-                        g_bc = (Is / vt) * exp_bc
-                        
-                        # Jacobian Stamp (G)
-                        # Base Row (nb)
-                        G[nb, nb] += (1-alpha_f)*g_be + (1-alpha_r)*g_bc
-                        G[nb, ne] -= (1-alpha_f)*g_be
-                        G[nb, nc] -= (1-alpha_r)*g_bc
-                        
-                        # Collector Row (nc)
-                        G[nc, nb] += alpha_f*g_be - g_bc
-                        G[nc, nc] += g_bc
-                        G[nc, ne] -= alpha_f*g_be
-                        
-                        # Emitter Row (ne)
-                        G[ne, nb] += -g_be + alpha_r*g_bc
-                        G[ne, ne] += g_be
-                        G[ne, nc] -= alpha_r*g_bc
-                        
-                        # RHS Vector (I) - Newton Raphson: J*dx = -F  => J*x_new = J*x_old - F
-                        # RHS = J*x - F (where F is current leaving node)
-                        Ib_val = (1-alpha_f)*If + (1-alpha_r)*Ir
-                        Ic_val = alpha_f*If - Ir
-                        Ie_val = -If + alpha_r*Ir
-                        
-                        rhs_ib = Ib_val - ((1-alpha_f)*g_be*vbe + (1-alpha_r)*g_bc*vbc)
-                        rhs_ic = Ic_val - (alpha_f*g_be*vbe - g_bc*vbc)
-                        rhs_ie = Ie_val - (-g_be*vbe + alpha_r*g_bc*vbc)
-                        
-                        I[nb] -= rhs_ib
-                        I[nc] -= rhs_ic
-                        I[ne] -= rhs_ie
+
 
                 # Ground handling
                 if 0 in self.node_map:
@@ -1536,6 +1517,7 @@ c.solve_transient()
             <button onClick={() => addComponent('inductor')} className="btn-tool">Bobina</button>
             <button onClick={() => addComponent('source')} className="btn-tool">Fuente</button>
             <button onClick={() => addComponent('gnd')} className="btn-tool">GND</button>
+            <button onClick={() => addComponent('diode')} className="btn-tool">Diodo</button>
             
             <div className="w-[1px] h-4 bg-gray-600 mx-1"></div>
             <span className="text-xs font-bold text-gray-400">ACTIVE:</span>
@@ -1613,14 +1595,28 @@ c.solve_transient()
           <div className="w-full h-[300px] bg-gray-900 border border-gray-700 rounded-lg p-4">
               <h3 className="text-green-400 text-sm font-bold mb-2">Osciloscopio (Resultados Transitorios)</h3>
               <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={simData}>
+                  <LineChart data={processedData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                      <XAxis dataKey="time" stroke="#888" label={{ value: 'Tiempo (ms)', position: 'insideBottomRight', offset: -5 }} />
-                      <YAxis stroke="#888" label={{ value: 'Voltaje (V)', angle: -90, position: 'insideLeft' }} />
-                      <Tooltip contentStyle={{ backgroundColor: '#111', borderColor: '#555' }} />
+                      <XAxis 
+                        dataKey="time" 
+                        stroke="#888" 
+                        label={{ value: 'Tiempo (ms)', position: 'insideBottomRight', offset: -5 }} 
+                        domain={[0, maxTime]} 
+                        ticks={xTicks}
+                        type="number"
+                        allowDataOverflow
+                      />
+                      <YAxis 
+                        stroke="#888" 
+                        label={{ value: 'Voltaje (V)', angle: -90, position: 'insideLeft' }} 
+                        domain={[-maxVolts, maxVolts]}
+                        ticks={yTicks}
+                        allowDataOverflow
+                      />
+                      <Tooltip contentStyle={{ backgroundColor: '#111', borderColor: '#555' }} labelFormatter={(v) => `${Number(v).toFixed(2)} ms`} />
                       <Legend />
                       {Object.keys(simData[0] || {}).filter(k => k !== 'time').map((k, i) => (
-                          <Line key={k} type="monotone" dataKey={k} stroke={colors[i % colors.length]} dot={false} strokeWidth={2} />
+                          <Line key={k} type="monotone" dataKey={k} stroke={colors[i % colors.length]} dot={false} strokeWidth={2} isAnimationActive={false} />
                       ))}
                   </LineChart>
               </ResponsiveContainer>

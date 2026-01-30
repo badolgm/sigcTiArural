@@ -1117,3 +1117,43 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
 **2. Solución Implementada**
 *   **Código:** Se agregó `if (!data) return null;` a `FlipFlopNode`, `ShiftRegisterNode` y `KarnaughMapNode` en `SchematicEditor.jsx`.
 *   **Infraestructura:** Reinicio forzado del contenedor frontend para asegurar despliegue de cambios.
+
+## 34. MIGRACIÓN DE CONTROLES DE OSCILOSCOPIO (2026-01-30)
+
+**1. Requerimiento**
+*   Mover la funcionalidad de control del osciloscopio (Time/Div, Volts/Div, Offsets) del modo "SIMULACIÓN" al modo "DISEÑO".
+*   El objetivo es permitir el ajuste de las gráficas de simulación *mientras* se edita el circuito, evitando el cambio constante de pestañas.
+*   El modo "SIMULACIÓN" se reserva para visualización pura de señales y análisis espectral/armónicos.
+
+**2. Implementación**
+*   **SchematicEditor.jsx:**
+    *   Habilitación de props `timeDiv`, `voltsDiv`, `ch1Offset`, `ch2Offset`.
+    *   Implementación de lógica `processedData` para aplicar escalado y offsets dinámicos a las gráficas del modo diseño.
+    *   Configuración de `XAxis` y `YAxis` con dominios dinámicos (`domain`) y ticks calculados para reflejar la escala seleccionada.
+*   **ElectronicsLab.jsx:**
+    *   Paso de props de estado (timeDiv, voltsDiv, offsets) al componente `SchematicEditor`.
+
+## 35. CORRECCIÓN DE FUENTES DE SEÑAL Y SINCRONIZACIÓN (2026-01-30)
+
+**1. Problema Identificado**
+*   Las fuentes de voltaje (`SourceNode`) en el modo DISEÑO generaban únicamente señales senoidales o constantes, ignorando la configuración de onda (Cuadrada/Triangular) del Generador de Señales o la selección manual.
+*   Causa: El manejador de eventos `onNodeDoubleClick` en `SchematicEditor.jsx` tenía codificado `waveType: 'sine'` de forma fija (hardcoded) para ediciones manuales.
+
+**2. Solución**
+*   **Edición Manual:** Se actualizó `onNodeDoubleClick` para permitir al usuario seleccionar explícitamente el tipo de onda (Sine, Square, Triangle) cuando edita una fuente AC manualmente.
+*   **Sincronización Automática (LAB):** Se verificó que la sincronización con el Generador de Señales (`useLab: true`) propaga correctamente el tipo de onda gracias a la actualización previa del hook `useEffect` de sincronización.
+*   **Backend:** Se confirmó que la generación del Netlist y el solver Python soportan correctamente los parámetros de onda (`square`, `triangle`).
+
+## 36. AJUSTES DE INTERFAZ Y NUEVOS COMPONENTES (2026-01-30)
+
+**1. Limpieza de Interfaz (Modo DISEÑO)**
+*   **Problema:** La tabla de "Modulación AM" ocupaba espacio innecesario en el modo DISEÑO, donde no es relevante.
+*   **Solución:** Se aplicó renderizado condicional en `ElectronicsLab.jsx` para ocultar los controles de Modulación AM cuando `viewMode !== 'schematic'`.
+
+**2. Nuevos Componentes**
+*   **Diodo Rectificador:** Se agregó el botón "Diodo" a la barra de herramientas BASIC en `SchematicEditor.jsx`. El componente `DiodeNode` ya existía en el código pero no era accesible desde la UI.
+
+**3. Infraestructura**
+*   **Resolución de Conflictos de Puerto:** Se liberó el puerto 5173 (bloqueado por procesos Node.js huérfanos) para permitir el arranque correcto de Docker.
+
+dejar el MASTERDOC-

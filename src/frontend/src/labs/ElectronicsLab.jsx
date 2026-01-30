@@ -671,6 +671,7 @@ const ElectronicsLab = ({ onNavigate }) => {
                         </div>
 
                         {/* GRUPO 2: MODULACIÓN */}
+                        {viewMode !== 'schematic' && (
                         <div>
                             <div className="flex items-center justify-between mb-2">
                                 <label className="text-xs text-green-400 font-mono">MODULACIÓN AM</label>
@@ -703,6 +704,7 @@ const ElectronicsLab = ({ onNavigate }) => {
                                 </div>
                             )}
                         </div>
+                        )}
 
                         {/* GRUPO 3: OSCILOSCOPIO */}
                         <div className="pt-2 border-t border-gray-800">
@@ -872,6 +874,10 @@ const ElectronicsLab = ({ onNavigate }) => {
                             amp: vinAmp,
                             freq: vinFreq
                         }}
+                        timeDiv={timeDiv}
+                        voltsDiv={voltsDiv}
+                        ch1Offset={ch1Offset}
+                        ch2Offset={ch2Offset}
                     />
                  </ErrorBoundary>
              </div>
