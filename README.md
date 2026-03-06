@@ -547,7 +547,46 @@ flowchart LR
 
 ---
 
-### ⚡ Instalación con Docker (Recomendado)
+### 💻 Instalación Local (Desarrollo Híbrido - Modo Rápido)
+
+```bash
+Esta opción es ideal para desarrollo activo. Usamos Docker para las bases de datos (estabilidad) y la terminal local para el código (velocidad).
+
+# 1. Levantar solo las Bases de Datos
+# Encendemos los "motores" de datos en segundo plano
+docker-compose up -d db db-mysql
+
+# 2. Configurar el "Puente" (.env local)
+En tu archivo src/backend/.env, asegúrate de ajustar el host para que el código local encuentre el contenedor:
+
+Cambia: DB_HOST=db ➔ DB_HOST=localhost
+
+Manten: DB_PORT=5432
+
+# 3. Backend (Django)
+cd src/backend
+
+# Crear y activar entorno virtual
+python -m venv venv
+source venv/Scripts/activate
+
+# Instalar dependencias y sincronizar tablas
+pip install -r requirements.txt
+python manage.py migrate
+
+# Iniciar servidor de desarrollo
+python manage.py runserver
+
+# 4. Frontend (React + Vite)
+cd src/frontend
+
+# Instalar y arrancar interfaz
+npm install
+npm run dev
+
+```
+
+### ⚡ Instalación con Docker (Recomendado para producción)
 
 ```bash
 # 1. Clonar el repositorio
@@ -555,10 +594,12 @@ git clone https://github.com/badolgm/sigcTiArural.git
 cd sigcTiArural
 
 # 2. Configurar variables de entorno
+## Copiamos el ejemplo para crear nuestro archivo real
 cp .env.example .env
 # Editar .env con tus configuraciones (opcional para desarrollo local)
 
 # 3. Levantar todos los servicios
+## El flag --build asegura que se construyan las imágenes con los últimos cambios
 docker-compose up -d --build
 
 # 4. Verificar que los contenedores estén corriendo
@@ -570,8 +611,21 @@ docker-compose ps
 # sigct_db            postgres:15-alpine       Up
 # sigct_frontend      sigctiArural-frontend    Up
 # sigct_ai_service    sigctiArural-ai_service  Up
-```
 
+# 5. CONFIGURACIÓN INICIAL DE BASE DE DATOS (Solo la primera vez)
+# Importante: Los contenedores deben estar en estado "Up"
+
+Una vez que los contenedores estén corriendo, es necesario preparar la estructura de la base de datos (Migraciones) y, opcionalmente, crear un superusuario para el panel de administración.
+
+# A. Construir las tablas en PostgreSQL (Migraciones):
+docker exec -it sigct_backend python manage.py migrate
+
+## Crear usuario administrador para el panel de Django (Opcional):
+docker exec -it sigct_backend python manage.py createsuperuser
+
+## Nota: Estos pasos solo se ejecutan cuando clonas el proyecto por primera vez o si borras los volúmenes de Docker.
+
+```
 ### 🌐 Acceder a la Aplicación
 
 | Servicio | URL | Descripción |
@@ -604,7 +658,7 @@ docker-compose logs -f backend
 
 ### 💻 Instalación Local (Desarrollo Sin Docker)
 
-Esta opción es ideal para **desarrollo activo** donde necesitas hacer cambios frecuentes en el código.
+Esta opción es más larga que el Desarrollo Híbrido (Modo Rápido) , también es  ideal para **desarrollo activo** donde necesitas hacer cambios frecuentes en el código.
 
 #### 📦 Paso 1: Backend (Django)
 
@@ -631,6 +685,7 @@ pip install -r requirements.txt
 # Opción 1: Usar PostgreSQL local
 createdb sigct_db
 # Opción 2: Usar el contenedor de Docker solo para la BD
+# Encender el motor (Docker)
 docker-compose up -d db
 
 # Configurar variables de entorno
@@ -647,14 +702,11 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-**Verificación:**
 ```bash
 # En otra terminal, probar la API
 curl http://localhost:8000/api/health/
 # Salida esperada: {"status": "ok", "database": "connected"}
 ```
-
----
 
 #### ⚛️ Paso 2: Frontend (React + Vite)
 
@@ -671,10 +723,10 @@ echo "VITE_API_URL=http://localhost:8000" > .env.local
 # Iniciar servidor de desarrollo (Puerto 5173)
 npm run dev
 ```
-
+---
 **Verificación:**
 - Abre tu navegador en `http://localhost:5173`
-- Deberías ver el Dashboard principal con las 11 categorías de laboratorios
+- Deberías ver el Dashboard principal con las 12 categorías de laboratorios
 
 ---
 
