@@ -60,7 +60,7 @@
 <a name="-visión-general-del-proyecto"></a>
 ## 🎯 Visión General del Proyecto
 
-**SIGC&T Rural** (Sistema Integrado de Gestión del Conocimiento y Tecnología Rural) es una **plataforma web híbrida Cloud/Edge** de código abierto que integra **Internet de las Cosas (IoT)**, **Inteligencia Artificial** y **educación técnica** para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.
+**SIGC&T Rural** (Sistema Integrado de Gestión del Conocimiento y Tecnología Rural) es un **ecosistema autónomo y agnóstico en hardware y software**, de código abierto, que integra **sensores, robots, sistemas de inteligencia artificial y personas como nodos cooperantes**, orientados a observar, cuidar, aprender y actuar sobre **entornos vivos** de manera sostenible, resiliente y educativa
 
 ### 🌟 Características Distintivas
 
