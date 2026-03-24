@@ -114,7 +114,7 @@ Alineado con los **Objetivos de Desarrollo Sostenible (ODS)** de la ONU: Hambre 
 <div align="center">
 
 ```mermaid
-%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor':'#7c3aed','primaryTextColor':'#fff','primaryBorderColor':'#a78bfa','lineColor':'#8b5cf6','secondaryColor':'#1e293b','tertiaryColor':'#0f172a'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#c2ba91','primaryTextColor':'#412402','primaryBorderColor':'#3f9999','lineColor':'#6e854349','secondaryColor':'#1887b3','tertiaryColor':'#9badcf'}}}%%
 mindmap
   root((SIGC&T Rural))
     Cloud Platform
