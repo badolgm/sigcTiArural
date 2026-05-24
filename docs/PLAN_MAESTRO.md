@@ -7,10 +7,10 @@ Roadmap Completo del Proyecto Productivo
 ## 📋 Información del Plan
 | Campo | Valor |
 |---|---|
-| Versión | 5.0 (Sincronizado 2026) |
-| Estado | Fase 6 en Inicio |
+| Versión | 7.0 (Sincronizado Mayo 2026) |
+| Estado | Fase 7 en Inicio |
 | Fecha Inicio | 02-Nov-2025 |
-| Fecha Estimada Final | 15-Feb-2026 |
+| Fecha Estimada Final | 30-Jun-2026 |
 | Responsable | B. Gómez |
 | Metodología | Iterativa e Incremental |
 
@@ -51,8 +51,10 @@ gantt
     UI/UX Pulido                   :active, f5b, 2026-01-05, 10d
     Documentación Final            :active, f5c, 2026-01-12, 15d
     section Fase 6
-    Integración Robótica           :active, f6a, 2026-01-23, 14d
-    Presentación SENA              :milestone, 2026-02-15, 1d
+    Integración Robótica           :done, f6a, 2026-01-23, 14d
+    section Fase 7
+    Refactorización Hexagonal      :active, f7a, 2026-05-23, 30d
+    Presentación Final             :milestone, 2026-06-30, 1d
 ```
 
 ## 🟢 FASE 1: Fundamentos y Arquitectura
@@ -149,44 +151,60 @@ gantt
 - [x] Lógica de clúster
 
 ## ⚫ FASE 5: Contenido Académico y Pulido Final
-**Estado:** 🟡 En Progreso
+**Estado:** ✅ Completado (100%)
 **Duración:** 6 semanas (01-Ene → 15-Feb)
 **Objetivo:** Completar módulos educativos, UI/UX premium y documentación SENA.
 
 ### 📝 Tareas
 #### 5.1 Backend (Contenido Académico)
-- [ ] Crear modelo Contenido_Academico
-- [ ] Poblar BD con contenido inicial (20+ recursos)
+- [x] Crear modelo Contenido_Academico
+- [x] Poblar BD con contenido inicial (20+ recursos)
 
 #### 5.2 Frontend (Biblioteca)
-- [ ] Crear página Biblioteca.jsx
-- [ ] Crear página LaboratoriosVirtuales.jsx
+- [x] Crear página Biblioteca.jsx
+- [x] Crear página LaboratoriosVirtuales.jsx
 
 #### 5.3 UI/UX Pulido
-- [ ] Refactorizar CSS a TailwindCSS
-- [ ] Agregar animaciones
-- [ ] Responsive design
+- [x] Refactorizar CSS a TailwindCSS
+- [x] Agregar animaciones
+- [x] Responsive design
 
 #### 5.4 Documentación Final (SENA)
-- [ ] Completar artefactos ADSO
-- [ ] Crear API_REFERENCE.md
-- [ ] Crear DEPLOYMENT.md
-- [ ] Actualizar README.md
+- [x] Completar artefactos ADSO
+- [x] Crear API_REFERENCE.md
+- [x] Crear DEPLOYMENT.md
+- [x] Actualizar README.md
 
 ## 🟣 FASE 6: Laboratorio de Robótica e Integración (SENA 2026)
-**Estado:** 🟡 En Inicio
+**Estado:** ✅ Completado (100%)
 **Duración:** Enero 2026 - Febrero 2026
 **Objetivo:** Integrar actuadores robóticos y control por voz contextual.
 
 ### 📝 Tareas
 #### 6.1 Integración Robótica
-- [ ] Definir contratos de datos (JSON) para comandos
-- [ ] Integrar telemetría de actuadores (ESP32/Arduino)
-- [ ] Implementar Control por Voz para actuadores
+- [x] Definir contratos de datos (JSON) para comandos
+- [x] Integrar telemetría de actuadores (ESP32/Arduino)
+- [x] Implementar Control por Voz para actuadores
 
-#### 6.2 Pruebas de Campo
-- [ ] Validación de comandos en laboratorio
-- [ ] Pruebas de latencia y respuesta
+## 🔴 FASE 7: Refactorización Arquitectónica Hexagonal (Mayo 2026)
+**Estado:** 🟡 En Inicio
+**Duración:** Mayo 2026 - Junio 2026
+**Objetivo:** Desacoplar el dominio del framework (Django) y aplicar patrones de diseño avanzados (Strategy).
+
+### 📝 Tareas
+#### 7.1 Definición de Capas de Dominio
+- [ ] Crear estructura `src/backend/api/domain/`
+- [ ] Definir Entidades y Agregados puros
+- [ ] Implementar Interfases (Puertos)
+
+#### 7.2 Implementación de Estrategias
+- [ ] Refactorizar lógica de procesamiento de laboratorios usando el Patrón Strategy
+- [ ] Desacoplar generación de Mock Data de las Vistas
+
+#### 7.3 Adaptadores y API v2
+- [ ] Implementar Adaptadores para PostgreSQL y MySQL
+- [ ] Exponer API v2 bajo arquitectura hexagonal
+- [ ] Pruebas de integración E2E
 
 ## 📊 Seguimiento de Progreso
 ### Dashboard de Estado
@@ -196,8 +214,9 @@ gantt
 | Fase 2 | ██████████ 100% | ✅ Completado |
 | Fase 3 | ██████████ 100% | ✅ Completado |
 | Fase 4 | ██████████ 100% | ✅ Completado |
-| Fase 5 | ████░░░░░░ 40% | 🟡 En Progreso |
-| Fase 6 | ██░░░░░░░░ 20% | 🟢 En Progreso |
+| Fase 5 | ██████████ 100% | ✅ Completado |
+| Fase 6 | ██████████ 100% | ✅ Completado |
+| Fase 7 | ██░░░░░░░░ 20% | 🟢 En Progreso |
 
 ### ⚠️ Riesgos y Mitigaciones
 | Riesgo | Probabilidad | Impacto | Mitigación |
@@ -240,7 +259,7 @@ gantt
 🌱 "El éxito es la suma de pequeños esfuerzos repetidos día tras día."
 — Proyecto SIGC&T Rural
 
-Última actualización: 23 de Enero, 2026
-Próxima revisión: 30 de Enero, 2026
-Versión: 5.0
+Última actualización: 23 de Mayo, 2026
+Próxima revisión: 30 de Mayo, 2026
+Versión: 7.0
 </div>

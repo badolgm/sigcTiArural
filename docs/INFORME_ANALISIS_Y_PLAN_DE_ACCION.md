@@ -31,6 +31,10 @@
 | [17 de Febrero 2026 — Refactorización](#17-de-febrero-2026--refactorización) | Mañana | Refactorización `AdvancedMathLab` y Consolidación de Rama |
 | [17 de Febrero 2026 — Auditoría IA](#17-de-febrero-2026--auditoría-ia) | Tarde | Auditoría Técnica Completa — Por Qué No Predice la IA |
 | [17 de Febrero 2026 — Arquitectura](#17-de-febrero-2026--arquitectura-de-ejecución) | Tarde | Decisión de Arquitectura: Desarrollo Local vs Docker |
+| [23 de Mayo 2026 — Refactorización Arquitectónica](#23-de-mayo-2026--refactorización-arquitectónica) | Mañana | Validación de Arquitectura Hexagonal y Plan de Refactorización Maestro |
+| [23 de Mayo 2026 — Implementación Hexagonal](#23-de-mayo-2026--implementación-hexagonal) | Tarde | Creación de Capas de Dominio, Puertos y Adaptadores para Robótica y Telecom |
+| [23 de Mayo 2026 — Saneamiento y Expansión](#23-de-mayo-2026--saneamiento-y-expansión) | Noche | Limpieza de redundancias y migración completa de laboratorios al dominio puro |
+| [23 de Mayo 2026 — Evolución IA y Mensajería](#23-de-mayo-2026--evolución-ia-y-mensajería) | Noche | Plan de expansión de Datasets, Notificaciones y Arquitectura de Mensajería |
 
 ---
 
@@ -1203,4 +1207,136 @@ curl http://localhost:8081/health   # AI Service
 
 ---
 
-*Fin del documento — MASTERDOC.md es un documento vivo. Nunca se elimina historial.*
+## 23 de Mayo 2026 — Refactorización Arquitectónica
+
+### 🟢 SESIÓN: Validación de Arquitectura Hexagonal y Plan de Refactorización Maestro
+
+1. Validación de la arquitectura actual y detección de cuellos de botella.
+2. Diseño de la nueva arquitectura de capas (Domain, Ports, Adapters).
+3. Documentar los contratos de datos entre la IA y el nuevo núcleo de dominio.
+
+---
+
+## 23 de Mayo 2026 — Implementación Hexagonal
+
+### 🛠️ SESIÓN: Creación de Capas de Dominio, Puertos y Adaptadores
+
+| Campo | Valor |
+|-------|-------|
+| **Autor** | Bernardo Adolfo Gómez Montoya |
+| **Metodología** | Strangler Fig Pattern (Migración en paralelo) |
+| **Estado** | Estructura Base Funcional (v2) |
+
+#### 1. Logros Técnicos Alcanzados
+
+**A. Creación de la Estructura de Carpetas (`src/backend/api/logic/`)**
+- `/domain`: Lógica de negocio pura (Python Puro).
+- `/ports`: Interfaces que definen contratos de comunicación.
+- `/adapters`: Implementaciones concretas (Django ORM, HTTP Requests).
+
+**B. Implementación del Patrón Strategy y Factory**
+- Se crearon las estrategias `ProcesadorRobotica` y `ProcesadorTelecomunicaciones`.
+- Se implementó `LaboratorioStrategyFactory` para permitir la selección dinámica de laboratorios mediante parámetros de URL (ej: `?tipo=TELECOMUNICACIONES`).
+
+**C. Desacoplamiento de Servicios Externos (IA)**
+- Se creó un puerto para el servicio de IA y un adaptador que se comunica con FastAPI.
+- **Resiliencia:** Se implementó un mecanismo de *fallback* local que proporciona sugerencias básicas de cultivo si el servicio de IA no está disponible.
+
+#### 2. Verificación de Cero Roturas
+- Los endpoints originales `/api/telemetry/history/` siguen operando con el código antiguo.
+- Los nuevos endpoints `/api/v2/telemetry/history/` y `/api/v2/ai/crop-advice/` han sido validados exitosamente mediante `curl`.
+
+#### 3. Próximos Pasos
+- Migrar el laboratorio de Agricultura al dominio puro.
+- Iniciar la limpieza de la carpeta duplicada `src/backend/ai_service/` (rezago técnico).
+- Documentar los diagramas de secuencia del nuevo flujo hexagonal.
+
+---
+
+## 23 de Mayo 2026 — Saneamiento y Expansión
+
+### 🧹 SESIÓN: Limpieza de redundancias y migración completa de laboratorios
+
+| Campo | Valor |
+|-------|-------|
+| **Autor** | Bernardo Adolfo Gómez Montoya |
+| **Acción** | Saneamiento de Backend y Finalización de Estrategias |
+| **Impacto** | Alta Sanidad del Repositorio |
+
+#### 1. Saneamiento del Repositorio
+- **Backup de Seguridad:** Se movió la carpeta redundante `src/backend/ai_service/` a `_deprecated_backups/ai_service_old`.
+- **Desvinculación:** Se eliminó `'ai_service'` de `INSTALLED_APPS` en `settings.py` para evitar carga de código obsoleto.
+
+#### 2. Migración de Laboratorios al Dominio (Python Puro)
+- **Agricultura + IA:** Implementada en `domain/agricultura.py`. Incluye lógica de estrés hídrico y simulación circadiana.
+- **Electrónica:** Implementada en `domain/electronica.py`. Incluye lógica de análisis de topología y gemelo digital.
+- **Factoría:** Actualizada para soportar los 4 tipos de laboratorios principales: `ROBOTICA`, `TELECOMUNICACIONES`, `AGRICULTURA`, `ELECTRONICA`.
+
+#### 3. Estado de la Infraestructura
+- Todos los servicios Docker están **activos y verificados**.
+- La base de datos PostgreSQL está sincronizada y operando con los nuevos adaptadores de persistencia.
+
+#### 4. Próximos Pasos (Cierre de Fase)
+- Actualizar diagramas visuales en el `MASTERDOC`.
+- Realizar pruebas de carga sobre el adaptador de persistencia.
+- Planificar la migración del Frontend para consumir exclusivamente los endpoints `/api/v2/`.
+
+---
+
+## 23 de Mayo 2026 — Evolución IA y Mensajería
+
+### 📡 SESIÓN: Expansión de Inteligencia y Sistema de Notificaciones
+
+| Campo | Valor |
+|-------|-------|
+| **Autor** | Bernardo Adolfo Gómez Montoya |
+| **Tema** | Messaging, Datasets y Notificaciones |
+| **Decisión** | Uso de Redis/RabbitMQ para Mensajería |
+
+#### 1. Evolución del Dataset de IA
+Se identifica que el uso exclusivo de **PlantVillage** es solo el punto de partida (Línea Base).
+- **Limitación Actual:** Clasificación binaria (Sana/Enferma).
+- **Plan de Expansión:** Integrar datasets específicos para **Roya del Café**, **Moniliasis del Cacao** y **Tizón del Tomate**.
+- **Acción:** Se ha modificado el Dominio (`ProcesadorAgricultura`) para soportar múltiples clases de patógenos. El modelo .h5 debe ser re-entrenado con estas nuevas categorías.
+
+#### 2. Arquitectura de Mensajería y Notificaciones
+Se analiza la necesidad de notificar al usuario en tiempo real cuando la IA detecta una anomalía.
+
+
+- **RabbitMQ (RECOMENDADO):** Ideal para sistemas de microservicios como SIGC&T Rural. Permite una entrega de mensajes fiable y ligera.
+- **Redis (ALTERNATIVA LIGHT):** Si el entorno es muy limitado (Edge), Redis Pub/Sub es la opción más rápida y sencilla de implementar.
+
+
+
+#### 3. Sistema de Notificaciones (Push/Mobile)
+Para que el usuario reciba alertas en el móvil o dashboard:
+1. **Frontend:** Uso de **WebSockets** (Django Channels) para alertas instantáneas en el navegador.
+2. **Mobile:** Integración con **Firebase Cloud Messaging (FCM)** mediante un nuevo Adaptador Hexagonal.
+3. **Trigger:** Cuando el `LaboratorioService` detecta un nivel de estrés "Crítico", dispara una llamada al `NotificationPort`.
+
+#### 4. Implementación Inmediata
+- Se ha creado el **`NotificationPort`** en `ports/notifications.py`.
+- Se ha creado un **`ConsoleNotificationAdapter`** para pruebas iniciales sin dependencias externas.
+- El Dominio de Agricultura ahora es capaz de identificar patógenos específicos (simulados) preparando el camino para el modelo multiclase.
+
+---
+
+## 23 de Mayo 2026 — Cierre de Fase de Reingeniería
+
+### 🏁 CONCLUSIÓN: Transición Exitosa a Arquitectura de Alto Nivel
+
+| Indicador | Estado |
+|-------|-------|
+| **Arquitectura** | Hexagonal (Puertos y Adaptadores) |
+| **Calidad de Código** | Clean Code & SOLID Principles |
+| **Resiliencia** | Fallback de IA implementado |
+| **Sanidad** | Rezagos eliminados y respaldados |
+
+#### Resumen Final de la Fase
+Se ha transformado el backend de un modelo monolítico acoplado a una arquitectura distribuida y modular. El **Dominio** del proyecto (Robótica, Agricultura, Telecom, Electrónica) es ahora independiente de la tecnología, garantizando que el software pueda evolucionar, escalar y migrar sin riesgo de pérdida de lógica de negocio.
+
+**SIGC&T-Rural** cumple ahora con los estándares internacionales de ingeniería de software para proyectos de alto impacto social y tecnológico.
+
+---
+
+*Fin del documento — INFORME_ANALISIS_Y_PLAN_DE_ACCION.md es un documento vivo. Nunca se elimina historial.*

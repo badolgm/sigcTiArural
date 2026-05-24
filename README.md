@@ -7,7 +7,8 @@
 
 [![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyMmMxLjEgMCAyLS45IDItMlYxMmMwLTEuMS0uOS0yLTItMkg0Yy0xLjEgMC0yIC45LTIgMnY4YzAgMS4xLjkgMiAyIDJoOHoiLz48cGF0aCBkPSJNMjAgMTJjMC0xLjEtLjktMi0yLTJoLTR2NGg0YzEuMSAwIDItLjkgMi0yeiIvPjwvc3ZnPg==)](https://www.sena.edu.co/)
 [![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo%20Activo-00d4ff?style=for-the-badge&logo=StatusPage&logoColor=white)](https://github.com/badolgm/sigcTiArural)
-[![Versión](https://img.shields.io/badge/Versión-6.0-7c3aed?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/badolgm/sigcTiArural/releases)
+[![Versión](https://img.shields.io/badge/Versión-7.0-7c3aed?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/badolgm/sigcTiArural/releases)
+[![Arquitectura](https://img.shields.io/badge/Arquitectura-Hexagonal-ff6f00?style=for-the-badge&logo=hexo&logoColor=white)](docs/MASTERDOC.md#9-arquitectura-hexagonal)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-fbbf24?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
@@ -189,6 +190,36 @@ flowchart TB
     style users fill:#1e293b,stroke:#8b5cf6,stroke-width:2px
     style sigct fill:#7c3aed,stroke:#a78bfa,stroke-width:3px
     style external fill:#0f172a,stroke:#6366f1,stroke-width:2px
+```
+
+### ⚙️ Nivel 3: Arquitectura Hexagonal (Backend Clean Architecture)
+
+```mermaid
+graph TD
+    subgraph "Capa de Adaptadores (Infraestructura)"
+        UI[React Frontend] -->|REST API| Views[Django Views V2]
+        Views --> DB_Adap[Django ORM Adapter]
+        Views --> AI_Adap[FastAPI AI Adapter]
+    end
+
+    subgraph "Capa de Puertos (Interfaces)"
+        Views --> Lab_Port[ProcesadorLaboratorioPort]
+        DB_Adap -.-> Repo_Port[RepositoryPort]
+        AI_Adap -.-> AI_Port[AIServicePort]
+    end
+
+    subgraph "Capa de Dominio (Lógica Pura)"
+        Lab_Port --> Service[LaboratorioService]
+        Service --> Strategy[Strategy Pattern]
+        Strategy --> Robotica[ProcesadorRobotica]
+        Strategy --> Agricultura[ProcesadorAgricultura]
+        Strategy --> Telecom[ProcesadorTelecom]
+        Strategy --> Electronica[ProcesadorElectronica]
+    end
+
+    style Service fill:#f96,stroke:#333,stroke-width:4px
+    style Lab_Port fill:#bbf,stroke:#333,stroke-width:2px
+    style Views fill:#dfd,stroke:#333,stroke-width:2px
 ```
 
 ### 🔧 Nivel 2: Vista de Contenedores
@@ -867,71 +898,47 @@ sigcTiArural/
 ├── 📁 src/                               # Código fuente
 │   │
 │   ├── 📁 backend/                       # Backend Django
-│   │   ├── 📄 manage.py                  # CLI de Django
-│   │   ├── 📄 requirements.txt           # Dependencias Python
-│   │   ├── 📄 Dockerfile                 # Imagen Docker del backend
+│   │   ├── 📁 api/                       # Aplicación de API REST
+│   │   │   ├── 📁 logic/                 # ⬢ ARQUITECTURA HEXAGONAL (Core)
+│   │   │   │   ├── 📁 domain/            # Lógica de Negocio (Python Puro)
+│   │   │   │   ├── 📁 ports/             # Interfaces y Contratos
+│   │   │   │   └── 📁 adapters/          # Implementaciones (Django ORM, AI, Notificaciones)
+│   │   │   ├── 📄 models.py              # Modelos de BD (Legacy/Persistence)
+│   │   │   ├── 📄 serializers.py         # Serializadores DRF
+│   │   │   ├── 📄 views.py               # Vistas de API (V1 y V2 Hexagonal)
+│   │   │   └── 📄 urls.py                # Rutas de API
 │   │   ├── 📁 sigct_backend/             # Configuración del proyecto
-│   │   │   ├── 📄 settings.py            # Configuración principal
-│   │   │   ├── 📄 urls.py                # Rutas principales
-│   │   │   ├── 📄 wsgi.py                # Servidor WSGI
-│   │   │   └── 📄 asgi.py                # Servidor ASGI (WebSockets)
-│   │   └── 📁 api/                       # Aplicación de API REST
-│   │       ├── 📄 models.py              # Modelos de BD (Robot, Telemetry)
-│   │       ├── 📄 serializers.py         # Serializadores DRF
-│   │       ├── 📄 views.py               # Vistas de API
-│   │       └── 📄 urls.py                # Rutas de API
+│   │   └── 📄 manage.py                  # CLI de Django
 │   │
 │   ├── 📁 frontend/                      # Frontend React
-│   │   ├── 📄 package.json               # Dependencias Node.js
-│   │   ├── 📄 vite.config.js             # Configuración de Vite
-│   │   ├── 📄 Dockerfile                 # Imagen Docker del frontend
-│   │   ├── 📄 nginx.conf                 # Configuración Nginx (producción)
 │   │   ├── 📁 src/                       # Código fuente React
-│   │   │   ├── 📄 App.jsx                # Componente principal
-│   │   │   ├── 📄 main.jsx               # Punto de entrada
 │   │   │   ├── 📁 components/            # Componentes reutilizables
-│   │   │   │   ├── 📄 TopNav.jsx         # Barra de navegación
-│   │   │   │   ├── 📄 Dashboard.jsx      # Dashboard principal
-│   │   │   │   ├── 📄 LabCatalog.jsx     # Catálogo de laboratorios
-│   │   │   │   └── 📄 Telemetry3DScene.jsx # Visualización 3D
-│   │   │   ├── 📁 labs/                  # Componentes de laboratorios
-│   │   │   │   ├── 📄 RoboticsLab.jsx    # Lab de robótica
-│   │   │   │   ├── 📄 MathLab.jsx        # Lab de matemáticas
-│   │   │   │   └── 📄 DataScienceLab.jsx # Lab de ciencia de datos
-│   │   │   ├── 📁 data/                  # Datos estáticos
-│   │   │   │   └── 📄 lab-data.js        # Configuración de laboratorios
-│   │   │   └── 📁 hooks/                 # Custom React Hooks
-│   │   │       └── 📄 useRoboticsApi.js  # Hook para API de robótica
-│   │   └── 📁 public/                    # Archivos estáticos
+│   │   │   ├── 📁 pages/                 # Páginas de la aplicación (Dashboard, Labs, etc.)
+│   │   │   ├── 📁 labs/                  # Módulos de laboratorios especializados
+│   │   │   ├── 📁 data/                  # Datos estáticos (lab-data.js)
+│   │   │   ├── 📁 hooks/                 # Custom React Hooks
+│   │   │   └── 📄 App.jsx                # Router y raíz
+│   │   └── 📄 vite.config.js             # Configuración de Vite
 │   │
-│   ├── 📁 ai_models/                     # Servicio de IA
-│   │   ├── 📄 requirements.txt           # Dependencias de IA
-│   │   ├── 📄 Dockerfile                 # Imagen Docker de IA
-│   │   ├── 📄 fastapi_app.py             # API de IA (FastAPI)
-│   │   ├── 📄 conversation_context.py    # Memoria conversacional
-│   │   ├── 📁 models/                    # Modelos entrenados
-│   │   │   ├── 📄 plant_disease.h5       # Modelo Cloud (TensorFlow)
-│   │   │   └── 📄 plant_disease.tflite   # Modelo Edge (TFLite)
-│   │   └── 📁 notebooks/                 # Jupyter Notebooks
-│   │       └── 📄 train_plant_model.ipynb
+│   ├── 📁 ai_models/                     # Microservicio de IA (FastAPI)
+│   │   ├── 📁 production_models/         # Modelos entrenados (.h5, .keras)
+│   │   ├── 📁 notebooks/                 # Entrenamiento y experimentación
+│   │   ├── 📄 fastapi_app.py             # API de Inferencia y Voz
+│   │   └── 📄 conversation_context.py    # Memoria contextual
 │   │
-│   └── 📁 embedded/                      # Scripts para BeagleBone Black
-│       ├── 📄 sensor_reader.py           # Lectura de sensores (BBB-03)
-│       ├── 📄 mqtt_publisher.py          # Publicador MQTT (BBB-01)
-│       └── 📄 edge_inference.py          # Inferencia Edge (BBB-02)
+│   └── 📁 embedded/                      # Edge Computing (BeagleBone Black)
+│       ├── 📁 bbb_01_gateway/            # Gateway MQTT y Sincronización
+│       ├── 📁 bbb_02_ia_edge/            # Inferencia local TFLite
+│       └── 📁 bbb_03_sensors/            # Adquisición de datos y cámara
 │
-├── 📁 scripts/                           # Scripts de utilidad
-│   ├── 📄 physics_sim.py                 # Simulador de física (robots)
-│   ├── 📄 check_tools.py                 # Verificador de dependencias
-│   └── 📄 backup_db.sh                   # Script de backup de BD
+├── 📁 scripts/                           # Automatización y Simulación
+│   ├── 📄 physics_sim.py                 # Simulador de drones y telemetría
+│   └── 📄 generate-diagrams.mjs          # Generación de documentación visual
 │
-├── 📁 config/                            # Archivos de configuración
-│   └── 📄 supervisord.conf               # Configuración de procesos
-│
-├── 📁 data/                              # Datasets (local only, ignorado por Git)
-│   └── 📁 plantvillage/                  # Dataset de PlantVillage
-│
-└── 📁 backups/                           # Backups de BD (local only)
+└── 📁 docs/                              # Documentación Maestra
+    ├── 📄 MASTERDOC.md                   # DAS y Arquitectura
+    ├── 📄 PLAN_MAESTRO.md                # Roadmap v7.0
+    └── 📄 INFORME_ANALISIS_Y_PLAN_DE_ACCION.md # Bitácora de reingeniería
 ```
 
 > 📝 **Nota:** Las carpetas `data/`, `backups/`, `venv/` y `node_modules/` están excluidas del control de versiones mediante `.gitignore`.

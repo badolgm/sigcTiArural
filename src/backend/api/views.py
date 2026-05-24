@@ -60,3 +60,83 @@ class TelemetryHistoryView(APIView):
                 "sensor": "Simulado"
             })
         return data
+
+# ==============================================================================
+# ARQUITECTURA HEXAGONAL V2 (REFACCIONADA)
+# ==============================================================================
+from .logic.domain.services import LaboratorioService
+from .logic.domain.factories import LaboratorioStrategyFactory
+from .logic.adapters.persistence import DjangoRepository
+
+class TelemetryHistoryV2View(APIView):
+    """
+    Versión refactorizada de TelemetryHistoryView usando Arquitectura Hexagonal y Factory Strategy.
+    """
+    permission_classes = [AllowAny]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.repository = DjangoRepository()
+
+    def get(self, request):
+        # Obtener el tipo de laboratorio de los parámetros (por defecto ROBOTICA)
+        tipo_lab = request.query_params.get('tipo', 'ROBOTICA')
+        
+        try:
+            service = LaboratorioService(tipo_lab)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=400)
+
+        # 1. Intentamos obtener datos del puerto de persistencia (Adaptador Django)
+        # Aquí podríamos filtrar por sensor_id según el laboratorio
+        readings = self.repository.listar_todos('api.SensorReading')[:24]
+        
+        if readings:
+            data = []
+            for r in readings:
+                data.append({
+                    "time": r.timestamp.strftime("%H:%M"),
+                    "temp": r.temperature,
+                    "humidity": r.humidity,
+                    "sensor": f"{r.sensor_id} ({tipo_lab} V2)"
+                })
+            return Response(data[::-1])
+            
+        # 2. Fallback: Lógica de dominio pura para datos simulados
+        data_simulada = service.obtener_simulacion_historica()
+        return Response(data_simulada)
+
+from .logic.adapters.ai_service import FastAPI_AIAdapter
+
+class AICropAdviceView(APIView):
+    """
+    Nuevo endpoint que utiliza el Adaptador de IA para dar sugerencias.
+    Demuestra la Arquitectura Hexagonal aplicada a servicios externos.
+    """
+    permission_classes = [AllowAny]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.ai_adapter = FastAPI_AIAdapter()
+        self.repository = DjangoRepository()
+
+    def get(self, request):
+        # Obtenemos el último dato de sensores
+        last_reading = self.repository.listar_todos('api.SensorReading')
+        if not last_reading:
+            return Response({"error": "No hay datos de sensores para analizar"}, status=404)
+        
+        reading = last_reading[0]
+        datos = {
+            "temperature": reading.temperature,
+            "humidity": reading.humidity,
+            "sensor_id": reading.sensor_id
+        }
+        
+        # Pedimos sugerencia al Adaptador de IA
+        sugerencia = self.ai_adapter.obtener_sugerencias_productividad(datos)
+        
+        return Response({
+            "datos_analizados": datos,
+            "ia_feedback": sugerencia
+        })

@@ -1,4 +1,4 @@
-# 📘 MASTERDOC v6.0 - SIGC&T RURAL
+# 📘 MASTERDOC v7.0 - SIGC&T RURAL
 ## Documento Maestro de Arquitectura de Software
 
 **Sistema Integrado de Gestión del Conocimiento y Tecnología Rural**
@@ -9,12 +9,12 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Versión** | 6.0 (Completa y Consolidada) |
+| **Versión** | 7.0 (Arquitectura Hexagonal) |
 | **Fecha Creación** | 24 de Enero 2026 |
-| **Última Actualización** | 24 de Enero 2026 |
+| **Última Actualización** | 23 de Mayo 2026 |
 | **Autor Principal** | Bernardo Adolfo Gómez Montoya |
 | **Institución** | SENA - Tecnología en ADSO |
-| **Estado** | Documento Vivo - Actualización Continua |
+| **Estado** | Documento Vivo - Consolidación de Reingeniería |
 | **Clasificación** | Técnico - Académico - Open Source |
 | **Licencia** | MIT License |
 
@@ -35,6 +35,59 @@
 6. [Modelo C4 - Vistas de Arquitectura](#6-arquitectura-c4)
 7. [Stack Tecnológico Completo](#7-stack-tecnologico)
 8. [Patrones y Decisiones Arquitectónicas](#8-decisiones-arquitectonicas)
+9. [Arquitectura Hexagonal (Puertos y Adaptadores)](#9-arquitectura-hexagonal)
+
+---
+
+## 9. Arquitectura Hexagonal
+
+Para garantizar la sostenibilidad y el impacto social del proyecto SIGC&T-Rural, se ha implementado una **Arquitectura Hexagonal (Puertos y Adaptadores)**. Esta estructura desacopla las reglas de negocio (Dominio) de las tecnologías externas (Django, Bases de Datos, APIs).
+
+### 📐 Diagrama de Arquitectura
+
+```mermaid
+graph TD
+    subgraph "Capa de Adaptadores (Entrada/Salida)"
+        UI[React Frontend] -->|HTTP/REST| API_V2[Django Views V2]
+        API_V2 --> DB_ADAPTER[Django ORM Adapter]
+        API_V2 --> AI_ADAPTER[FastAPI AI Adapter]
+    end
+
+    subgraph "Capa de Puertos (Interfaces)"
+        API_V2 --> PORT_LAB[ProcesadorLaboratorioPort]
+        DB_ADAPTER -.-> PORT_REPO[RepositoryPort]
+        AI_ADAPTER -.-> PORT_AI[AIServicePort]
+    end
+
+    subgraph "Capa de Dominio (Corazón)"
+        PORT_LAB --> DOMAIN_LOGIC[LaboratorioService]
+        DOMAIN_LOGIC --> STRATEGY[Patrón Strategy]
+        STRATEGY --> ROBOTICA[ProcesadorRobotica]
+        STRATEGY --> AGRICULTURA[ProcesadorAgricultura]
+        STRATEGY --> TELECOM[ProcesadorTelecom]
+        STRATEGY --> ELECTRONICA[ProcesadorElectronica]
+    end
+
+    style DOMAIN_LOGIC fill:#f96,stroke:#333,stroke-width:4px
+    style PORT_LAB fill:#bbf,stroke:#333,stroke-width:2px
+    style API_V2 fill:#dfd,stroke:#333,stroke-width:2px
+```
+
+### 📂 Estructura del Código (`src/backend/api/logic/`)
+
+Ver detalle técnico en el [README de Lógica](file:///c%3A/Users/Devbadolgm/WorkSpace/CloneNuevo_sigcTiArural/sigcTiArural/src/backend/api/logic/README.md).
+
+| Capa | Carpeta | Responsabilidad |
+| :--- | :--- | :--- |
+| **Dominio** | `domain/` | Reglas de negocio puras (Python Puro). No depende de Django. |
+| **Puertos** | `ports/` | Definición de contratos (Interfaces ABC) para servicios y persistencia. |
+| **Adaptadores** | `adapters/` | Implementaciones concretas: Django ORM, Clientes HTTP, etc. |
+
+### 🛠️ Principios de Ingeniería Aplicados
+- **Clean Code**: Nombres descriptivos, funciones pequeñas y responsabilidad única.
+- **SOLID**: Especial énfasis en el principio Open/Closed mediante el uso de **Factories** y **Strategies**.
+- **Resiliencia**: Adaptadores de IA con mecanismos de *Fallback* local.
+- **Independencia Tecnológica**: El dominio puede ser migrado a otro framework sin cambios.
 
 ### VOLUMEN II: IMPLEMENTACIÓN TÉCNICA
 
@@ -62,9 +115,9 @@
 21. [Laboratorio de Ciencia de Datos](#21-laboratorio-datos)
 
 #### PARTE 7: BITÁCORA DE INTERVENCIONES
-22. [Timeline Completo (16-24 Enero 2026)](#22-timeline-completo)
+22. [Timeline Completo (Enero - Mayo 2026)](#22-timeline-completo)
 23. [Comandos Ejecutados Detallados](#23-comandos-detallados)
-24. [Lecciones Aprendidas](#24-lecciones-aprendidas)
+24. [Lecciones Aprendidas de Reingeniería](#24-lecciones-aprendidas)
 
 #### PARTE 8: GESTIÓN DEL PROYECTO
 25. [Estrategia de Ramas Git](#25-estrategia-ramas)
@@ -162,13 +215,13 @@ Este proyecto nace como **Proyecto Productivo** del programa **Tecnología en An
 ### 2.1 Línea de Tiempo General
 
 ```
-2025-11-02 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2026-01-24
+2025-11-02 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2026-05-23
 
-   NOV        DIC        ENE-16    ENE-18    ENE-22    ENE-23    ENE-24
-    │          │           │         │         │         │         │
-    ▼          ▼           ▼         ▼         ▼         ▼         ▼
-  Fase 1     Fase 2     Migr.    Rescate    IA Voz   Robótica  Docs
-  (Arq.)   (Protot.)    MySQL    Docker    Intelig.  Integr.   Final
+   NOV        DIC        ENE-16    ENE-24    FEB-17    MAY-23
+    │          │           │         │         │         │
+    ▼          ▼           ▼         ▼         ▼         ▼
+  Fase 1     Fase 2     Migr.     Robótica   Auditoría  Refact.
+  (Arq.)   (Protot.)    SQL       Integr.    IA        Hexagonal
 ```
 
 ### 2.2 Fase 1: Fundamentos y Arquitectura (02-15 Nov 2025)
