@@ -14,3 +14,10 @@ dj-database-url  # Para leer config de BD desde URL
 psycopg2-binary  # Driver para PostgreSQL
 python-dotenv    # Para leer variables de entorno desde .env
 requests         # Para comunicación con microservicios (Hexagonal Adapter)
+
+# ======================================================
+# Testing (Fase 0 - Hexagonal Refactor)
+# ======================================================
+pytest>=7.4
+pytest-cov>=4.0
+# pytest-django   # Descomentar cuando se agreguen tests que requieran Django ORM

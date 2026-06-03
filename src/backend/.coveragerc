@@ -1,0 +1,24 @@
+[run]
+source = api
+branch = True
+omit =
+    */tests/*
+    */migrations/*
+    */__pycache__/*
+    */conftest.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    def __repr__
+    raise NotImplementedError
+
+precision = 2
+show_missing = True
+
+[html]
+directory = htmlcov
+# Fase 0: simple coverage config for characterization tests of domain strategies.
+# Use: pytest  (uses pytest.ini + this .coveragerc)
+# Reports help track progress toward hexagonal refactor without touching prod code.
