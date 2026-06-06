@@ -6,18 +6,20 @@ from typing import Dict, Any, List
 from .interfaces import ProcesadorLaboratorioStrategy
 from .factories import LaboratorioStrategyFactory
 from api.logic.ports.notifications import NotificationPort  # <-- 1. Importamos el puerto abstracto
+from api.logic.ports.ai_service import AIServicePort  # <-- NUEVO: Importamos el puerto de IA
 
 class LaboratorioService:
     """
     Servicio de Dominio que coordina la ejecución de estrategias de laboratorio.
     """
-    def __init__(self, tipo_lab: str = "ROBOTICA", notification_port: NotificationPort = None):
+    def __init__(self, tipo_lab: str = "ROBOTICA", notification_port: NotificationPort = None, ai_service_port: AIServicePort = None):
         """
-        Inicializa el servicio inyectando de forma opcional el puerto de notificaciones.
+        Inicializa el servicio inyectando de forma opcional los puertos de comunicación externa.
         """
         self._estrategia = LaboratorioStrategyFactory.obtener_estrategia(tipo_lab)
         self._tipo_lab = tipo_lab  # Guardamos el tipo para validaciones en la ejecución
-        self._notification_port = notification_port  # <-- 2. Guardamos la referencia del puerto
+        self._notification_port = notification_port  # <-- Guardamos la referencia del puerto de alertas
+        self._ai_service_port = ai_service_port  # <-- NUEVO: Guardamos la referencia del puerto de IA
 
     def cambiar_laboratorio(self, tipo_lab: str):
         self._estrategia = LaboratorioStrategyFactory.obtener_estrategia(tipo_lab)
@@ -27,7 +29,7 @@ class LaboratorioService:
         # Ejecuta el análisis delegando el procesamiento a la estrategia activa
         resultado = self._estrategia.procesar(datos)
         
-        # <-- 3. Interceptamos si es AGRICULTURA y reporta estrés Crítico
+        # Interceptamos si es AGRICULTURA y reporta estrés Crítico
         if self._tipo_lab == "AGRICULTURA" and resultado.get("nivel_estres") == "Crítico":
             if self._notification_port:
                 self._notification_port.enviar_alerta(

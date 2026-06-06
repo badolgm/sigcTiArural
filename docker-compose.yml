@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'   #Comento esta linea porque estaba tirando un error de versión
 
 services:
   # Base de datos PostgreSQL (Donde inyectamos kairos_db)

@@ -443,7 +443,8 @@ def test_todos_labs_procesar_con_input_minimo_no_rompe():
         assert isinstance(res, dict)
         assert "estado" in res
 
-        # ============================================================
+
+# ============================================================
 # FASE 2: Aislamiento de Interfaces - Pruebas de Puertos y Adaptadores
 # Certifica el desacoplamiento y cableado de contratos (SOLID).
 # ============================================================
@@ -458,16 +459,42 @@ def test_laboratorio_service_dispara_alerta_cuando_estres_es_critico():
 
     # 1. Instanciamos el adaptador de consola real
     adaptador_notificaciones = ConsoleNotificationAdapter()
-    
+   
     # 2. Inyectamos el adaptador en el servicio configurado para AGRICULTURA
     servicio = LaboratorioService(tipo_lab="AGRICULTURA", notification_port=adaptador_notificaciones)
-    
+   
     # 3. Simulamos datos de entrada que sabemos de forma determinista que disparan estrés crítico
     datos_criticos = {"temperature": 36, "humidity": 20, "imagen_analizada": False}
-    
+   
     # 4. Ejecutamos el análisis
     resultado = servicio.ejecutar_analisis(datos_criticos)
-    
+   
     # 5. Verificaciones de contrato y estado del dominio
     assert resultado["nivel_estres"] == "Crítico"
     assert resultado["sugerencia_riego"] is True
+
+
+def test_laboratorio_service_integra_puerto_ia_correctamente():
+    """
+    Certifica que LaboratorioService acepte la inyección del puerto de IA
+    y que el adaptador responda adecuadamente al contrato establecido.
+    """
+    from api.logic.domain.services import LaboratorioService
+    from api.logic.adapters.ai_service import FastAPI_AIAdapter
+   
+    # 1. Instanciamos el adaptador real
+    adaptador_ia = FastAPI_AIAdapter()
+   
+    # 2. Inyectamos el adaptador en el servicio
+    servicio = LaboratorioService(tipo_lab="AGRICULTURA", ai_service_port=adaptador_ia)
+   
+    # 3. Validamos la persistencia de la instancia dentro del servicio de dominio
+    assert servicio._ai_service_port is not None
+    assert isinstance(servicio._ai_service_port, FastAPI_AIAdapter)
+   
+    # 4. Probamos el método de fallback determinista local del adaptador
+    datos_prueba = {"temperature": 35, "humidity": 30}
+    resultado_fallback = adaptador_ia._sugerencias_basicas(datos_prueba)
+   
+    assert "Alerta" in resultado_fallback["sugerencia"]
+    assert resultado_fallback["fuente"] == "Fallback Local"
