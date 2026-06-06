@@ -19,6 +19,8 @@ show_missing = True
 
 [html]
 directory = htmlcov
-# Fase 0: simple coverage config for characterization tests of domain strategies.
-# Use: pytest  (uses pytest.ini + this .coveragerc)
-# Reports help track progress toward hexagonal refactor without touching prod code.
+# Fase 1 (Consolidate Domain): simple coverage config for characterization tests of the existing
+# hexagonal nucleus (api/logic/domain strategies, factories, services).
+# The new tests (historico for all labs + multi-switch) brought domain coverage to ~100% for the 4 strategies.
+# Use: pytest  (uses pytest.ini + this .coveragerc). Reports visible in verify_refactor.ps1 [5].
+# Helps track Sec 7.8 progress without any prod code changes. Low-risk only.

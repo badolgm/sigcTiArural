@@ -1,12 +1,15 @@
 # verify_refactor.ps1
-# Verification script for Fase 0 - Hexagonal Refactor
-# Checks that the key services are healthy after changes.
+# Verification script for Hexagonal Refactor (Fase 1: Consolidate Domain Core)
+# Checks that the key services + domain characterization tests are healthy.
+# Part of the ADSO Hexagonal Refactor plan (see docs/ADSO_GUIA... Sec 7.8 for testing goals).
 #
 # Usage (from project root):
 #   .\scripts\verify_refactor.ps1
+#   .\scripts\verify_refactor.ps1 -StartServices   # only when you want to auto-start containers
 #
-# It assumes docker-compose services are (or can be) running.
+# It assumes docker-compose services are (or can be) running for full checks.
 # It does NOT start DB/backend by default to avoid side effects in CI/local.
+# Domain tests (section 5) always run if pytest available (no docker needed).
 
 param(
     [switch]$StartServices
@@ -21,8 +24,9 @@ $passed = 0
 $warnings = 0
 $failed = 0
 
-Write-Host "=== Fase 0 Refactor Verification ===" -ForegroundColor Cyan
+Write-Host "=== Hex Refactor Verification (Fase 1: Consolidate Domain) ===" -ForegroundColor Cyan
 Write-Host "Project root: $ProjectRoot" -ForegroundColor Gray
+Write-Host "Focus: existing domain core (api/logic/domain/*) + services health. See Sec 7.8 TODO for more test goals." -ForegroundColor DarkGray
 
 # 1. Optionally start services (use with care)
 if ($StartServices) {
@@ -65,6 +69,10 @@ try {
     Write-Host "Make sure Docker Desktop is running and docker-compose is available." -ForegroundColor Yellow
     $failed++
 }
+
+# Note (Fase 1, low-risk): The 'version: obsolete' warning from docker-compose is pre-existing (top-level in yml).
+# It is filtered in detection logic above and harmless. Per rules, do not touch docker-compose or prod configs here.
+# See ADSO guide Sec 7.7 (high risk, later phases).
 
 # 3. Test AI Service
 Write-Host "`n[3] Testing AI Service (port 8081)..." -ForegroundColor Yellow
@@ -140,7 +148,8 @@ foreach ($url in $backendEndpoints) {
     }
 }
 
-# 5. Quick pytest run (if tests exist)
+# 5. Quick pytest run (if tests exist) - Fase 1 emphasis on domain characterization (api/logic/domain strategies + service + historico edges + error paths).
+# Per Sec 7.8/7.10: we parse the exact #tests from output (dots count) and surface it in the resumen for visibility of the growing safety net.
 Write-Host "`n[5] Running backend domain tests (if pytest available)..." -ForegroundColor Yellow
 Push-Location src\backend
 try {
@@ -156,19 +165,40 @@ try {
     }
 
     if ($hasCmd) {
-        # Use & to invoke to avoid any alias issues
-        & pytest tests/ -q --tb=line
+        # Capture to parse exact test count/status for resumen (Fase 1 improvement per previous pending in Sec 10).
+        # Re-emit output so user still sees the dots + coverage report.
+        $output = & pytest tests/ -q --tb=line 2>&1
+        $output | ForEach-Object { Write-Host $_ }
         if ($LASTEXITCODE -eq 0) {
             $passed++
+            # Robust parse for this env: pytest -q + cov often emits dots line (one . per test) + cov table, not always "N passed".
+            # Count dots in the dots line as the # of domain characterization tests executed.
+            $dotsLine = $output | Select-String -Pattern '^\.{10,}' | Select-Object -First 1
+            if ($dotsLine) {
+                $num = ($dotsLine.Line.Trim() -replace '\s.*$', '').Length
+                $script:domainTestSummary = "Domain tests: $num passed (see dots/coverage above)"
+            } else {
+                $script:domainTestSummary = "Domain tests: passed (characterization; count in output above)"
+            }
         } else {
             $failed++
+            $script:domainTestSummary = "Domain tests: FAILED (see output above)"
         }
     } elseif ($hasModule) {
-        python -m pytest tests/ -q --tb=line
+        $output = python -m pytest tests/ -q --tb=line 2>&1
+        $output | ForEach-Object { Write-Host $_ }
         if ($LASTEXITCODE -eq 0) {
             $passed++
+            $dotsLine = $output | Select-String -Pattern '^\.{10,}' | Select-Object -First 1
+            if ($dotsLine) {
+                $num = ($dotsLine.Line.Trim() -replace '\s.*$', '').Length
+                $script:domainTestSummary = "Domain tests: $num passed (see dots/coverage above)"
+            } else {
+                $script:domainTestSummary = "Domain tests: passed (characterization; count in output above)"
+            }
         } else {
             $failed++
+            $script:domainTestSummary = "Domain tests: FAILED (see output above)"
         }
     } else {
         Write-Host "  pytest is not available in this environment." -ForegroundColor Yellow
@@ -180,15 +210,23 @@ try {
         Write-Host "  (Make sure you are in the correct Python environment / venv)" -ForegroundColor Gray
         $warnings++
     }
+
+    # Fase 1 note: detailed dots + coverage for domain strategies printed (and parsed) above.
+    # New characterization tests (historico edges, switches, errors) help cover generar_historico_simulado + guards in all 4 labs + service.
+    if ($script:domainTestSummary) {
+        Write-Host "  $script:domainTestSummary" -ForegroundColor DarkGray
+    } else {
+        Write-Host "  (Domain tests output + coverage above. Growing safety net for the existing hexagonal core.)" -ForegroundColor DarkGray
+    }
 } finally {
     Pop-Location
 }
 
 Write-Host "`n=== Verification complete ===" -ForegroundColor Cyan
 
-# Resumen final - made more visual and useful
+# Resumen final - made more visual and useful (Fase 1 updates)
 $estado_general = "$passed OK / $warnings Warnings / $failed Errores"
-Write-Host "`n=== Resumen Fase 0 ===" -ForegroundColor Cyan
+Write-Host "`n=== Resumen Verificación (Fase 1: Consolidate Domain Core) ===" -ForegroundColor Cyan
 Write-Host "Estado general: $estado_general" -ForegroundColor White
 Write-Host ""
 Write-Host "Checks ejecutados en esta verificación:" -ForegroundColor Gray
@@ -197,17 +235,21 @@ Write-Host "  - Con warnings (no críticos): $warnings" -ForegroundColor Yellow
 Write-Host "  - Fallaron (errores): $failed" -ForegroundColor Red
 Write-Host ""
 Write-Host "Nota: Los conteos reflejan los checks de contenedores (secc.2), AI (secc.3) y Backend (secc.4)." -ForegroundColor Gray
-Write-Host "La sección de pytest (secc.5) se ejecuta por separado y reporta su propio resumen (si pytest está disponible)." -ForegroundColor Gray
+Write-Host "La sección de pytest (secc.5) se ejecuta por separado (domain characterization tests for api/logic/domain strategies)." -ForegroundColor Gray
+Write-Host "  Domain tests help consolidate the existing hexagonal nucleus (see ADSO guide Sec 7.8)." -ForegroundColor DarkGray
+if ($script:domainTestSummary) {
+    Write-Host "  $script:domainTestSummary" -ForegroundColor Cyan
+}
 
 if ($failed -gt 0) {
-    Write-Host "`n=== Resumen Fase 0 ===" -ForegroundColor Red
+    Write-Host "`n=== Resumen Verificación (Fase 1: Consolidate Domain Core) ===" -ForegroundColor Red
     Write-Host "Hay errores graves (probablemente servicios no levantados). Revisa los mensajes de ERROR arriba." -ForegroundColor Red
     Write-Host "Acción recomendada: Ejecuta el script con -StartServices o inicia manualmente: docker-compose up -d db backend ai_service" -ForegroundColor Red
 } elseif ($warnings -gt 0) {
-    Write-Host "`n=== Resumen Fase 0 ===" -ForegroundColor Yellow
+    Write-Host "`n=== Resumen Verificación (Fase 1: Consolidate Domain Core) ===" -ForegroundColor Yellow
     Write-Host "Hay algunos warnings (ej. servicios no running), pero la mayoría de checks OK." -ForegroundColor Yellow
     Write-Host "Acción recomendada: Inicia los servicios faltantes y re-ejecuta." -ForegroundColor Yellow
 } else {
-    Write-Host "`n=== Resumen Fase 0 ===" -ForegroundColor Green
-    Write-Host "¡Todo bien! Fase 0 completada exitosamente. Todos los checks principales pasaron." -ForegroundColor Green
+    Write-Host "`n=== Resumen Verificación (Fase 1: Consolidate Domain Core) ===" -ForegroundColor Green
+    Write-Host "¡Todo bien! Domain core + services checks passed. Fase 1 progress on characterization tests (see Sec 7.8)." -ForegroundColor Green
 }

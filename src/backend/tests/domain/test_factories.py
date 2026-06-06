@@ -2,7 +2,11 @@
 Characterization tests for LaboratorioStrategyFactory.
 
 These tests capture the current behavior of the domain factory
-as part of Fase 0 hexagonal refactoring.
+as part of Fase 0 baseline + Fase 1 consolidate hexagonal refactoring.
+
+See test_services.py header for Fase 1 goals and "how to add for new lab".
+Factory is the composition point; tests here ensure all 4 current strategies
+are registered and return fresh instances implementing the interface.
 """
 import pytest
 
@@ -71,8 +75,8 @@ def test_obtener_estrategia_telecomunicaciones_full():
     assert isinstance(strategy, ProcesadorTelecomunicaciones)
 
 
-def test_todos_los_tipos_son_subclases_de_strategy():
-    """All registered strategies implement the base interface."""
-    for tipo in ["ROBOTICA", "AGRICULTURA", "ELECTRONICA", "TELECOMUNICACIONES"]:
-        strategy = LaboratorioStrategyFactory.obtener_estrategia(tipo)
-        assert isinstance(strategy, ProcesadorLaboratorioStrategy)
+@pytest.mark.parametrize("tipo", ["ROBOTICA", "AGRICULTURA", "ELECTRONICA", "TELECOMUNICACIONES"])
+def test_todos_los_tipos_son_subclases_de_strategy(tipo):
+    """All registered strategies implement the base interface (parametrized for clarity/quality, Fase 1 improvement)."""
+    strategy = LaboratorioStrategyFactory.obtener_estrategia(tipo)
+    assert isinstance(strategy, ProcesadorLaboratorioStrategy)
