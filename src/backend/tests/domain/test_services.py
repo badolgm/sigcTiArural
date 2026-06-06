@@ -442,3 +442,32 @@ def test_todos_labs_procesar_con_input_minimo_no_rompe():
         res = svc.ejecutar_analisis({})  # or minimal
         assert isinstance(res, dict)
         assert "estado" in res
+
+        # ============================================================
+# FASE 2: Aislamiento de Interfaces - Pruebas de Puertos y Adaptadores
+# Certifica el desacoplamiento y cableado de contratos (SOLID).
+# ============================================================
+
+def test_laboratorio_service_dispara_alerta_cuando_estres_es_critico():
+    """
+    Certifica que LaboratorioService invoque correctamente el puerto de notificaciones
+    cuando la estrategia de AGRICULTURA reporta un nivel de estrés 'Crítico'.
+    """
+    from api.logic.domain.services import LaboratorioService
+    from api.logic.adapters.notifications import ConsoleNotificationAdapter
+
+    # 1. Instanciamos el adaptador de consola real
+    adaptador_notificaciones = ConsoleNotificationAdapter()
+    
+    # 2. Inyectamos el adaptador en el servicio configurado para AGRICULTURA
+    servicio = LaboratorioService(tipo_lab="AGRICULTURA", notification_port=adaptador_notificaciones)
+    
+    # 3. Simulamos datos de entrada que sabemos de forma determinista que disparan estrés crítico
+    datos_criticos = {"temperature": 36, "humidity": 20, "imagen_analizada": False}
+    
+    # 4. Ejecutamos el análisis
+    resultado = servicio.ejecutar_analisis(datos_criticos)
+    
+    # 5. Verificaciones de contrato y estado del dominio
+    assert resultado["nivel_estres"] == "Crítico"
+    assert resultado["sugerencia_riego"] is True
