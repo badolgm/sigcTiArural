@@ -153,6 +153,7 @@ mindmap
 
 ---
 
+
 <a name="️-arquitectura-del-sistema"></a>
 ## 🏗️ Arquitectura del Sistema
 
@@ -1066,11 +1067,11 @@ Este proyecto es el **Proyecto Productivo** del programa **Tecnología en Análi
 ### 🏫 Información del Programa
 
 - **Institución:** SENA - Regional Antioquia
-- **Centro:** Centro de Tecnologías de la Información y las Comunicaciones (CTELYC) - Itagüí
-- **Programa:** Tecnología en ADSO (Análisis y Desarrollo de Software)
-- **Ficha:** 2069658
+- **Centro:** Centro de Logística y Promoción Ecoturística del MAgdalena
+- **Programa:** Tecnología en Análisis y Desarrollo de Software (ADSO)
+- **Ficha:** 3070388
 - **Duración:** 24 meses (2024-2026)
-- **Instructor Líder:** Ing. Carlos Andrés Quintero
+- **Instructor Líder:** Ing. Carlos Alberto Estuwe Roldan
 
 ### 🎯 Competencias Desarrolladas
 
