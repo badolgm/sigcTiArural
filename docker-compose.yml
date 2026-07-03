@@ -1,26 +1,40 @@
 # version: '3.8'   #Comento esta linea porque estaba tirando un error de versión
 
 services:
-  # Base de datos PostgreSQL (Donde inyectamos kairos_db)
+  # Base de datos PostgreSQL (Donde inyectamos sigctiarural_db)
   db:
     image: postgres:15
-    container_name: postgres-db
+    container_name: sigctiarural_postgres_db
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5434:5432"
+      - "5544:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
 
-  # Base de datos MySQL (Donde inyectamos sigct_rural)
+  # Base de datos MySQL - residuo de la migración pre-Postgres (commit 3ed04e6 -> f7732122).
+  # Django no la usa: sin driver mysqlclient/PyMySQL en requirements.txt y sin referencias en el código.
+  # Se mantiene definida por si algún script externo aún depende de ella; no bloquea el arranque del backend.
   db-mysql:
     image: mysql:8.0
-    container_name: mysql-db
+    container_name: sigctiarural_mysql_db
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3316:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     restart: unless-stopped
 
   # Tus servicios locales configurados para Docker
@@ -28,11 +42,11 @@ services:
     build:
       context: ./src/backend
       dockerfile: Dockerfile
-    container_name: sigct_backend
+    container_name: sigctiarural_backend
     volumes:
       - ./src/backend:/app
     ports:
-      - "8000:8000"
+      - "8010:8000"
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -40,14 +54,14 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
     depends_on:
-      - db
-      - db-mysql
+      db:
+        condition: service_healthy
 
   ai_service:
     build:
       context: ./src/ai_models
       dockerfile: Dockerfile
-    container_name: sigct_ai_service
+    container_name: sigctiarural_ai_service
     ports:
       - "8081:8081"
     environment:
@@ -56,13 +70,14 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     build:
       context: ./src/frontend
       dockerfile: Dockerfile
-    container_name: sigct_frontend
+    container_name: sigctiarural_frontend
     ports:
       - "5173:80"
     depends_on:
