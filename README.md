@@ -7,7 +7,8 @@
 
 [![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyMmMxLjEgMCAyLS45IDItMlYxMmMwLTEuMS0uOS0yLTItMkg0Yy0xLjEgMC0yIC45LTIgMnY4YzAgMS4xLjkgMiAyIDJoOHoiLz48cGF0aCBkPSJNMjAgMTJjMC0xLjEtLjktMi0yLTJoLTR2NGg0YzEuMSAwIDItLjkgMi0yeiIvPjwvc3ZnPg==)](https://www.sena.edu.co/)
 [![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo%20Activo-00d4ff?style=for-the-badge&logo=StatusPage&logoColor=white)](https://github.com/badolgm/sigcTiArural)
-[![Versión](https://img.shields.io/badge/Versión-6.0-7c3aed?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/badolgm/sigcTiArural/releases)
+[![Versión](https://img.shields.io/badge/Versión-7.0-7c3aed?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/badolgm/sigcTiArural/releases)
+[![Arquitectura](https://img.shields.io/badge/Arquitectura-Hexagonal-ff6f00?style=for-the-badge&logo=hexo&logoColor=white)](docs/MASTERDOC.md#9-arquitectura-hexagonal)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-fbbf24?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
@@ -60,7 +61,7 @@
 <a name="-visión-general-del-proyecto"></a>
 ## 🎯 Visión General del Proyecto
 
-**SIGC&T Rural** (Sistema Integrado de Gestión del Conocimiento y Tecnología Rural) es una **plataforma web híbrida Cloud/Edge** de código abierto que integra **Internet de las Cosas (IoT)**, **Inteligencia Artificial** y **educación técnica** para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.
+**SIGC&T Rural** (Sistema Integrado de Gestión del Conocimiento y Tecnología Rural) es un **ecosistema autónomo y agnóstico en hardware y software**, de código abierto, que integra **sensores, robots, sistemas de inteligencia artificial y personas como nodos cooperantes**, orientados a observar, cuidar, aprender y actuar sobre **entornos vivos** de manera sostenible, resiliente y educativa
 
 ### 🌟 Características Distintivas
 
@@ -114,7 +115,7 @@ Alineado con los **Objetivos de Desarrollo Sostenible (ODS)** de la ONU: Hambre 
 <div align="center">
 
 ```mermaid
-%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor':'#7c3aed','primaryTextColor':'#fff','primaryBorderColor':'#a78bfa','lineColor':'#8b5cf6','secondaryColor':'#1e293b','tertiaryColor':'#0f172a'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#c2ba91','primaryTextColor':'#412402','primaryBorderColor':'#3f9999','lineColor':'#6e854349','secondaryColor':'#1887b3','tertiaryColor':'#9badcf'}}}%%
 mindmap
   root((SIGC&T Rural))
     Cloud Platform
@@ -189,6 +190,36 @@ flowchart TB
     style users fill:#1e293b,stroke:#8b5cf6,stroke-width:2px
     style sigct fill:#7c3aed,stroke:#a78bfa,stroke-width:3px
     style external fill:#0f172a,stroke:#6366f1,stroke-width:2px
+```
+
+### ⚙️ Nivel 3: Arquitectura Hexagonal (Backend Clean Architecture)
+
+```mermaid
+graph TD
+    subgraph "Capa de Adaptadores (Infraestructura)"
+        UI[React Frontend] -->|REST API| Views[Django Views V2]
+        Views --> DB_Adap[Django ORM Adapter]
+        Views --> AI_Adap[FastAPI AI Adapter]
+    end
+
+    subgraph "Capa de Puertos (Interfaces)"
+        Views --> Lab_Port[ProcesadorLaboratorioPort]
+        DB_Adap -.-> Repo_Port[RepositoryPort]
+        AI_Adap -.-> AI_Port[AIServicePort]
+    end
+
+    subgraph "Capa de Dominio (Lógica Pura)"
+        Lab_Port --> Service[LaboratorioService]
+        Service --> Strategy[Strategy Pattern]
+        Strategy --> Robotica[ProcesadorRobotica]
+        Strategy --> Agricultura[ProcesadorAgricultura]
+        Strategy --> Telecom[ProcesadorTelecom]
+        Strategy --> Electronica[ProcesadorElectronica]
+    end
+
+    style Service fill:#f96,stroke:#333,stroke-width:4px
+    style Lab_Port fill:#bbf,stroke:#333,stroke-width:2px
+    style Views fill:#dfd,stroke:#333,stroke-width:2px
 ```
 
 ### 🔧 Nivel 2: Vista de Contenedores
@@ -547,7 +578,46 @@ flowchart LR
 
 ---
 
-### ⚡ Instalación con Docker (Recomendado)
+### 💻 Instalación Local (Desarrollo Híbrido - Modo Rápido)
+
+```bash
+Esta opción es ideal para desarrollo activo. Usamos Docker para las bases de datos (estabilidad) y la terminal local para el código (velocidad).
+
+# 1. Levantar solo las Bases de Datos
+# Encendemos los "motores" de datos en segundo plano
+docker-compose up -d db db-mysql
+
+# 2. Configurar el "Puente" (.env local)
+En tu archivo src/backend/.env, asegúrate de ajustar el host para que el código local encuentre el contenedor:
+
+Cambia: DB_HOST=db ➔ DB_HOST=localhost
+
+Manten: DB_PORT=5432
+
+# 3. Backend (Django)
+cd src/backend
+
+# Crear y activar entorno virtual
+python -m venv venv
+source venv/Scripts/activate
+
+# Instalar dependencias y sincronizar tablas
+pip install -r requirements.txt
+python manage.py migrate
+
+# Iniciar servidor de desarrollo
+python manage.py runserver
+
+# 4. Frontend (React + Vite)
+cd src/frontend
+
+# Instalar y arrancar interfaz
+npm install
+npm run dev
+
+```
+
+### ⚡ Instalación con Docker (Recomendado para producción)
 
 ```bash
 # 1. Clonar el repositorio
@@ -555,10 +625,12 @@ git clone https://github.com/badolgm/sigcTiArural.git
 cd sigcTiArural
 
 # 2. Configurar variables de entorno
+## Copiamos el ejemplo para crear nuestro archivo real
 cp .env.example .env
 # Editar .env con tus configuraciones (opcional para desarrollo local)
 
 # 3. Levantar todos los servicios
+## El flag --build asegura que se construyan las imágenes con los últimos cambios
 docker-compose up -d --build
 
 # 4. Verificar que los contenedores estén corriendo
@@ -570,8 +642,21 @@ docker-compose ps
 # sigct_db            postgres:15-alpine       Up
 # sigct_frontend      sigctiArural-frontend    Up
 # sigct_ai_service    sigctiArural-ai_service  Up
-```
 
+# 5. CONFIGURACIÓN INICIAL DE BASE DE DATOS (Solo la primera vez)
+# Importante: Los contenedores deben estar en estado "Up"
+
+Una vez que los contenedores estén corriendo, es necesario preparar la estructura de la base de datos (Migraciones) y, opcionalmente, crear un superusuario para el panel de administración.
+
+# A. Construir las tablas en PostgreSQL (Migraciones):
+docker exec -it sigct_backend python manage.py migrate
+
+## Crear usuario administrador para el panel de Django (Opcional):
+docker exec -it sigct_backend python manage.py createsuperuser
+
+## Nota: Estos pasos solo se ejecutan cuando clonas el proyecto por primera vez o si borras los volúmenes de Docker.
+
+```
 ### 🌐 Acceder a la Aplicación
 
 | Servicio | URL | Descripción |
@@ -604,7 +689,7 @@ docker-compose logs -f backend
 
 ### 💻 Instalación Local (Desarrollo Sin Docker)
 
-Esta opción es ideal para **desarrollo activo** donde necesitas hacer cambios frecuentes en el código.
+Esta opción es más larga que el Desarrollo Híbrido (Modo Rápido) , también es  ideal para **desarrollo activo** donde necesitas hacer cambios frecuentes en el código.
 
 #### 📦 Paso 1: Backend (Django)
 
@@ -631,6 +716,7 @@ pip install -r requirements.txt
 # Opción 1: Usar PostgreSQL local
 createdb sigct_db
 # Opción 2: Usar el contenedor de Docker solo para la BD
+# Encender el motor (Docker)
 docker-compose up -d db
 
 # Configurar variables de entorno
@@ -647,14 +733,11 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-**Verificación:**
 ```bash
 # En otra terminal, probar la API
 curl http://localhost:8000/api/health/
 # Salida esperada: {"status": "ok", "database": "connected"}
 ```
-
----
 
 #### ⚛️ Paso 2: Frontend (React + Vite)
 
@@ -671,10 +754,10 @@ echo "VITE_API_URL=http://localhost:8000" > .env.local
 # Iniciar servidor de desarrollo (Puerto 5173)
 npm run dev
 ```
-
+---
 **Verificación:**
 - Abre tu navegador en `http://localhost:5173`
-- Deberías ver el Dashboard principal con las 11 categorías de laboratorios
+- Deberías ver el Dashboard principal con las 12 categorías de laboratorios
 
 ---
 
@@ -815,71 +898,47 @@ sigcTiArural/
 ├── 📁 src/                               # Código fuente
 │   │
 │   ├── 📁 backend/                       # Backend Django
-│   │   ├── 📄 manage.py                  # CLI de Django
-│   │   ├── 📄 requirements.txt           # Dependencias Python
-│   │   ├── 📄 Dockerfile                 # Imagen Docker del backend
+│   │   ├── 📁 api/                       # Aplicación de API REST
+│   │   │   ├── 📁 logic/                 # ⬢ ARQUITECTURA HEXAGONAL (Core)
+│   │   │   │   ├── 📁 domain/            # Lógica de Negocio (Python Puro)
+│   │   │   │   ├── 📁 ports/             # Interfaces y Contratos
+│   │   │   │   └── 📁 adapters/          # Implementaciones (Django ORM, AI, Notificaciones)
+│   │   │   ├── 📄 models.py              # Modelos de BD (Legacy/Persistence)
+│   │   │   ├── 📄 serializers.py         # Serializadores DRF
+│   │   │   ├── 📄 views.py               # Vistas de API (V1 y V2 Hexagonal)
+│   │   │   └── 📄 urls.py                # Rutas de API
 │   │   ├── 📁 sigct_backend/             # Configuración del proyecto
-│   │   │   ├── 📄 settings.py            # Configuración principal
-│   │   │   ├── 📄 urls.py                # Rutas principales
-│   │   │   ├── 📄 wsgi.py                # Servidor WSGI
-│   │   │   └── 📄 asgi.py                # Servidor ASGI (WebSockets)
-│   │   └── 📁 api/                       # Aplicación de API REST
-│   │       ├── 📄 models.py              # Modelos de BD (Robot, Telemetry)
-│   │       ├── 📄 serializers.py         # Serializadores DRF
-│   │       ├── 📄 views.py               # Vistas de API
-│   │       └── 📄 urls.py                # Rutas de API
+│   │   └── 📄 manage.py                  # CLI de Django
 │   │
 │   ├── 📁 frontend/                      # Frontend React
-│   │   ├── 📄 package.json               # Dependencias Node.js
-│   │   ├── 📄 vite.config.js             # Configuración de Vite
-│   │   ├── 📄 Dockerfile                 # Imagen Docker del frontend
-│   │   ├── 📄 nginx.conf                 # Configuración Nginx (producción)
 │   │   ├── 📁 src/                       # Código fuente React
-│   │   │   ├── 📄 App.jsx                # Componente principal
-│   │   │   ├── 📄 main.jsx               # Punto de entrada
 │   │   │   ├── 📁 components/            # Componentes reutilizables
-│   │   │   │   ├── 📄 TopNav.jsx         # Barra de navegación
-│   │   │   │   ├── 📄 Dashboard.jsx      # Dashboard principal
-│   │   │   │   ├── 📄 LabCatalog.jsx     # Catálogo de laboratorios
-│   │   │   │   └── 📄 Telemetry3DScene.jsx # Visualización 3D
-│   │   │   ├── 📁 labs/                  # Componentes de laboratorios
-│   │   │   │   ├── 📄 RoboticsLab.jsx    # Lab de robótica
-│   │   │   │   ├── 📄 MathLab.jsx        # Lab de matemáticas
-│   │   │   │   └── 📄 DataScienceLab.jsx # Lab de ciencia de datos
-│   │   │   ├── 📁 data/                  # Datos estáticos
-│   │   │   │   └── 📄 lab-data.js        # Configuración de laboratorios
-│   │   │   └── 📁 hooks/                 # Custom React Hooks
-│   │   │       └── 📄 useRoboticsApi.js  # Hook para API de robótica
-│   │   └── 📁 public/                    # Archivos estáticos
+│   │   │   ├── 📁 pages/                 # Páginas de la aplicación (Dashboard, Labs, etc.)
+│   │   │   ├── 📁 labs/                  # Módulos de laboratorios especializados
+│   │   │   ├── 📁 data/                  # Datos estáticos (lab-data.js)
+│   │   │   ├── 📁 hooks/                 # Custom React Hooks
+│   │   │   └── 📄 App.jsx                # Router y raíz
+│   │   └── 📄 vite.config.js             # Configuración de Vite
 │   │
-│   ├── 📁 ai_models/                     # Servicio de IA
-│   │   ├── 📄 requirements.txt           # Dependencias de IA
-│   │   ├── 📄 Dockerfile                 # Imagen Docker de IA
-│   │   ├── 📄 fastapi_app.py             # API de IA (FastAPI)
-│   │   ├── 📄 conversation_context.py    # Memoria conversacional
-│   │   ├── 📁 models/                    # Modelos entrenados
-│   │   │   ├── 📄 plant_disease.h5       # Modelo Cloud (TensorFlow)
-│   │   │   └── 📄 plant_disease.tflite   # Modelo Edge (TFLite)
-│   │   └── 📁 notebooks/                 # Jupyter Notebooks
-│   │       └── 📄 train_plant_model.ipynb
+│   ├── 📁 ai_models/                     # Microservicio de IA (FastAPI)
+│   │   ├── 📁 production_models/         # Modelos entrenados (.h5, .keras)
+│   │   ├── 📁 notebooks/                 # Entrenamiento y experimentación
+│   │   ├── 📄 fastapi_app.py             # API de Inferencia y Voz
+│   │   └── 📄 conversation_context.py    # Memoria contextual
 │   │
-│   └── 📁 embedded/                      # Scripts para BeagleBone Black
-│       ├── 📄 sensor_reader.py           # Lectura de sensores (BBB-03)
-│       ├── 📄 mqtt_publisher.py          # Publicador MQTT (BBB-01)
-│       └── 📄 edge_inference.py          # Inferencia Edge (BBB-02)
+│   └── 📁 embedded/                      # Edge Computing (BeagleBone Black)
+│       ├── 📁 bbb_01_gateway/            # Gateway MQTT y Sincronización
+│       ├── 📁 bbb_02_ia_edge/            # Inferencia local TFLite
+│       └── 📁 bbb_03_sensors/            # Adquisición de datos y cámara
 │
-├── 📁 scripts/                           # Scripts de utilidad
-│   ├── 📄 physics_sim.py                 # Simulador de física (robots)
-│   ├── 📄 check_tools.py                 # Verificador de dependencias
-│   └── 📄 backup_db.sh                   # Script de backup de BD
+├── 📁 scripts/                           # Automatización y Simulación
+│   ├── 📄 physics_sim.py                 # Simulador de drones y telemetría
+│   └── 📄 generate-diagrams.mjs          # Generación de documentación visual
 │
-├── 📁 config/                            # Archivos de configuración
-│   └── 📄 supervisord.conf               # Configuración de procesos
-│
-├── 📁 data/                              # Datasets (local only, ignorado por Git)
-│   └── 📁 plantvillage/                  # Dataset de PlantVillage
-│
-└── 📁 backups/                           # Backups de BD (local only)
+└── 📁 docs/                              # Documentación Maestra
+    ├── 📄 MASTERDOC.md                   # DAS y Arquitectura
+    ├── 📄 PLAN_MAESTRO.md                # Roadmap v7.0
+    └── 📄 INFORME_ANALISIS_Y_PLAN_DE_ACCION.md # Bitácora de reingeniería
 ```
 
 > 📝 **Nota:** Las carpetas `data/`, `backups/`, `venv/` y `node_modules/` están excluidas del control de versiones mediante `.gitignore`.

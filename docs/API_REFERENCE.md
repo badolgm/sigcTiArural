@@ -71,6 +71,21 @@ Authorization: Bearer <ACCESS_TOKEN>
 - `GET /api/v1/contenido-academico/` — Listado de recursos.
 - `GET /api/v1/contenido-academico/{id}/` — Detalle de recurso.
 
+## API v2 (Arquitectura Hexagonal)
+
+La versión 2 de la API utiliza una arquitectura de Puertos y Adaptadores para desacoplar la lógica de negocio.
+
+### Telemetría de Laboratorios (Hexagonal)
+
+- `GET /api/v2/telemetry/history/?tipo={LAB}` — Obtiene el historial de telemetría procesado por el dominio.
+  - **Parámetro `tipo`**: `ROBOTICA`, `TELECOMUNICACIONES`, `AGRICULTURA`, `ELECTRONICA`.
+  - **Funcionamiento**: Si no hay datos en la DB, el dominio genera una simulación inteligente.
+
+### IA y Sugerencias Agrícolas
+
+- `GET /api/v2/ai/crop-advice/` — Analiza el estado actual de los sensores y solicita sugerencias a la IA.
+  - **Resiliencia**: Si el microservicio de IA está caído, utiliza un adaptador de *fallback* local.
+
 ## Ejemplos
 
 Obtener proyectos:

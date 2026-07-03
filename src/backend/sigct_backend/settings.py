@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     # Aplicaciones del Proyecto
     'api', 
     'users',
-    'ai_service',
 ]
 
 # ==============================================================================

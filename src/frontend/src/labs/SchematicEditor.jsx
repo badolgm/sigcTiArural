@@ -426,7 +426,7 @@ const FlipFlopNode = ({ data, selected }) => {
                      <span className="text-[10px] font-mono text-green-400">Q</span>
                  </div>
                  <div className="flex justify-between w-full px-2 items-center h-1/2">
-                     <span className="text-[10px] font-mono text-yellow-400">></span>
+                     <span className="text-[10px] font-mono text-yellow-400">{"\u003e"}</span>
                      <span className="text-[10px] font-mono text-green-400">Q'</span>
                  </div>
                  
