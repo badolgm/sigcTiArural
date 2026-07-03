@@ -14,10 +14,20 @@ pluggy==1.6.0
 psycopg2-binary==2.9.12
 Pygments==2.20.0
 pytest==9.0.3
-pytest>=8.0.0
 pytest-django==4.12.0
 python-dotenv==1.2.2
 requests==2.34.2
 sqlparse==0.5.5
 tzdata==2026.2
 urllib3==2.7.0
+
+# Herramientas de Calidad de Código
+black==24.8.0
+flake8==7.1.1
+mypy==1.11.2
+types-requests==2.32.0.20240914
+types-python-dotenv==1.0.0.20240819
+
+
+# Resiliencia
+tenacity==9.0.0

@@ -8,6 +8,9 @@ from django.utils import timezone
 from datetime import timedelta
 import random
 
+# ==============================================================================
+# VIEWS LEGACY (MANTENIDAS PARA COMPATIBILIDAD
+# ==============================================================================
 class RobotViewSet(viewsets.ModelViewSet):
     queryset = Robot.objects.all()
     serializer_class = RobotSerializer
@@ -27,7 +30,6 @@ class TelemetryHistoryView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # Datos reales (últimas 24h)
         readings = SensorReading.objects.all()[:24]
         
         if readings.exists():
@@ -39,10 +41,8 @@ class TelemetryHistoryView(APIView):
                     "humidity": r.humidity,
                     "sensor": r.sensor_id
                 })
-            # Invertir para orden cronológico en gráfica
             return Response(data[::-1])
             
-        # Fallback: Datos simulados si la BD está vacía (para Demo)
         return Response(self.generate_mock_data())
 
     def generate_mock_data(self):
@@ -62,16 +62,83 @@ class TelemetryHistoryView(APIView):
         return data
 
 # ==============================================================================
-# ARQUITECTURA HEXAGONAL V2 (REFACCIONADA)
+# ARQUITECTURA HEXAGONAL V3 (REFACTORIZACIÓN COMPLETA)
 # ==============================================================================
-from .logic.domain.services import LaboratorioService
+try:
+    from core.domain.services import LabService
+    from infrastructure.config.dependencies import (
+        get_sensor_reading_repository,
+        get_ai_service,
+        get_notification_service,
+    )
+    HEXAGONAL_V3_AVAILABLE = True
+except ImportError:
+    HEXAGONAL_V3_AVAILABLE = False
+
+if HEXAGONAL_V3_AVAILABLE:
+    class TelemetryHistoryV3View(APIView):
+        permission_classes = [AllowAny]
+
+        def get(self, request):
+            tipo_lab = request.query_params.get('tipo', 'ROBOTICA')
+            
+            try:
+                service = LabService(
+                    tipo_lab,
+                    notification_port=get_notification_service())
+            except ValueError as e:
+                return Response({"error": str(e)}, status=400)
+
+            repository = get_sensor_reading_repository()
+            readings = repository.get_all(limit=24)
+            
+            if readings:
+                data = []
+                for r in readings:
+                    data.append({
+                        "time": r.timestamp.strftime("%H:%M"),
+                        "temp": r.temperature.value,
+                        "humidity": r.humidity.value,
+                        "sensor": f"{r.sensor_id} ({tipo_lab} V3)"
+                    })
+                return Response(data[::-1])
+                
+            data_simulada = service.obtener_simulacion_historica()
+            return Response(data_simulada)
+
+    class AICropAdviceV3View(APIView):
+        permission_classes = [AllowAny]
+
+        def get(self, request):
+            repository = get_sensor_reading_repository()
+            ai_adapter = get_ai_service()
+            
+            readings = repository.get_all(limit=1)
+            if not readings:
+                return Response({"error": "No hay datos de sensores para analizar"}, status=404)
+            
+            reading = readings[-1]
+            datos = {
+                "temperature": reading.temperature.value,
+                "humidity": reading.humidity.value,
+                "sensor_id": str(reading.sensor_id)
+            }
+            
+            sugerencia = ai_adapter.obtener_sugerencias_productividad(datos)
+            
+            return Response({
+                "datos_analizados": datos,
+                "ia_feedback": sugerencia
+            })
+
+# ==============================================================================
+# ARQUITECTURA HEXAGONAL V2 (REFACCIONADA - MANTENIDA)
+# ==============================================================================
+from .logic.domain.services import LaboratorioService as LegacyLaboratorioService
 from .logic.domain.factories import LaboratorioStrategyFactory
 from .logic.adapters.persistence import DjangoRepository
 
 class TelemetryHistoryV2View(APIView):
-    """
-    Versión refactorizada de TelemetryHistoryView usando Arquitectura Hexagonal y Factory Strategy.
-    """
     permission_classes = [AllowAny]
 
     def __init__(self, **kwargs):
@@ -79,16 +146,13 @@ class TelemetryHistoryV2View(APIView):
         self.repository = DjangoRepository()
 
     def get(self, request):
-        # Obtener el tipo de laboratorio de los parámetros (por defecto ROBOTICA)
         tipo_lab = request.query_params.get('tipo', 'ROBOTICA')
         
         try:
-            service = LaboratorioService(tipo_lab)
+            service = LegacyLaboratorioService(tipo_lab)
         except ValueError as e:
             return Response({"error": str(e)}, status=400)
 
-        # 1. Intentamos obtener datos del puerto de persistencia (Adaptador Django)
-        # Aquí podríamos filtrar por sensor_id según el laboratorio
         readings = self.repository.listar_todos('api.SensorReading')[:24]
         
         if readings:
@@ -102,17 +166,12 @@ class TelemetryHistoryV2View(APIView):
                 })
             return Response(data[::-1])
             
-        # 2. Fallback: Lógica de dominio pura para datos simulados
         data_simulada = service.obtener_simulacion_historica()
         return Response(data_simulada)
 
 from .logic.adapters.ai_service import FastAPI_AIAdapter
 
 class AICropAdviceView(APIView):
-    """
-    Nuevo endpoint que utiliza el Adaptador de IA para dar sugerencias.
-    Demuestra la Arquitectura Hexagonal aplicada a servicios externos.
-    """
     permission_classes = [AllowAny]
 
     def __init__(self, **kwargs):
@@ -121,7 +180,6 @@ class AICropAdviceView(APIView):
         self.repository = DjangoRepository()
 
     def get(self, request):
-        # Obtenemos el último dato de sensores
         last_reading = self.repository.listar_todos('api.SensorReading')
         if not last_reading:
             return Response({"error": "No hay datos de sensores para analizar"}, status=404)
@@ -133,7 +191,6 @@ class AICropAdviceView(APIView):
             "sensor_id": reading.sensor_id
         }
         
-        # Pedimos sugerencia al Adaptador de IA
         sugerencia = self.ai_adapter.obtener_sugerencias_productividad(datos)
         
         return Response({
