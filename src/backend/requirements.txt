@@ -1,23 +1,23 @@
-# ======================================================
-# Backend Principal – Django
-# ======================================================
-
-Django>=4.2
-djangorestframework>=3.14
-django-cors-headers>=4.4
-
-
-# ======================================================
-# Base de Datos y Entorno
-# ======================================================
-dj-database-url  # Para leer config de BD desde URL
-psycopg2-binary  # Driver para PostgreSQL
-python-dotenv    # Para leer variables de entorno desde .env
-requests         # Para comunicación con microservicios (Hexagonal Adapter)
-
-# ======================================================
-# Testing (Fase 0 - Hexagonal Refactor)
-# ======================================================
-pytest>=7.4
-pytest-cov>=4.0
-# pytest-django   # Descomentar cuando se agreguen tests que requieran Django ORM
+asgiref==3.11.1
+certifi==2026.5.20
+charset-normalizer==3.4.7
+colorama==0.4.6
+coverage==7.14.1
+dj-database-url==3.1.2
+Django>=4.2.16,<5.0
+django-cors-headers==4.9.0
+djangorestframework==3.17.1
+idna==3.18
+iniconfig==2.3.0
+packaging==26.2
+pluggy==1.6.0
+psycopg2-binary==2.9.12
+Pygments==2.20.0
+pytest==9.0.3
+pytest>=8.0.0
+pytest-django==4.12.0
+python-dotenv==1.2.2
+requests==2.34.2
+sqlparse==0.5.5
+tzdata==2026.2
+urllib3==2.7.0
