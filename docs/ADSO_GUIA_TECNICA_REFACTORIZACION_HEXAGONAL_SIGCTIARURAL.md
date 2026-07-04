@@ -1107,3 +1107,124 @@ Cumplió **todas** las reglas estrictas: solo bajo riesgo (tests + docs + script
 
 
 
+**ATENCIÓN GIRO REPENTONO A TODO EL PROYECTO**
+**FECHA JUÑIO 4 DE 2026**
+
+
+Vamos a continuar el desarrollo del proyecto , esto es lo que me dice CALUDE, y del cual vamos a iniciar desde GEMINI en badolfogm@gmail.com , toda la última charla que me escupe fue :
+
+Diagnóstico real (lo que muestra tu output)
+Tienes dos implementaciones paralelas y compitiendo del mismo dominio:
+•	api/logic/ (V2): domain/{agricultura,electronica,robotica,telecom}.py + factories.py + adapters/ + ports/ — Strategy+Factory, pero con dominio y adaptadores en el mismo namespace (api.logic), acoplado a Django desde el nombre del paquete.
+•	core/ (V3): domain/{entities,exceptions,factories,services,strategies,value_objects}/ + ports/{repositories,services}/ + application/{commands,queries}/ — hexagonal más estricto, domain puro sin imports de Django.
+urls.py expone ambas versiones simultáneamente (v2/ y v3/) con fallback silencioso. Esto no es arquitectura, es deuda técnica en producción: dos fuentes de verdad para "qué es un laboratorio", riesgo de que un bug se corrija en una y no en la otra (ya pasó: el FrozenInstanceError de SensorId solo lo detectamos porque tocamos core/, no sabemos si api/logic/domain/*.py tiene equivalentes rotos sin auditar).
+Antes de decidir arquitectura objetivo, esto se resuelve: no se diseña sobre una base con dos dominios paralelos.
+Respuesta directa a tu pregunta: ni hexagonal "pura" global, ni microservicios ya
+Hexagonal pura como un solo core gigante es el error que ya cometiste sin querer. Un hexágono modela un bounded context con lenguaje ubicuo coherente. "Laboratorio de robótica", "modelo de IA de enfermedades de plantas", "telemetría de sensores embebidos" y "cursos" no comparten lenguaje ubicuo — son dominios distintos que hoy conviven forzados bajo core.domain. Eso es el anti-patrón de "hexágono dios": un solo domain/ que termina acoplando conceptos que deberían evolucionar independientemente.
+Microservicios completos ahora tampoco se justifica. Con un solo desarrollador (tú) y sin necesidad real de escalar independientemente cada dominio, microservicios full traen costo operativo (service discovery, transacciones distribuidas, observabilidad, versionado de contratos entre servicios) sin ningún beneficio compensatorio todavía. Es sobre-ingeniería prematura — el error clásico de extraer microservicios antes de que el dominio esté estable.
+Lo correcto para tu caso: Modular Monolith con límites hexagonales por bounded context. Cada contexto (labs, telemetría, IA, cursos, identidad) es un hexágono independiente — su propio domain/, ports/, application/, infrastructure/ — pero todos se despliegan en el mismo proceso Django (excepto los que ya tienen frontera física real, como ai_service, que correctamente vive aparte porque es otro runtime — FastAPI/TensorFlow — y otro ciclo de vida de despliegue).
+Por qué esto y no otra cosa: los ports de cada contexto son exactamente la costura donde extraes un microservicio real el día que el volumen o el equipo lo justifiquen (ej: cuando la ingesta de telemetría IoT crezca a punto de necesitar su propio proceso, el SensorReadingRepositoryPort ya existe — cambias el adaptador de Django ORM a un cliente gRPC/HTTP sin tocar el dominio). Diseñas para poder microserviciar, no microservicias antes de necesitarlo.
+Estructura objetivo concreta
+src/backend/
+├── contexts/
+│   ├── labs/                          # Bounded context: laboratorios (agricultura, electrónica, robótica, telecom)
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   ├── value_objects/
+│   │   │   ├── strategies/            # Strategy pattern: 1 por tipo de lab
+│   │   │   ├── factories/
+│   │   │   └── exceptions/
+│   │   ├── ports/
+│   │   │   ├── repositories.py
+│   │   │   └── notification_port.py
+│   │   ├── application/
+│   │   │   ├── commands/
+│   │   │   └── queries/
+│   │   └── infrastructure/
+│   │       └── persistence/django/
+│   │
+│   ├── telemetry/                     # Bounded context: ingesta IoT (separado de labs, cambia por razones distintas)
+│   │   ├── domain/
+│   │   ├── ports/
+│   │   ├── application/
+│   │   └── infrastructure/
+│   │
+│   ├── ai_advisory/                   # Bounded context: puente hacia ai_service (FastAPI externo)
+│   │   ├── domain/
+│   │   ├── ports/                     # AIServicePort — adapter real: fastapi_ai_adapter.py
+│   │   └── application/
+│   │
+│   └── identity/                      # users/ actual, reorganizado igual
+│
+├── interfaces/                        # Capa de entrada única, Django REST
+│   └── web/api/
+│       ├── labs/urls.py
+│       ├── telemetry/urls.py
+│       └── ai_advisory/urls.py
+│
+├── shared_kernel/                     # SOLO lo que genuinamente comparten todos los contextos
+│   └── result.py                      # (ya lo tienes en shared/result.py)
+│
+└── sigct_backend/                     # settings.py, wsgi, config Django — sin lógica de dominio
+Diferencia clave con lo que tienes: core/ deja de existir como carpeta plana única — se parte en contexts/{labs,telemetry,ai_advisory,identity}/, cada uno con su propio hexágono completo. api/logic/ se elimina por completo tras migrar su lógica (no se "fusiona con core", se mata — mantener dos versiones activas durante la migración es aceptable por 1-2 sprints máximo, con V2 marcado @deprecated y fecha de remoción, nunca indefinido como está ahora).
+Plan de migración (orden, no todo a la vez)
+1.	Freeze de api/logic/: nadie escribe código nuevo ahí. Solo bugfixes críticos si algo se rompe en prod mientras migras.
+2.	Mover core/ → contexts/labs/ primero, porque es donde vive el 90% de la lógica real y es el contexto más maduro.
+3.	Extraer telemetry de labs: hoy sensor_reading.py vive dentro del mismo core/domain, pero conceptualmente es ingesta, no simulación de laboratorio — sepáralo.
+4.	Reescribir urls.py/views.py: eliminar el flag HEXAGONAL_V3_AVAILABLE y el fallback silencioso — con una sola versión activa, ese try/except desaparece.
+5.	Migrar tests: tests/domain/test_factories.py y test_services.py (los 48 tests con 100% coverage de phase-01) deben re-apuntar a contexts.labs.domain, no borrarse.
+6.	Borrar api/logic/ una vez migrado y verificado con los tests existentes.
+¿Empezamos por el punto 1 (marcar api/logic/ deprecated y confirmar qué endpoints v2 siguen en uso real antes de tocar nada) o prefieres que primero te muestre el diff concreto de mover core/ a contexts/labs/?
+
+Luego le pregunte a GEMINI la cual me dice todo esto: 
+
+He recibido y procesado toda la información. Tengo la radiografía completa: el diagnóstico de Claude es preciso, la dualidad de arquitecturas es una deuda técnica crítica y tu entorno multirepositorio requiere una gestión de identidades (Git Config) impecable para evitar errores de autoría o acceso a repositorios privados.
+
+1. Blindaje de Identidad (Git Config)
+Para este repositorio específico (sigcTiArural), forzaremos la identidad correcta. Así, aunque tengas configuraciones globales, este proyecto usará exclusivamente el correo que tú dictamines (personal o emprendimiento).
+
+Ejecuta esto en tu terminal dentro de sigcTiArural:
+
+Bash
+# Cambia 'tu-correo@dominio.com' por el que corresponda a este proyecto
+git config user.email "badolfogm@gmail.com"
+git config user.name "Devbadolgm"
+Verificación: git config user.email te confirmará que el cambio es local a este repo.
+
+2. Sincronización del Remoto (Estado del Arte)
+Antes de tocar una sola línea de código, garantizaremos que tu copia local es idéntica al remoto para evitar conflictos de merge que destruyan el trabajo.
+
+Bash
+# 1. Asegurar que estamos en main
+git checkout main
+
+# 2. Fetch de todos los cambios remotos
+git fetch origin
+
+# 3. Verificar estado contra el remoto (DRY RUN - No hace cambios)
+git status
+git log HEAD..origin/main --oneline
+Si el último comando devuelve algo, significa que hay código en el remoto que no tienes. NO PROCEDAS hasta que hagamos un git pull origin main.
+
+3. Actualización de Bitácora [2026-07-04]
+Iniciamos la sesión con el compromiso de "Cero Daño".
+
+Markdown
+## [SESIÓN DE IA AUTÓNOMA] - 2026-07-04
+* **Estado:** PRE-MIGRACIÓN (Consolidación Monolito Modular)
+* **Objetivo:** Migrar de `api/logic` (V2) y `core/` (V3) a `contexts/` (Modular Monolith).
+* **Blindaje:** * Identidad Git configurada para el proyecto.
+    * Sincronización verificada con `origin/main`.
+    * Estrategia "Bridge" activa: no se borrará código hasta validar tests en la nueva estructura.
+---
+4. Propuesta de Inicio (Plan de Choque)
+Para cumplir con el plan de Claude sin riesgos, vamos a aplicar fase cero de manera indiscutible:
+
+Freeze de Código: No tocaremos nada sin un git checkout -b refactor/migracion-contexts para trabajar en una rama aislada.
+
+Marcado @deprecated: En lugar de borrar api/logic, vamos a inyectar un decorador en sus clases principales. Así, si alguna parte del sistema aún llama a esos archivos, verás una advertencia clara en consola (o logs) que te dirá: "¡Ey! Todavía estás usando una ruta vieja, migra esto."
+
+¿Confirmas que ya ejecutaste el git fetch y no tienes commits pendientes en el remoto? Una vez me des el "OK" de sincronización, generaré el script para marcar api/logic como @deprecated y crear la carpeta contexts/ (sin borrar nada aún). ¿Qué correo prefieres que quede registrado para este repositorio, el de investigación o el comercial?
+
+luego yo como obediente que soy le paso el resultado a GEMINI para q¿ver que mas dice:
+
