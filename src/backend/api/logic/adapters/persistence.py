@@ -1,3 +1,4 @@
+from src.backend.utils.deprecation import deprecated_legacy
 from ..ports.repositories import RepositoryInterface
 from django.apps import apps
 from typing import List, Any
