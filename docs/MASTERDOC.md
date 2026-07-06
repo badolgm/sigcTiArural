@@ -9,9 +9,9 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Versión** | 7.0 (Arquitectura Hexagonal) |
+| **Versión** | 7.1 (Continuidad + Automatización) |
 | **Fecha Creación** | 24 de Enero 2026 |
-| **Última Actualización** | 23 de Mayo 2026 |
+| **Última Actualización** | 4 de Julio 2026 |
 | **Autor Principal** | Bernardo Adolfo Gómez Montoya |
 | **Institución** | SENA - Tecnología en ADSO |
 | **Estado** | Documento Vivo - Consolidación de Reingeniería |
@@ -19,6 +19,27 @@
 | **Licencia** | MIT License |
 
 ---
+
+## Estado operativo actual (2026-07-04)
+
+El proyecto ya cuenta con una ruta de continuidad documentada y verificada. La forma recomendada de retomar el trabajo es ejecutar el chequeo único de continuidad desde la raíz del repositorio:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\continuity_check.ps1
+```
+
+Este flujo valida:
+- arranque de servicios principales,
+- salud del backend,
+- salud del microservicio de IA,
+- ejecución de la suite de tests de dominio.
+
+Las fuentes de verdad operativa y técnica para continuar son:
+- [CONTINUITY_RUNBOOK.md](CONTINUITY_RUNBOOK.md)
+- [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md)
+- [HEXAGONAL_REFACTOR_PLAN.md](HEXAGONAL_REFACTOR_PLAN.md)
+- [API_REFERENCE.md](API_REFERENCE.md)
+- [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ## 📑 TABLA DE CONTENIDOS MAESTRA
 
@@ -41,53 +62,77 @@
 
 ## 9. Arquitectura Hexagonal
 
-Para garantizar la sostenibilidad y el impacto social del proyecto SIGC&T-Rural, se ha implementado una **Arquitectura Hexagonal (Puertos y Adaptadores)**. Esta estructura desacopla las reglas de negocio (Dominio) de las tecnologías externas (Django, Bases de Datos, APIs).
+El proyecto atraviesa una migración activa hacia **Modular Monolith con límites hexagonales por bounded context**. A la fecha (2026-07-04) coexisten tres capas de implementación en el backend, resultado de sucesivas iteraciones del Strangler Fig Pattern. Esta sección documenta el estado real verificado, no un objetivo aspiracional.
 
-### 📐 Diagrama de Arquitectura
+### 9.0 Estado real verificado — tres capas coexistentes
+
+| Capa | Ubicación | Estado | Rol |
+|---|---|---|---|
+| **Legacy (V1)** | `api/views.py`, `api/models.py` | Activa, sin instrumentar | ViewSets acoplados directo al ORM. Endpoints: `/api/telemetry/history/`, `RobotViewSet`, etc. |
+| **V2 (Strangler Fig, mayo 2026)** | `api/logic/{domain,ports,adapters}/` | Activa, **en proceso de deprecación** | Strategy + Factory para los 4 laboratorios. Adaptador `DjangoRepository` instrumentado con decorador `@deprecated_legacy` (`obtener_por_id`, `guardar`, `listar_todos`) desde 2026-07-04 — dispara `DeprecationWarning` en cada invocación, verificado por test. |
+| **V3 (Hexagonal estricta, recuperada 2026-07-03)** | `core/domain/`, `core/ports/`, `infrastructure/`, `interfaces/` | Activa, expuesta en `/api/v3/*` | Dominio sin dependencias de Django. Inyección de dependencias vía `infrastructure/config/dependencies.py`. Endpoints `TelemetryHistoryV3View`, `AICropAdviceV3View` con fallback silencioso a V2 si el import de `core`/`infrastructure` falla (deuda técnica pendiente: el fallback oculta errores reales de configuración, no solo ausencia del módulo). |
+
+`urls.py` expone simultáneamente V1, V2 y V3. No hay fecha de remoción fijada para V1 y V2 — pendiente definir en el plan de migración (ver `HEXAGONAL_REFACTOR_PLAN.md`).
+
+### 📐 Diagrama de Arquitectura (V3 — capa objetivo)
 
 ```mermaid
 graph TD
     subgraph "Capa de Adaptadores (Entrada/Salida)"
-        UI[React Frontend] -->|HTTP/REST| API_V2[Django Views V2]
-        API_V2 --> DB_ADAPTER[Django ORM Adapter]
-        API_V2 --> AI_ADAPTER[FastAPI AI Adapter]
+        UI[React Frontend] -->|HTTP/REST| API_V3[Django Views V3]
+        API_V3 --> DB_ADAPTER[DjangoSensorReadingRepository]
+        API_V3 --> AI_ADAPTER[FastAPI_AIAdapter]
     end
 
-    subgraph "Capa de Puertos (Interfaces)"
-        API_V2 --> PORT_LAB[ProcesadorLaboratorioPort]
-        DB_ADAPTER -.-> PORT_REPO[RepositoryPort]
-        AI_ADAPTER -.-> PORT_AI[AIServicePort]
+    subgraph "Capa de Puertos (core/ports)"
+        API_V3 --> PORT_REPO[SensorReadingRepositoryPort]
+        API_V3 --> PORT_AI[AIServicePort]
+        API_V3 --> PORT_NOTIF[NotificationPort]
     end
 
-    subgraph "Capa de Dominio (Corazón)"
-        PORT_LAB --> DOMAIN_LOGIC[LaboratorioService]
+    subgraph "Capa de Dominio (core/domain — sin Django)"
+        PORT_REPO -.-> DOMAIN_LOGIC[LabService]
         DOMAIN_LOGIC --> STRATEGY[Patrón Strategy]
-        STRATEGY --> ROBOTICA[ProcesadorRobotica]
-        STRATEGY --> AGRICULTURA[ProcesadorAgricultura]
-        STRATEGY --> TELECOM[ProcesadorTelecom]
-        STRATEGY --> ELECTRONICA[ProcesadorElectronica]
+        STRATEGY --> ROBOTICA[RoboticsStrategy]
+        STRATEGY --> AGRICULTURA[AgricultureStrategy]
+        STRATEGY --> TELECOM[TelecomStrategy]
+        STRATEGY --> ELECTRONICA[ElectronicsStrategy]
     end
 
     style DOMAIN_LOGIC fill:#f96,stroke:#333,stroke-width:4px
-    style PORT_LAB fill:#bbf,stroke:#333,stroke-width:2px
-    style API_V2 fill:#dfd,stroke:#333,stroke-width:2px
+    style PORT_REPO fill:#bbf,stroke:#333,stroke-width:2px
+    style API_V3 fill:#dfd,stroke:#333,stroke-width:2px
 ```
 
-### 📂 Estructura del Código (`src/backend/api/logic/`)
+### 📂 Estructura del código (backend)
 
-Ver detalle técnico en el [README de Lógica](file:///c%3A/Users/Devbadolgm/WorkSpace/CloneNuevo_sigcTiArural/sigcTiArural/src/backend/api/logic/README.md).
-
-| Capa | Carpeta | Responsabilidad |
+| Capa | Ubicación V3 (objetivo actual) | Ubicación V2 (legacy en deprecación) |
 | :--- | :--- | :--- |
-| **Dominio** | `domain/` | Reglas de negocio puras (Python Puro). No depende de Django. |
-| **Puertos** | `ports/` | Definición de contratos (Interfaces ABC) para servicios y persistencia. |
-| **Adaptadores** | `adapters/` | Implementaciones concretas: Django ORM, Clientes HTTP, etc. |
+| **Dominio** | `core/domain/` — entities, value_objects, strategies, factories, exceptions | `api/logic/domain/` |
+| **Puertos** | `core/ports/` — repositories, services | `api/logic/ports/` |
+| **Adaptadores** | `infrastructure/persistence/`, `infrastructure/external/` | `api/logic/adapters/` |
+| **Composition Root** | `infrastructure/config/dependencies.py` | Instanciación manual en `views.py` |
 
-### 🛠️ Principios de Ingeniería Aplicados
-- **Clean Code**: Nombres descriptivos, funciones pequeñas y responsabilidad única.
-- **SOLID**: Especial énfasis en el principio Open/Closed mediante el uso de **Factories** y **Strategies**.
-- **Resiliencia**: Adaptadores de IA con mecanismos de *Fallback* local.
-- **Independencia Tecnológica**: El dominio puede ser migrado a otro framework sin cambios.
+### 🛡️ Red de seguridad (tests)
+
+58 tests pasando (`pytest tests/ -q` desde `src/backend/`), cubriendo dominio (factories, services, strategies) e infraestructura (`test_persistence_infra.py`, `test_adapters_infra.py`). Requiere Postgres real accesible (no usa mocks para el adaptador de persistencia — es un test de integración, no de dominio). Ver `CONTINUITY_RUNBOOK.md` para variables de entorno de conexión.
+
+### 9.1 Arquitectura objetivo actual (Declaración de dirección técnica — 2026-07-04)
+
+El rediseño actual del proyecto se orienta a un **Modular Monolith** con límites hexagonales por bounded context, manteniendo un único proceso de ejecución central en Django para los contextos que comparten runtime y base de datos, mientras se preservan fronteras físicas reales para componentes con ciclo de vida independiente.
+
+#### Regla de diseño adoptada
+- Los bounded contexts del negocio se organizan como hexágonos autónomos, cada uno con su propio dominio, puertos, aplicación e infraestructura.
+- Los contextos principales son: laboratorios, telemetría, IA, cursos y contenido académico, usuarios y administración.
+- Todos estos contextos se despliegan en el mismo proceso Django, salvo los servicios que ya tienen frontera física y ciclo de despliegue propio, como el servicio de IA en FastAPI + TensorFlow.
+- El servicio de IA se mantiene como runtime independiente porque ya opera con un ciclo de vida y dependencias distintas, mientras el resto del sistema conserva una separación lógica y modular de responsabilidades.
+
+**Estado de la migración:** rama `feature/refactor-modular-contexts` creada. Decisión de estructura tomada (`contexts/{labs,telemetry,ai_advisory,identity}/`), aún no materializada como carpetas — el trabajo actual es la instrumentación `@deprecated` de V2 como paso previo (Strangler Fig), no la creación de `contexts/` todavía.
+
+#### Principio operativo de seguridad
+- La refactorización debe ser incremental, quirúrgica y verificable.
+- No se eliminan líneas de documentación histórica; se conservan bitácoras con fecha, hora, resultado, causa y observaciones.
+- La documentación funciona como mapa de continuidad para que el proyecto pueda retomar el proceso sin perder contexto.
 
 ### VOLUMEN II: IMPLEMENTACIÓN TÉCNICA
 

@@ -25,7 +25,7 @@
 
 **Plataforma web híbrida (Cloud/Edge) que integra IoT, Inteligencia Artificial y educación técnica para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.**
 
-📚 [Documentación Completa (MASTERDOC)](docs/MASTERDOC.md) • 🚀 [Plan Maestro](docs/PLAN_MAESTRO.md) • 🐞 [Reportar Bug](https://github.com/badolgm/sigcTiArural/issues) • 💡 [Solicitar Mejora](https://github.com/badolgm/sigcTiArural/issues/new)
+📚 [Documentación Completa (MASTERDOC)](docs/MASTERDOC.md) • 🚀 [Plan Maestro](docs/PLAN_MAESTRO.md) • � [Runbook de Continuidad](docs/CONTINUITY_RUNBOOK.md) • �🐞 [Reportar Bug](https://github.com/badolgm/sigcTiArural/issues) • 💡 [Solicitar Mejora](https://github.com/badolgm/sigcTiArural/issues/new)
 
 </div>
 

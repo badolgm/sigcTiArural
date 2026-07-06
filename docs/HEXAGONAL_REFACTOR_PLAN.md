@@ -9,6 +9,22 @@
 **Metodología:** Strangler Fig Pattern + Branch by Abstraction + Migración Incremental  
 **Principio fundamental:** Nunca romper funcionalidades existentes. Todo cambio es verificable y reversible.
 
+### Declaración arquitectónica actual (2026-07-04)
+
+La dirección técnica del proyecto se define como un **Modular Monolith** con límites hexagonales por bounded context. La idea es que cada contexto del negocio —laboratorios, telemetría, IA, cursos, usuarios y administración— tenga su propia estructura interna de dominio, puertos, aplicación e infraestructura, pero que todos se desplieguen dentro del mismo proceso Django como un monolito modular bien delimitado.
+
+### Punto de chequeo de continuidad (obligatorio)
+
+La documentación debe bastar para que cualquier persona o agente retome el proyecto sin intervención manual adicional. Por ello, la ruta de continuidad oficial es:
+
+1. Leer [docs/CONTINUITY_RUNBOOK.md](docs/CONTINUITY_RUNBOOK.md).
+2. Ejecutar [scripts/continuity_check.ps1](scripts/continuity_check.ps1) para levantar lo mínimo y validar el estado completo.
+3. Revisar [docs/reports/continuity_status.md](docs/reports/continuity_status.md) y continuar desde el siguiente paso indicado.
+
+Esta ruta se considera parte del proceso de refactorización, no un anexo opcional.
+
+La excepción técnica son los servicios con frontera física real y ciclo de vida independiente, como el servicio de IA en FastAPI/TensorFlow, que sigue viviendo aparte porque tiene runtime, despliegue y dependencias distintas. Esta división permite mantener coherencia y seguridad en la refactorización sin convertir el proyecto en un sistema distribuido prematuramente.
+
 ---
 
 ## 1. RESUMEN EJECUTIVO DEL ESTADO ACTUAL (Análisis Completo)
@@ -470,6 +486,7 @@ Total estimado realista (part-time 4-6h/día): 4.5 - 7 meses calendario
 ## 8. NOTAS FINALES DEL ARQUITECTO
 
 Este proyecto tiene una base excelente y una ambición alta (educación + IoT + IA + Edge + docs impecables). La refactorización **es viable y deseable**, pero debe hacerse con disciplina quirúrgica.
+Nota del Autor: Esto lo hago por aprendizaje para conocer la arquitectura a implementar.
 
 El trabajo ya realizado en Mayo 2026 (la carpeta `logic/`) es un **activo** muy valioso — la estrategia correcta es "terminar lo que se empezó" en lugar de "empezar de nuevo".
 

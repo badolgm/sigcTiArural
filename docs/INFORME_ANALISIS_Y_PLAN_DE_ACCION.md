@@ -8,6 +8,27 @@
 
 ## 📋 ÍNDICE DE INTERVENCIONES
 
+## 2026-07-04 — Reordenación documental y alineación arquitectónica
+
+### Resumen ejecutivo
+Se realizó una intervención de documentación y alineación técnica para dejar claro el rumbo del refactor: el proyecto se está reconduciendo hacia un **Modular Monolith** con **bounded contexts hexagonales**, manteniendo Django como proceso principal y separando aquellos servicios que requieren su propio runtime físico, como el servicio de IA en FastAPI/TensorFlow.
+
+### Resultado
+- **Estado:** Positivo con observaciones.
+- **Razón de éxito:** Se consolidó la intención arquitectónica, se dejó trazabilidad del estado actual y se evitó borrar ni desordenar la documentación histórica.
+- **Razón de intervención:** Evitar que la refactorización se vuelva ambigua o frágil, especialmente ante cambios de puertos, credenciales de base de datos, entornos virtuales y despliegues de Docker.
+
+### Evidencia y observaciones técnicas
+- Se mantuvo la bitácora como registro histórico, sin eliminar entradas previas.
+- Se documentó la separación lógica entre contextos del negocio y servicios con frontera física real.
+- Se registró que los conflictos de puertos, autenticación de PostgreSQL y aislamiento de entornos pueden bloquear una ejecución inicial, pero no invalidan la ruta de refactorización si se gestionan con orden y trazabilidad.
+- Se dejó claro que la documentación debe servir como punto de continuidad para la IA, el equipo técnico y el proceso de migración.
+
+### Conclusión operativa
+La documentación del proyecto quedó más coherente para comprender dónde está el proceso, qué se está transformando, qué se conserva y cómo se debe continuar sin perder seguridad ni consistencia.
+
+---
+
 | Fecha | Sesión | Descripción |
 |-------|--------|-------------|
 | [16 de Enero 2026](#16-de-enero-2026) | Única | Corrección `dj_database_url` |

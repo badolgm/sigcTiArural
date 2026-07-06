@@ -1256,3 +1256,140 @@ El proyecto ha sido instrumentado. La línea base es segura, los tests están co
 Fin del Documento Técnico.
 Versión: 1.0.0-PROD-READY-GOAL
 Generado bajo estándares ADSO-SENA 2026.
+
+
+
+------------------
+__________________________________
+
+
+
+BITÁCORA TÉCNICA: ESTABILIZACIÓN Y REFACTORIZACIÓN MODULAR
+Proyecto: sigcTiArural
+
+Estado: Integración con infraestructura real verificada
+
+Fecha: 4 de julio de 2026
+
+1. Diagnóstico y Corrección de Rumbo
+Durante las iteraciones previas, el sistema presentó fallos recurrentes (OperationalError, ModuleNotFoundError) debido a una desconexión entre la configuración de los tests y el estado real de la infraestructura en el entorno local (Windows/Mingw64).
+
+Error de Concepción: Se intentó desacoplar el test de integración forzando el uso de SQLite en memoria. Esto fue un error de arquitectura: el componente en cuestión (DjangoRepository) es un Adaptador de Infraestructura cuya responsabilidad explícita es comunicarse con el motor de persistencia (PostgreSQL). Forzar un Mock en este punto anulaba la validez del test de integración.
+
+Acierto en la Resolución: El diagnóstico de Claude confirmó que la infraestructura de contenedores (sigctiarural_postgres_db en el puerto 5544) estaba operativa y lista. La solución consistió en configurar correctamente las variables de entorno de la sesión de ejecución (DB_NAME, DB_USER, etc.) para que el ORM de Django pudiera establecer el puente con el contenedor.
+
+2. Ejecución y Resultados del Test
+Tras corregir la ruta de ejecución y las variables de entorno, se validó la integridad de la capa de persistencia:
+
+Entorno: Python 3.14.3, Django 4.2.30 (versión actualmente presente en el entorno global), pytest-9.0.3.
+
+Comando de Ejecución: python -m pytest tests/test_persistence_infra.py -W always
+
+Resultado: 2 passed in 0.88s.
+
+Conclusión: Los adaptadores de persistencia están correctamente conectados a la base de datos real.
+
+3. Vulnerabilidad Identificada: Regresión de Dependencias
+Se identificó un riesgo crítico de "contaminación cruzada" en tu entorno de desarrollo. Al ejecutar la instalación de requirements.txt globalmente:
+
+El intérprete de Python del sistema sufrió un downgrade de Django 6.0.3 a 4.2.30.
+
+Impacto potencial: Tus otros proyectos (VETNA, Kairos-OS, etc.) que operan en la misma máquina y dependen de versiones modernas de Django podrían quedar inoperativos o presentar comportamientos erráticos.
+
+Acción Inmediata: La migración a un entorno virtual (venv) es obligatoria para aislar sigcTiArural y devolver al intérprete global su configuración original.
+
+4. Hoja de Ruta de Resiliencia (Pasos a seguir)
+Fase A: Aislamiento del Entorno (Prioridad Alta)
+Para blindar tus otros proyectos, aislaremos el entorno de este repositorio:
+
+Bash
+# 1. Dentro de src/backend, crear el entorno virtual
+python -m venv .venv
+
+# 2. Activar el venv (Git Bash)
+source .venv/Scripts/activate
+
+# 3. Reinstalar dependencias limpias solo en este venv
+pip install --upgrade pip
+pip install -r requirements.txt
+Fase B: Validación del Centinela (Código Legacy)
+Ahora que los tests pasan en un entorno controlado, debemos confirmar que el decorador @deprecated (el "centinela") está funcionando. Si al correr pytest -W always no ves un bloque de warnings summary, debemos inspeccionar:
+
+Que el import del decorador sea correcto en persistence.py.
+
+Que el método decorado sea efectivamente el que el test invoca.
+
+Fase C: Consolidación de la Arquitectura
+Una vez validado el Centinela, procederemos con la inyección de dependencias para el código nuevo. Mantendremos el Monolito Modular con límites hexagonales:
+
+Capa de Dominio: Sin dependencias externas (Python puro).
+
+Capa de Adaptadores: Donde viven los DjangoRepository, que se comunican con el exterior mediante las interfaces definidas en la capa de puertos.
+
+Capa de Infraestructura: Gestión de configuraciones, Docker y despliegue.
+
+Estado actual de la ejecución: La infraestructura responde, los tests de integración son verdes y el camino hacia la refactorización modular está despejado. La prioridad absoluta ahora es el aislamiento mediante venv para proteger la estabilidad de tus otros proyectos de investigación.
+
+¿Procedemos con la creación del venv para estabilizar el proyecto, o prefieres que revisemos el contenido del warnings summary primero?
+
+
+Julio 4 de 2026  hora  19:35
+
+# Informe resumido de hallazgos y plan de acción — SIGC&T Rural
+
+Fecha: 2026-07-04
+
+## Hallazgos principales
+- Estado servicios (Docker): backend expuesto en localhost:8010, AI service en 8081, frontend en 5173, Postgres en 5544. También hay otros contenedores en la máquina (ej. eiarc_api en 8000).
+- Tests backend: 58 passed, 3 warnings (depuración por adapters legacy).
+- AI service: responde en /health con {"status":"ok",...}.
+- Backend: el endpoint comprobado en localhost:8000 devolvió Not Found porque el backend del proyecto está en 8010; existe un conflicto multi-proyecto en la misma máquina.
+- Scripts de verificación (scripts/continuity_check.ps1 y verify_refactor.ps1) asumen puerto 8000 → generan falsos negativos en entornos donde se reasignan puertos.
+- .env contiene credenciales en texto plano; debe evitarse commit.
+- Documentación y planes (README, MASTERDOC, RUNBOOK, PLAN_MAESTRO, HEXAGONAL_REFACTOR_PLAN, AI_PIPELINE) están completos y coherentes; hay referencias a rutas de servicio IA inconsistentes en algunos docs (unificar).
+
+## Riesgos
+- Automatización que asume puertos fijos provoca falsos fallos/alertas.
+- Credenciales expuestas en .env si se comitean.
+- Referencias de rutas/rutas de servicio IA inconsistentes pueden confundir nuevos contribuidores.
+
+## Plan de acción (priorizado, mínimo y seguro)
+1. Corregir scripts de verificación para detectar puertos dinámicamente (env → docker compose → fallback). Aplicar primero en continuity_check.ps1 y luego en verify_refactor.ps1.
+2. Añadir .env.example y agregar .env a .gitignore; rotar credenciales si ya fueron públicas.
+3. Unificar referencias de ruta del AI service en documentación (escoger una ruta: src/backend/ai_service o src/ai_models).
+4. Ejecutar verificaciones de salud locales y registrar evidencia:
+   - docker compose ps
+   - curl a backend real (puerto detectado) y AI service
+   - pytest en src/backend
+5. Commit y push de cambios de scripts y ejemplos, manteniendo bitácora (docs/INFORME...).
+
+## Cambios concretos recomendados
+- Patch mínimo para continuity_check.ps1: autodetección de puertos (env -> docker compose -> fallback).  
+  Aplica el contenido siguiente en el script (insertar en el lugar apropiado):
+
+```powershell
+// filepath: continuity_check.ps1
+# ...existing code...
+# --- Autodetección de puertos (env -> docker compose -> fallback) ---
+function Get-PortForService {
+    param($envName, $composeService, $containerPort, $defaultPort)
+
+    if ($env:$envName) { return $env:$envName }
+
+    try {
+        $out = docker compose port $composeService $containerPort 2>$null
+        if ($out -and $out -match ":(\d+)$") { return $matches[1] }
+    } catch { }
+
+    return $defaultPort
+}
+
+$backendPort = Get-PortForService -envName "BACKEND_PORT" -composeService "backend" -containerPort 8000 -defaultPort 8000
+$aiPort      = Get-PortForService -envName "AI_PORT" -composeService "ai_service" -containerPort 8081 -defaultPort 8081
+
+Write-Host "Detected ports -> backend:$backendPort ai:$aiPort" -ForegroundColor Gray
+# ...existing code...
+# Reemplace comprobaciones de endpoints por:
+$backendResp = curl.exe -s --max-time 5 "http://localhost:$backendPort/api/telemetry/history/" 2>$null
+$aiResp      = curl.exe -s --max-time 5 "http://localhost:$aiPort/health" 2>$null
+# ...existing code...

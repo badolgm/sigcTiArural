@@ -7,12 +7,12 @@ Roadmap Completo del Proyecto Productivo
 ## 📋 Información del Plan
 | Campo | Valor |
 |---|---|
-| Versión | 7.0 (Sincronizado Mayo 2026) |
-| Estado | Fase 7 en Inicio |
+| Versión | 8.0 (Sincronizado Julio 2026) |
+| Estado | Fase 7 en Progreso + Fase 8 en Preparación |
 | Fecha Inicio | 02-Nov-2025 |
-| Fecha Estimada Final | 30-Jun-2026 |
+| Fecha Estimada Final | 31-Jul-2026 (continuidad y consolidación) |
 | Responsable | B. Gómez |
-| Metodología | Iterativa e Incremental |
+| Metodología | Iterativa, Incremental y Segura |
 
 ## 🎯 Visión General del Proyecto
 ### Objetivo Principal
@@ -23,8 +23,19 @@ Desarrollar SIGC&T Rural como plataforma web híbrida (Cloud/Edge) que integra I
 - ✅ Clúster de 3 BeagleBone Black operacional con sensores
 - ✅ Modelo de IA entrenado (>85% accuracy) con inferencia Cloud/Edge
 - ✅ Biblioteca educativa con 20+ recursos curados
-- ✅ Documentación técnica completa (MASTERDOC, APIs, Despliegue)
+- ✅ Documentación técnica completa (MASTERDOC, APIs, Despliegue, bitácoras)
 - ✅ Artefactos SENA (Proyecto Formativo, Evidencias, Presentación)
+
+### Declaración Arquitectónica Actual (2026-07-04)
+El proyecto se está reconduciendo hacia un enfoque de Modular Monolith con límites hexagonales por bounded context. La intención es que cada contexto del negocio —laboratorios, telemetría, IA, cursos, usuarios y administración— tenga su propia estructura interna de dominio, puertos, aplicación e infraestructura, pero que todos compartan el mismo proceso principal de Django como runtime común.
+
+La excepción técnica son los componentes con frontera física real y ciclo de vida independiente, como el servicio de IA en FastAPI + TensorFlow, que continúa operando aparte por sus propias dependencias y despliegue. Esto permite mantener coherencia, seguridad y trazabilidad en la refactorización sin convertir prematuramente el sistema en una arquitectura distribuida compleja.
+
+### Principios de Continuidad y Gobernanza
+- La documentación jamás se elimina; se conserva de forma histórica y se actualiza con fecha, hora, resultado, causas y observaciones.
+- La refactorización debe ser quirúrgica, incremental y verificable. No se rompen funcionalidades existentes para avanzar.
+- Cada cambio debe dejar evidencia operativa: pruebas, logs, validación de puertos, verificación de entorno y registro en bitácora.
+- La migración y el rediseño deben mantener coherencia entre arquitectura, implementación, infraestructura y documentación.
 
 ## 📊 Resumen de Fases
 ```mermaid
@@ -186,25 +197,46 @@ gantt
 - [x] Integrar telemetría de actuadores (ESP32/Arduino)
 - [x] Implementar Control por Voz para actuadores
 
-## 🔴 FASE 7: Refactorización Arquitectónica Hexagonal (Mayo 2026)
-**Estado:** 🟡 En Inicio
-**Duración:** Mayo 2026 - Junio 2026
-**Objetivo:** Desacoplar el dominio del framework (Django) y aplicar patrones de diseño avanzados (Strategy).
+## 🔴 FASE 7: Refactorización Arquitectónica Hexagonal (Mayo - Julio 2026)
+**Estado:** 🟡 En Progreso
+**Duración:** Mayo 2026 - Julio 2026
+**Objetivo:** Desacoplar el dominio del framework (Django) y consolidar un diseño modular con límites hexagonales por bounded context, preservando estabilidad operativa.
 
 ### 📝 Tareas
 #### 7.1 Definición de Capas de Dominio
-- [ ] Crear estructura `src/backend/api/domain/`
-- [ ] Definir Entidades y Agregados puros
-- [ ] Implementar Interfases (Puertos)
+- [x] Consolidar la intención arquitectónica del proyecto como Modular Monolith con bounded contexts
+- [x] Documentar la diferencia entre contextos que comparten runtime y servicios con frontera física real
+- [ ] Migrar progresivamente la lógica de negocio a estructuras de dominio más limpias y aisladas
+- [ ] Definir contratos claros entre dominio, puertos, aplicación e infraestructura
 
-#### 7.2 Implementación de Estrategias
-- [ ] Refactorizar lógica de procesamiento de laboratorios usando el Patrón Strategy
-- [ ] Desacoplar generación de Mock Data de las Vistas
+#### 7.2 Implementación de Estrategias y Contextos
+- [x] Identificar bounded contexts principales: laboratorios, telemetría, IA, usuarios, contenidos y administración
+- [ ] Refactorizar la lógica de procesamiento de laboratorios usando patrones Strategy/Factory y límites claros de contexto
+- [ ] Separar las reglas de negocio de la generación de datos y de la presentación en vistas
+- [ ] Establecer un patrón de adaptación para persistencia y servicios externos
 
-#### 7.3 Adaptadores y API v2
-- [ ] Implementar Adaptadores para PostgreSQL y MySQL
-- [ ] Exponer API v2 bajo arquitectura hexagonal
-- [ ] Pruebas de integración E2E
+#### 7.3 Adaptadores, API y Seguridad
+- [x] Alinear la configuración de puertos y variables de entorno con Docker y Django
+- [x] Cargar variables de entorno desde el archivo de proyecto para evitar errores por entorno local
+- [ ] Completar la integración del servicio de IA con el backend sin romper el flujo actual
+- [ ] Fortalecer la seguridad de configuración y evitar dependencias rígidas a variables hardcodeadas
+
+#### 7.4 Continuidad Documental
+- [x] Actualizar bitácoras con fecha, hora, resultado y causa de intervención
+- [x] Mantener la documentación histórica sin borrado de líneas ni pérdida de contexto
+- [ ] Completar una guía operativa de continuidad para que la IA o cualquier desarrollador retome el proyecto sin ambigüedad
+
+## 🟢 FASE 8: Continuidad Operativa, Observabilidad y Hardening
+**Estado:** 🟡 En Preparación
+**Duración:** Julio 2026
+**Objetivo:** Dejar el proyecto estable, verificable y listo para avanzar sin riesgo de pérdida de contexto ni rotura funcional.
+
+### 📝 Tareas
+- [ ] Establecer un flujo de arranque seguro: DB → migraciones → backend → IA → frontend
+- [ ] Definir un checklist de verificación por entorno (Docker, venv, puertos, variables de entorno)
+- [ ] Implementar observabilidad mínima: logs estructurados, health checks y trazabilidad de errores
+- [ ] Asegurar que los cambios de puertos no rompan la ejecución de otros proyectos locales
+- [ ] Mantener la documentación como fuente única de continuidad del proceso de refactorización
 
 ## 📊 Seguimiento de Progreso
 ### Dashboard de Estado
@@ -216,7 +248,8 @@ gantt
 | Fase 4 | ██████████ 100% | ✅ Completado |
 | Fase 5 | ██████████ 100% | ✅ Completado |
 | Fase 6 | ██████████ 100% | ✅ Completado |
-| Fase 7 | ██░░░░░░░░ 20% | 🟢 En Progreso |
+| Fase 7 | ████░░░░░░ 45% | 🟢 En Progreso |
+| Fase 8 | ██░░░░░░░░ 15% | 🟡 En Preparación |
 
 ### ⚠️ Riesgos y Mitigaciones
 | Riesgo | Probabilidad | Impacto | Mitigación |

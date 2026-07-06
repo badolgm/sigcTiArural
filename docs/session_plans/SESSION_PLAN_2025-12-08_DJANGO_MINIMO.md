@@ -27,3 +27,5 @@ Validación (pendiente de ejecución):
 
 Historial:
 - 2025-12-08: versión inicial del plan, lista para ejecución.
+- 2026-07-04: se agregó un fixture de pytest para `lab_service` en [src/backend/tests/conftest.py](src/backend/tests/conftest.py) para resolver la falla de tests de dominio; validación ejecutada con 50 tests pasados.
+- 2026-07-04: se verificó la importación del microservicio de IA en [src/ai_models/fastapi_app.py](src/ai_models/fastapi_app.py); el servicio carga correctamente en modo mock cuando TensorFlow no está disponible en el entorno actual.
