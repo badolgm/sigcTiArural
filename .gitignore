@@ -142,3 +142,7 @@ AUDITORIA_COMPLETA_*.md
 HANDOFF_TRAE_sigcTiArural.md
 docs/
 docs/
+
+# Architect Master Knowledge Base
+!docs/architect_master/
+!docs/architect_master/**
