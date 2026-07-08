@@ -1,4 +1,4 @@
-🚀 PLAN MAESTRO v5.0 - SIGC&T Rural ADSO
+🚀 PLAN MAESTRO v8.1 - SIGC&T Rural / EIARC ADSO
 <div align="center">
 Fases de Implementación Basadas en Arquitectura
 Roadmap Completo del Proyecto Productivo
@@ -7,16 +7,18 @@ Roadmap Completo del Proyecto Productivo
 ## 📋 Información del Plan
 | Campo | Valor |
 |---|---|
-| Versión | 8.0 (Sincronizado Julio 2026) |
-| Estado | Fase 7 en Progreso + Fase 8 en Preparación |
+| Versión | 8.1 (Sincronizado Julio 2026 — incorpora evolución hacia EIARC) |
+| Estado | Fase 7 en Progreso + Fase 8 en Preparación + Fase 9 Planificada |
 | Fecha Inicio | 02-Nov-2025 |
-| Fecha Estimada Final | 31-Jul-2026 (continuidad y consolidación) |
-| Responsable | B. Gómez |
+| Fecha Estimada Final | 31-Jul-2026 (continuidad y consolidación de Fases 7-8; Fase 9 sin fecha de cierre aún) |
+| Responsable | Bernardo Adolfo  Gómez Montoya|
 | Metodología | Iterativa, Incremental y Segura |
 
 ## 🎯 Visión General del Proyecto
 ### Objetivo Principal
 Desarrollar SIGC&T Rural como plataforma web híbrida (Cloud/Edge) que integra IoT, IA y educación técnica para el sector agrícola, cumpliendo con todos los requisitos del Proyecto Productivo ADSO - SENA.
+
+El proyecto evoluciona conceptualmente hacia un ecosistema más amplio, **EIARC (Ecosistema de Inteligencia Artificial y Robótica para el Campo)**, que busca extender el mismo enfoque técnico —sensores, modelos de aprendizaje automático y arquitectura modular— a otras líneas de producción agropecuaria (apicultura, piscicultura, ganadería y avicultura, invernaderos) y a una multiplataforma educativa dirigida tanto a hijos de agricultores como al público general interesado en ciencias naturales, matemáticas y física. Esta ampliación se planifica como la Fase 9 del proyecto (ver sección correspondiente) y se apoya en la misma arquitectura de Monolito Modular con límites hexagonales, que permite incorporar nuevas líneas de producción como nuevas estrategias de dominio sin reescribir lo ya construido.
 
 ### Entregables Finales
 - ✅ Plataforma web funcional (React + Django) desplegada en Cloud
@@ -25,11 +27,34 @@ Desarrollar SIGC&T Rural como plataforma web híbrida (Cloud/Edge) que integra I
 - ✅ Biblioteca educativa con 20+ recursos curados
 - ✅ Documentación técnica completa (MASTERDOC, APIs, Despliegue, bitácoras)
 - ✅ Artefactos SENA (Proyecto Formativo, Evidencias, Presentación)
+- 🔲 (Planificado — Fase 9) Al menos un MVP funcional de una nueva línea de producción EIARC (apicultura, piscicultura, ganadería/avicultura o invernaderos)
+- 🔲 (Planificado — Fase 9) Monitoreo biométrico de ganado vía dispositivo sensórico portable (collar), con al menos una variable vital validada end-to-end (temperatura, ritmo cardíaco o comportamiento)
+- 🔲 (Planificado — Fase 9) Multiplataforma educativa ampliada para público infantil/general en ciencias naturales, matemáticas y física
 
 ### Declaración Arquitectónica Actual (2026-07-04)
 El proyecto se está reconduciendo hacia un enfoque de Modular Monolith con límites hexagonales por bounded context. La intención es que cada contexto del negocio —laboratorios, telemetría, IA, cursos, usuarios y administración— tenga su propia estructura interna de dominio, puertos, aplicación e infraestructura, pero que todos compartan el mismo proceso principal de Django como runtime común.
 
 La excepción técnica son los componentes con frontera física real y ciclo de vida independiente, como el servicio de IA en FastAPI + TensorFlow, que continúa operando aparte por sus propias dependencias y despliegue. Esto permite mantener coherencia, seguridad y trazabilidad en la refactorización sin convertir prematuramente el sistema en una arquitectura distribuida compleja.
+
+### Evolución de la Visión del Proyecto: Ecosistema EIARC (06-Jul-2026)
+
+SIGC&T Rural evoluciona conceptualmente hacia **EIARC (Ecosistema de Inteligencia Artificial y Robótica para el Campo)**: un ecosistema agropecuario integral que va más allá de la agricultura de precisión y el diagnóstico de enfermedades en plantas, para cubrir también:
+
+- **Apicultura:** monitoreo de colmenas y salud de polinizadores (variables ambientales críticas para la supervivencia de las abejas, cuyo rol en la polinización tiene impacto directo en la seguridad alimentaria).
+- **Piscicultura:** calidad de agua, oxígeno disuelto y ciclos de cría en estanques o sistemas acuícolas.
+- **Ganadería y avicultura (vacas, cerdos, gallinas, etc.):** monitoreo biométrico individual del animal mediante **dispositivos sensóricos portables tipo collar** (o equivalentes para especies que no lo admitan), que capturan señales vitales en tiempo real: temperatura corporal (detección temprana de fiebre/estrés térmico), ritmo cardíaco, variables como pH cuando aplique, y patrones de movimiento/comportamiento del animal. Estas señales se procesan mediante ingeniería de características (feature engineering) y modelos de Machine Learning / Deep Learning para detectar anomalías de salud o comportamiento antes de que se vuelvan críticas.
+- **Invernaderos:** control climático y riego automatizado.
+- **IA con alertas tempranas:** los modelos no se limitan a clasificar una condición actual, sino que buscan anticipar eventos (enfermedad, estrés térmico, comportamiento anómalo) mediante el análisis histórico de las señales de sensores, permitiendo intervención preventiva en vez de solo reactiva.
+- **Multiplataforma educativa:** un componente pedagógico dirigido a hijos de agricultores y al público general, para el aprendizaje de ciencias naturales, matemáticas y física de forma intuitiva, aprovechando la misma infraestructura de laboratorios virtuales ya construida.
+
+**Por qué la arquitectura ya definida absorbe esta expansión sin rediseño:**
+
+- El contexto `labs` (laboratorios/producción) ya usa el patrón Strategy + Factory para sus 4 líneas actuales (agricultura, electrónica, robótica, telecomunicaciones). Cada nueva línea de producción (apicultura, piscicultura, ganadería/avicultura, invernaderos) se incorpora como una **nueva estrategia de dominio** dentro del mismo contexto, sin tocar las estrategias existentes ni el contrato del puerto (`RepositoryPort`, `NotificationPort`, etc.).
+- El contexto `telemetry` (ingesta IoT), ya separado de `labs` desde el rediseño hacia `contexts/`, es el punto natural de entrada para las señales de un collar sensórico de ganado: es el mismo tipo de dato (lecturas periódicas de sensores) que ya maneja para `SensorReading`, solo que asociado a un animal en vez de a un cultivo o a un laboratorio.
+- El contexto `ai_advisory` (puente hacia el servicio de IA) se extiende agregando nuevos modelos de detección de anomalías/alertas tempranas, sin modificar el adaptador existente hacia el servicio de diagnóstico de enfermedades en plantas — ambos conviven como capacidades distintas detrás del mismo puerto `AIServicePort`.
+- El contexto `cursos`, ya anticipado en la lista de bounded contexts de la Declaración Arquitectónica, es exactamente donde se formaliza la multiplataforma educativa ampliada.
+
+Esta ampliación se documenta como **intención estratégica confirmada**, pero se mantiene como **Fase 9 planificada** (ver más abajo), para no interferir con el cierre de las Fases 7 y 8 actualmente en curso, en línea con el principio de gobernanza de no romper funcionalidades existentes para avanzar.
 
 ### Principios de Continuidad y Gobernanza
 - La documentación jamás se elimina; se conserva de forma histórica y se actualiza con fecha, hora, resultado, causas y observaciones.
@@ -66,6 +91,8 @@ gantt
     section Fase 7
     Refactorización Hexagonal      :active, f7a, 2026-05-23, 30d
     Presentación Final             :milestone, 2026-06-30, 1d
+    section Fase 9
+    Expansión EIARC (planificada)  :f9a, 2026-08-01, 1d
 ```
 
 ## 🟢 FASE 1: Fundamentos y Arquitectura
@@ -238,6 +265,46 @@ gantt
 - [ ] Asegurar que los cambios de puertos no rompan la ejecución de otros proyectos locales
 - [ ] Mantener la documentación como fuente única de continuidad del proceso de refactorización
 
+## ⚪ FASE 9: Expansión de Dominio — Ecosistema EIARC (Planificada)
+**Estado:** 🔲 Planificada (no iniciada)
+**Duración:** A definir (posterior al cierre satisfactorio de las Fases 7 y 8)
+**Objetivo:** Extender el ecosistema más allá del dominio agrícola original hacia un ecosistema agropecuario integral (EIARC), reutilizando la arquitectura modular por bounded context ya definida, sin reabrir el trabajo de estabilización de las Fases 7 y 8.
+
+### 📝 Tareas (backlog inicial, sujeto a priorización)
+
+#### 9.1 Nuevas Líneas de Producción (contexto `labs`)
+- [ ] Definir estrategia de dominio para Apicultura (monitoreo de colmenas, salud de polinizadores, variables ambientales críticas)
+- [ ] Definir estrategia de dominio para Piscicultura (calidad de agua, oxígeno disuelto, ciclos de cría)
+- [ ] Definir estrategia de dominio para Ganadería y Avicultura (vacas, cerdos, gallinas, etc.)
+- [ ] Definir estrategia de dominio para Invernaderos (control climático, riego automatizado)
+- [ ] Extender `LaboratorioStrategyFactory` (o su equivalente en `contexts/labs/domain/factories/`) para registrar las nuevas estrategias sin romper las 4 existentes
+
+#### 9.2 Monitoreo Biométrico Individual de Ganado (contexto `telemetry` + `ai_advisory`)
+- [ ] Diseñar el contrato de datos del dispositivo sensórico portable (collar u otro formato según la especie): temperatura corporal, ritmo cardíaco, pH cuando aplique, y variables de movimiento/actividad
+- [ ] Definir `AnimalReadingPort` (o extender `SensorReadingRepositoryPort` existente) para que la ingesta de telemetría distinga entre lectura de cultivo/laboratorio y lectura biométrica de un animal individual
+- [ ] Investigar y documentar rangos fisiológicos normales por especie (vacas, cerdos, gallinas) como base para la detección de anomalías (fiebre, estrés térmico, taquicardia, hipoactividad)
+- [ ] Aplicar ingeniería de características (feature engineering) sobre las series de tiempo de cada animal (medias móviles, variabilidad, tendencias) como insumo para los modelos
+- [ ] Evaluar modelos de Machine Learning / Deep Learning para clasificación de estado de salud y detección de comportamiento anómalo por animal
+- [ ] Diseñar el mecanismo de alerta temprana (umbral + modelo predictivo) para notificar al productor antes de que la condición se vuelva crítica
+- [ ] Definir el MVP mínimo viable: una sola variable vital (por ejemplo, temperatura) validada end-to-end (sensor → ingesta → almacenamiento → visualización → alerta) antes de sumar más variables o especies
+
+#### 9.3 IA de Alertas Tempranas (contexto `ai_advisory`, general para todas las líneas EIARC)
+- [ ] Definir puertos y contratos para modelos de detección de anomalías/alertas tempranas, reutilizables entre cultivos, colmenas, estanques e individuos de ganado
+- [ ] Evaluar modelos de Machine Learning y Deep Learning adicionales al de diagnóstico de enfermedades en plantas, manteniendo el mismo `AIServicePort` como punto de integración
+- [ ] Diseñar el mecanismo de retroalimentación para que la IA "guíe" y eduque al usuario (recomendaciones explicables, no solo predicciones aisladas)
+
+#### 9.4 Multiplataforma Educativa (contexto `cursos`)
+- [ ] Formalizar el contexto `cursos` como bounded context independiente (actualmente solo referenciado en la Declaración Arquitectónica)
+- [ ] Definir contenidos dirigidos a hijos de agricultores y público general (ciencias naturales, matemáticas, física)
+- [ ] Diseñar rutas de aprendizaje progresivas, separadas del contenido técnico/profesional existente
+
+#### 9.5 Gobernanza de Alcance
+- [ ] Priorizar un único MVP (una sola línea de producción o una sola variable biométrica) antes de escalar a las demás, para evitar expansión simultánea sin control
+- [ ] Validar que cada nueva línea siga el mismo patrón Strategy/Factory/Port ya probado en los 4 laboratorios actuales
+- [ ] Actualizar MASTERDOC con los nuevos diagramas de contexto una vez priorizada la primera línea nueva
+
+**Nota de gobernanza:** esta fase se documenta como intención estratégica confirmada del proyecto, pero permanece **planificada** y no debe iniciarse operativamente hasta el cierre satisfactorio de las Fases 7 y 8, en línea con el principio de "no romper funcionalidades existentes para avanzar".
+
 ## 📊 Seguimiento de Progreso
 ### Dashboard de Estado
 | Fase | Progreso | Estado |
@@ -250,6 +317,7 @@ gantt
 | Fase 6 | ██████████ 100% | ✅ Completado |
 | Fase 7 | ████░░░░░░ 45% | 🟢 En Progreso |
 | Fase 8 | ██░░░░░░░░ 15% | 🟡 En Preparación |
+| Fase 9 | ░░░░░░░░░░ 0% | 🔲 Planificada |
 
 ### ⚠️ Riesgos y Mitigaciones
 | Riesgo | Probabilidad | Impacto | Mitigación |
@@ -258,6 +326,8 @@ gantt
 | Dataset insuficiente para IA | Baja | Alto | Usar PlantVillage (54K imágenes), augmentation agresivo |
 | Despliegue Cloud falla | Media | Medio | Tener backup en Railway/Heroku, scripts automatizados |
 | Retraso en Integración Robótica | Alta | Alto | Simplificar comandos, usar simuladores si hardware falla |
+| Expansión de alcance sin control hacia múltiples dominios EIARC (apicultura, piscicultura, ganadería, invernaderos) antes de cerrar Fases 7-8 | Alta | Alto | Mantener Fase 9 estrictamente planificada hasta cierre de Fases 7-8; priorizar un único MVP por línea nueva; reutilizar el mismo patrón Strategy/Factory/Port ya validado en los 4 laboratorios actuales |
+| Falta de datos etiquetados/rangos fisiológicos confiables por especie para el monitoreo biométrico de ganado | Media | Alto | Investigación previa de rangos fisiológicos normales por especie antes de entrenar modelos; comenzar con reglas de umbral simples y evolucionar a ML/DL cuando existan suficientes datos propios |
 
 ## 🎯 Criterios de Aceptación Global
 ### Para Aprobar el Proyecto ADSO
@@ -273,7 +343,7 @@ gantt
 **Canales**
 - GitHub Issues: Para bugs y features
 - Email: badolgm@gmail.com
-- Instructor SENA: [Nombre y contacto]
+- Instructor SENA: Carlos Stuwe
 
 **Reuniones**
 - Weekly Sync: Cada lunes 9:00 AM (autoevaluación de progreso)
@@ -287,12 +357,13 @@ gantt
 | README.md | Raíz del proyecto | Introducción y setup |
 | API_REFERENCE.md | docs/API_REFERENCE.md | Documentación de APIs |
 | DEPLOYMENT.md | docs/DEPLOYMENT.md | Guía de despliegue |
+| EIARC_VISION.md (pendiente de creación) | docs/EIARC_VISION.md | Visión y alcance ampliado del ecosistema EIARC (Fase 9) |
 
 <div align="center">
 🌱 "El éxito es la suma de pequeños esfuerzos repetidos día tras día."
-— Proyecto SIGC&T Rural
+— Proyecto SIGC&T Rural / EIARC
 
-Última actualización: 23 de Mayo, 2026
-Próxima revisión: 30 de Mayo, 2026
-Versión: 7.0
+Última actualización: 06 de Julio, 2026
+Próxima revisión: A definir según cierre de Fase 7-8
+Versión: 8.1
 </div>

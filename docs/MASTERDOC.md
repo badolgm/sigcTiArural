@@ -1,4 +1,4 @@
-# 📘 MASTERDOC v7.0 - SIGC&T RURAL
+# 📘 MASTERDOC v7.2 - SIGC&T RURAL / EIARC
 ## Documento Maestro de Arquitectura de Software
 
 **Sistema Integrado de Gestión del Conocimiento y Tecnología Rural**
@@ -9,9 +9,9 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Versión** | 7.1 (Continuidad + Automatización) |
+| **Versión** | 7.2 (Continuidad + Automatización + Alineación EIARC) |
 | **Fecha Creación** | 24 de Enero 2026 |
-| **Última Actualización** | 4 de Julio 2026 |
+| **Última Actualización** | 6 de Julio 2026 |
 | **Autor Principal** | Bernardo Adolfo Gómez Montoya |
 | **Institución** | SENA - Tecnología en ADSO |
 | **Estado** | Documento Vivo - Consolidación de Reingeniería |
@@ -40,6 +40,9 @@ Las fuentes de verdad operativa y técnica para continuar son:
 - [HEXAGONAL_REFACTOR_PLAN.md](HEXAGONAL_REFACTOR_PLAN.md)
 - [API_REFERENCE.md](API_REFERENCE.md)
 - [DEPLOYMENT.md](DEPLOYMENT.md)
+- [PLAN_MAESTRO.md](PLAN_MAESTRO.md) — roadmap de fases del proyecto, incluida la Fase 9 (expansión de dominio EIARC, planificada)
+- [GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md](GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md) — guía de estudio ADSO con la bitácora consolidada de la refactorización hexagonal
+- [EIARC_Documento_Maestro_Modelo_Negocio.pdf](EIARC_Documento_Maestro_Modelo_Negocio.pdf) — documento de modelo de negocio y posicionamiento comercial de EIARC (fuera del alcance técnico de este MASTERDOC; se referencia aquí solo para trazabilidad)
 
 ## 📑 TABLA DE CONTENIDOS MAESTRA
 
@@ -129,6 +132,107 @@ El rediseño actual del proyecto se orienta a un **Modular Monolith** con límit
 
 **Estado de la migración:** rama `feature/refactor-modular-contexts` creada. Decisión de estructura tomada (`contexts/{labs,telemetry,ai_advisory,identity}/`), aún no materializada como carpetas — el trabajo actual es la instrumentación `@deprecated` de V2 como paso previo (Strangler Fig), no la creación de `contexts/` todavía.
 
+### 9.2 Vista Ampliada del Diagrama Hexagonal — Ecosistema EIARC (Planificado)
+
+**Estado: planificado, no construido.** Este diagrama complementa (no reemplaza) el diagrama V3 de la Sección 9 anterior. Mientras el diagrama de la Sección 9 refleja los puertos genéricos ya implementados (`SensorReadingRepositoryPort`, `AIServicePort`, `NotificationPort`), esta vista nombra los adaptadores concretos que corresponden a la expansión de dominio EIARC (Fase 9 de `PLAN_MAESTRO.md`). De los adaptadores nombrados abajo, **solo están construidos hoy**: React + Three.js (UI), Endpoints API REST/Django, PostgreSQL 15, y el microservicio FastAPI/TensorFlow (para diagnóstico de plantas). **Los adaptadores MQTT/LoRaWAN, WebSockets de telemetría en tiempo real, y notificaciones FCM son planificados**, no operativos.
+
+```mermaid
+graph LR
+    subgraph Capa_Infraestructura_Driving [Adaptadores Primarios - Entrada]
+        UI[App Móvil / Web React + Three.js]
+        REST[Endpoints API REST / Django]
+        WS[WebSockets - Telemetría Real-time — planificado]
+        Auth[Autenticación JWT]
+    end
+
+    subgraph Puertos_Entrada [Puertos driving]
+        IPort((Input Port))
+    end
+
+    subgraph Dominio_Core [NÚCLEO DEL DOMINIO - Lógica Pura]
+        direction TB
+        subgraph Reglas_Negocio [Entidades y Value Objects]
+            Bio[Lógica Biológica: Rumia/Celo — planificado, ver 9.3]
+            Clin[Reglas Clínicas: Patologías — planificado, ver 9.3]
+        end
+        subgraph Patrones_Diseño [Patrones]
+            Fact[LaboratorioStrategyFactory]
+            Strat[Estrategias: Robótica/Agri/Telecom/Electrónica]
+        end
+        AI_Borde[IA de Borde: Edge AI]
+    end
+
+    subgraph Puertos_Salida [Puertos driven]
+        PPort((Persistence Port))
+        AIP((AI Port))
+        NPort((Notification Port))
+    end
+
+    subgraph Capa_Infraestructura_Driven [Adaptadores Secundarios - Salida]
+        DB[(PostgreSQL 15 - JSONB)]
+        FastAPI[Microservicio IA - FastAPI/TensorFlow]
+        MQTT[Protocolos: MQTT / LoRaWAN — planificado]
+        FCM[Notificaciones: FCM / Alertas — planificado]
+    end
+
+    UI --> REST
+    REST --> IPort
+    WS --> IPort
+    MQTT --> IPort
+
+    IPort --> AI_Borde
+    AI_Borde --> Reglas_Negocio
+    Reglas_Negocio --> Fact
+    Fact --> Strat
+
+    Strat --> PPort
+    Strat --> AIP
+    Strat --> NPort
+
+    PPort --> DB
+    AIP --> FastAPI
+    NPort --> FCM
+
+    style Dominio_Core fill:#d4edda,stroke:#28a745,stroke-width:2px
+    style Puertos_Entrada fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    style Puertos_Salida fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    style Capa_Infraestructura_Driving fill:#d1ecf1,stroke:#0c5460
+    style Capa_Infraestructura_Driven fill:#d1ecf1,stroke:#0c5460
+```
+
+**Validación de la diagramación (criterios de diseño):**
+- **Desacoplamiento:** la lógica biológica y las reglas clínicas residirían en el Dominio, protegidas por puertos — ningún adaptador (MQTT, FCM, PostgreSQL) es conocido directamente por el dominio.
+- **Extensibilidad vía `LaboratorioStrategyFactory`:** el mismo mecanismo que hoy registra las estrategias de Robótica/Agricultura/Telecomunicaciones/Electrónica sería el punto de extensión para las nuevas líneas de producción EIARC (Sección 9.3 y Fase 9 de `PLAN_MAESTRO.md`), sin modificar las estrategias existentes.
+- **Economía circular / hardware agnóstico:** el Input Port está diseñado para que un sensor antiguo (vía adaptador simple) y un sensor LoRaWAN de última generación entreguen datos al dominio de forma indistinguible, siempre que ambos se traduzcan al mismo contrato de puerto.
+
+### 9.3 Modelo de Dominio: Telemetría Veterinaria Multiespecie (Planificado — Fase 9)
+
+**Estado: planificado, no implementado.** Esta subsección documenta las reglas de dominio propuestas para la línea de Ganadería/Avicultura de la Fase 9 (ver también `PLAN_MAESTRO.md`, Sección 9.2), a nivel de Entidades y Value Objects del contexto `labs`. Se registra aquí como especificación técnica de referencia, no como funcionalidad ya construida.
+
+**Bovinos (vacas):**
+- Variable de entrada: acelerometría tridimensional capturada por collar sensórico.
+- Regla de dominio propuesta: una caída del índice de rumia por debajo de un umbral (`R_t < α`, con `α` a calibrar con datos propios) dispara una alerta de morbilidad o mastitis subclínica.
+- Un incremento sostenido de actividad física, analizado por ventanas de tiempo, es la señal propuesta para la predicción del ciclo estral (celo).
+
+**Porcinos y ovinos:**
+- Variable de entrada: monitoreo térmico continuo (arete o dispositivo RFID activo).
+- Regla de dominio propuesta: detección de picos febriles sostenidos como indicador temprano de enfermedad.
+- Función complementaria: geofencing (cercas virtuales) para alertar dispersión del rebaño fuera de una zona segura (riesgo de depredadores o sustracción).
+
+**Caninos (trabajo o compañía):**
+- Variable de entrada: señales de micro-movimiento.
+- Regla de dominio propuesta: filtrado pasa-banda para aislar frecuencias características de rascado repetitivo o sacudidas de cabeza, como indicador predictivo de dermatitis parasitaria u otitis.
+
+**Nota de rigor técnico:** ninguno de los umbrales o parámetros anteriores (`α`, rangos térmicos exactos, frecuencias de filtrado) está calibrado con datos reales todavía. Antes de implementar estas reglas como código de dominio, la Fase 9 exige investigar y documentar rangos fisiológicos normales por especie (ver `PLAN_MAESTRO.md`, tarea 9.2), y comenzar con un único MVP de una sola variable validada end-to-end antes de generalizar.
+
+### 9.4 Checklist de Validaciones Críticas (Estado Actual — no exclusivo de EIARC)
+
+Validaciones pendientes de confirmar sobre la implementación actual, identificadas como puntos de riesgo técnico real (no relacionadas con la expansión EIARC, sino con el estado presente del sistema):
+
+- [ ] **Normalización de IA:** confirmar que tanto el entrenamiento del modelo como el adaptador de inferencia usan exactamente el mismo escalado de imagen (por ejemplo, `(arr / 127.5) - 1.0`). Un desajuste entre entrenamiento e inferencia invalida la precisión reportada del modelo sin que el sistema lo reporte como error.
+- [ ] **Seguridad de `.gitignore`:** confirmar que las carpetas `/data/` y `/backups/` en la raíz del repositorio permanezcan ignoradas (protegidas), mientras que `src/frontend/src/data/lab-data.js` se mantenga correctamente rastreado por Git (ver el incidente de "Pantalla Blanca" documentado en la Sección 28 de este mismo documento, causado por una regla de `.gitignore` no anclada a la raíz).
+- [ ] **Persistencia JSONB:** confirmar que el adaptador de PostgreSQL efectivamente use el tipo `JSONB` (y no `TEXT` o `VARCHAR`) para los metadatos variables de sensores IoT, de forma que el esquema no se corrompa al agregar nuevos campos por sensor.
+
 #### Principio operativo de seguridad
 - La refactorización debe ser incremental, quirúrgica y verificable.
 - No se eliminan líneas de documentación histórica; se conservan bitácoras con fecha, hora, resultado, causa y observaciones.
@@ -174,6 +278,16 @@ A. [Glosario Técnico](#apendice-a)
 B. [Comandos de Referencia Rápida](#apendice-b)
 C. [Enlaces y Referencias](#apendice-c)
 D. [Configuraciones Completas](#apendice-d)
+
+---
+
+> ### 📌 Nota de Continuidad Documental — Estado de Desarrollo del Índice
+>
+> Este índice fue diseñado como tabla de contenidos maestra completa, pero **no todas las secciones listadas han sido desarrolladas en el cuerpo del documento**. Para que ningún enlace del índice quede como una promesa incumplida silenciosa, este es el estado real, verificado línea por línea:
+>
+> - **Desarrolladas:** Sección 1 (Introducción), Sección 2 (Historia y Evolución Cronológica, con bitácora detallada de enero 2026), Sección 9 (Arquitectura Hexagonal, incluida la subsección 9.2-9.4 de expansión EIARC), Sección 28 en adelante (bitácora de integración de laboratorios, enero 2026) y Apéndice C (añadido en esta actualización, ver más abajo).
+> - **Pendientes de desarrollar** (existen como entrada de índice, pero sin contenido propio en el cuerpo del documento): Secciones 3 a 8, Secciones 10 a 27, y los Apéndices A, B y D.
+> - Esta guía no rellena esas secciones con contenido inventado — se deja constancia del vacío para que la continuidad del proyecto lo aborde de forma explícita, priorizando según la relevancia académica/técnica que corresponda (por ejemplo, la Sección 6 "Modelo C4" y la Sección 8 "Decisiones Arquitectónicas" son las de mayor prioridad, por solaparse directamente con el trabajo de refactorización hexagonal ya documentado en la Sección 9).
 
 ---
 
@@ -241,6 +355,10 @@ Este proyecto nace como **Proyecto Productivo** del programa **Tecnología en An
 - Matemáticas Avanzadas (Dr. Binary v2)
 - Ciencia de Datos (Plotly.js, Pyodide)
 - Telecomunicaciones (GNU Radio, SDR)
+
+#### 🧭 Evolución de Alcance: Ecosistema EIARC (Planificado)
+
+El proyecto documenta una evolución conceptual hacia **EIARC (Ecosistema de Inteligencia Artificial y Robótica para el Campo)**: la extensión del mismo enfoque técnico (sensores, IA, arquitectura hexagonal) hacia telemetría veterinaria multiespecie (bovinos, porcinos, ovinos, caninos), apicultura, piscicultura y una plataforma educativa ampliada. Esta expansión está formalizada como **Fase 9 (planificada, no iniciada)** en `PLAN_MAESTRO.md`, y su fundamentación de modelo de negocio se documenta por separado en `EIARC_Documento_Maestro_Modelo_Negocio.pdf`. El detalle de dominio técnico correspondiente (reglas biológicas, adaptadores adicionales) se documenta en la Sección 9.2 y 9.3 de este MASTERDOC, también marcado como planificado.
 
 #### ❌ Fuera del Alcance
 
@@ -1253,3 +1371,61 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
 
 **3. Infraestructura**
 *   **Resolución de Conflictos de Puerto:** Se liberó el puerto 5173 (bloqueado por procesos Node.js huérfanos) para permitir el arranque correcto de Docker.
+---
+
+<a name="apendice-c"></a>
+## Apéndice C: Enlaces y Referencias
+
+**Estado: desarrollado (añadido en la actualización v7.2).** Bibliografía técnica y de mercado que respalda las decisiones de arquitectura hexagonal y la expansión de dominio EIARC documentadas en la Sección 9.
+
+### C.1 Documentos Principales del Proyecto (Autoría y Repositorio)
+
+- Gómez Montoya, B. A. (2026). *EIARC: Ecosistema de Inteligencia Artificial y Robótica para el Campo – Documento Maestro de Modelo de Negocio y Dirección Técnica*. SENA - Regional Magdalena.
+- Gómez Montoya, B. A. (2026). *SIGC&T RURAL: Sistema Integrado de Gestión del Conocimiento y Tecnología Rural* (Documento de Sustentación v6.0). SENA.
+- Gómez Montoya, B. A. (2026). *sigcTiArural: Sistema Integral de Gestión del Conocimiento y la Tecnología para el Fortalecimiento de la Investigación en Entornos Rurales*. Repositorio de GitHub. https://github.com/badolgm/sigcTiArural.git
+
+### C.2 Fundamentos de Arquitectura de Software y Refactorización
+
+- AWS Prescriptive Guidance. (2026). *Hexagonal architecture pattern*. Amazon Web Services. https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/hexagonal-architecture.html
+- Benito, T., & Barrientos, A. (2024). An Intelligent Human–Machine Interface Architecture for Long-Term Remote Robot Handling in Fusion Reactor Environments. *Applied Sciences, 14*(11), 4814. https://doi.org/10.3390/app14114814
+- Cockburn, A., & Garrido de Paz, J. M. (2024). *Hexagonal Architecture Explained*.
+- Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1994). *Patrones de diseño: Elementos de software orientado a objetos reutilizable*. Addison-Wesley.
+- GeeksforGeeks. (2026, 14 de mayo). *Hexagonal Architecture - System Design*. https://www.geeksforgeeks.org/system-design/hexagonal-architecture-system-design/
+- Martin, R. C. (2017). *Clean Architecture: A Craftsman's Guide to Software Structure and Design*. Prentice Hall.
+- Pressman, R. S. (2010). *Ingeniería del software: Un enfoque práctico* (9.ª ed.). McGraw-Hill.
+- Wikipedia contributors. (2026, 11 de mayo). Hexagonal architecture (software). En *Wikipedia, The Free Encyclopedia*. https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)
+- Woltmann, S. (2023, 18 de enero). *Hexagonal Architecture – What Is It? Why Use It?* HappyCoders.eu. https://www.happycoders.eu/software-craftsmanship/hexagonal-architecture/
+
+### C.3 Telemetría IoT y Ganadería de Precisión (PLF) — soporte bibliográfico de la Sección 9.3 (planificado)
+
+- Asset Track Pro. (2026). *LoRaWAN for Livestock Monitoring and Mobile Systems*. https://assettrackpro.com/product/lorawan-for-livestock-monitoring-and-mobile-systems/
+- Ding et al. (s.f.). Advancing precision livestock farming: integrating artificial intelligence and emerging technologies for sustainable livestock management. *PMC*. https://pmc.ncbi.nlm.nih.gov/articles/PMC13057718/
+- LoRa Alliance. (2020, noviembre). *The farming of tomorrow is already here: How LoRaWAN® technology supports smart agriculture & precise animal production*. https://lora-alliance.org/wp-content/uploads/2020/12/THE-FARMING-OF-TOMORROW-IS-ALREADY-HERE-HOW-LoRaWAN%C2%AE-TECHNOLOGY-SUPPORTS-SMART-AGRICULTURE-PRECISE-ANIMAL-PRODUCTION.pdf
+- Mindray Animal Medical. (2026). *TMS30 Vet Veterinary Telemetry System*. https://www.mindrayanimal.com/en/product/TMS30_Vet
+- Mohapatra, H. (2025). A LoRa-IoT Framework with Machine Learning for Remote Livestock Monitoring in Smart Agriculture. *arXiv*. https://arxiv.org/abs/2510.07322v1
+- Nowak, P., Costa, H., & Horvath, I. (2025). Smart Livestock Monitoring Using IoT and Biosensor Technologies. *Indo-American Journal of Agricultural and Veterinary Sciences*. https://iajavs.org/index.php/iajavs/article/download/166/154
+- Proulx, R., & Nowatzki, J. (2026). *Basics of LoRa Technology for Crop and Livestock Management*. NDSU Agriculture. https://www.ndsu.edu/agriculture/extension/publications/basics-lora-technology-crop-and-livestock-management
+- Rutten, C. J., Velthuis, A. G. J., Steeneveld, W., & Hogeveen, H. (2013). Invited review: Sensors to support health management on dairy farms. *Journal of Dairy Science, 96*(4), 1928-1952.
+- Schirmann, K., Chapinal, N., Weary, D. M., Heuwieser, W., & von Keyserlingk, M. A. G. (2016). Rumination and its relationship to feeding and lying behavior in Holstein dairy cows. *Journal of Dairy Science, 95*(6), 3212-3217.
+- Semtech Corporation. (2019). *Monitoring Cattle in Real Time: Semtech's LoRa Enables Smart Agriculture*. https://www.semtech.com/uploads/technology/LoRa/appbriefs/Semtech-UseCase-SmartAgriculture-Chipsafer_101019(WEB).pdf
+
+### C.4 Inteligencia Artificial y Datos Científicos
+
+- Bhadra, M. (2024). *Agriculture and farming dataset* [Conjunto de datos]. Kaggle. https://www.kaggle.com/datasets/bhadramohit/agriculture-and-farming-dataset
+- Hughes, D. P., & Salathé, M. (2015). An open access repository of images on plant health to enable the development of mobile disease diagnostics. *arXiv*.
+- Sandler, M., et al. (2018). MobileNetV2: Inverted Residuals and Linear Bottlenecks. *CVPR 2018*.
+- Suvroo. (2024). *AI for sustainable agriculture dataset* [Conjunto de datos]. Kaggle. https://www.kaggle.com/datasets/suvroo/ai-for-sustainable-agriculture-dataset
+
+### C.5 Análisis de Mercado (referencia para el modelo de negocio en documento separado)
+
+- Fortune Business Insights. (2026). *Veterinary Telemetry Systems Market Size, Share, Forecast, 2034*. https://www.fortunebusinessinsights.com/industry-reports/veterinary-telemetry-systems-market-100689
+- ReAnIn. (2026). *Veterinary Telemetry Systems Market Size & Share Analysis - Growth Trends And Forecast (2025 - 2032)*. https://www.reanin.com/reports/veterinary-telemetry-systems-market
+- TechSci Research. (2026). *Veterinary Telemetry Systems Market - Global Industry Size, Share, Trends, Opportunity, and Forecast, 2031F*. https://www.techsciresearch.com/report/veterinary-telemetry-systems-market/17612.html
+
+### C.6 Normatividad y Entorno Nacional (Colombia)
+
+- Departamento Administrativo Nacional de Estadística (DANE). (s.f.). *Estadísticas por tema*. https://www.dane.gov.co/index.php/estadisticas-por-tema
+- Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC). (2025). *Sector TIC analiza retos y desafíos para la conectividad en las regiones en Conecta Colombia 2025*. https://mintic.gov.co/portal/inicio/Sala-de-prensa/Noticias/401713:Sector-TIC-analiza-retos-y-desafios-para-la-conectividad-en-las-regiones-en-Conecta-Colombia-2025
+- Ministerio de Agricultura y Desarrollo Rural (Agronet). (s.f.). *Agricultura de precisión: más eficiente y amigable con el campo*. https://agronet.gov.co/noticias/agricultura-de-precision-mas-eficiente-y-amigable-con-el-campo
+
+**Nota de continuidad:** los Apéndices A (Glosario Técnico), B (Comandos de Referencia Rápida) y D (Configuraciones Completas) permanecen pendientes de desarrollo (ver Nota de Continuidad Documental al inicio del documento).
