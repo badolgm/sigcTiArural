@@ -1,0 +1,103 @@
+%% Telemetry Context Target Architecture
+%% Fecha: 2026-07-12
+%% Versión: v1.0.0
+%% Propósito:
+%% Representar la arquitectura objetivo del primer Vertical Slice oficial
+%% de Telemetry Context, mostrando V1/V2/V3, el contrato oficial y los
+%% consumidores frontend principales.
+
+flowchart LR
+    subgraph LEGACY["Estado actual"]
+        V1["V1 /api/telemetry/history/
+ORM directo
+mock implícito"]
+        V2["V2 /api/v2/telemetry/history/
+legacy services
+api.logic"]
+        CLOUD["cloud.js
+OpenMeteo + health"]
+        PANEL["TelemetryPanel.jsx
+simulación local"]
+        ROBOTAPI["useRoboticsApi.js
+/api/robot-telemetry/"]
+    end
+
+    subgraph TARGET["Vertical Slice oficial"]
+        ROUTE["GET /api/v3/telemetry/history/
+endpoint oficial inicial"]
+        VIEW["TelemetryHistoryV3View
+orquestación del slice"]
+        DEP["get_sensor_reading_repository()"]
+        REPO["DjangoSensorReadingRepository"]
+        MAP["SensorReadingMapper"]
+        DOMAIN["SensorReading
+sensor_id
+temperature
+humidity
+timestamp"]
+        CONTRACT["Contrato oficial
+context
+contract_version
+source_mode
+lab_type
+count
+items[]"]
+    end
+
+    subgraph FRONT["Consumidores objetivo"]
+        DASH["Dashboard.jsx"]
+        PANEL2["TelemetryPanel.jsx
+consumidor oficial"]
+        CHART["Serie histórica / gráfico"]
+        ROBOT3D["Telemetry3DScene.jsx
+fuera del slice histórico"]
+    end
+
+    subgraph STRATEGY["Estrategia V1 -> V2 -> V3"]
+        S1["V1 congelado"]
+        S2["V2 compatibilidad temporal"]
+        S3["V3 promovido a oficial"]
+        S4["Alias /api/telemetry/history/
+solo después de consolidar V3"]
+    end
+
+    %% Estado actual
+    CLOUD -. compite .-> PANEL
+    ROBOTAPI -. contrato distinto .-> ROBOT3D
+
+    %% Slice objetivo
+    ROUTE --> VIEW
+    VIEW --> DEP
+    DEP --> REPO
+    REPO --> MAP
+    MAP --> DOMAIN
+    VIEW --> CONTRACT
+
+    %% Consumidores
+    CONTRACT --> DASH
+    DASH --> PANEL2
+    DASH --> CHART
+    ROBOTAPI -. especializado .-> ROBOT3D
+
+    %% Estrategia de migración
+    V1 --> S1
+    V2 --> S2
+    ROUTE --> S3
+    S3 --> S4
+
+    %% Relaciones clave
+    PANEL -. reemplazado por .-> PANEL2
+    CLOUD -. sale del camino oficial .-> CONTRACT
+    V1 -. deprecated .-> ROUTE
+    V2 -. deprecated .-> ROUTE
+
+    %% Estilos
+    classDef legacy fill:#f8d7da,color:#7f1d1d,stroke:#dc2626,stroke-width:2px;
+    classDef target fill:#c8e6c9,color:#1a5e20,stroke:#2e7d32,stroke-width:2px;
+    classDef front fill:#e3f2fd,color:#0d47a1,stroke:#1976d2,stroke-width:2px;
+    classDef strategy fill:#fff3e0,color:#e65100,stroke:#ef6c00,stroke-width:2px;
+
+    class V1,V2,CLOUD,PANEL,ROBOTAPI legacy;
+    class ROUTE,VIEW,DEP,REPO,MAP,DOMAIN,CONTRACT target;
+    class DASH,PANEL2,CHART,ROBOT3D front;
+    class S1,S2,S3,S4 strategy;
