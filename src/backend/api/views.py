@@ -93,18 +93,42 @@ if HEXAGONAL_V3_AVAILABLE:
             readings = repository.get_all(limit=24)
             
             if readings:
-                data = []
-                for r in readings:
-                    data.append({
-                        "time": r.timestamp.strftime("%H:%M"),
-                        "temp": r.temperature.value,
+                items = []
+                for r in readings[::-1]:
+                    items.append({
+                        "reading_id": r.id,
+                        "sensor_id": str(r.sensor_id),
+                        "timestamp": r.timestamp.isoformat(),
+                        "temperature": r.temperature.value,
                         "humidity": r.humidity.value,
-                        "sensor": f"{r.sensor_id} ({tipo_lab} V3)"
                     })
-                return Response(data[::-1])
+                return Response({
+                    "context": "telemetry",
+                    "contract_version": "v1",
+                    "source_mode": "live",
+                    "lab_type": tipo_lab,
+                    "count": len(items),
+                    "items": items,
+                })
                 
             data_simulada = service.obtener_simulacion_historica()
-            return Response(data_simulada)
+            items = []
+            for item in data_simulada:
+                items.append({
+                    "reading_id": None,
+                    "sensor_id": item.get("sensor", "Simulado"),
+                    "timestamp": item.get("timestamp") or item.get("time", ""),
+                    "temperature": item.get("temp"),
+                    "humidity": item.get("humidity"),
+                })
+            return Response({
+                "context": "telemetry",
+                "contract_version": "v1",
+                "source_mode": "simulated",
+                "lab_type": tipo_lab,
+                "count": len(items),
+                "items": items,
+            })
 
     class AICropAdviceV3View(APIView):
         permission_classes = [AllowAny]

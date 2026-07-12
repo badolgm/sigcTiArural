@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const NEON = {
     blue: '#00FFFF',
@@ -36,29 +36,18 @@ const DigitalDisplay = ({ label, value, unit, color, icon }) => (
     </div>
 );
 
-const TelemetryPanel = () => {
-    // Simulamos datos vivos que llegarían de los sensores/robots
-    const [data, setData] = useState({ 
-        temp: 24.5, 
-        hum: 60, 
-        soil: 7.2, 
-        light: 850,
-        co2: 420 
-    });
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            // Pequeñas variaciones para simular lectura real
-            setData(prev => ({
-                temp: (24 + Math.random()).toFixed(1),
-                hum: (60 + Math.random() * 2 - 1).toFixed(0),
-                soil: (7.0 + Math.random() * 0.2).toFixed(2),
-                light: (850 + Math.random() * 20).toFixed(0),
-                co2: (420 + Math.random() * 10).toFixed(0)
-            }));
-        }, 1500);
-        return () => clearInterval(interval);
-    }, []);
+const TelemetryPanel = ({ items = [], sourceMode = 'unknown', loading = false, error = null }) => {
+    const latestReading = items.length ? items[items.length - 1] : null;
+    const timestampLabel = latestReading?.timestamp
+        ? (String(latestReading.timestamp).includes('T')
+            ? String(latestReading.timestamp).slice(11, 16)
+            : String(latestReading.timestamp))
+        : '--:--';
+    const sourceLabel = sourceMode === 'live'
+        ? 'LIVE'
+        : sourceMode === 'simulated'
+            ? 'SIM'
+            : 'N/D';
 
     return (
         <div className="w-full mb-8 animate-fade-in">
@@ -73,12 +62,47 @@ const TelemetryPanel = () => {
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <DigitalDisplay label="Temp. Aire" value={data.temp} unit="°C" color={NEON.blue} icon="🌡️" />
-                <DigitalDisplay label="Humedad" value={data.hum} unit="%" color={NEON.green} icon="💧" />
-                <DigitalDisplay label="pH Suelo" value={data.soil} unit="pH" color={NEON.yellow} icon="🌱" />
-                <DigitalDisplay label="Radiación" value={data.light} unit="W/m²" color={NEON.orange} icon="☀️" />
-                <DigitalDisplay label="Calidad Aire" value={data.co2} unit="PPM" color={NEON.red} icon="☁️" />
+                <DigitalDisplay
+                    label="Temp. Aire"
+                    value={loading ? '...' : latestReading?.temperature ?? '--'}
+                    unit="°C"
+                    color={NEON.blue}
+                    icon="🌡️"
+                />
+                <DigitalDisplay
+                    label="Humedad"
+                    value={loading ? '...' : latestReading?.humidity ?? '--'}
+                    unit="%"
+                    color={NEON.green}
+                    icon="💧"
+                />
+                <DigitalDisplay
+                    label="Sensor"
+                    value={loading ? '...' : latestReading?.sensor_id ?? '--'}
+                    unit=""
+                    color={NEON.yellow}
+                    icon="🛰️"
+                />
+                <DigitalDisplay
+                    label="Fuente"
+                    value={loading ? '...' : sourceLabel}
+                    unit=""
+                    color={NEON.orange}
+                    icon="📡"
+                />
+                <DigitalDisplay
+                    label="Lectura"
+                    value={loading ? '...' : error ? 'ERR' : timestampLabel}
+                    unit=""
+                    color={NEON.red}
+                    icon={error ? '⚠️' : '⏱️'}
+                />
             </div>
+            {error && (
+                <div className="mt-4 text-sm font-semibold text-[#FF3131]">
+                    Error de telemetria oficial: {error}
+                </div>
+            )}
         </div>
     );
 };
