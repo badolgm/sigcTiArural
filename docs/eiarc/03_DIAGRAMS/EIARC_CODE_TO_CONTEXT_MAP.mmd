@@ -1,0 +1,116 @@
+%% EIARC Code to Context Map
+%% Fecha: 2026-07-12
+%% Versión: v1.0.0
+%% Propósito:
+%% Mapear el código actual del repositorio hacia los Contextos EIARC,
+%% mostrando estado relativo, legacy y orden recomendado de migración.
+
+flowchart LR
+    subgraph CODE["Código actual"]
+        BAPI[src/backend/api/**]
+        BCORE[src/backend/core/**]
+        BINFRA[src/backend/infrastructure/**]
+        AIM[src/ai_models/**]
+        FAPP[src/frontend/src/App.jsx]
+        FPAGES[src/frontend/src/pages/**]
+        FLABS[src/frontend/src/labs/**]
+        FCOMP[src/frontend/src/components/**]
+        FAUTH[src/frontend/src/auth/**]
+        FSTORE[src/frontend/src/stores/**]
+        EMB[src/embedded/**]
+        SCR[scripts/newton_bridge.py + physics_sim.py]
+        DEP[docker-compose.yml + Dockerfiles]
+        DOCS[docs/architect_master + project_knowledge_base + eiarc]
+    end
+
+    subgraph CTX["Contextos EIARC"]
+        TELEMETRY[Telemetry Context]
+        AI[AI Context]
+        LABS[Labs Context]
+        KNOWLEDGE[Knowledge Context]
+        IDENTITY[Identity Context]
+        IOT[IoT Context]
+        DEPLOYMENT[Deployment Context]
+    end
+
+    %% Mapeo principal
+    BCORE --> TELEMETRY
+    BINFRA --> TELEMETRY
+    BAPI --> TELEMETRY
+
+    AIM --> AI
+    BINFRA --> AI
+    FPAGES --> AI
+    FCOMP --> AI
+
+    FLABS --> LABS
+    FSTORE --> LABS
+    BCORE --> LABS
+    BAPI --> LABS
+
+    DOCS --> KNOWLEDGE
+    FPAGES --> KNOWLEDGE
+
+    FAUTH --> IDENTITY
+    FCOMP --> IDENTITY
+    BAPI --> IDENTITY
+
+    EMB --> IOT
+    SCR --> IOT
+    BAPI --> IOT
+    FLABS --> IOT
+
+    DEP --> DEPLOYMENT
+    AIM --> DEPLOYMENT
+    BAPI --> DEPLOYMENT
+
+    %% Estados
+    T1[Telemetry<br/>más alineado<br/>prioridad 1]
+    A1[AI<br/>crítico pero desalineado<br/>prioridad 2]
+    L1[Labs<br/>funcional y heterogéneo<br/>prioridad 3]
+    K1[Knowledge<br/>fuerte documentalmente<br/>transversal]
+    I1[Identity<br/>débil y mockeado<br/>prioridad 4]
+    O1[IoT<br/>parcial y placeholder<br/>prioridad 5]
+    D1[Deployment<br/>existente pero híbrido<br/>prioridad 6]
+
+    TELEMETRY --> T1
+    AI --> A1
+    LABS --> L1
+    KNOWLEDGE --> K1
+    IDENTITY --> I1
+    IOT --> O1
+    DEPLOYMENT --> D1
+
+    %% Orden de migración
+    TELEMETRY -. 1 .-> AI
+    AI -. 2 .-> LABS
+    LABS -. 3 .-> IDENTITY
+    IDENTITY -. 4 .-> IOT
+    IOT -. 5 .-> DEPLOYMENT
+    KNOWLEDGE -. gobierna .-> TELEMETRY
+    KNOWLEDGE -. gobierna .-> AI
+    KNOWLEDGE -. gobierna .-> LABS
+    KNOWLEDGE -. gobierna .-> DEPLOYMENT
+
+    %% Leyenda visual
+    LEG1[Verde: más alineado]
+    LEG2[Naranja: parcial]
+    LEG3[Rojo: legacy o alto drift]
+    LEG4[Azul: documentación y gobierno]
+
+    %% Estilos
+    classDef code fill:#1f2937,color:#ffffff,stroke:#60a5fa,stroke-width:2px;
+    classDef ctx fill:#111827,color:#ffffff,stroke:#a78bfa,stroke-width:2px;
+    classDef aligned fill:#c8e6c9,color:#1a5e20,stroke:#2e7d32,stroke-width:2px;
+    classDef partial fill:#fff3e0,color:#e65100,stroke:#ef6c00,stroke-width:2px;
+    classDef risk fill:#f8d7da,color:#7f1d1d,stroke:#dc2626,stroke-width:2px;
+    classDef knowledge fill:#bbdefb,color:#0d47a1,stroke:#1976d2,stroke-width:2px;
+    classDef legend fill:#0f172a,color:#e5e7eb,stroke:#475569,stroke-width:1px,stroke-dasharray: 5 5;
+
+    class BAPI,BCORE,BINFRA,AIM,FAPP,FPAGES,FLABS,FCOMP,FAUTH,FSTORE,EMB,SCR,DEP,DOCS code;
+    class TELEMETRY,AI,LABS,KNOWLEDGE,IDENTITY,IOT,DEPLOYMENT ctx;
+    class T1 aligned;
+    class A1,L1,D1 partial;
+    class I1,O1 risk;
+    class K1 knowledge;
+    class LEG1,LEG2,LEG3,LEG4 legend;
