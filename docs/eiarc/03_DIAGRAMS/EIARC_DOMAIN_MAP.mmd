@@ -1,0 +1,112 @@
+%% EIARC Domain Map
+%% Propósito:
+%% Mostrar cómo EIARC organiza una capa de contextos arquitectónicos
+%% para servir múltiples dominios productivos y educativos.
+%% Lectura:
+%% - Arriba: evolución desde SIGCT-Rural hacia EIARC.
+%% - Centro: contextos canónicos reutilizables.
+%% - Abajo: dominios verticales que consumen esos contextos.
+
+flowchart TB
+    %% Evolución fundacional
+    SIG[SIGCT-Rural<br/>Caso inicial de aplicación]
+    EIARC[EIARC<br/>Canon arquitectónico reusable]
+    SIG --> EIARC
+
+    %% Contextos horizontales reutilizables
+    subgraph CONTEXTS["Contextos EIARC"]
+        direction LR
+        TELEMETRY[Telemetry]
+        AI[AI]
+        LABS[Labs]
+        KNOWLEDGE[Knowledge]
+        IDENTITY[Identity]
+        IOT[IoT]
+        DEPLOYMENT[Deployment]
+    end
+
+    EIARC --> TELEMETRY
+    EIARC --> AI
+    EIARC --> LABS
+    EIARC --> KNOWLEDGE
+    EIARC --> IDENTITY
+    EIARC --> IOT
+    EIARC --> DEPLOYMENT
+
+    %% Dominios verticales a los que EIARC puede servir
+    subgraph DOMAINS["Dominios productivos y operacionales"]
+        direction LR
+        AGRI[Agricultura]
+        LIVESTOCK[Ganadería]
+        FISH[Piscicultura]
+        BEE[Apicultura]
+        PIG[Porcicultura]
+        POULTRY[Avicultura]
+        GREENHOUSE[Invernaderos]
+    end
+
+    %% Los dominios consumen el mismo lenguaje arquitectónico, no implementaciones aisladas
+    TELEMETRY --> AGRI
+    AI --> AGRI
+    IOT --> AGRI
+    LABS --> AGRI
+
+    TELEMETRY --> LIVESTOCK
+    AI --> LIVESTOCK
+    IOT --> LIVESTOCK
+
+    TELEMETRY --> FISH
+    AI --> FISH
+    IOT --> FISH
+
+    TELEMETRY --> BEE
+    AI --> BEE
+    IOT --> BEE
+
+    TELEMETRY --> PIG
+    AI --> PIG
+    IDENTITY --> PIG
+
+    TELEMETRY --> POULTRY
+    AI --> POULTRY
+    IDENTITY --> POULTRY
+
+    TELEMETRY --> GREENHOUSE
+    AI --> GREENHOUSE
+    IOT --> GREENHOUSE
+    DEPLOYMENT --> GREENHOUSE
+
+    %% Contextos transversales que gobiernan a todos los dominios
+    KNOWLEDGE --> AGRI
+    KNOWLEDGE --> LIVESTOCK
+    KNOWLEDGE --> FISH
+    KNOWLEDGE --> BEE
+    KNOWLEDGE --> PIG
+    KNOWLEDGE --> POULTRY
+    KNOWLEDGE --> GREENHOUSE
+
+    DEPLOYMENT --> AGRI
+    DEPLOYMENT --> LIVESTOCK
+    DEPLOYMENT --> FISH
+    DEPLOYMENT --> BEE
+    DEPLOYMENT --> PIG
+    DEPLOYMENT --> POULTRY
+
+    IDENTITY --> AGRI
+    IDENTITY --> LIVESTOCK
+    IDENTITY --> FISH
+    IDENTITY --> BEE
+    LABS --> GREENHOUSE
+    LABS --> LIVESTOCK
+
+    %% Estilos para distinguir capas
+    classDef origin fill:#1f2937,color:#ffffff,stroke:#60a5fa,stroke-width:2px;
+    classDef canonical fill:#0f766e,color:#ffffff,stroke:#2dd4bf,stroke-width:2px;
+    classDef domain fill:#78350f,color:#ffffff,stroke:#fbbf24,stroke-width:2px;
+    classDef governance fill:#581c87,color:#ffffff,stroke:#c084fc,stroke-width:2px;
+
+    class SIG origin;
+    class EIARC governance;
+    class TELEMETRY,AI,LABS,IDENTITY,IOT,DEPLOYMENT canonical;
+    class KNOWLEDGE governance;
+    class AGRI,LIVESTOCK,FISH,BEE,PIG,POULTRY,GREENHOUSE domain;

@@ -1,0 +1,95 @@
+%% EIARC Architecture Overview
+%% Fecha: 2026-07-12
+%% Versión: v1.0.0
+%% Propósito:
+%% Representar la evolución desde SIGCT-Rural hacia EIARC y mostrar
+%% la estructura documental y arquitectónica que conecta foundation,
+%% architecture, diagrams, contexts y dominios verticales.
+
+flowchart TB
+    %% Origen del marco EIARC
+    SIGCTRURAL[SIGCT-Rural<br/>Plataforma híbrida de origen]
+    EVOLUTION[Transición arquitectónica<br/>y gobierno semántico]
+    EIARC[EIARC<br/>Marco arquitectónico fundacional]
+
+    SIGCTRURAL --> EVOLUTION --> EIARC
+
+    %% Capas documentales de EIARC
+    subgraph DOCS["Estructura EIARC"]
+        direction LR
+        FOUNDATION[Foundation]
+        ARCHITECTURE[Architecture]
+        DIAGRAMS[Diagrams]
+    end
+
+    EIARC --> FOUNDATION
+    EIARC --> ARCHITECTURE
+    EIARC --> DIAGRAMS
+
+    %% Contextos canónicos definidos por la arquitectura
+    subgraph CONTEXTS["Contexts"]
+        direction LR
+        TELEMETRY[Telemetry]
+        AI[AI]
+        LABS[Labs]
+        KNOWLEDGE[Knowledge]
+        IDENTITY[Identity]
+        IOT[IoT]
+        DEPLOYMENT[Deployment]
+    end
+
+    FOUNDATION --> CONTEXTS
+    ARCHITECTURE --> CONTEXTS
+    DIAGRAMS --> CONTEXTS
+
+    %% Dominios que consumen el canon EIARC
+    subgraph DOMAINS["Dominios"]
+        direction LR
+        AGRICULTURA[Agricultura]
+        GANADERIA[Ganadería]
+        PISCICULTURA[Piscicultura]
+        APICULTURA[Apicultura]
+        PORCICULTURA[Porcicultura]
+        AVICULTURA[Avicultura]
+        INVERNADEROS[Invernaderos]
+    end
+
+    CONTEXTS --> DOMAINS
+
+    %% Relaciones explícitas entre contexts y dominios
+    TELEMETRY --> AGRICULTURA
+    TELEMETRY --> GANADERIA
+    TELEMETRY --> PISCICULTURA
+    TELEMETRY --> APICULTURA
+    TELEMETRY --> PORCICULTURA
+    TELEMETRY --> AVICULTURA
+    TELEMETRY --> INVERNADEROS
+
+    AI --> AGRICULTURA
+    AI --> GANADERIA
+    AI --> PISCICULTURA
+    AI --> APICULTURA
+    AI --> PORCICULTURA
+    AI --> AVICULTURA
+    AI --> INVERNADEROS
+
+    KNOWLEDGE --> AGRICULTURA
+    KNOWLEDGE --> GANADERIA
+    KNOWLEDGE --> PISCICULTURA
+    KNOWLEDGE --> APICULTURA
+    KNOWLEDGE --> PORCICULTURA
+    KNOWLEDGE --> AVICULTURA
+    KNOWLEDGE --> INVERNADEROS
+
+    %% Estilos para hacer legible la jerarquía
+    classDef origin fill:#1f2937,color:#ffffff,stroke:#60a5fa,stroke-width:2px;
+    classDef transition fill:#3f3f46,color:#ffffff,stroke:#f59e0b,stroke-width:2px;
+    classDef structure fill:#0f766e,color:#ffffff,stroke:#2dd4bf,stroke-width:2px;
+    classDef context fill:#581c87,color:#ffffff,stroke:#c084fc,stroke-width:2px;
+    classDef domain fill:#78350f,color:#ffffff,stroke:#fbbf24,stroke-width:2px;
+
+    class SIGCTRURAL origin;
+    class EVOLUTION,EIARC transition;
+    class FOUNDATION,ARCHITECTURE,DIAGRAMS structure;
+    class TELEMETRY,AI,LABS,KNOWLEDGE,IDENTITY,IOT,DEPLOYMENT context;
+    class AGRICULTURA,GANADERIA,PISCICULTURA,APICULTURA,PORCICULTURA,AVICULTURA,INVERNADEROS domain;

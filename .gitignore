@@ -1,4 +1,3 @@
-
 # ==========================
 # Entornos Virtuales de Python
 # ==========================
@@ -140,9 +139,18 @@ READMEV4.md
 # ==========================
 AUDITORIA_COMPLETA_*.md
 HANDOFF_TRAE_sigcTiArural.md
-docs/
-docs/
+
+# Ignorar docs por defecto
+docs/*
 
 # Architect Master Knowledge Base
 !docs/architect_master/
 !docs/architect_master/**
+
+# Project Knowledge Base
+!docs/project_knowledge_base/
+!docs/project_knowledge_base/**
+
+# EIARC Architecture
+!docs/eiarc/
+!docs/eiarc/**

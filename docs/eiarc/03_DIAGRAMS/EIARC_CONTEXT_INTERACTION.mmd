@@ -1,0 +1,63 @@
+%% EIARC Context Interaction
+%% Fecha: 2026-07-12
+%% Versión: v1.0.0
+%% Propósito:
+%% Representar la interacción entre los contextos oficiales de EIARC,
+%% mostrando dependencias, flujos de información y relaciones de gobierno.
+
+flowchart LR
+    %% Contextos oficiales
+    TELEMETRY[Telemetry Context]
+    AI[AI Context]
+    LABS[Labs Context]
+    KNOWLEDGE[Knowledge Context]
+    IDENTITY[Identity Context]
+    IOT[IoT Context]
+    DEPLOYMENT[Deployment Context]
+
+    %% Flujos principales de información
+    IOT -->|captura física, señales y eventos| TELEMETRY
+    TELEMETRY -->|lecturas y observación operativa| AI
+    AI -->|predicciones y significado de negocio| LABS
+    IDENTITY -->|contexto de actor y acceso| LABS
+    DEPLOYMENT -->|topología y entorno| IOT
+    DEPLOYMENT -->|condiciones de ejecución| AI
+    DEPLOYMENT -->|topología operativa| TELEMETRY
+
+    %% Gobierno y trazabilidad
+    KNOWLEDGE -->|gobierna taxonomías, contratos y verdad| AI
+    KNOWLEDGE -->|gobierna principios y artefactos| DEPLOYMENT
+    KNOWLEDGE -->|gobierna trazabilidad| TELEMETRY
+    KNOWLEDGE -->|gobierna coherencia documental| LABS
+    KNOWLEDGE -->|gobierna políticas y significado| IDENTITY
+    KNOWLEDGE -->|gobierna nombrado y consistencia| IOT
+
+    %% Dependencias funcionales adicionales
+    AI -->|retroalimenta criterios de decisión| TELEMETRY
+    TELEMETRY -->|evidencia operativa| KNOWLEDGE
+    LABS -->|evidencia de experiencia y uso| KNOWLEDGE
+    IDENTITY -->|rol y perfil de consumo| AI
+    IDENTITY -->|rol y perfil de consumo| TELEMETRY
+
+    %% Relaciones de gobierno explícitas
+    GOV[Knowledge Context = contexto de gobierno transversal]
+    GOV -. gobierna .-> KNOWLEDGE
+    GOV -. alinea .-> TELEMETRY
+    GOV -. alinea .-> AI
+    GOV -. alinea .-> LABS
+    GOV -. alinea .-> IDENTITY
+    GOV -. alinea .-> IOT
+    GOV -. alinea .-> DEPLOYMENT
+
+    %% Estilos visuales
+    classDef operational fill:#0f766e,color:#ffffff,stroke:#2dd4bf,stroke-width:2px;
+    classDef experience fill:#78350f,color:#ffffff,stroke:#fbbf24,stroke-width:2px;
+    classDef governance fill:#581c87,color:#ffffff,stroke:#c084fc,stroke-width:2px;
+    classDef deployment fill:#1f2937,color:#ffffff,stroke:#60a5fa,stroke-width:2px;
+    classDef note fill:#3f3f46,color:#ffffff,stroke:#f59e0b,stroke-width:2px,stroke-dasharray: 5 5;
+
+    class TELEMETRY,AI,IOT operational;
+    class LABS,IDENTITY experience;
+    class KNOWLEDGE governance;
+    class DEPLOYMENT deployment;
+    class GOV note;

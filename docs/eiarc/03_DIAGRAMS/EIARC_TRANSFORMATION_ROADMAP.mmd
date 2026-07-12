@@ -1,0 +1,96 @@
+%% EIARC Transformation Roadmap
+%% Fecha: 2026-07-12
+%% Versión: v1.0.0
+%% Propósito:
+%% Representar el orden recomendado de transformación desde SIGCT-Rural
+%% hacia EIARC, mostrando fases, dependencias y prioridad relativa.
+
+flowchart TB
+    SIGCT[SIGCT-Rural actual<br/>monorepo híbrido en transición]
+    EIARC[EIARC operativo<br/>arquitectura gobernada]
+
+    subgraph P1["Fase 1 - Consolidación del conocimiento"]
+        F1A[Knowledge base canónica]
+        F1B[Fuentes AS-IS y TO-BE alineadas]
+        F1C[Trazabilidad documental]
+    end
+
+    subgraph P2["Fase 2 - Consolidación de contextos"]
+        F2A[Context map oficial]
+        F2B[Mapeo SIGCT-Rural -> Contexts]
+        F2C[Responsabilidades por contexto]
+    end
+
+    subgraph P3["Fase 3 - Contrato semántico IA"]
+        F3A[Taxonomía de predicciones]
+        F3B[Semantic contract versionado]
+        F3C[Compatibilidad cloud-edge]
+    end
+
+    subgraph P4["Fase 4 - Modelo canónico de datos"]
+        F4A[Reconciliación ORM-schema-ERD]
+        F4B[Ownership por contexto]
+        F4C[Baseline de datos canónicos]
+    end
+
+    subgraph P5["Fase 5 - Implementación modular"]
+        F5A[Retiro controlado V1-V2]
+        F5B[Módulos por contexto]
+        F5C[Testing por capa]
+    end
+
+    subgraph P6["Fase 6 - Arquitectura Cloud-Edge"]
+        F6A[Topología oficial]
+        F6B[Source modes y observabilidad]
+        F6C[Equivalencia semántica entre entornos]
+    end
+
+    subgraph P7["Fase 7 - EIARC Operativo"]
+        F7A[Baseline operativa]
+        F7B[Madurez arquitectónica]
+        F7C[Governance continua]
+    end
+
+    SIGCT --> F1A
+    F1A --> F1B --> F1C
+    F1C --> F2A
+    F2A --> F2B --> F2C
+    F2C --> F3A
+    F3A --> F3B --> F3C
+    F3C --> F4A
+    F4A --> F4B --> F4C
+    F4C --> F5A
+    F5A --> F5B --> F5C
+    F5C --> F6A
+    F6A --> F6B --> F6C
+    F6C --> F7A
+    F7A --> F7B --> F7C
+    F7C --> EIARC
+
+    %% Dependencias transversales críticas
+    F1C -. habilita .-> F3B
+    F2C -. habilita .-> F4B
+    F3B -. gobierna .-> F5B
+    F3C -. condiciona .-> F6C
+    F4C -. sostiene .-> F5B
+
+    %% Prioridades visibles
+    QW[Quick Wins<br/>documentos canónicos<br/>contexts oficiales<br/>semantic contract IA]
+    QW -. acelera .-> F1A
+    QW -. acelera .-> F2A
+    QW -. acelera .-> F3A
+
+    %% Estilos
+    classDef current fill:#1f2937,color:#ffffff,stroke:#60a5fa,stroke-width:2px;
+    classDef early fill:#c8e6c9,color:#1a5e20,stroke:#2e7d32,stroke-width:2px;
+    classDef middle fill:#fff3e0,color:#e65100,stroke:#ef6c00,stroke-width:2px;
+    classDef late fill:#f3e5f5,color:#7b1fa2,stroke:#8e24aa,stroke-width:2px;
+    classDef target fill:#0f766e,color:#ffffff,stroke:#2dd4bf,stroke-width:2px;
+    classDef quick fill:#bbdefb,color:#0d47a1,stroke:#1976d2,stroke-width:2px,stroke-dasharray: 5 5;
+
+    class SIGCT current;
+    class F1A,F1B,F1C,F2A,F2B,F2C early;
+    class F3A,F3B,F3C,F4A,F4B,F4C middle;
+    class F5A,F5B,F5C,F6A,F6B,F6C,F7A,F7B,F7C late;
+    class EIARC target;
+    class QW quick;
