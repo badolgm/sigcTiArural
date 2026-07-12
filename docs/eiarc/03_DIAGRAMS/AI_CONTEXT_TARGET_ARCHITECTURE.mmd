@@ -1,0 +1,72 @@
+%% Fecha: 2026-07-12
+%% Version: v1.0.0
+%% Proposito: Representar la arquitectura objetivo del AI Context de EIARC,
+%% separando endpoint publico, microservicio tecnico, resolucion semantica,
+%% consumidores frontend y dependencias de contrato.
+
+flowchart LR
+    subgraph FE["Frontend Consumers"]
+        AIP["AIPredictiva.jsx"]
+        VOI["VoiceAssistant.jsx"]
+        DSL["DataScienceLab.jsx"]
+    end
+
+    subgraph API["Backend Public AI Context"]
+        AIEP["POST /api/v3/ai/inference/"]
+        AICROP["GET /api/v3/ai/crop-advice/"]
+        RES["Semantic Resolution Layer"]
+        TAX["PredictionTaxonomy / SemanticContractVersion"]
+        PORT["AIServicePort"]
+    end
+
+    subgraph AISVC["Internal AI Service"]
+        INF["POST /infer"]
+        AST["POST /assist"]
+        EVT["GET /events"]
+        MOD["Model Runtime"]
+        META["model_metadata.json"]
+    end
+
+    subgraph CANON["EIARC Canon"]
+        CONTRACT["EIARC AI Semantic Contract"]
+        PRED["Prediction"]
+        IRES["InferenceResult"]
+        REC["Recommendation"]
+        MD["ModelDescriptor"]
+        IEVT["InferenceEvent"]
+    end
+
+    AIP --> AIEP
+    AIEP --> PORT
+    PORT --> INF
+    INF --> MOD
+    MOD --> META
+    INF --> RES
+    META --> RES
+    TAX --> RES
+    CONTRACT --> RES
+    RES --> PRED
+    RES --> IRES
+    RES --> REC
+    RES --> MD
+    RES --> AIEP
+
+    AICROP --> PORT
+    PORT --> INF
+    AICROP --> RES
+
+    VOI -. capacidad separada .-> AST
+    DSL -. observabilidad oficial .-> EVT
+    EVT --> IEVT
+    IEVT --> DSL
+
+    RES -. publica .-> CONTRACT
+    RES -. versiona .-> TAX
+
+    classDef public fill:#0f172a,stroke:#22d3ee,color:#e2e8f0,stroke-width:2px;
+    classDef internal fill:#111827,stroke:#a78bfa,color:#e5e7eb,stroke-width:1.5px;
+    classDef canon fill:#052e16,stroke:#4ade80,color:#dcfce7,stroke-width:1.5px;
+
+    class AIEP,AICROP,RES,TAX,PORT public;
+    class INF,AST,EVT,MOD,META internal;
+    class CONTRACT,PRED,IRES,REC,MD,IEVT canon;
