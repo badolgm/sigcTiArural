@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from .models import SensorReading, Robot, RobotTelemetry, RobotCommand
 from .serializers import SensorReadingSerializer, RobotSerializer, RobotTelemetrySerializer, RobotCommandSerializer
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
 import random
 
 # ==============================================================================
@@ -114,10 +114,30 @@ if HEXAGONAL_V3_AVAILABLE:
             data_simulada = service.obtener_simulacion_historica()
             items = []
             for item in data_simulada:
+                raw_timestamp = item.get("timestamp")
+                raw_time = item.get("time")
+
+                if raw_timestamp and "T" in str(raw_timestamp):
+                    normalized_timestamp = str(raw_timestamp)
+                elif raw_time:
+                    try:
+                        parsed_time = datetime.strptime(str(raw_time), "%H:%M")
+                        now = timezone.now()
+                        normalized_timestamp = now.replace(
+                            hour=parsed_time.hour,
+                            minute=parsed_time.minute,
+                            second=0,
+                            microsecond=0,
+                        ).isoformat()
+                    except ValueError:
+                        normalized_timestamp = timezone.now().isoformat()
+                else:
+                    normalized_timestamp = timezone.now().isoformat()
+
                 items.append({
                     "reading_id": None,
                     "sensor_id": item.get("sensor", "Simulado"),
-                    "timestamp": item.get("timestamp") or item.get("time", ""),
+                    "timestamp": normalized_timestamp,
                     "temperature": item.get("temp"),
                     "humidity": item.get("humidity"),
                 })
