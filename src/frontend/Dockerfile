@@ -13,8 +13,10 @@ COPY . .
 # Permite inyectar endpoints en build (Vite lee .env.* en build)
 ARG VITE_API_URL
 ARG VITE_AI_API_BASE
+ARG VITE_AI_INFERENCE_URL
 RUN echo "VITE_API_URL=${VITE_API_URL}" > .env.production && \
-    echo "VITE_AI_API_BASE=${VITE_AI_API_BASE}" >> .env.production 
+    echo "VITE_AI_API_BASE=${VITE_AI_API_BASE}" >> .env.production && \
+    echo "VITE_AI_INFERENCE_URL=${VITE_AI_INFERENCE_URL}" >> .env.production
 
 RUN npm run build
 
