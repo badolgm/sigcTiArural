@@ -1,43 +1,39 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
-// Conector al backend local (Terminal 1)
-const API_BASE = 'http://localhost:8000'; 
+const AI_INFERENCE_URL = import.meta.env.VITE_AI_INFERENCE_URL?.trim() || '/api/v3/ai/inference/';
 
-// --- BASE DE CONOCIMIENTO AGRÍCOLA (SISTEMA EXPERTO) ---
-const PLANT_DISEASE_DB = {
-  'Tomato_Late_blight': {
-    label: 'Tomato Late Blight',
-    plant: 'Tomate (Solanum lycopersicum)',
-    disease: 'Tizón Tardío (Phytophthora infestans)',
-    status: 'critical',
-    recommendation: 'AISLAR INMEDIATAMENTE. Aplicar fungicidas a base de cobre (Caldo Bordeles). Reducir humedad foliar y mejorar ventilación del cultivo.',
-    description: 'Hongo oomiceto destructivo. Causa manchas necróticas acuosas en hojas y tallos que se extienden rápidamente.'
-  },
-  'Tomato_Early_blight': {
-    label: 'Tomato Early Blight',
-    plant: 'Tomate (Solanum lycopersicum)',
-    disease: 'Tizón Temprano (Alternaria solani)',
-    status: 'warning',
-    recommendation: 'Podar hojas inferiores afectadas. Aplicar fungicida orgánico (Bacillus subtilis). Rotación de cultivos para la próxima temporada.',
-    description: 'Manchas concéntricas (anillos) en hojas viejas. Puede causar defoliación severa si no se trata.'
-  },
-  'Tomato_Healthy': {
-    label: 'Tomato Healthy',
-    plant: 'Tomate (Solanum lycopersicum)',
-    disease: 'Ninguna (Planta Saludable)',
-    status: 'healthy',
-    recommendation: 'Mantener programa de riego por goteo. Continuar monitoreo semanal. Fertilización balanceada (N-P-K).',
-    description: 'Tejido foliar verde intenso, turgente y sin anomalías visibles. Desarrollo óptimo.'
-  },
-  'Potato_Early_blight': {
-    label: 'Potato Early Blight',
-    plant: 'Papa (Solanum tuberosum)',
-    disease: 'Tizón Temprano (Alternaria)',
-    status: 'warning',
-    recommendation: 'Aplicar fungicidas preventivos. Evitar riego por aspersión. Eliminar restos de cosecha anterior.',
-    description: 'Lesiones marrones con anillos concéntricos en el follaje. Reduce el rendimiento del tubérculo.'
-  }
+const ANALYSIS_MODES = {
+  real: 'INFERENCIA REAL',
+  simulation: 'SIMULACION',
+  robot_demo: 'ROBOT DEMO',
 };
+
+const DEMO_SCENARIOS = [
+  {
+    id: 'demo-unhealthy',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_leaf_late_blight.jpg/640px-Tomato_leaf_late_blight.jpg',
+    rawDiagnosis: 'class_0',
+    rawClassIndex: 0,
+    confidence: 0.9721,
+    status: 'warning',
+    title: 'Condicion no saludable detectada',
+    classification: 'Clasificacion binaria simulada: enferma',
+    plant: 'Cultivo de demostracion',
+    recommendation: 'Escenario demostrativo. No corresponde a inferencia cientifica oficial.',
+  },
+  {
+    id: 'demo-healthy',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Tomato_leaf.jpg/640px-Tomato_leaf.jpg',
+    rawDiagnosis: 'class_1',
+    rawClassIndex: 1,
+    confidence: 0.9644,
+    status: 'healthy',
+    title: 'Condicion saludable detectada',
+    classification: 'Clasificacion binaria simulada: sana',
+    plant: 'Cultivo de demostracion',
+    recommendation: 'Escenario demostrativo. No corresponde a inferencia cientifica oficial.',
+  },
+];
 
 const NEON_COLORS = {
   primary: '#00FFFF', // Cyan
@@ -48,6 +44,135 @@ const NEON_COLORS = {
   panelBg: '#0F0F0F',
 };
 
+const SPECIES_LABELS = {
+  unknown: 'Cultivo no determinado',
+};
+
+const getOfficialStatus = (healthState) => {
+  if (healthState === 'healthy') return 'healthy';
+  if (healthState === 'critical') return 'critical';
+  if (healthState === 'warning') return 'warning';
+  return 'unknown';
+};
+
+const getClassificationLabel = (rawClassIndex) => {
+  if (Number(rawClassIndex) === 0) return 'Clasificacion binaria del modelo: enferma';
+  if (Number(rawClassIndex) === 1) return 'Clasificacion binaria del modelo: sana';
+  return 'Clasificacion binaria del modelo: no determinada';
+};
+
+const getStatusPresentation = (status) => {
+  if (status === 'healthy') {
+    return {
+      panelClass: 'border-green-500/50 bg-green-900/10',
+      titleClass: 'text-[#39FF14]',
+      badgeClass: 'bg-green-500/20 border-green-500 text-green-400',
+      badgeLabel: 'SALUDABLE',
+      badgeIcon: '✅',
+      confidenceColor: '#39FF14',
+    };
+  }
+
+  if (status === 'warning') {
+    return {
+      panelClass: 'border-yellow-500/50 bg-yellow-900/10',
+      titleClass: 'text-[#FFD32A]',
+      badgeClass: 'bg-yellow-500/20 border-yellow-500 text-yellow-300',
+      badgeLabel: 'ALERTA PREVENTIVA',
+      badgeIcon: '⚠️',
+      confidenceColor: '#FFD32A',
+    };
+  }
+
+  if (status === 'critical') {
+    return {
+      panelClass: 'border-red-500/50 bg-red-900/10',
+      titleClass: 'text-[#FF3131]',
+      badgeClass: 'bg-red-500/20 border-red-500 text-red-400',
+      badgeLabel: 'ALERTA CRITICA',
+      badgeIcon: '🚨',
+      confidenceColor: '#FF3131',
+    };
+  }
+
+  return {
+    panelClass: 'border-cyan-500/40 bg-cyan-900/10',
+    titleClass: 'text-cyan-300',
+    badgeClass: 'bg-cyan-500/20 border-cyan-500 text-cyan-300',
+    badgeLabel: 'ESTADO INDETERMINADO',
+    badgeIcon: 'ℹ️',
+    confidenceColor: '#67E8F9',
+  };
+};
+
+const getModePresentation = (mode) => {
+  if (mode === 'simulation') {
+    return {
+      label: ANALYSIS_MODES.simulation,
+      className: 'bg-yellow-500/20 border-yellow-500 text-yellow-300',
+    };
+  }
+
+  if (mode === 'robot_demo') {
+    return {
+      label: ANALYSIS_MODES.robot_demo,
+      className: 'bg-red-500/20 border-red-500 text-red-300',
+    };
+  }
+
+  return {
+    label: ANALYSIS_MODES.real,
+    className: 'bg-cyan-500/20 border-cyan-500 text-cyan-300',
+  };
+};
+
+const buildInfoFromOfficialResponse = (data) => {
+  const prediction = data?.prediction || {};
+  const trace = data?.trace || {};
+  const healthState = String(prediction?.health_state || 'unknown').toLowerCase();
+  const rawClassIndex = Number(trace?.raw_class_index ?? -1);
+
+  return {
+    plant: SPECIES_LABELS[String(prediction?.plant_species || 'unknown').toLowerCase()] || prediction?.plant_species || 'Cultivo Desconocido',
+    disease: prediction?.prediction_label || 'Resultado oficial',
+    classification: getClassificationLabel(rawClassIndex),
+    status: getOfficialStatus(healthState),
+    recommendation: prediction?.recommended_action || 'Sin recomendacion oficial disponible.',
+    description: 'El modelo actual solo soporta clasificacion binaria saludable/no saludable y no identifica enfermedad especifica.',
+    mode: 'real',
+    rawDiagnosis: trace?.raw_diagnosis || 'unknown',
+    rawClassIndex,
+    confidence: Number(prediction?.confidence ?? 0),
+    modelVersion: prediction?.model_version || 'unknown',
+    scientificScope: prediction?.scientific_scope || 'binary_only',
+    semanticContractVersion: prediction?.semantic_contract_version || 'unknown',
+    sourceMode: data?.source_mode || 'unknown',
+    predictionCode: prediction?.prediction_code || 'unknown',
+    conditionGroup: prediction?.condition_group || 'unknown',
+  };
+};
+
+const buildDemoInfo = (scenario, mode) => {
+  return {
+    plant: scenario.plant,
+    disease: scenario.title,
+    classification: scenario.classification,
+    status: scenario.status,
+    recommendation: scenario.recommendation,
+    description: 'Escenario sintetico de demostracion. El resultado visual no proviene de inferencia cientifica oficial.',
+    mode,
+    rawDiagnosis: scenario.rawDiagnosis,
+    rawClassIndex: scenario.rawClassIndex,
+    confidence: scenario.confidence,
+    modelVersion: 'demo-simulator',
+    scientificScope: 'demonstration_only',
+    semanticContractVersion: 'demo-v1',
+    sourceMode: mode,
+    predictionCode: `demo.${scenario.id}`,
+    conditionGroup: 'demonstration',
+  };
+};
+
 const AIPredictiva = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -55,27 +180,21 @@ const AIPredictiva = () => {
   const [detailedInfo, setDetailedInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [robotMode, setRobotMode] = useState(false);
-  
-  // Referencia para scroll automático a resultados
-  const resultsRef = useRef(null);
+  const [analysisMode, setAnalysisMode] = useState('real');
+  const statusPresentation = detailedInfo ? getStatusPresentation(detailedInfo.status) : null;
+  const modePresentation = getModePresentation(detailedInfo?.mode || analysisMode);
 
-  // Función de Síntesis de Voz Mejorada
   const speakResult = (info) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      
-      let text = '';
-      if (info.status === 'healthy') {
-        text = `Análisis finalizado. Planta detectada: ${info.plant}. Estado: Saludable. ${info.recommendation}`;
-      } else {
-        text = `Alerta fitosanitaria. Detección positiva en ${info.plant}. Patología identificada: ${info.disease}. Recomendación prioritaria: ${info.recommendation}`;
-      }
-
+      const prefix = info.mode === 'real'
+        ? 'Inferencia real finalizada.'
+        : `${getModePresentation(info.mode).label}.`;
+      const text = `${prefix} ${info.disease}. ${info.classification}. ${info.recommendation}`;
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'es-ES';
       utterance.rate = 1.0;
-      utterance.pitch = 1.0; // Voz más natural y autoritaria
+      utterance.pitch = 1.0;
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -83,125 +202,115 @@ const AIPredictiva = () => {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setRobotMode(false);
+    setAnalysisMode('real');
     setSelectedFile(file);
     setPreview(URL.createObjectURL(file));
-    setResult(null); 
+    setResult(null);
     setDetailedInfo(null);
     setError(null);
   };
 
-  const processDiagnosis = (rawDiagnosis, confidence) => {
-    // Intentar mapear la respuesta cruda a nuestra DB
-    // Si el backend devuelve "Tomato_Late_blight", lo buscamos.
-    // Si devuelve algo genérico, hacemos un fallback inteligente.
-    
-    let info = PLANT_DISEASE_DB[rawDiagnosis];
-    
-    // Fallback si la llave no existe exactamente
-    if (!info) {
-        if (rawDiagnosis.toLowerCase().includes('healthy') || rawDiagnosis.toLowerCase().includes('sana')) {
-            info = PLANT_DISEASE_DB['Tomato_Healthy']; // Default healthy
-        } else {
-            // Default sick (Generic)
-            info = {
-                plant: 'Cultivo Desconocido',
-                disease: rawDiagnosis || 'Anomalía Detectada',
-                status: 'warning',
-                recommendation: 'Consultar agrónomo. Aislar muestra.',
-                description: 'Patología no registrada en base de datos local.'
-            };
-        }
-    }
-    
+  const processOfficialPrediction = (data) => {
+    const info = buildInfoFromOfficialResponse(data);
     setDetailedInfo(info);
     return info;
   };
 
+  const activateMode = (mode) => {
+    setAnalysisMode(mode);
+    setSelectedFile(null);
+    setError(null);
+    setResult(null);
+    setDetailedInfo(null);
+    if (mode !== 'real') {
+      setPreview(null);
+    }
+  };
+
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || analysisMode !== 'real') return;
     setLoading(true);
     setError(null);
     const formData = new FormData();
     formData.append('file', selectedFile);
+    formData.append('client_context', 'aipredictiva');
 
     try {
-      const response = await fetch(`${API_BASE}/infer`, { 
+      const response = await fetch(AI_INFERENCE_URL, { 
         method: 'POST', 
         body: formData 
       });
 
-      if (!response.ok) throw new Error("Servidor IA Offline (Usando simulación de respaldo...)");
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        throw new Error('La respuesta oficial de IA no es valida.');
+      }
 
-      const data = await response.json();
+      if (!response.ok || data?.error) {
+        throw new Error(
+          data?.error?.message ||
+          data?.error?.detail ||
+          'No fue posible completar la inferencia oficial.'
+        );
+      }
+
       setResult(data);
-      const info = processDiagnosis(data.diagnosis, data.confidence);
+      const info = processOfficialPrediction(data);
       speakResult(info);
 
     } catch (err) {
-      console.warn("Backend offline, switch to mock mode for UI testing");
-      // Fallback para demo si no hay backend
-      setTimeout(() => {
-          const mockDiagnosis = 'Tomato_Early_blight';
-          const mockConf = 0.88;
-          setResult({ diagnosis: mockDiagnosis, confidence: mockConf, processing_time: '0.12s' });
-          const info = processDiagnosis(mockDiagnosis, mockConf);
-          speakResult(info);
-      }, 1500);
+      console.warn('AI Context PR1 error:', err);
+      setResult(null);
+      setDetailedInfo(null);
+      setError(err.message || 'No fue posible completar la inferencia oficial.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Simulación de flujo automático de Robots (MODO ROBOT)
   useEffect(() => {
     let interval;
-    if (robotMode) {
-      const demoScenarios = [
-        { 
-            img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_leaf_late_blight.jpg/640px-Tomato_leaf_late_blight.jpg",
-            code: 'Tomato_Late_blight'
-        },
-        { 
-            img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Tomato_leaf.jpg/640px-Tomato_leaf.jpg",
-            code: 'Tomato_Healthy' 
-        },
-        {
-            img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Alternaria_solani_01.jpg/640px-Alternaria_solani_01.jpg",
-            code: 'Tomato_Early_blight'
-        }
-      ];
+    if (analysisMode === 'simulation' || analysisMode === 'robot_demo') {
       let idx = 0;
-      
       interval = setInterval(() => {
         setLoading(true);
-        // Simular tiempo de procesamiento
         setTimeout(() => {
-            const scenario = demoScenarios[idx];
-            
-            // Datos simulados
-            const simulatedResult = {
-                diagnosis: scenario.code,
-                confidence: 0.96 + (Math.random() * 0.03),
-                processing_time: '0.04s'
-            };
+          const scenario = DEMO_SCENARIOS[idx];
+          const info = buildDemoInfo(scenario, analysisMode);
+          const simulatedResult = {
+            prediction: {
+              confidence: info.confidence,
+              model_version: info.modelVersion,
+              scientific_scope: info.scientificScope,
+              semantic_contract_version: info.semanticContractVersion,
+              prediction_code: info.predictionCode,
+              condition_group: info.conditionGroup,
+            },
+            trace: {
+              raw_diagnosis: info.rawDiagnosis,
+              raw_class_index: info.rawClassIndex,
+            },
+          };
 
-            setPreview(scenario.img);
-            setResult(simulatedResult);
-            
-            const info = processDiagnosis(scenario.code, simulatedResult.confidence);
-            speakResult(info); // El robot habla
-            
-            setLoading(false);
-            idx = (idx + 1) % demoScenarios.length;
-        }, 1500); // Tiempo de "análisis"
-      }, 12000); // Tiempo entre muestras (más largo para leer recomendaciones)
+          setPreview(scenario.img);
+          setError(null);
+          setResult(simulatedResult);
+          setDetailedInfo(info);
+          speakResult(info);
+
+          setLoading(false);
+          idx = (idx + 1) % DEMO_SCENARIOS.length;
+        }, 1200);
+      }, analysisMode === 'simulation' ? 9000 : 12000);
     }
+
     return () => {
-        clearInterval(interval);
-        window.speechSynthesis.cancel();
+      clearInterval(interval);
+      window.speechSynthesis.cancel();
     };
-  }, [robotMode]);
+  }, [analysisMode]);
 
   return (
     <div className="min-h-screen p-6 pt-24 font-sans text-gray-100" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
@@ -224,22 +333,27 @@ const AIPredictiva = () => {
                     <span className="text-[#39FF14]">● SISTEMA ONLINE</span>
                 </div>
             </div>
-            
-            <button 
-                onClick={() => setRobotMode(!robotMode)}
-                className={`group relative px-8 py-4 rounded-none skew-x-[-10deg] border transition-all duration-300 ${
-                    robotMode 
-                    ? 'bg-red-900/30 border-red-500 text-red-500 hover:bg-red-900/50' 
-                    : 'bg-cyan-900/30 border-cyan-500 text-cyan-400 hover:bg-cyan-900/50'
-                }`}
-            >
-                <div className="skew-x-[10deg] flex items-center gap-3 font-bold tracking-widest">
-                    <span className="text-2xl">{robotMode ? '⏹' : '▶'}</span>
-                    {robotMode ? 'DETENER MODO AUTO' : 'INICIAR MODO ROBOT'}
-                </div>
-                {/* Glow Effect */}
-                <div className={`absolute inset-0 opacity-20 blur-md transition-all ${robotMode ? 'bg-red-500' : 'bg-cyan-500'} group-hover:opacity-40`}></div>
-            </button>
+
+            <div className="flex flex-wrap gap-3">
+                <button
+                    onClick={() => activateMode('real')}
+                    className={`px-5 py-3 border font-bold tracking-widest ${analysisMode === 'real' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300' : 'bg-gray-900 border-gray-700 text-gray-400'}`}
+                >
+                    INFERENCIA REAL
+                </button>
+                <button
+                    onClick={() => activateMode(analysisMode === 'simulation' ? 'real' : 'simulation')}
+                    className={`px-5 py-3 border font-bold tracking-widest ${analysisMode === 'simulation' ? 'bg-yellow-500/20 border-yellow-500 text-yellow-300' : 'bg-gray-900 border-gray-700 text-gray-400'}`}
+                >
+                    {analysisMode === 'simulation' ? 'DETENER SIMULACION' : 'INICIAR SIMULACION'}
+                </button>
+                <button
+                    onClick={() => activateMode(analysisMode === 'robot_demo' ? 'real' : 'robot_demo')}
+                    className={`px-5 py-3 border font-bold tracking-widest ${analysisMode === 'robot_demo' ? 'bg-red-500/20 border-red-500 text-red-300' : 'bg-gray-900 border-gray-700 text-gray-400'}`}
+                >
+                    {analysisMode === 'robot_demo' ? 'DETENER ROBOT DEMO' : 'INICIAR ROBOT DEMO'}
+                </button>
+            </div>
         </header>
 
         {/* MAIN GRID */}
@@ -273,16 +387,16 @@ const AIPredictiva = () => {
                          )}
                          
                          {/* Live Badge */}
-                         {robotMode && (
-                            <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur px-3 py-1 rounded border border-red-500/50">
-                                <div className="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
-                                <span className="text-xs font-mono text-red-400 font-bold">LIVE FEED</span>
+                         {analysisMode !== 'real' && (
+                            <div className={`absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur px-3 py-1 rounded border ${analysisMode === 'robot_demo' ? 'border-red-500/50' : 'border-yellow-500/50'}`}>
+                                <div className={`w-2 h-2 rounded-full animate-ping ${analysisMode === 'robot_demo' ? 'bg-red-500' : 'bg-yellow-400'}`}></div>
+                                <span className={`text-xs font-mono font-bold ${analysisMode === 'robot_demo' ? 'text-red-400' : 'text-yellow-300'}`}>{getModePresentation(analysisMode).label}</span>
                             </div>
                          )}
                     </div>
 
                     {/* Controls */}
-                    {!robotMode && (
+                    {analysisMode === 'real' && (
                         <div className="p-6 border-t border-gray-800">
                              <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-700 rounded-lg cursor-pointer hover:border-cyan-500 hover:bg-cyan-900/10 transition-all group">
                                 <span className="text-gray-400 group-hover:text-cyan-400 font-mono text-sm">📥 CARGAR IMAGEN DE MUESTRA</span>
@@ -300,6 +414,21 @@ const AIPredictiva = () => {
                             >
                                 {loading ? 'PROCESANDO...' : 'EJECUTAR ANÁLISIS'}
                             </button>
+                            {error && (
+                                <p className="mt-3 text-sm font-semibold text-[#FF3131]">
+                                    {error}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                    {analysisMode !== 'real' && (
+                        <div className="p-6 border-t border-gray-800">
+                            <div className="rounded-lg border border-gray-700 bg-black/30 p-4 text-sm text-gray-300">
+                                <p className="font-bold uppercase tracking-widest text-gray-400 mb-2">{getModePresentation(analysisMode).label}</p>
+                                <p>
+                                    Este modo es demostrativo y no corresponde a inferencia cientifica oficial. Los resultados se generan a partir de escenarios sinteticos controlados.
+                                </p>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -310,13 +439,7 @@ const AIPredictiva = () => {
                 {detailedInfo ? (
                     <div className="h-full animate-fade-in-up">
                         {/* 1. MAIN DIAGNOSIS CARD */}
-                        <div className={`relative p-8 rounded-xl border-2 mb-6 overflow-hidden ${
-                            detailedInfo.status === 'healthy' 
-                            ? 'border-green-500/50 bg-green-900/10' 
-                            : detailedInfo.status === 'warning'
-                            ? 'border-yellow-500/50 bg-yellow-900/10'
-                            : 'border-red-500/50 bg-red-900/10'
-                        }`}>
+                        <div className={`relative p-8 rounded-xl border-2 mb-6 overflow-hidden ${statusPresentation?.panelClass || 'border-cyan-500/40 bg-cyan-900/10'}`}>
                              {/* Background Texture */}
                              <div className="absolute inset-0 opacity-10" 
                                   style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '20px 20px' }}>
@@ -324,19 +447,19 @@ const AIPredictiva = () => {
 
                              <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                                 <div>
-                                    <h3 className="text-gray-400 text-xs font-mono uppercase tracking-[0.2em] mb-1">Diagnóstico Principal</h3>
-                                    <h2 className={`text-3xl md:text-4xl font-black uppercase leading-tight ${
-                                        detailedInfo.status === 'healthy' ? 'text-[#39FF14]' : 
-                                        detailedInfo.status === 'warning' ? 'text-[#FFD32A]' : 'text-[#FF3131]'
-                                    }`} style={{ textShadow: '0 0 20px currentColor' }}>
+                                    <h3 className="text-gray-400 text-xs font-mono uppercase tracking-[0.2em] mb-1">Resultado Principal</h3>
+                                    <h2 className={`text-3xl md:text-4xl font-black uppercase leading-tight ${statusPresentation?.titleClass || 'text-cyan-300'}`} style={{ textShadow: '0 0 20px currentColor' }}>
                                         {detailedInfo.disease}
                                     </h2>
+                                    <p className="mt-2 text-sm font-mono text-gray-300">{detailedInfo.classification}</p>
                                 </div>
-                                <div className={`px-4 py-2 rounded font-bold uppercase text-sm border ${
-                                     detailedInfo.status === 'healthy' ? 'bg-green-500/20 border-green-500 text-green-400' : 
-                                     'bg-red-500/20 border-red-500 text-red-400'
-                                }`}>
-                                    {detailedInfo.status === 'healthy' ? '✅ SALUDABLE' : '⚠️ ALERTA PATÓGENO'}
+                                <div className="flex flex-col gap-2 items-start md:items-end">
+                                    <div className={`px-4 py-2 rounded font-bold uppercase text-sm border ${statusPresentation?.badgeClass || 'bg-cyan-500/20 border-cyan-500 text-cyan-300'}`}>
+                                        {statusPresentation?.badgeIcon || 'ℹ️'} {statusPresentation?.badgeLabel || 'ESTADO INDETERMINADO'}
+                                    </div>
+                                    <div className={`px-4 py-2 rounded font-bold uppercase text-xs border ${modePresentation.className}`}>
+                                        {modePresentation.label}
+                                    </div>
                                 </div>
                              </div>
 
@@ -344,14 +467,14 @@ const AIPredictiva = () => {
                              <div className="mb-6">
                                 <div className="flex justify-between text-xs font-mono text-gray-400 mb-2">
                                     <span>CERTEZA DEL MODELO</span>
-                                    <span className="text-white">{(Number(result?.confidence || 0) * 100).toFixed(1)}%</span>
+                                    <span className="text-white">{(Number(detailedInfo?.confidence ?? 0) * 100).toFixed(1)}%</span>
                                 </div>
                                 <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
                                     <div 
                                         className="h-full transition-all duration-1000 ease-out"
                                         style={{ 
-                                            width: `${(Number(result?.confidence || 0) * 100)}%`,
-                                            backgroundColor: detailedInfo.status === 'healthy' ? '#39FF14' : '#FF3131'
+                                            width: `${(Number(detailedInfo?.confidence ?? 0) * 100)}%`,
+                                            backgroundColor: statusPresentation?.confidenceColor || '#67E8F9'
                                         }}
                                     ></div>
                                 </div>
@@ -361,19 +484,19 @@ const AIPredictiva = () => {
                              <div className="flex items-center gap-3 p-4 bg-black/40 rounded-lg border border-gray-700/50">
                                 <span className="text-2xl">🌿</span>
                                 <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Variedad Detectada</p>
+                                    <p className="text-xs text-gray-500 uppercase font-bold">Especie Reportada</p>
                                     <p className="text-lg font-medium text-gray-200">{detailedInfo.plant}</p>
                                 </div>
                              </div>
                         </div>
 
                         {/* 2. DETAILS & RECOMMENDATIONS GRID */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             
                             {/* DESCRIPTION PANEL */}
                             <div className="p-6 rounded-xl bg-[#111] border border-gray-800 hover:border-cyan-500/30 transition-colors">
                                 <h4 className="flex items-center gap-2 text-cyan-400 font-bold uppercase text-sm mb-4">
-                                    <span>📝</span> Análisis Patológico
+                                    <span>📝</span> Alcance Cientifico
                                 </h4>
                                 <p className="text-gray-400 text-sm leading-relaxed">
                                     {detailedInfo.description}
@@ -390,6 +513,51 @@ const AIPredictiva = () => {
                                 </p>
                             </div>
 
+                            {/* TRACEABILITY PANEL */}
+                            <div className="p-6 rounded-xl bg-[#111] border border-gray-800 hover:border-fuchsia-500/30 transition-colors">
+                                <h4 className="flex items-center gap-2 text-fuchsia-400 font-bold uppercase text-sm mb-4">
+                                    <span>🧬</span> Trazabilidad
+                                </h4>
+                                <div className="space-y-3 text-sm font-mono">
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">prediction_code</p>
+                                        <p className="text-gray-200 break-all">{detailedInfo.predictionCode}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">raw_diagnosis</p>
+                                        <p className="text-gray-200 break-all">{String(detailedInfo.rawDiagnosis)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">raw_class_index</p>
+                                        <p className="text-gray-200">{String(detailedInfo.rawClassIndex)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">condition_group</p>
+                                        <p className="text-gray-200">{detailedInfo.conditionGroup}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">confidence</p>
+                                        <p className="text-gray-200">{Number(detailedInfo.confidence).toFixed(4)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">model_version</p>
+                                        <p className="text-gray-200">{detailedInfo.modelVersion}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">scientific_scope</p>
+                                        <p className="text-gray-200">{detailedInfo.scientificScope}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">semantic_contract_version</p>
+                                        <p className="text-gray-200">{detailedInfo.semanticContractVersion}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">source_mode</p>
+                                        <p className="text-gray-200">{detailedInfo.sourceMode}</p>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 ) : (
@@ -400,7 +568,7 @@ const AIPredictiva = () => {
                         </div>
                         <h3 className="text-xl font-bold text-gray-500 uppercase tracking-widest mb-2">Sistema en Espera</h3>
                         <p className="text-gray-600 text-sm text-center max-w-md">
-                            Cargue una imagen o inicie el modo robot para comenzar el diagnóstico fitosanitario en tiempo real.
+                            Seleccione inferencia real, simulacion o robot demo para iniciar el analisis.
                         </p>
                     </div>
                 )}

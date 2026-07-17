@@ -32,3 +32,11 @@ try:
     ]
 except ImportError:
     pass
+
+try:
+    from .views import AIInferenceV3View
+    urlpatterns += [
+        path('v3/ai/inference/', AIInferenceV3View.as_view(), name='ai-inference-v3'),
+    ]
+except ImportError:
+    pass

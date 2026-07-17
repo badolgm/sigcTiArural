@@ -76,7 +76,13 @@ def find_repo_root(start: Path) -> Path:
     return Path.cwd()
 
 ROOT_DIR = find_repo_root(Path(__file__))
-MODELS_DIR = ROOT_DIR / "src" / "ai_models" / "production_models"
+CONTAINER_MODELS_DIR = ROOT_DIR / "production_models"
+REPO_MODELS_DIR = ROOT_DIR / "src" / "ai_models" / "production_models"
+MODELS_DIR = (
+    CONTAINER_MODELS_DIR
+    if list(CONTAINER_MODELS_DIR.glob("*.h5")) or list(CONTAINER_MODELS_DIR.glob("*.keras"))
+    else REPO_MODELS_DIR
+)
 LOGS_DIR = ROOT_DIR / "data" / "logs"
 INFER_LOG = LOGS_DIR / "infer_log.jsonl"
 
@@ -228,9 +234,9 @@ async def infer(file: Optional[UploadFile] = File(default=None)):
             confidence = float(np.max(preds))
             diagnosis = f"class_{idx}"
         else:
-            diagnosis = "Tomato_Early_blight"
-            confidence = 0.87
-            idx = 0
+            diagnosis = "unknown"
+            confidence = 0.0
+            idx = -1
 
         processing_time = f"{(time.time() - start_time):.2f}s"
 
@@ -238,10 +244,16 @@ async def infer(file: Optional[UploadFile] = File(default=None)):
             "diagnosis": diagnosis,
             "confidence": round(confidence, 4),
             "class_index": idx,
-            "model": model_name or "mock",
+            "model": model_name or "unavailable",
             "processing_time": processing_time,
-            "status": "ok"
+            "status": "ok" if diagnosis != "unknown" else "error"
         }
+
+        if diagnosis == "unknown":
+            result["detail"] = (
+                "No fue posible ejecutar inferencia oficial: el modelo no esta disponible "
+                "o TensorFlow no esta cargado."
+            )
 
         try:
             log_entry = {**result, "timestamp": datetime.utcnow().isoformat() + "Z"}
@@ -256,12 +268,13 @@ async def infer(file: Optional[UploadFile] = File(default=None)):
         raise
     except Exception as e:
         return {
-            "diagnosis": "Tomato_Early_blight",
-            "confidence": 0.5,
-            "class_index": 0,
+            "diagnosis": "unknown",
+            "confidence": 0.0,
+            "class_index": -1,
             "model": "fallback",
             "processing_time": f"{(time.time() - start_time):.2f}s",
-            "status": "error"
+            "status": "error",
+            "detail": f"No fue posible ejecutar inferencia oficial: {str(e)}",
         }
 
 

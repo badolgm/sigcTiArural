@@ -75,6 +75,15 @@ try:
 except ImportError:
     HEXAGONAL_V3_AVAILABLE = False
 
+try:
+    from infrastructure.config.dependencies import get_ai_service as get_ai_inference_service
+    from infrastructure.external.ai_service.semantic_prediction_resolver import (
+        SemanticPredictionResolver,
+    )
+    AI_INFERENCE_V3_AVAILABLE = True
+except ImportError:
+    AI_INFERENCE_V3_AVAILABLE = False
+
 if HEXAGONAL_V3_AVAILABLE:
     class TelemetryHistoryV3View(APIView):
         permission_classes = [AllowAny]
@@ -173,6 +182,81 @@ if HEXAGONAL_V3_AVAILABLE:
             return Response({
                 "datos_analizados": datos,
                 "ia_feedback": sugerencia
+            })
+
+if AI_INFERENCE_V3_AVAILABLE:
+    class AIInferenceV3View(APIView):
+        permission_classes = [AllowAny]
+        allowed_mime_types = {"image/jpeg", "image/png", "image/webp"}
+
+        def post(self, request):
+            image_file = request.FILES.get("file")
+            if image_file is None:
+                return Response({
+                    "context": "ai",
+                    "contract_version": "v1",
+                    "operation": "plant_diagnosis",
+                    "source_mode": "fallback",
+                    "error": {
+                        "code": "invalid_request",
+                        "message": "No fue posible completar la inferencia oficial.",
+                        "detail": "El campo 'file' es obligatorio.",
+                    },
+                }, status=400)
+
+            content_type = (image_file.content_type or "").lower()
+            if content_type and content_type not in self.allowed_mime_types:
+                return Response({
+                    "context": "ai",
+                    "contract_version": "v1",
+                    "operation": "plant_diagnosis",
+                    "source_mode": "fallback",
+                    "error": {
+                        "code": "unsupported_media_type",
+                        "message": "No fue posible completar la inferencia oficial.",
+                        "detail": f"Formato no soportado: {content_type}",
+                    },
+                }, status=400)
+
+            ai_adapter = get_ai_inference_service()
+            resolver = SemanticPredictionResolver()
+            raw_result = ai_adapter.predecir_enfermedad(image_file.read())
+            upstream_status = str(raw_result.get("status") or "ok").lower()
+            upstream_detail = raw_result.get("detail")
+
+            if raw_result.get("error"):
+                return Response({
+                    "context": "ai",
+                    "contract_version": "v1",
+                    "operation": "plant_diagnosis",
+                    "source_mode": "fallback",
+                    "error": {
+                        "code": "ai_inference_unavailable",
+                        "message": "No fue posible completar la inferencia oficial.",
+                        "detail": raw_result.get("error"),
+                    },
+                }, status=502)
+
+            resolved = resolver.resolve_prediction(raw_result)
+            if upstream_status == "error":
+                # Regla EIARC: source_mode=fallback mantiene contrato válido
+                # mientras preserve trazabilidad y no publique semántica ficticia.
+                resolved["source_mode"] = "fallback"
+
+            return Response({
+                "context": "ai",
+                "contract_version": "v1",
+                "operation": "plant_diagnosis",
+                "source_mode": resolved["source_mode"],
+                "prediction": resolved["prediction"],
+                "trace": {
+                    "provider": raw_result.get("provider", "fastapi_ai_service"),
+                    "raw_diagnosis": raw_result.get("diagnosis"),
+                    "raw_class_index": raw_result.get("class_index"),
+                    "processing_time": raw_result.get("processing_time"),
+                    "upstream_status": upstream_status,
+                    "upstream_detail": upstream_detail,
+                },
             })
 
 # ==============================================================================
