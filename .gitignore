@@ -46,7 +46,7 @@ htmlcov/
 # Logs
 # ==========================
 *.log
-logs/
+/logs/
 
 # ==========================
 # Datos Locales (Datasets, Logs, etc)
@@ -81,10 +81,10 @@ scripts/docker_maintenance.ps1
 # ==========================
 # Respaldos y Archivos Temporales
 # ==========================
-_deprecated_backups/
-_local_docs_backup/
-preview/
-backups/
+/_deprecated_backups/
+/_local_docs_backup/
+/preview/
+/backups/
 *.bak
 docs/**/*.bak
 
@@ -154,3 +154,18 @@ docs/*
 # EIARC Architecture
 !docs/eiarc/
 !docs/eiarc/**
+
+# SENA Academic Deliverables
+!docs/sena_artifacts/
+!docs/sena_artifacts/**
+
+# AI Dataset/Training Manifests
+!docs/ai/
+!docs/ai/**
+
+# Continuity Reports
+!docs/reports/
+!docs/reports/**
+
+# Loose documentation files directly under docs/
+!docs/*.md

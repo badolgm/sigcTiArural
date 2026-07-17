@@ -1,0 +1,43 @@
+schema_version: "1.0"
+manifest_type: "split_manifest"
+
+split_version: "agriculture_v2_split_v1"
+context: "agriculture"
+modality: "computer_vision"
+
+inputs:
+  dataset_id: "agriculture_images_tomato-potato-corn"
+  dataset_version: "v1"
+  taxonomy_version: "agriculture_v2_taxonomy_v1"
+  label_schema_version: "agriculture_v2_label_schema_v1"
+  curation_manifest: "curation_manifest.agriculture_v2_dataset_v1.yaml"
+
+ratios:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+
+stratification_rules:
+  - "Stratify by canonical_class_id"
+  - "Preserve class proportions as closely as possible"
+
+anti_leakage_rules:
+  - "Deduplicate exact duplicates before split"
+  - "Detect near-duplicates before split when possible (pHash); group near-duplicates and keep group in a single partition"
+  - "Do not mix grayscale/segmented variants (excluded by curation policy)"
+
+reproducibility:
+  random_seed: 42
+  split_algorithm: "stratified_group_split"
+  notes:
+    - "El split se versiona aunque el materializado (lista de samples por partición) se genere en la fase de ejecución."
+
+outputs_expected:
+  - "split_lists/train.csv"
+  - "split_lists/validation.csv"
+  - "split_lists/test.csv"
+
+quality_gates:
+  - "No class missing in any partition unless class_count is extremely small"
+  - "Report per-class counts per partition"
+  - "Block if leakage detected (duplicates across partitions)"
