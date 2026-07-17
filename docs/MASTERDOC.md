@@ -1,5 +1,5 @@
-# 📘 MASTERDOC v7.2 - SIGC&T RURAL / EIARC
-## Documento Maestro de Arquitectura de Software
+# 📘 MASTERDOC v8 - SIGC&T RURAL / EIARC
+## Registro Técnico Profundo y Archivo de Arquitectura
 
 **Sistema Integrado de Gestión del Conocimiento y Tecnología Rural**
 
@@ -9,65 +9,66 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Versión** | 7.2 (Continuidad + Automatización + Alineación EIARC) |
+| **Versión** | 8.0 (Redefinición de alcance documental) |
 | **Fecha Creación** | 24 de Enero 2026 |
-| **Última Actualización** | 6 de Julio 2026 |
+| **Última Actualización** | 17 de Julio 2026 |
 | **Autor Principal** | Bernardo Adolfo Gómez Montoya |
 | **Institución** | SENA - Tecnología en ADSO |
-| **Estado** | Documento Vivo - Consolidación de Reingeniería |
+| **Estado** | Documento Vivo - Registro Técnico y Archivo Histórico |
 | **Clasificación** | Técnico - Académico - Open Source |
 | **Licencia** | MIT License |
 
 ---
 
-## Estado operativo actual (2026-07-04)
+## 📑 Tabla de Contenidos
 
-El proyecto ya cuenta con una ruta de continuidad documentada y verificada. La forma recomendada de retomar el trabajo es ejecutar el chequeo único de continuidad desde la raíz del repositorio:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\continuity_check.ps1
-```
-
-Este flujo valida:
-- arranque de servicios principales,
-- salud del backend,
-- salud del microservicio de IA,
-- ejecución de la suite de tests de dominio.
-
-Las fuentes de verdad operativa y técnica para continuar son:
-- [CONTINUITY_RUNBOOK.md](CONTINUITY_RUNBOOK.md)
-- [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md)
-- [HEXAGONAL_REFACTOR_PLAN.md](HEXAGONAL_REFACTOR_PLAN.md)
-- [API_REFERENCE.md](API_REFERENCE.md)
-- [DEPLOYMENT.md](DEPLOYMENT.md)
-- [PLAN_MAESTRO.md](PLAN_MAESTRO.md) — roadmap de fases del proyecto, incluida la Fase 9 (expansión de dominio EIARC, planificada)
-- [GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md](GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md) — guía de estudio ADSO con la bitácora consolidada de la refactorización hexagonal
-- [EIARC_Documento_Maestro_Modelo_Negocio.pdf](EIARC_Documento_Maestro_Modelo_Negocio.pdf) — documento de modelo de negocio y posicionamiento comercial de EIARC (fuera del alcance técnico de este MASTERDOC; se referencia aquí solo para trazabilidad)
-
-## 📑 TABLA DE CONTENIDOS MAESTRA
-
-### VOLUMEN I: FUNDAMENTOS Y CONTEXTO
-
-#### PARTE 1: VISIÓN GENERAL DEL PROYECTO
-1. [Introducción al Proyecto](#1-introduccion)
-2. [Historia y Evolución Cronológica](#2-historia-cronologica)
-3. [Visión, Misión y Objetivos](#3-vision-mision)
-4. [Impacto Social y ODS](#4-impacto-social)
-5. [Actores y Roles del Sistema](#5-actores-roles)
-
-#### PARTE 2: ARQUITECTURA DE SOFTWARE
-6. [Modelo C4 - Vistas de Arquitectura](#6-arquitectura-c4)
-7. [Stack Tecnológico Completo](#7-stack-tecnologico)
-8. [Patrones y Decisiones Arquitectónicas](#8-decisiones-arquitectonicas)
-9. [Arquitectura Hexagonal (Puertos y Adaptadores)](#9-arquitectura-hexagonal)
+0. [Ficha del Documento y Alcance Explícito](#0-ficha-del-documento-y-alcance-explícito)
+1. [Arquitectura Hexagonal — Estado Verificado](#1-arquitectura-hexagonal--estado-verificado)
+2. [Decisiones Arquitectónicas y su Justificación](#2-decisiones-arquitectónicas-y-su-justificación)
+3. [Modelo de Dominio EIARC (Planificado)](#3-modelo-de-dominio-eiarc-planificado)
+4. [Checklist de Validaciones Críticas Pendientes](#4-checklist-de-validaciones-críticas-pendientes)
+5. [Bitácora de Intervenciones Técnicas — Archivo Histórico](#5-bitácora-de-intervenciones-técnicas--archivo-histórico)
+6. [Apéndice A: Enlaces y Referencias](#apéndice-a-enlaces-y-referencias)
 
 ---
 
-## 9. Arquitectura Hexagonal
+## 0. Ficha del Documento y Alcance Explícito
+
+### Changelog v7.2 → v8
+
+La versión 7.2 de este documento incluía una Tabla de Contenidos Maestra que prometía nueve secciones en el Volumen I, tres partes completas en el Volumen II, tres partes en el Volumen III y cuatro apéndices. Una auditoría documental determinó que la mayoría de esas entradas nunca tuvieron cuerpo real: la propia v7.2 ya advertía esto en una nota de continuidad ("no todas las secciones listadas han sido desarrolladas... esta guía no rellena esas secciones con contenido inventado"), pero la Tabla de Contenidos nunca se ajustó para reflejarlo, dejando enlaces internos rotos.
+
+**v8 resuelve esa brecha por retiro, no por relleno.** Se redefine el alcance documental de MASTERDOC: deja de intentar ser un documento enciclopédico único y pasa a ser el **registro técnico profundo y archivo histórico** del proyecto, complementario a `README.md`, `SIGCT_RURAL_SYSTEM_BOOT.md` y `PLAN_MAESTRO.md`, que ya cubren — con menos ambigüedad — todo lo que las secciones vacías de v7.2 prometían.
+
+Se retiran de la Tabla de Contenidos: la Visión/Misión/Objetivos, el Impacto Social y ODS, los Actores y Roles, el Modelo C4, el Stack Tecnológico y las Decisiones Arquitectónicas genéricas (antiguas Secciones 3-8), el Volumen II completo de Base de Datos/Docker/Inteligencia Artificial, la Parte 6 de Laboratorios Técnicos y la Parte 8 de Gestión del Proyecto del Volumen III, y los Apéndices A, B y D en su forma anterior. Ninguno de estos retiros elimina contenido que existiera — elimina promesas de la Tabla de Contenidos que nunca se cumplieron.
+
+Se conserva íntegramente: la Arquitectura Hexagonal verificada (antigua Sección 9), el Modelo de Dominio EIARC planificado (antiguas 9.2-9.3), el Checklist de Validaciones Críticas (antigua 9.4), y la totalidad de la Bitácora de Intervenciones Técnicas (antigua Sección 2), sin editar su contenido.
+
+### Identidad del Proyecto
+
+SIGC&T Rural es una plataforma web híbrida Cloud/Edge de código abierto que integra Internet de las Cosas (IoT), Inteligencia Artificial y educación técnica para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.
+
+### Qué Cubre Este Documento — y Qué No
+
+| Tema | Fuente de verdad |
+|---|---|
+| Entrada pública, instalación, stack tecnológico, estado operativo resumido | [`README.md`](../README.md) |
+| Gobernanza de continuidad, incidentes abiertos/resueltos, orden de lectura obligatorio | [`SIGCT_RURAL_SYSTEM_BOOT.md`](../SIGCT_RURAL_SYSTEM_BOOT.md) |
+| Roadmap por fases, criterios de aceptación, seguimiento de progreso | [`PLAN_MAESTRO.md`](PLAN_MAESTRO.md) |
+| EIARC como marco arquitectónico y de gobernanza (contextos delimitados) | [`docs/eiarc/`](eiarc/) |
+| **Arquitectura hexagonal en profundidad, decisiones arquitectónicas justificadas, modelo de dominio técnico de la expansión EIARC, checklist de validaciones críticas, archivo histórico de intervenciones** | **Este documento (MASTERDOC v8)** |
+
+### Evolución de Alcance: Ecosistema EIARC
+
+El proyecto documenta una evolución conceptual hacia **EIARC**, usada en la documentación del proyecto con dos significados que deben leerse por separado: como marco arquitectónico y de gobernanza (`docs/eiarc/`, contextos delimitados, contratos semánticos), y como visión futura de expansión productiva — telemetría veterinaria multiespecie, apicultura, piscicultura y una plataforma educativa ampliada — formalizada como **Fase 9 (planificada, no iniciada)** en `PLAN_MAESTRO.md`. Su fundamentación de modelo de negocio se documenta por separado en *EIARC_Documento_Maestro_Modelo_Negocio.pdf* — **documento no disponible en este repositorio**. El detalle de dominio técnico correspondiente se documenta en la Sección 3 de este MASTERDOC, marcado como planificado.
+
+---
+
+## 1. Arquitectura Hexagonal — Estado Verificado
 
 El proyecto atraviesa una migración activa hacia **Modular Monolith con límites hexagonales por bounded context**. A la fecha (2026-07-04) coexisten tres capas de implementación en el backend, resultado de sucesivas iteraciones del Strangler Fig Pattern. Esta sección documenta el estado real verificado, no un objetivo aspiracional.
 
-### 9.0 Estado real verificado — tres capas coexistentes
+### 1.1 Estado real verificado — tres capas coexistentes
 
 | Capa | Ubicación | Estado | Rol |
 |---|---|---|---|
@@ -118,9 +119,9 @@ graph TD
 
 ### 🛡️ Red de seguridad (tests)
 
-58 tests pasando (`pytest tests/ -q` desde `src/backend/`), cubriendo dominio (factories, services, strategies) e infraestructura (`test_persistence_infra.py`, `test_adapters_infra.py`). Requiere Postgres real accesible (no usa mocks para el adaptador de persistencia — es un test de integración, no de dominio). Ver `CONTINUITY_RUNBOOK.md` para variables de entorno de conexión.
+**58 tests identificados** (`pytest tests/ -q --collect-only` desde `src/backend/`), cubriendo dominio (factories, services, strategies) e infraestructura (`test_persistence_infra.py`, `test_adapters_infra.py`). De estos, **56 verificados como pasando en entorno sin infraestructura adicional**; **2 dependen de una conexión activa a PostgreSQL** (`test_django_repository_guardar_y_obtener`, `test_django_repository_listar_todos` en `test_persistence_infra.py`) y no se ejecutan como test de dominio puro — son test de integración real, no mockeado. Ver `CONTINUITY_RUNBOOK.md` para variables de entorno de conexión.
 
-### 9.1 Arquitectura objetivo actual (Declaración de dirección técnica — 2026-07-04)
+### 1.2 Arquitectura objetivo actual (Declaración de dirección técnica — 2026-07-04)
 
 El rediseño actual del proyecto se orienta a un **Modular Monolith** con límites hexagonales por bounded context, manteniendo un único proceso de ejecución central en Django para los contextos que comparten runtime y base de datos, mientras se preservan fronteras físicas reales para componentes con ciclo de vida independiente.
 
@@ -132,9 +133,94 @@ El rediseño actual del proyecto se orienta a un **Modular Monolith** con límit
 
 **Estado de la migración:** rama `feature/refactor-modular-contexts` creada. Decisión de estructura tomada (`contexts/{labs,telemetry,ai_advisory,identity}/`), aún no materializada como carpetas — el trabajo actual es la instrumentación `@deprecated` de V2 como paso previo (Strangler Fig), no la creación de `contexts/` todavía.
 
-### 9.2 Vista Ampliada del Diagrama Hexagonal — Ecosistema EIARC (Planificado)
+---
 
-**Estado: planificado, no construido.** Este diagrama complementa (no reemplaza) el diagrama V3 de la Sección 9 anterior. Mientras el diagrama de la Sección 9 refleja los puertos genéricos ya implementados (`SensorReadingRepositoryPort`, `AIServicePort`, `NotificationPort`), esta vista nombra los adaptadores concretos que corresponden a la expansión de dominio EIARC (Fase 9 de `PLAN_MAESTRO.md`). De los adaptadores nombrados abajo, **solo están construidos hoy**: React + Three.js (UI), Endpoints API REST/Django, PostgreSQL 15, y el microservicio FastAPI/TensorFlow (para diagnóstico de plantas). **Los adaptadores MQTT/LoRaWAN, WebSockets de telemetría en tiempo real, y notificaciones FCM son planificados**, no operativos.
+## 2. Decisiones Arquitectónicas y su Justificación
+
+Esta sección documenta únicamente decisiones con fuente trazable — a la bitácora histórica (Sección 5), a `HEXAGONAL_REFACTOR_PLAN.md`, a `SIGCT_RURAL_SYSTEM_BOOT.md`, o a verificación directa de código. No contiene narrativa retrospectiva sin respaldo documental.
+
+### 2.1 Migración de MySQL a PostgreSQL 15
+
+**Decisión:** migrar el motor de base de datos de MySQL a PostgreSQL 15.
+
+**Fuente:** Bitácora histórica, entrada "18 de Enero 2026 | 17:45 PM - 19:45 PM — 🔴 DECISIÓN ARQUITECTÓNICA MAYOR" (ver Sección 5).
+
+**Justificación documentada:** tabla comparativa por criterio — integridad referencial (DEFERRABLE), tipos de datos avanzados (JSONB, Arrays, UUID), compatibilidad con Django, soporte de ventanas y CTEs, búsqueda de texto completo (tsvector + GIN), licencia tipo MIT frente a GPL dual, y calidad de documentación — con PostgreSQL como ganador en los siete criterios evaluados.
+
+**Verificación en código:** `docker-compose.yml` usa `postgres:15-alpine`; `src/backend/sigct_backend/settings.py` implementa lógica dual (`dj_database_url` para Docker, configuración explícita para entorno local).
+
+### 2.2 El servicio de IA permanece como runtime independiente
+
+**Decisión:** el microservicio de IA (FastAPI + TensorFlow) no se integra al monolito modular Django; conserva despliegue y ciclo de vida propios.
+
+**Fuente:** `HEXAGONAL_REFACTOR_PLAN.md` ("La excepción técnica son los servicios con frontera física real y ciclo de vida independiente, como el servicio de IA...") y Sección 1.2 de este documento ("El servicio de IA se mantiene como runtime independiente porque ya opera con un ciclo de vida y dependencias distintas").
+
+**Justificación documentada:** esta división permite mantener coherencia y seguridad en la refactorización sin convertir el proyecto en un sistema distribuido prematuramente.
+
+**Verificación en código:** `src/ai_models/` mantiene `requirements.txt` y despliegue Docker propios, separados de `src/backend/`.
+
+### 2.3 No iniciar la Fase 9 (expansión EIARC) antes de completar las Fases 0-8
+
+**Decisión:** la expansión de dominio EIARC (apicultura, piscicultura, ganadería/avicultura, invernaderos) no debe comenzar antes de cerrar el refactor hexagonal actual.
+
+**Fuente:** `HEXAGONAL_REFACTOR_PLAN.md` ("no debe iniciarse antes de completar las Fases 0-8 descritas aquí") y `SIGCT_RURAL_SYSTEM_BOOT.md` §13 (regla de secuenciación de la próxima acción obligatoria).
+
+**Verificación documental:** `PLAN_MAESTRO.md` mantiene la Fase 9 marcada "Planificada — 0% de avance".
+
+### 2.4 Instrumentación de `DjangoRepository` (V2) con decorador `@deprecated_legacy` en vez de eliminación directa
+
+**Decisión:** el adaptador V2 no se elimina de golpe; se instrumenta con un decorador que emite `DeprecationWarning` en cada invocación, manteniendo la funcionalidad mientras se documenta su retiro futuro.
+
+**Fuente:** Sección 1.1 de este documento (estado verificado de las tres capas) — consistente con `HEXAGONAL_REFACTOR_PLAN.md`, tabla de riesgos: "Resistencia a eliminar código legacy → Mitigación: usar 'deprecated' warnings + fecha de remoción clara en comentarios".
+
+**Verificación en código:** confirmado en `src/backend/api/logic/adapters/persistence.py` y `src/backend/utils/deprecation.py`.
+
+### 2.5 Adopción de Strangler Fig Pattern + Branch by Abstraction como metodología de refactorización
+
+**Decisión:** la migración hacia arquitectura hexagonal se ejecuta manteniendo siempre los endpoints y flujos legacy funcionando, introduciendo la nueva implementación "al lado" y migrando consumidores gradualmente.
+
+**Fuente:** `HEXAGONAL_REFACTOR_PLAN.md` §2.1 — "Patrón Principal: Strangler Fig (Higuera Estranguladora) + Branch by Abstraction". Regla explícita: solo se elimina código viejo cuando (1) la cobertura de tests supera un umbral, (2) hay verificación manual de flujos clave, y (3) existe aprobación explícita del usuario.
+
+### 2.6 Mantener `models.py` y las migraciones dentro de una app Django
+
+**Decisión:** no extraer los modelos de persistencia fuera del framework Django, pese a la migración hacia un núcleo de dominio sin dependencias de Django.
+
+**Fuente:** `HEXAGONAL_REFACTOR_PLAN.md`, "Decisión clave sobre Models" — "Mantener `models.py` + migraciones dentro de una app Django (`api` o `infrastructure_django`) porque Django lo exige para `makemigrations`/admin. Los mappers viven en `infrastructure/persistence/django/`."
+
+### 2.7 Principios obligatorios de la refactorización
+
+**Fuente:** `HEXAGONAL_REFACTOR_PLAN.md` §2.2. Diez principios adoptados como reglas de gobernanza técnica del proceso de migración:
+
+1. Zero Downtime Funcional — cada fase debe permitir `docker-compose up --build` con el sistema usable.
+2. Python puro en el hexágono — `domain/` y `application/` nunca importan Django, FastAPI, React ni librerías HTTP.
+3. Puertos primero — definir contratos antes de implementar adaptadores.
+4. Inyección de dependencias explícita, con composition root en el shell.
+5. Testabilidad como primera clase — el dominio debe testearse con `pytest` sin settings de Django ni base de datos.
+6. Documentación como código — cada fase actualiza la bitácora y las secciones de estado de este documento.
+7. Una rama Git por cambio importante.
+8. Cambios pequeños y verificables — nunca "big bang".
+9. Verificación obligatoria por fase (build, curl a endpoints legacy y nuevos, ejercitar frontend, revisión de logs).
+10. Precaución extrema en comandos — mostrar el comando exacto, backups de base de datos antes de migraciones estructurales.
+
+### 2.8 Definición de contextos delimitados por dominio de negocio
+
+**Decisión:** los bounded contexts del negocio se organizan como hexágonos autónomos: laboratorios, telemetría, IA, cursos y contenido académico, usuarios y administración.
+
+**Fuente:** Sección 1.2 de este documento ("Regla de diseño adoptada") y `HEXAGONAL_REFACTOR_PLAN.md` §2.3 (estructura objetivo `core/{domain,application,ports}`, `infrastructure/`, `interfaces/web/`).
+
+### 2.9 `schema_postgresql.sql` no es fuente única de verdad del esquema
+
+**Decisión:** el esquema de base de datos se gobierna por `src/backend/api/migrations/` y `models.py`; el archivo `schema_postgresql.sql` en la raíz del repositorio se conserva solo como referencia histórica.
+
+**Fuente:** `SIGCT_RURAL_SYSTEM_BOOT.md` §18, regla 4.
+
+---
+
+## 3. Modelo de Dominio EIARC (Planificado)
+
+### 3.1 Vista Ampliada del Diagrama Hexagonal — Ecosistema EIARC (Planificado)
+
+**Estado: planificado, no construido.** Este diagrama complementa (no reemplaza) el diagrama V3 de la Sección 1. Mientras el diagrama de la Sección 1 refleja los puertos genéricos ya implementados (`SensorReadingRepositoryPort`, `AIServicePort`, `NotificationPort`), esta vista nombra los adaptadores concretos que corresponden a la expansión de dominio EIARC (Fase 9 de `PLAN_MAESTRO.md`). De los adaptadores nombrados abajo, **solo están construidos hoy**: React + Three.js (UI), Endpoints API REST/Django, PostgreSQL 15, y el microservicio FastAPI/TensorFlow (para diagnóstico de plantas). **Los adaptadores MQTT/LoRaWAN, WebSockets de telemetría en tiempo real, notificaciones FCM, y el mecanismo de autenticación (JWT u otro, aún por definir) son planificados**, no operativos.
 
 ```mermaid
 graph LR
@@ -142,7 +228,7 @@ graph LR
         UI[App Móvil / Web React + Three.js]
         REST[Endpoints API REST / Django]
         WS[WebSockets - Telemetría Real-time — planificado]
-        Auth[Autenticación JWT]
+        Auth[Autenticación — mecanismo por definir, planificado]
     end
 
     subgraph Puertos_Entrada [Puertos driving]
@@ -152,8 +238,8 @@ graph LR
     subgraph Dominio_Core [NÚCLEO DEL DOMINIO - Lógica Pura]
         direction TB
         subgraph Reglas_Negocio [Entidades y Value Objects]
-            Bio[Lógica Biológica: Rumia/Celo — planificado, ver 9.3]
-            Clin[Reglas Clínicas: Patologías — planificado, ver 9.3]
+            Bio[Lógica Biológica: Rumia/Celo — planificado, ver 3.2]
+            Clin[Reglas Clínicas: Patologías — planificado, ver 3.2]
         end
         subgraph Patrones_Diseño [Patrones]
             Fact[LaboratorioStrategyFactory]
@@ -202,10 +288,10 @@ graph LR
 
 **Validación de la diagramación (criterios de diseño):**
 - **Desacoplamiento:** la lógica biológica y las reglas clínicas residirían en el Dominio, protegidas por puertos — ningún adaptador (MQTT, FCM, PostgreSQL) es conocido directamente por el dominio.
-- **Extensibilidad vía `LaboratorioStrategyFactory`:** el mismo mecanismo que hoy registra las estrategias de Robótica/Agricultura/Telecomunicaciones/Electrónica sería el punto de extensión para las nuevas líneas de producción EIARC (Sección 9.3 y Fase 9 de `PLAN_MAESTRO.md`), sin modificar las estrategias existentes.
+- **Extensibilidad vía `LaboratorioStrategyFactory`:** el mismo mecanismo que hoy registra las estrategias de Robótica/Agricultura/Telecomunicaciones/Electrónica sería el punto de extensión para las nuevas líneas de producción EIARC (Sección 3.2 y Fase 9 de `PLAN_MAESTRO.md`), sin modificar las estrategias existentes.
 - **Economía circular / hardware agnóstico:** el Input Port está diseñado para que un sensor antiguo (vía adaptador simple) y un sensor LoRaWAN de última generación entreguen datos al dominio de forma indistinguible, siempre que ambos se traduzcan al mismo contrato de puerto.
 
-### 9.3 Modelo de Dominio: Telemetría Veterinaria Multiespecie (Planificado — Fase 9)
+### 3.2 Modelo de Dominio: Telemetría Veterinaria Multiespecie (Planificado — Fase 9)
 
 **Estado: planificado, no implementado.** Esta subsección documenta las reglas de dominio propuestas para la línea de Ganadería/Avicultura de la Fase 9 (ver también `PLAN_MAESTRO.md`, Sección 9.2), a nivel de Entidades y Value Objects del contexto `labs`. Se registra aquí como especificación técnica de referencia, no como funcionalidad ya construida.
 
@@ -225,12 +311,14 @@ graph LR
 
 **Nota de rigor técnico:** ninguno de los umbrales o parámetros anteriores (`α`, rangos térmicos exactos, frecuencias de filtrado) está calibrado con datos reales todavía. Antes de implementar estas reglas como código de dominio, la Fase 9 exige investigar y documentar rangos fisiológicos normales por especie (ver `PLAN_MAESTRO.md`, tarea 9.2), y comenzar con un único MVP de una sola variable validada end-to-end antes de generalizar.
 
-### 9.4 Checklist de Validaciones Críticas (Estado Actual — no exclusivo de EIARC)
+---
+
+## 4. Checklist de Validaciones Críticas Pendientes
 
 Validaciones pendientes de confirmar sobre la implementación actual, identificadas como puntos de riesgo técnico real (no relacionadas con la expansión EIARC, sino con el estado presente del sistema):
 
 - [ ] **Normalización de IA:** confirmar que tanto el entrenamiento del modelo como el adaptador de inferencia usan exactamente el mismo escalado de imagen (por ejemplo, `(arr / 127.5) - 1.0`). Un desajuste entre entrenamiento e inferencia invalida la precisión reportada del modelo sin que el sistema lo reporte como error.
-- [ ] **Seguridad de `.gitignore`:** confirmar que las carpetas `/data/` y `/backups/` en la raíz del repositorio permanezcan ignoradas (protegidas), mientras que `src/frontend/src/data/lab-data.js` se mantenga correctamente rastreado por Git (ver el incidente de "Pantalla Blanca" documentado en la Sección 28 de este mismo documento, causado por una regla de `.gitignore` no anclada a la raíz).
+- [ ] **Seguridad de `.gitignore`:** confirmar que las carpetas `/data/` y `/backups/` en la raíz del repositorio permanezcan ignoradas (protegidas), mientras que `src/frontend/src/data/lab-data.js` se mantenga correctamente rastreado por Git (ver el incidente de "Pantalla Blanca" documentado en la Sección 28 de la Bitácora Histórica, Sección 5, causado por una regla de `.gitignore` no anclada a la raíz).
 - [ ] **Persistencia JSONB:** confirmar que el adaptador de PostgreSQL efectivamente use el tipo `JSONB` (y no `TEXT` o `VARCHAR`) para los metadatos variables de sensores IoT, de forma que el esquema no se corrompa al agregar nuevos campos por sensor.
 
 #### Principio operativo de seguridad
@@ -238,144 +326,15 @@ Validaciones pendientes de confirmar sobre la implementación actual, identifica
 - No se eliminan líneas de documentación histórica; se conservan bitácoras con fecha, hora, resultado, causa y observaciones.
 - La documentación funciona como mapa de continuidad para que el proyecto pueda retomar el proceso sin perder contexto.
 
-### VOLUMEN II: IMPLEMENTACIÓN TÉCNICA
-
-#### PARTE 3: BASE DE DATOS
-9. [Migración MySQL → PostgreSQL](#9-migracion-postgresql)
-10. [Schema de PostgreSQL Completo](#10-schema-postgresql)
-11. [Modelo de Datos Detallado](#11-modelo-datos)
-
-#### PARTE 4: INFRAESTRUCTURA DOCKER
-12. [Arquitectura Docker Compose](#12-docker-compose)
-13. [Configuración de Contenedores](#13-contenedores)
-14. [Troubleshooting Docker](#14-troubleshooting-docker)
-15. [Compactación WSL2 (VHDX)](#15-compactacion-wsl2)
-
-#### PARTE 5: INTELIGENCIA ARTIFICIAL
-16. [IA de Voz Conversacional](#16-ia-voz)
-17. [Modelo de Clasificación de Plantas](#17-modelo-plantas)
-18. [Edge Computing con TFLite](#18-edge-computing)
-
-### VOLUMEN III: DESARROLLO Y EVOLUCIÓN
-
-#### PARTE 6: LABORATORIOS TÉCNICOS
-19. [Laboratorio de Robótica](#19-laboratorio-robotica)
-20. [Laboratorio de Matemáticas Avanzadas](#20-laboratorio-matematicas)
-21. [Laboratorio de Ciencia de Datos](#21-laboratorio-datos)
-
-#### PARTE 7: BITÁCORA DE INTERVENCIONES
-22. [Timeline Completo (Enero - Mayo 2026)](#22-timeline-completo)
-23. [Comandos Ejecutados Detallados](#23-comandos-detallados)
-24. [Lecciones Aprendidas de Reingeniería](#24-lecciones-aprendidas)
-
-#### PARTE 8: GESTIÓN DEL PROYECTO
-25. [Estrategia de Ramas Git](#25-estrategia-ramas)
-26. [Plan de Merge y Consolidación](#26-plan-merge)
-27. [Roadmap Futuro (2026)](#27-roadmap-2026)
-
-### APÉNDICES
-A. [Glosario Técnico](#apendice-a)
-B. [Comandos de Referencia Rápida](#apendice-b)
-C. [Enlaces y Referencias](#apendice-c)
-D. [Configuraciones Completas](#apendice-d)
-
 ---
 
-> ### 📌 Nota de Continuidad Documental — Estado de Desarrollo del Índice
+## 5. Bitácora de Intervenciones Técnicas — Archivo Histórico
+
+> **Nota de reencuadre (v8):** esta sección se conserva íntegra respecto a v7.2, sin editar ni resumir su contenido, en cumplimiento del principio operativo de seguridad de la Sección 4. Cubre el período Noviembre 2025 – Enero 2026. La numeración interna de entradas (incluida la referencia "Sección 28" usada en el Checklist de la Sección 4) se conserva sin alterar para no romper esa referencia cruzada. Para el estado operativo posterior a enero de 2026, ver `SIGCT_RURAL_SYSTEM_BOOT.md`.
 >
-> Este índice fue diseñado como tabla de contenidos maestra completa, pero **no todas las secciones listadas han sido desarrolladas en el cuerpo del documento**. Para que ningún enlace del índice quede como una promesa incumplida silenciosa, este es el estado real, verificado línea por línea:
->
-> - **Desarrolladas:** Sección 1 (Introducción), Sección 2 (Historia y Evolución Cronológica, con bitácora detallada de enero 2026), Sección 9 (Arquitectura Hexagonal, incluida la subsección 9.2-9.4 de expansión EIARC), Sección 28 en adelante (bitácora de integración de laboratorios, enero 2026) y Apéndice C (añadido en esta actualización, ver más abajo).
-> - **Pendientes de desarrollar** (existen como entrada de índice, pero sin contenido propio en el cuerpo del documento): Secciones 3 a 8, Secciones 10 a 27, y los Apéndices A, B y D.
-> - Esta guía no rellena esas secciones con contenido inventado — se deja constancia del vacío para que la continuidad del proyecto lo aborde de forma explícita, priorizando según la relevancia académica/técnica que corresponda (por ejemplo, la Sección 6 "Modelo C4" y la Sección 8 "Decisiones Arquitectónicas" son las de mayor prioridad, por solaparse directamente con el trabajo de refactorización hexagonal ya documentado en la Sección 9).
+> **Nota aclaratoria sobre contenido histórico:** las entradas a continuación se conservan literalmente, tal como fueron registradas en su momento. Pueden contener terminología, banderas de configuración o afirmaciones (por ejemplo, nombres de rutas, variables de entorno o decisiones puntuales) propias de la fecha en que fueron capturadas, que no necesariamente reflejan el estado actual del sistema descrito en las Secciones 1-4 de este documento. Ante cualquier discrepancia entre esta bitácora y el estado actual, prevalece lo documentado en las Secciones 1-4 y en `SIGCT_RURAL_SYSTEM_BOOT.md`.
 
----
-
-<a name="1-introduccion"></a>
-## 1. INTRODUCCIÓN AL PROYECTO
-
-### 1.1 ¿Qué es SIGC&T Rural?
-
-**SIGC&T Rural** (Sistema Integrado de Gestión del Conocimiento y Tecnología Rural) es una **plataforma web híbrida Cloud/Edge** de código abierto que integra **Internet de las Cosas (IoT)**, **Inteligencia Artificial** y **educación técnica** para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.
-
-#### Características Distintivas
-
-- 🌐 **Arquitectura Híbrida**: Combina procesamiento en la nube (Cloud) con computación en el borde (Edge)
-- 🤖 **IA Dual**: Inferencia en servidor (TensorFlow) y en dispositivos embebidos (TensorFlow Lite)
-- 📚 **Educación Abierta**: Laboratorios virtuales y recursos técnicos gratuitos
-- 🔬 **Enfoque Científico**: Integración de robótica, matemáticas avanzadas y ciencia de datos
-- 🌾 **Impacto Social**: Alineado con los ODS de la ONU
-
-### 1.2 Contexto Académico
-
-Este proyecto nace como **Proyecto Productivo** del programa **Tecnología en Análisis y Desarrollo de Software (ADSO)** del **SENA** (Servicio Nacional de Aprendizaje de Colombia).
-
-#### Objetivos Académicos
-
-| ID | Objetivo | Descripción | Estado |
-|----|----------|-------------|--------|
-| **O-01** | Dashboard Centralizado | Visualización web de datos de sensores en tiempo real | ✅ Completado |
-| **O-02** | Modelo de IA | Clasificación de enfermedades de plantas (>85% accuracy) | ✅ Completado |
-| **O-03** | Laboratorio Hardware | Clúster de 3 BeagleBone Black operacional | 🟡 En Progreso |
-| **O-04** | Biblioteca Educativa | Repositorio de 20+ recursos curados | 🟡 En Progreso |
-| **O-05** | Cumplimiento ADSO | Entregables completos del Proyecto Productivo | 🟡 En Progreso |
-
-### 1.3 Alcance del Proyecto
-
-#### ✅ Dentro del Alcance
-
-**Cloud (Plataforma Web):**
-- Frontend React responsive (mobile-first)
-- Backend Django con API RESTful
-- Base de datos PostgreSQL 15
-- Sistema de autenticación JWT
-- Dashboard con gráficos en tiempo real
-- Sistema de alertas
-- Módulo de IA (inferencia cloud)
-- CRUD de contenido académico
-
-**Edge (Laboratorio Físico):**
-- Clúster 3x BeagleBone Black Rev C
-- Broker MQTT (Mosquitto)
-- Sensores IoT (DHT22, humedad de suelo)
-- Captura de imágenes (cámara USB)
-- Inferencia local con TensorFlow Lite
-- Sincronización cloud automática
-- Lógica "store-and-forward"
-
-**Inteligencia Artificial:**
-- Modelo CNN para clasificación de enfermedades
-- Dataset PlantVillage (tomate, papa)
-- Transfer Learning con MobileNetV2
-- Modelos .h5 (cloud) y .tflite (edge)
-- IA de voz conversacional con memoria contextual
-
-**Laboratorios Técnicos:**
-- Robótica (Integración con Webots/Hardware)
-- Matemáticas Avanzadas (Dr. Binary v2)
-- Ciencia de Datos (Plotly.js, Pyodide)
-- Telecomunicaciones (GNU Radio, SDR)
-
-#### 🧭 Evolución de Alcance: Ecosistema EIARC (Planificado)
-
-El proyecto documenta una evolución conceptual hacia **EIARC (Ecosistema de Inteligencia Artificial y Robótica para el Campo)**: la extensión del mismo enfoque técnico (sensores, IA, arquitectura hexagonal) hacia telemetría veterinaria multiespecie (bovinos, porcinos, ovinos, caninos), apicultura, piscicultura y una plataforma educativa ampliada. Esta expansión está formalizada como **Fase 9 (planificada, no iniciada)** en `PLAN_MAESTRO.md`, y su fundamentación de modelo de negocio se documenta por separado en `EIARC_Documento_Maestro_Modelo_Negocio.pdf`. El detalle de dominio técnico correspondiente (reglas biológicas, adaptadores adicionales) se documenta en la Sección 9.2 y 9.3 de este MASTERDOC, también marcado como planificado.
-
-#### ❌ Fuera del Alcance
-
-- Creación de hardware personalizado (PCBs propios)
-- Aplicación móvil nativa (iOS/Android) - solo web responsive
-- Integración directa con SofiaPlus del SENA (fase futura)
-- Comercialización del producto
-- Procesamiento de pagos / e-commerce
-- Soporte 24/7 en producción
-- Despliegue en dispositivos FPGA (referencia futura)
-
----
-
-<a name="2-historia-cronologica"></a>
-## 2. HISTORIA Y EVOLUCIÓN CRONOLÓGICA
-
-### 2.1 Línea de Tiempo General
+### 5.1 Línea de Tiempo General
 
 ```
 2025-11-02 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2026-05-23
@@ -387,7 +346,7 @@ El proyecto documenta una evolución conceptual hacia **EIARC (Ecosistema de Int
   (Arq.)   (Protot.)    SQL       Integr.    IA        Hexagonal
 ```
 
-### 2.2 Fase 1: Fundamentos y Arquitectura (02-15 Nov 2025)
+### 5.2 Fase 1: Fundamentos y Arquitectura (02-15 Nov 2025)
 
 **Objetivo**: Definir y validar la arquitectura completa del sistema.
 
@@ -399,10 +358,10 @@ El proyecto documenta una evolución conceptual hacia **EIARC (Ecosistema de Int
 - ✅ Diccionario de Datos completo
 - ✅ Aprobación de arquitectura
 
-**Duración**: 2 semanas  
+**Duración**: 2 semanas
 **Estado**: ✅ 100% Completado
 
-### 2.3 Fase 2: Prototipo "Hola Mundo" (12-25 Nov 2025)
+### 5.3 Fase 2: Prototipo "Hola Mundo" (12-25 Nov 2025)
 
 **Objetivo**: Validar comunicación Backend ↔ Frontend ↔ Edge.
 
@@ -413,10 +372,10 @@ El proyecto documenta una evolución conceptual hacia **EIARC (Ecosistema de Int
 - ✅ Configuración BeagleBone Black (Debian 11)
 - ✅ Red local estática configurada
 
-**Duración**: 2 semanas  
+**Duración**: 2 semanas
 **Estado**: ✅ 100% Completado
 
-### 2.4 Fase 3: Flujo de Datos Edge-to-Cloud (26 Nov - 09 Dic 2025)
+### 5.4 Fase 3: Flujo de Datos Edge-to-Cloud (26 Nov - 09 Dic 2025)
 
 **Objetivo**: Pipeline completo Sensor → BBB → Cloud → Dashboard.
 
@@ -427,10 +386,10 @@ El proyecto documenta una evolución conceptual hacia **EIARC (Ecosistema de Int
 - ✅ Dashboard con gráficos en tiempo real
 - ✅ WebSockets (parcial)
 
-**Duración**: 2 semanas  
+**Duración**: 2 semanas
 **Estado**: ✅ 100% Completado
 
-### 2.5 Fase 4: Integración de IA (10-31 Dic 2025)
+### 5.5 Fase 4: Integración de IA (10-31 Dic 2025)
 
 **Objetivo**: Implementar clasificación de enfermedades (Cloud + Edge).
 
@@ -442,20 +401,20 @@ El proyecto documenta una evolución conceptual hacia **EIARC (Ecosistema de Int
 - ✅ API Cloud `/api/ia/classify/`
 - ✅ API Edge `tflite_api.py` (BBB-02)
 
-**Duración**: 3 semanas  
+**Duración**: 3 semanas
 **Estado**: ✅ 100% Completado
 
 ---
 
-### 2.6 ENERO 2026 - MES CRÍTICO DE CONSOLIDACIÓN
+### 5.6 ENERO 2026 - MES CRÍTICO DE CONSOLIDACIÓN
 
 Este mes marca el punto de inflexión del proyecto, con múltiples intervenciones técnicas que transformaron la arquitectura y estabilizaron el sistema.
 
 ---
 
 #### 📅 **16 de Enero 2026 | 10:30 AM**
-**Sesión**: Corrección de Dependencias Backend  
-**Responsable**: Bernardo Gómez + Gemini AI  
+**Sesión**: Corrección de Dependencias Backend
+**Responsable**: Bernardo Gómez + Gemini AI
 **Rama**: `rescue/ia-voz-completa`
 
 ##### Problema Identificado
@@ -495,8 +454,8 @@ pip install -r requirements.txt
 ---
 
 #### 📅 **17 de Enero 2026 | 16:00 PM**
-**Sesión**: Análisis y Configuración Docker  
-**Responsable**: Bernardo Gómez + Gemini AI  
+**Sesión**: Análisis y Configuración Docker
+**Responsable**: Bernardo Gómez + Gemini AI
 **Rama**: `rescue/ia-voz-completa`
 
 ##### Problema Identificado
@@ -546,8 +505,8 @@ docker-compose up -d --build
 ---
 
 #### 📅 **18 de Enero 2026 | 09:00 AM**
-**Sesión**: Auditoría Forense y Saneamiento de .gitignore  
-**Responsable**: Bernardo Gómez + Gemini AI  
+**Sesión**: Auditoría Forense y Saneamiento de .gitignore
+**Responsable**: Bernardo Gómez + Gemini AI
 **Rama**: `rescue/ia-voz-completa`
 
 ##### Problema Identificado
@@ -616,7 +575,7 @@ git status
 git commit -m "infra: saneamiento de repositorio - actualizar .gitignore"
 ```
 
-**Resultado**: 
+**Resultado**:
 - ✅ Repositorio reducido de 500 MB a 85 MB
 - ✅ Git status limpio
 - ✅ Solo archivos fuente rastreados
@@ -627,9 +586,9 @@ git commit -m "infra: saneamiento de repositorio - actualizar .gitignore"
 ---
 
 #### 📅 **18 de Enero 2026 | 13:45 PM**
-**Sesión**: Rescate de Infraestructura - Compactación de Disco WSL2  
-**Responsable**: Bernardo Gómez + Gemini AI  
-**Rama**: `rescue/ia-voz-completa`  
+**Sesión**: Rescate de Infraestructura - Compactación de Disco WSL2
+**Responsable**: Bernardo Gómez + Gemini AI
+**Rama**: `rescue/ia-voz-completa`
 **🔴 SESIÓN CRÍTICA**: Sistema al borde del colapso
 
 ##### Problema Identificado
@@ -837,8 +796,8 @@ docker-compose up -d
 ---
 
 #### 📅 **18 de Enero 2026 | 14:30 PM**
-**Sesión**: Resolución de Conflictos de Red  
-**Responsable**: Bernardo Gómez + Gemini AI  
+**Sesión**: Resolución de Conflictos de Red
+**Responsable**: Bernardo Gómez + Gemini AI
 **Rama**: `rescue/ia-voz-completa`
 
 ##### Problema Identificado
@@ -880,9 +839,9 @@ services:
 ---
 
 #### 📅 **18 de Enero 2026 | 17:45 PM - 19:45 PM**
-**Sesión**: Migración de MySQL a PostgreSQL  
-**Responsable**: Bernardo Gómez + Gemini AI  
-**Rama**: `rescue/ia-voz-completa`  
+**Sesión**: Migración de MySQL a PostgreSQL
+**Responsable**: Bernardo Gómez + Gemini AI
+**Rama**: `rescue/ia-voz-completa`
 **🔴 DECISIÓN ARQUITECTÓNICA MAYOR**
 
 ##### Contexto de la Decisión
@@ -1371,20 +1330,35 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
 
 **3. Infraestructura**
 *   **Resolución de Conflictos de Puerto:** Se liberó el puerto 5173 (bloqueado por procesos Node.js huérfanos) para permitir el arranque correcto de Docker.
+
 ---
 
-<a name="apendice-c"></a>
-## Apéndice C: Enlaces y Referencias
+## Apéndice A: Enlaces y Referencias
 
-**Estado: desarrollado (añadido en la actualización v7.2).** Bibliografía técnica y de mercado que respalda las decisiones de arquitectura hexagonal y la expansión de dominio EIARC documentadas en la Sección 9.
+### A.1 Ruta de Continuidad Operativa
 
-### C.1 Documentos Principales del Proyecto (Autoría y Repositorio)
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\continuity_check.ps1
+```
+
+Este flujo valida arranque de servicios principales, salud del backend, salud del microservicio de IA, y ejecución de la suite de tests de dominio.
+
+Fuentes de verdad operativa y técnica:
+- [`CONTINUITY_RUNBOOK.md`](CONTINUITY_RUNBOOK.md)
+- [`HEXAGONAL_REFACTOR_PLAN.md`](HEXAGONAL_REFACTOR_PLAN.md)
+- [`API_REFERENCE.md`](API_REFERENCE.md)
+- [`DEPLOYMENT.md`](DEPLOYMENT.md)
+- [`PLAN_MAESTRO.md`](PLAN_MAESTRO.md) — roadmap de fases del proyecto, incluida la Fase 9 (expansión de dominio EIARC, planificada)
+- [`ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`](ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md) — guía de estudio ADSO con la bitácora consolidada de la refactorización hexagonal
+- *EIARC_Documento_Maestro_Modelo_Negocio.pdf* — **Documento no disponible en este repositorio** (documento de modelo de negocio y posicionamiento comercial de EIARC; fuera del alcance técnico de este MASTERDOC, referenciado aquí solo para trazabilidad)
+
+### A.2 Documentos Principales del Proyecto (Autoría y Repositorio)
 
 - Gómez Montoya, B. A. (2026). *EIARC: Ecosistema de Inteligencia Artificial y Robótica para el Campo – Documento Maestro de Modelo de Negocio y Dirección Técnica*. SENA - Regional Magdalena.
 - Gómez Montoya, B. A. (2026). *SIGC&T RURAL: Sistema Integrado de Gestión del Conocimiento y Tecnología Rural* (Documento de Sustentación v6.0). SENA.
 - Gómez Montoya, B. A. (2026). *sigcTiArural: Sistema Integral de Gestión del Conocimiento y la Tecnología para el Fortalecimiento de la Investigación en Entornos Rurales*. Repositorio de GitHub. https://github.com/badolgm/sigcTiArural.git
 
-### C.2 Fundamentos de Arquitectura de Software y Refactorización
+### A.3 Fundamentos de Arquitectura de Software y Refactorización
 
 - AWS Prescriptive Guidance. (2026). *Hexagonal architecture pattern*. Amazon Web Services. https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/hexagonal-architecture.html
 - Benito, T., & Barrientos, A. (2024). An Intelligent Human–Machine Interface Architecture for Long-Term Remote Robot Handling in Fusion Reactor Environments. *Applied Sciences, 14*(11), 4814. https://doi.org/10.3390/app14114814
@@ -1396,7 +1370,7 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
 - Wikipedia contributors. (2026, 11 de mayo). Hexagonal architecture (software). En *Wikipedia, The Free Encyclopedia*. https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)
 - Woltmann, S. (2023, 18 de enero). *Hexagonal Architecture – What Is It? Why Use It?* HappyCoders.eu. https://www.happycoders.eu/software-craftsmanship/hexagonal-architecture/
 
-### C.3 Telemetría IoT y Ganadería de Precisión (PLF) — soporte bibliográfico de la Sección 9.3 (planificado)
+### A.4 Telemetría IoT y Ganadería de Precisión (PLF) — soporte bibliográfico de la Sección 3.2 (planificado)
 
 - Asset Track Pro. (2026). *LoRaWAN for Livestock Monitoring and Mobile Systems*. https://assettrackpro.com/product/lorawan-for-livestock-monitoring-and-mobile-systems/
 - Ding et al. (s.f.). Advancing precision livestock farming: integrating artificial intelligence and emerging technologies for sustainable livestock management. *PMC*. https://pmc.ncbi.nlm.nih.gov/articles/PMC13057718/
@@ -1409,23 +1383,21 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
 - Schirmann, K., Chapinal, N., Weary, D. M., Heuwieser, W., & von Keyserlingk, M. A. G. (2016). Rumination and its relationship to feeding and lying behavior in Holstein dairy cows. *Journal of Dairy Science, 95*(6), 3212-3217.
 - Semtech Corporation. (2019). *Monitoring Cattle in Real Time: Semtech's LoRa Enables Smart Agriculture*. https://www.semtech.com/uploads/technology/LoRa/appbriefs/Semtech-UseCase-SmartAgriculture-Chipsafer_101019(WEB).pdf
 
-### C.4 Inteligencia Artificial y Datos Científicos
+### A.5 Inteligencia Artificial y Datos Científicos
 
 - Bhadra, M. (2024). *Agriculture and farming dataset* [Conjunto de datos]. Kaggle. https://www.kaggle.com/datasets/bhadramohit/agriculture-and-farming-dataset
 - Hughes, D. P., & Salathé, M. (2015). An open access repository of images on plant health to enable the development of mobile disease diagnostics. *arXiv*.
 - Sandler, M., et al. (2018). MobileNetV2: Inverted Residuals and Linear Bottlenecks. *CVPR 2018*.
 - Suvroo. (2024). *AI for sustainable agriculture dataset* [Conjunto de datos]. Kaggle. https://www.kaggle.com/datasets/suvroo/ai-for-sustainable-agriculture-dataset
 
-### C.5 Análisis de Mercado (referencia para el modelo de negocio en documento separado)
+### A.6 Análisis de Mercado (referencia para el modelo de negocio en documento separado)
 
 - Fortune Business Insights. (2026). *Veterinary Telemetry Systems Market Size, Share, Forecast, 2034*. https://www.fortunebusinessinsights.com/industry-reports/veterinary-telemetry-systems-market-100689
 - ReAnIn. (2026). *Veterinary Telemetry Systems Market Size & Share Analysis - Growth Trends And Forecast (2025 - 2032)*. https://www.reanin.com/reports/veterinary-telemetry-systems-market
 - TechSci Research. (2026). *Veterinary Telemetry Systems Market - Global Industry Size, Share, Trends, Opportunity, and Forecast, 2031F*. https://www.techsciresearch.com/report/veterinary-telemetry-systems-market/17612.html
 
-### C.6 Normatividad y Entorno Nacional (Colombia)
+### A.7 Normatividad y Entorno Nacional (Colombia)
 
 - Departamento Administrativo Nacional de Estadística (DANE). (s.f.). *Estadísticas por tema*. https://www.dane.gov.co/index.php/estadisticas-por-tema
 - Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC). (2025). *Sector TIC analiza retos y desafíos para la conectividad en las regiones en Conecta Colombia 2025*. https://mintic.gov.co/portal/inicio/Sala-de-prensa/Noticias/401713:Sector-TIC-analiza-retos-y-desafios-para-la-conectividad-en-las-regiones-en-Conecta-Colombia-2025
 - Ministerio de Agricultura y Desarrollo Rural (Agronet). (s.f.). *Agricultura de precisión: más eficiente y amigable con el campo*. https://agronet.gov.co/noticias/agricultura-de-precision-mas-eficiente-y-amigable-con-el-campo
-
-**Nota de continuidad:** los Apéndices A (Glosario Técnico), B (Comandos de Referencia Rápida) y D (Configuraciones Completas) permanecen pendientes de desarrollo (ver Nota de Continuidad Documental al inicio del documento).
