@@ -1,5 +1,7 @@
 # 04_DIAGRAM_AUDIT
 
+> **Nota de obsolescencia (FASE 5C — migración documental V8):** este documento es un artefacto histórico de auditoría previo a la consolidación arquitectónica V8. Su propio propósito (auditar los diagramas de `docs/diagrams/`) fue reemplazado por la auditoría FASE 5 / 5A / 5B de esta consolidación. La fuente vigente de diagramas canónicos es `docs/eiarc/03_DIAGRAMS/*_V8.mmd`. Este documento se conserva intacto por trazabilidad histórica.
+
 Auditoría estática de la documentación gráfica del proyecto SIGC&T Rural.
 Fuente: `01_REPOSITORY_AUDIT.md`, `02_SIGCTRURAL_CANONICAL_MODEL.md`, `03_DOCUMENT_TRUTH_MATRIX.md`, y diagramas en `docs/diagrams/`, `docs/uml/`, `docs/database/`.
 

@@ -1,0 +1,41 @@
+%% PRODUCTIVE_CONTEXTS_V8
+%% Propósito: responde "¿dónde puede aplicarse SIGCT-Rural?" — Agricultura no es el
+%% dominio exclusivo; distingue implementado / diseñado / nombrado-sin-diseño dentro
+%% de la arquitectura objetivo oficial.
+%% Fuente: FASE 4A §6 + FASE 4B (revisión de 3 niveles — Apicultura/Piscicultura/
+%% Invernaderos suben a Objetivo Oficial, nombrados en PLAN_MAESTRO.md Fase 9) +
+%% docs/MASTERDOC.md v8 §3.2 (reglas de dominio Ganadería/Porcicultura) +
+%% docs/database/README.md (bibliografía: nombre oficial del proyecto incluye "Investigación")
+%% Convención de 3 niveles:
+%% 🟢 Implementado · 🔷 Arquitectura Objetivo Oficial · ⚪ Idea Especulativa
+
+flowchart TB
+    CENTER(("Dominio Central<br/>SIGCT-Rural — NO exclusivo de Agricultura"))
+
+    CENTER --> AGRI["🟢 Agricultura<br/>AgricultureStrategy — implementada"]
+    CENTER --> LIVESTOCK["🔷 Ganadería/Avicultura<br/>Nombrada Y diseñada — MASTERDOC v8 §3.2"]
+    CENTER --> PORC["🔷 Porcicultura<br/>Nombrada Y diseñada — MASTERDOC v8 §3.2"]
+    CENTER --> APIC["🔷 Apicultura<br/>Nombrada en PLAN_MAESTRO Fase 9 (FASE 4B: sube)<br/>Sin reglas de dominio detalladas todavía"]
+    CENTER --> PISC["🔷 Piscicultura<br/>Nombrada en PLAN_MAESTRO Fase 9 (FASE 4B: sube)<br/>Sin reglas de dominio detalladas todavía"]
+    CENTER --> GREEN["🔷 Invernaderos<br/>Nombrada en PLAN_MAESTRO Fase 9 (FASE 4B: sube)<br/>Sin reglas de dominio detalladas todavía"]
+    CENTER --> ELEC["🟢 Electrónica<br/>ElectronicsStrategy — implementada"]
+    CENTER --> ROBO["🟢 Robótica<br/>RoboticsStrategy — implementada"]
+    CENTER --> TELECOM["🟢 Telecomunicaciones<br/>TelecomStrategy — implementada"]
+    CENTER -.->|"dominio TRANSVERSAL, no un par más (FASE 4C)"| RESEARCH2["🔷 Investigación Científica<br/>Parte del nombre oficial completo del proyecto<br/>(docs/database/README.md, bibliografía)<br/>Atraviesa todos los demás Contextos Productivos"]
+    CENTER --> FUTURE["🔷 Futuros Contextos<br/>Principio de extensibilidad oficial<br/>(LaboratorioStrategyFactory, MASTERDOC v8 §3.1)"]
+
+    EDU["Educación — NO es un Contexto Productivo<br/>(FASE 4A §6: misión institucional del programa,<br/>no un dominio de aplicación de Fase 9)"]
+    CENTER -.->|"categoría distinta — ver SIGCT_RURAL_CONTEXT_MAP_V8.mmd"| EDU
+
+    style AGRI fill:#052e16,stroke:#4ade80
+    style ELEC fill:#052e16,stroke:#4ade80
+    style ROBO fill:#052e16,stroke:#4ade80
+    style TELECOM fill:#052e16,stroke:#4ade80
+    style LIVESTOCK fill:#1e3a8a,stroke:#60a5fa
+    style PORC fill:#1e3a8a,stroke:#60a5fa
+    style APIC fill:#1e3a8a,stroke:#60a5fa
+    style PISC fill:#1e3a8a,stroke:#60a5fa
+    style GREEN fill:#1e3a8a,stroke:#60a5fa
+    style RESEARCH2 fill:#1e3a8a,stroke:#60a5fa
+    style FUTURE fill:#1e3a8a,stroke:#60a5fa
+    style EDU fill:#374151,stroke:#9ca3af

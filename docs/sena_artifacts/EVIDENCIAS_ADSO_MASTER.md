@@ -39,17 +39,15 @@ Este documento organiza la evidencia existente en cinco bloques:
 
 ### 4.2 Diagramas reutilizables para entrega y sustentación
 
-- `docs/diagrams/architecture.mmd`
-- `docs/diagrams/c4_context.mmd`
-- `docs/diagrams/c4_components.mmd`
-- `docs/diagrams/c4_containers.mmd`
-- `docs/diagrams/c4_deployment.mmd`
-- `docs/diagrams/package_layers.mmd`
-- `docs/database/er_schema.mmd`
-- `docs/database/class_db_models.mmd`
-- `docs/uml/activity_model_training.mmd`
-- `docs/diagrams/use_cases.mmd`
-- `docs/diagrams/class_lab_catalog.mmd`
+**Nota (FASE 5C — migración documental V8):** las rutas siguientes fueron actualizadas a los diagramas canónicos V8. Las rutas originales entre paréntesis permanecen en el repositorio sin eliminar hasta completar la Fase 6 de limpieza física.
+
+- `docs/eiarc/03_DIAGRAMS/SIGCT_RURAL_CONTEXT_MAP_V8.mmd` (sustituye a `docs/diagrams/architecture.mmd`, `c4_context.mmd`, `c4_components.mmd`, `c4_containers.mmd`)
+- `docs/eiarc/03_DIAGRAMS/TELEMETRY_IOT_ARCHITECTURE_V8.mmd` (sustituye a `docs/diagrams/c4_deployment.mmd`)
+- `docs/diagrams/package_layers.svg` (corrección: la referencia original `package_layers.mmd` no existe en el repositorio; `package_layers.svg` permanece vigente sin cambios)
+- `docs/database/er_schema_v8.mmd` (sustituye a `docs/database/er_schema.mmd` y `docs/database/class_db_models.mmd`, ambos eliminados en la Fase 1 de esta consolidación)
+- `docs/uml/activity_model_training.mmd` (sin verificar — fuera del alcance de `docs/diagrams/` auditado en FASE 5/5A/5B)
+- `docs/diagrams/use_cases.mmd` (sin cambios — vigente)
+- `docs/eiarc/03_DIAGRAMS/LABORATORY_ARCHITECTURE_V8.mmd` (sustituye a `docs/diagrams/class_lab_catalog.mmd`)
 
 ### 4.3 Evidencia de gobierno documental
 

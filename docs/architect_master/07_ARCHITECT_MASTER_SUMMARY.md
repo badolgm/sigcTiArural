@@ -1,5 +1,7 @@
  # 07_ARCHITECT_MASTER_SUMMARY
 
+> **Nota de obsolescencia (FASE 5C — migración documental V8):** este documento es un artefacto histórico de auditoría previo a la consolidación arquitectónica V8. Las prioridades de diagramas citadas (`docs/diagrams/*`) fueron reevaluadas en la auditoría FASE 5 / 5A / 5B. La fuente vigente de diagramas canónicos es `docs/eiarc/03_DIAGRAMS/*_V8.mmd`. Este documento se conserva intacto por trazabilidad histórica.
+
 Resumen maestro de conocimiento arquitectónico — SIGC&T Rural
 (Resumen ejecutivo, estado, decisiones y recomendaciones técnicas).
 

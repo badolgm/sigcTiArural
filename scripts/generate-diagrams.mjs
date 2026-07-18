@@ -7,7 +7,8 @@ const roots = [
   'docs/diagrams',
   'docs/uml',
   'docs/database',
-  'docs/edge'
+  'docs/edge',
+  'docs/eiarc/03_DIAGRAMS'
 ];
 
 const puppeteerConfig = 'docs/puppeteer-config.json';

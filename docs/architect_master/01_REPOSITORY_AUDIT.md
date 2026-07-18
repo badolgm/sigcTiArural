@@ -1,5 +1,7 @@
 # 01_REPOSITORY_AUDIT
 
+> **Nota de obsolescencia (FASE 5C — migración documental V8):** este documento es un artefacto histórico de auditoría previo a la consolidación arquitectónica V8. Las referencias a diagramas en `docs/diagrams/`, `docs/uml/` y `docs/database/` citadas en este archivo pueden estar desactualizadas. La fuente vigente de diagramas canónicos es `docs/eiarc/03_DIAGRAMS/*_V8.mmd`. Ver FASE 5 / 5A / 5B para el detalle de la migración. Este documento se conserva intacto por trazabilidad histórica.
+
 ## 1. Resumen ejecutivo
 
 Informe de inspección estática del repositorio `sigcTiArural` en la rama `feature/refactor-modular-contexts`. El análisis se basó en la revisión de los archivos y carpetas clave: `README.md`, `docs/`, `src/`, `config/`, `schema_postgresql.sql` y `docker-compose.yml`. Se confirma que el repositorio ya incluye una migración en curso hacia una arquitectura hexagonal, con coexistencia de componentes legacy y nuevos adaptadores.

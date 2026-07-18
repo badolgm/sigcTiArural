@@ -167,5 +167,19 @@ docs/*
 !docs/reports/
 !docs/reports/**
 
+# Database Documentation (canonical ERD and future DB artifacts)
+!docs/database/
+!docs/database/**
+
+# Diagram archive (FASE 6B — archivos retirados de docs/diagrams/ sin equivalente V8)
+# docs/diagrams/ no tenía excepción previa (solo visible por archivos ya trackeados);
+# git no permite re-incluir una ruta si su directorio padre sigue excluido, por eso
+# se abre docs/diagrams/ y se vuelve a cerrar a nivel de archivo suelto, dejando
+# _archive/ como única excepción real (alcance exclusivo, sin abrir el resto de la carpeta).
+!docs/diagrams/
+docs/diagrams/*
+!docs/diagrams/_archive/
+!docs/diagrams/_archive/**
+
 # Loose documentation files directly under docs/
 !docs/*.md

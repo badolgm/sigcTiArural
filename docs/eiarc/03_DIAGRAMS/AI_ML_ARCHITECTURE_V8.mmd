@@ -1,0 +1,46 @@
+%% AI_ML_ARCHITECTURE_V8
+%% Propósito: responde "¿cómo fluye la inteligencia artificial?" — la IA no se modela
+%% como imagen→clasificador; es un pipeline multi-capa, multi-modal, publicado vía
+%% contratos semánticos EIARC.
+%% Fuente: FASE 4A §3 + FASE 4B (revisión de 3 niveles) + AI_CONTEXT_V2_ARCHITECTURE.md
+%% (nomenclatura textual de las capas) + semantic_prediction_resolver.py (código real)
+%% Convención de 3 niveles:
+%% 🟢 Implementado · 🔷 Arquitectura Objetivo Oficial · ⚪ Idea Especulativa
+
+flowchart TB
+    NOTE["IA ≠ imagen→clasificador (FASE 4A §3)<br/>Pipeline oficial: AI_CONTEXT_V2_ARCHITECTURE.md"]
+    NOTE2["🔷 FASE 4C — Nota arquitectónica:<br/>la IA del sistema debe procesar imágenes, audio, telemetría,<br/>señales, series temporales y datasets científicos<br/>SIN depender de un dominio específico<br/>(respaldo: los 8 bloques paralelos de AI_CONTEXT_V2_ARCHITECTURE.md<br/>— Agriculture/Animal Health/Telemetry/CV/Time Series/etc.<br/>ya están organizados por tipo de dato, no por un único dominio)"]
+    NOTE --> NOTE2
+
+    subgraph SOURCES["Fuentes de Datos"]
+        IMG["🟢 Imágenes"]
+        AUDIO["🟢 Audio (voz — no es modelo ML entrenado)"]
+        TELEM["🟢 Telemetría (dato real, sin pipeline IA)"]
+        TS["🔷 Series Temporales"]
+        SENS["🟢 Sensores (dato real, sin procesamiento IA)"]
+    end
+
+    NOTE --> SOURCES
+    SOURCES --> INGEST["🔷 Ingesta y Normalización"]
+    INGEST --> FEAT["🔷 Feature Engineering Layer"]
+    FEAT --> TRAIN["🟢🔷 Entrenamiento<br/>Real: MobileNetV2 binario · Objetivo: multi-modelo V2"]
+    TRAIN --> VALID["⚪ Validación<br/>terminología genérica, no nombrada en AI_CONTEXT_V2"]
+    VALID --> REGISTRY["⚪ Model Registry<br/>ídem — no nombrada en AI_CONTEXT_V2"]
+    REGISTRY --> INFER["🟢🔷 Motores de Inferencia Especializados<br/>Real: 1 (binario) · Objetivo: 8 bloques EIARC"]
+    INFER --> SEMANTIC["🟢 Semantic Resolution Layer<br/>semantic_prediction_resolver.py (verificado)"]
+    SEMANTIC --> DASH["🟢 Dashboard"]
+    SEMANTIC --> RECO["🔷 Recommendation Engine"]
+    RECO --> KAI["🔷 Knowledge AI Layer"]
+    KAI --> KHUBLINK["🔷 → Knowledge Hub<br/>ver KNOWLEDGE_HUB_ARCHITECTURE_V8.mmd"]
+
+    style NOTE fill:#1e3a8a,stroke:#60a5fa
+    style NOTE2 fill:#1e3a8a,stroke:#60a5fa
+    style SEMANTIC fill:#052e16,stroke:#4ade80
+    style DASH fill:#052e16,stroke:#4ade80
+    style INGEST fill:#1e3a8a,stroke:#60a5fa
+    style FEAT fill:#1e3a8a,stroke:#60a5fa
+    style RECO fill:#1e3a8a,stroke:#60a5fa
+    style KAI fill:#1e3a8a,stroke:#60a5fa
+    style KHUBLINK fill:#1e3a8a,stroke:#60a5fa
+    style VALID fill:#450a0a,stroke:#f87171
+    style REGISTRY fill:#450a0a,stroke:#f87171

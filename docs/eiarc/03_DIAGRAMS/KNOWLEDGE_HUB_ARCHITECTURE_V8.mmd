@@ -1,0 +1,69 @@
+%% KNOWLEDGE_HUB_ARCHITECTURE_V8
+%% Propósito: responde "¿cómo se transforma información en conocimiento?" — separa
+%% explícitamente el diseño documentado, el puente con AI Context (ambos oficiales),
+%% y la extensión especulativa sin respaldo.
+%% Fuente: FASE 4A §7 + FASE 4B (revisión de 3 niveles — la capa (b) sube a oficial
+%% completa) + KNOWLEDGE_HUB_ARCHITECTURE.md + AI_CONTEXT_V2_ARCHITECTURE.md +
+%% SIGCT_RURAL_SYSTEM_BOOT.md §12 (diseñado y especificado, no implementado)
+%% Convención de 3 niveles:
+%% 🟢 Implementado · 🔷 Arquitectura Objetivo Oficial · ⚪ Idea Especulativa
+
+flowchart TB
+    DEF["Knowledge Hub = tres capas separadas (FASE 4A §7 / FASE 4B)"]
+
+    subgraph REAL["🔷 (a) Diseño documentado — KNOWLEDGE_HUB_ARCHITECTURE.md — NO implementado"]
+        direction TB
+        SRC["Content Sources"] --> CAT["Catalogador Documental"] --> REG["Registry JSON"]
+        REG --> ROUTER["Router Documental React"]
+        REG --> SEARCH["Buscador Local"]
+        REG --> REL["Panel de Relaciones"]
+        ROUTER --> MDREND["Markdown Renderer Local"]
+        ROUTER --> MMDREND["Mermaid Renderer Local"]
+        ROUTER --> TIMELINE["Timeline / Continuity Portal"]
+    end
+
+    subgraph BRIDGE["🔷 (b) Conexión con AI Context — oficial completa (FASE 4B: sube de 'parcial')"]
+        KAI_IN["Knowledge Hub como fuente<br/>de la capa 'Conocimiento' del AI Context V2<br/>(AI_CONTEXT_V2_ARCHITECTURE.md, nombrado explícitamente)"]
+        KAI_OUT["Knowledge AI Layer<br/>(bloque oficial del pipeline de IA, no construido)"]
+        KAI_IN --> KAI_OUT
+    end
+
+    subgraph SPECULATIVE["⚪ (c) Extensión sin respaldo — permanece especulativa (FASE 4B)"]
+        direction TB
+        DOCS2["Documentos / Datasets / Investigaciones / Resultados de Labs"]
+        VEC["Vectorización"] --> CTX["Contexto"] --> SEM["Búsqueda Semántica"] --> ASSIST["Asistente IA"] --> ORGLEARN["Aprendizaje Organizacional"]
+        DOCS2 --> VEC
+    end
+
+    subgraph EVOLUTION["FASE 4C — Evolución del Knowledge Hub (marcado por respaldo real, no por deseo)"]
+        direction TB
+        EVO1["🔷 Documentos técnicos / conocimiento institucional<br/>YA respaldado: KNOWLEDGE_HUB_ARCHITECTURE.md Content Sources<br/>+ AI_CONTEXT_V2_ARCHITECTURE.md (Knowledge Hub como fuente de 'Conocimiento')"]
+        EVO2["⚪ Resultados experimentales de laboratorios / datasets crudos<br/>SIN respaldo: KNOWLEDGE_HUB_ARCHITECTURE.md solo lista<br/>*.md/*.mmd/*.svg/*.png/*.html como Content Sources —<br/>no datasets ni resultados de experimentos"]
+    end
+
+    DEF --> REAL
+    DEF --> BRIDGE
+    DEF --> EVOLUTION
+    REG -.->|"fuente potencial, sin diseño hoy"| KAI_IN
+    REG -.->|"sin diseño hoy"| DOCS2
+
+    style DEF fill:#1e3a8a,stroke:#60a5fa
+    style SRC fill:#1e3a8a,stroke:#60a5fa
+    style CAT fill:#1e3a8a,stroke:#60a5fa
+    style REG fill:#1e3a8a,stroke:#60a5fa
+    style ROUTER fill:#1e3a8a,stroke:#60a5fa
+    style SEARCH fill:#1e3a8a,stroke:#60a5fa
+    style REL fill:#1e3a8a,stroke:#60a5fa
+    style MDREND fill:#1e3a8a,stroke:#60a5fa
+    style MMDREND fill:#1e3a8a,stroke:#60a5fa
+    style TIMELINE fill:#1e3a8a,stroke:#60a5fa
+    style KAI_IN fill:#1e3a8a,stroke:#60a5fa
+    style KAI_OUT fill:#1e3a8a,stroke:#60a5fa
+    style DOCS2 fill:#450a0a,stroke:#f87171
+    style VEC fill:#450a0a,stroke:#f87171
+    style CTX fill:#450a0a,stroke:#f87171
+    style SEM fill:#450a0a,stroke:#f87171
+    style ASSIST fill:#450a0a,stroke:#f87171
+    style ORGLEARN fill:#450a0a,stroke:#f87171
+    style EVO1 fill:#1e3a8a,stroke:#60a5fa
+    style EVO2 fill:#450a0a,stroke:#f87171

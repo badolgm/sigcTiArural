@@ -1,0 +1,52 @@
+%% LABORATORY_ARCHITECTURE_V8
+%% Propósito: responde "¿cómo funcionan los laboratorios?" — definición oficial de
+%% Laboratorio como motor de experimentación reutilizable, no como contenido académico estático.
+%% Fuente: FASE 4A §2 + FASE 4B (revisión de 3 niveles) + docs/MASTERDOC.md v8 §3.1
+%% (Strategy/Factory como punto de extensión) + core/domain/strategies/ (código real)
+%% Convención de 3 niveles:
+%% 🟢 Implementado · 🔷 Arquitectura Objetivo Oficial · ⚪ Idea Especulativa
+%% FASE 4C: verificado directamente contra src/frontend/src/App.jsx (rutas reales) y
+%% src/frontend/src/{pages,labs}/ (componentes reales). Hallazgo: "Sistemas Embebidos"
+%% es un dominio real no incluido antes (EmbeddedLab.jsx, ruta /lab-embedded) — se agrega.
+%% "Física" NO tiene componente ni ruta propia (grep confirma que solo aparece como
+%% contenido temático dentro de AdvancedMathLab.jsx y RoboticsLab.jsx) — permanece
+%% en la categoría de menor certeza, con la evidencia exacta documentada, no como
+%% rechazo arbitrario.
+
+flowchart TB
+    DEF["🔷 Laboratorio = Motor de Experimentación Reutilizable<br/>Strategy Pattern dentro de LaboratorioStrategyFactory<br/>(principio de extensibilidad oficial, MASTERDOC v8 §3.1)"]
+
+    DEF --> COURSES["🔷 Cursos"] --> LABCAT["🟢 Catálogo de Laboratorios"]
+    LABCAT --> EXP["🟢 Experimentos<br/>vía Estrategia registrada en la Factory"]
+    EXP --> INPUT["🔷 Entrada multi-modal<br/>imagen / audio / telemetría / señal / dataset<br/>(principio oficial; hoy 1 tipo de dato por estrategia)"]
+    INPUT --> CAPTURE["🟢 Captura de Datos"]
+    CAPTURE --> VIZ["🟢 Visualización"]
+    VIZ --> AI["🟢🔷 IA<br/>Real solo en Agricultura; objetivo en el resto"]
+    AI --> RESULTS["🟢 Resultados"]
+
+    subgraph STRATEGIES["🟢 Estrategias reales verificadas (core/domain/strategies/)"]
+        S1["Robótica"]
+        S2["Electrónica"]
+        S3["Telecomunicaciones"]
+        S4["Agricultura"]
+    end
+
+    subgraph FRONTEND_ONLY["🟢 Dominios académicos con ruta/componente real verificado (App.jsx)"]
+        F1["Matemáticas — AdvancedMathLab.jsx, /advanced-math(-v2)"]
+        F2["Ciencia de Datos — DataScienceLab.jsx, /data-science"]
+        F3["Sistemas Embebidos — EmbeddedLab.jsx, /lab-embedded (FASE 4C, agregado)"]
+        F4["Inteligencia Artificial — AIPredictiva.jsx, /ai-predictive"]
+    end
+
+    subgraph UNBACKED["⚪ Sin componente ni ruta propia verificada"]
+        U1["Física — contenido temático dentro de AdvancedMathLab.jsx<br/>y RoboticsLab.jsx (verificado); sin PhysicsLab.jsx ni ruta /lab-physics"]
+    end
+
+    EXP -.-> STRATEGIES
+    EXP -.-> FRONTEND_ONLY
+    EXP -.-> UNBACKED
+
+    style DEF fill:#1e3a8a,stroke:#60a5fa
+    style INPUT fill:#1e3a8a,stroke:#60a5fa
+    style COURSES fill:#1e3a8a,stroke:#60a5fa
+    style U1 fill:#450a0a,stroke:#f87171

@@ -102,7 +102,7 @@ Basado en los documentos generados `01_REPOSITORY_AUDIT.md` al `07_ARCHITECT_MAS
 - Servicio `ai_service` validado con SLAs y fallback.
 - Política de despliegue Edge documentada y validada.
 - Flujo de ingestión de datos sincronizado: sensores → API → DB.
-- Diagramas `sequence_data_ingest.mmd`, `architecture_edge.svg` actualizados.
+- Diagrama `docs/eiarc/03_DIAGRAMS/TELEMETRY_IOT_ARCHITECTURE_V8.mmd` actualizado (sustituye a `docs/diagrams/sequence_data_ingest.mmd`, `architecture_edge.svg` — migración FASE 5C).
 
 ## Dependencias
 - Código `src/ai_models/fastapi_app.py` y adaptadores IA.
