@@ -151,29 +151,44 @@ El contenedor Docker local `ai_service` puede fallar al iniciar. La causa diagno
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#c2ba91','primaryTextColor':'#412402','primaryBorderColor':'#3f9999','lineColor':'#6e854349','secondaryColor':'#1887b3','tertiaryColor':'#9badcf'}}}%%
 mindmap
-  root((SIGC&T Rural))
-    Cloud Platform
-      Dashboard IoT ✅
-      API RESTful ✅
-      PostgreSQL 15 ✅
-      IA Service ⚠️ incidente activo
-    Edge Computing 🟡 parcial
-      BeagleBone Black x3 - referencia
-      MQTT Broker
-      TensorFlow Lite
-      Sensor Array
-    Education
-      Laboratorio Robótica ✅
-      Laboratorio Matemáticas ✅
-      Ciencia de Datos ✅
-      Asistente IA Voz ✅
-    Integrations
-      PlantVillage Dataset
-      Webots Simulator
-      Docker Compose
+  root((SIGCT-Rural<br/>🟢 Implementado · 🔷 Objetivo Oficial · ⚪ Especulativo))
+    🟢 Laboratorios
+      Motor Strategy/Factory reutilizable
+      🟢 Agricultura
+      🟢 Electrónica
+      🟢 Robótica
+      🟢 Telecomunicaciones
+      🟢 Sistemas Embebidos
+      🟢 Matemáticas Avanzadas
+      🟢 Ciencia de Datos
+    🔷 Academic and Research Community
+      🔷 Cursos / Biblioteca Educativa
+      🔷 Investigación
+      🔷 Recursos Académicos / Documentación
+    🟢🔷 AI Context
+      🟢 Clasificador binario MobileNetV2
+      🟢 Semantic Resolution Layer
+      🔷 Pipeline multi-modal V2 imagen-audio-telemetria-series
+      🔷 Recommendation Engine / Knowledge AI Layer
+    🟢🔷 Telemetría e IoT
+      🟢 Input Port backend PostgreSQL Dashboard
+      🟢 BeagleBone Black referencia código vacío
+      🔷 LoRaWAN ilustrativo
+      ⚪ Fuente real hoy generador simulado
+    🔷 Knowledge Hub
+      🔷 Diseñado no implementado
+      🔷 Puente con AI Context
+      ⚪ Vectorización búsqueda semántica asistente
+    🟢🔷 Contextos Productivos
+      🟢 Agricultura Electrónica Robótica Telecom
+      🔷 Ganadería Porcicultura Apicultura Piscicultura Invernaderos
+      🔷 Investigación transversal
+    🟢🔷 EIARC
+      🟢 Gobernanza parcial implementada
+      🔷 Expansión productiva Fase 9 sin avance
 ```
 
-**Leyenda:** ✅ Implementado en el repositorio · 🟡 Parcial / en progreso · ⚠️ Incidente conocido
+**Leyenda:** 🟢 Implementado en el repositorio · 🔷 Objetivo oficial (diseñado, aún no completamente implementado) · ⚪ Especulativo / ilustrativo
 
 </div>
 
@@ -199,33 +214,43 @@ mindmap
 ```mermaid
 %%{init: {'theme':'dark', 'themeVariables': { 'primaryColor':'#7c3aed','fontSize':'16px'}}}%%
 flowchart TB
-    subgraph users["👥 Usuarios"]
-        A["🌾 Agricultor"]
-        B["🎓 Estudiante SENA"]
+    subgraph users["👥 Usuarios Principales"]
+        A["🌾 Actores de Contextos Productivos<br/>(Agricultor/Técnico — multi-dominio)"]
+        B["🎓 Estudiantes e Investigadores SENA"]
         C["🔧 Administrador"]
     end
 
-    subgraph sigct["🌐 SIGC&T Rural Platform"]
-        S["☁️ Plataforma Web Híbrida<br/>Cloud + Edge Computing"]
+    ROOT(("🌐 SIGCT-Rural<br/>Agnóstico en hardware y en dominio"))
+
+    subgraph core["🏛️ Pilares de la Plataforma"]
+        direction TB
+        ARC["🔷 Academic &amp; Research Community<br/>Cursos · Biblioteca Educativa · Documentación"]
+        PRODCTX["🟢🔷 Contextos Productivos<br/>Agricultura/Electrónica/Robótica/Telecom implementados<br/>Ganadería/Apicultura/Piscicultura/Invernaderos diseñados"]
+        RESEARCH["🔷 Investigación<br/>dominio transversal, no un contexto más"]
+        KHUB["🔷 Knowledge Hub<br/>diseñado, no implementado"]
+        EIARC["🟢🔷 EIARC<br/>Gobernanza (parcial) + Expansión productiva (Fase 9)"]
     end
 
-    subgraph external["🔗 Sistemas Externos"]
-        E1["🤖 Cluster 3x BeagleBone Black<br/>(Edge Devices - referencia)"]
-        E2["📊 PlantVillage Dataset<br/>(Kaggle)"]
-        E3["🎓 SENA SofiaPlus<br/>(Futuro - OAuth 2.0)"]
+    subgraph external["🔗 Sistemas Externos Reales"]
+        direction TB
+        DATA["📊 Fuentes de datos de dominio<br/>(ej. PlantVillage/Kaggle — una entre varias)"]
+        SENAX["🎓 SENA SofiaPlus<br/>(integración futura, no central)"]
+        IOTX["📡 Hardware IoT vía Input Port<br/>(agnóstico, no BBB como identidad)"]
     end
 
-    A -->|"Consulta Dashboard<br/>Monitoreo de Cultivos"| S
-    B -->|"Accede a Cursos<br/>y Laboratorios"| S
-    C -->|"Administra Sistema<br/>y Usuarios"| S
+    users --> ROOT
+    ROOT --> core
+    ROOT -.->|"consume/integra"| external
 
-    E1 -->|"MQTT/HTTPS<br/>Telemetría IoT"| S
-    S -->|"Uso de Modelos<br/>Offline/Online"| E2
-    S -.->|"Autenticación SSO<br/>(Planificado)"| E3
-
+    style ROOT fill:#7c3aed,stroke:#a78bfa,stroke-width:3px
     style users fill:#1e293b,stroke:#8b5cf6,stroke-width:2px
-    style sigct fill:#7c3aed,stroke:#a78bfa,stroke-width:3px
-    style external fill:#0f172a,stroke:#6366f1,stroke-width:2px
+    style core fill:#0f172a,stroke:#6366f1,stroke-width:2px
+    style external fill:#0f172a,stroke:#10b981,stroke-width:2px
+    style PRODCTX fill:#052e16,stroke:#4ade80
+    style EIARC fill:#052e16,stroke:#4ade80
+    style ARC fill:#1e3a8a,stroke:#60a5fa
+    style RESEARCH fill:#1e3a8a,stroke:#60a5fa
+    style KHUB fill:#1e3a8a,stroke:#60a5fa
 ```
 
 ### ⚙️ Nivel 3: Arquitectura Backend — Estado Real de Migración
@@ -268,11 +293,12 @@ flowchart TB
 ### 🔧 Nivel 2: Vista de Contenedores
 
 ```mermaid
-%%{init: {'theme':'dark', 'flowchart': {'curve':'basis'}}}%%
+%%{init: {'theme':'dark', 'flowchart': {'curve':'basis', 'subGraphTitleMargin': {'top': 12, 'bottom': 18}}}}%%
 flowchart TB
     U["🌐 Usuario<br/>(Navegador Web)"]
 
     subgraph cloud["☁️ Cloud Infrastructure (Docker Compose)"]
+        direction TB
         subgraph frontend["🎨 Frontend Layer"]
             FE["⚛️ React App<br/>Vite + TailwindCSS<br/>Puerto: 5173"]
         end
@@ -294,10 +320,10 @@ flowchart TB
         API -->|"HTTP POST<br/>Inferencia IA"| AIS
     end
 
-    subgraph edge["🏭 Laboratorio Edge (Referencia)"]
-        GW["🔌 BBB-01 Gateway"]
-        IA_EDGE["🧠 BBB-02 IA Edge"]
-        IOT["📡 BBB-03 Sensores"]
+    subgraph edge["🧪 Laboratorio Edge de Referencia<br/>(agnóstico en hardware — demostrador)"]
+        GW["🔌 Nodo Gateway<br/>(ejemplo: BeagleBone Black)"]
+        IA_EDGE["🧠 Nodo IA Edge<br/>Inferencia local TFLite<br/>(ejemplo: BeagleBone Black)"]
+        IOT["📡 Nodo Adquisición de Señales<br/>Sensores intercambiables<br/>(ejemplo: BeagleBone Black)"]
     end
 
     U -->|"HTTPS:5173"| FE
