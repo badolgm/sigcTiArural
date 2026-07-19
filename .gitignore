@@ -70,10 +70,12 @@ config/settings.ini
 auditor_arquitectura.sh
 check_tools.py
 create_subdirs.sh
+create_test_data.py
 import_local_dataset.py
 run_local_ai.ps1
 run_local_ai.sh
 run_local_backend.ps1
+test_endpoints.py
 scripts/compact_docker.txt
 scripts/docker_maintain.ps1
 scripts/docker_maintenance.ps1
