@@ -86,6 +86,13 @@ const ClusterCard = ({ id, name, role, status, data, onRequireAuth, icon, banner
         </div>
       )}
 
+      {/* Estado de verdad (FASE 9A): mismo lenguaje 🟢/🔷/⚪ ya establecido en README.md */}
+      {status === 'construction' && (
+        <div className="mt-3 text-xs font-bold uppercase tracking-wide" style={{ color: '#f59e0b' }}>
+          🔷 Planeado — objetivo oficial, aún no implementado
+        </div>
+      )}
+
       {/* Banda informativa */}
       {banner && (
         <div className="mt-3 text-xs text-yellow-300 font-semibold border-l-2 border-yellow-500 pl-2">{banner}</div>

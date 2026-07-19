@@ -43,11 +43,14 @@ const TelemetryPanel = ({ items = [], sourceMode = 'unknown', loading = false, e
             ? String(latestReading.timestamp).slice(11, 16)
             : String(latestReading.timestamp))
         : '--:--';
+    // Estado de verdad (FASE 9A): mismo lenguaje 🟢/⚪ ya establecido en README.md
+    // (etiqueta corta para no desbordar el tile de fuente grande de DigitalDisplay)
     const sourceLabel = sourceMode === 'live'
-        ? 'LIVE'
+        ? '🟢 LIVE'
         : sourceMode === 'simulated'
-            ? 'SIM'
-            : 'N/D';
+            ? '⚪ SIM'
+            : '⚪ N/D';
+    const sourceColor = sourceMode === 'live' ? NEON.green : NEON.orange;
 
     return (
         <div className="w-full mb-8 animate-fade-in">
@@ -87,7 +90,7 @@ const TelemetryPanel = ({ items = [], sourceMode = 'unknown', loading = false, e
                     label="Fuente"
                     value={loading ? '...' : sourceLabel}
                     unit=""
-                    color={NEON.orange}
+                    color={loading ? NEON.orange : sourceColor}
                     icon="📡"
                 />
                 <DigitalDisplay

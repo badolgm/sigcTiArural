@@ -75,8 +75,11 @@ services:
 
   frontend:
     build:
-      context: ./src/frontend
-      dockerfile: Dockerfile
+      # Contexto ampliado a la raíz del repo (FASE 9B.1): el Knowledge Hub
+      # necesita README.md, SIGCT_RURAL_SYSTEM_BOOT.md y docs/** disponibles
+      # en tiempo de build para import.meta.glob (docLoader.js).
+      context: .
+      dockerfile: src/frontend/Dockerfile
       args:
         VITE_AI_INFERENCE_URL: ${VITE_AI_INFERENCE_URL:-http://localhost:8010/api/v3/ai/inference/}
         VITE_AI_API_BASE: ${VITE_AI_API_BASE:-http://localhost:8081}

@@ -25,7 +25,7 @@ const TopNav = ({ clusterNodes }) => {
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Laboratorios', path: '/labs' },
     { name: 'IA Predictiva', path: '/ai-predictive' },
-    { name: 'Docs (v5.0)', path: '/docs/masterdoc' },
+    { name: 'Conocimiento', path: '/knowledge' },
   ];
 
   // Lógica de estado del clúster

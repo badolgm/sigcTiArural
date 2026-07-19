@@ -1,14 +1,23 @@
 # Dockerfile — Frontend (Vite + React) servido por Nginx
-# Contexto de build: src/frontend
+# Contexto de build: raíz del repositorio (FASE 9B.1 — Knowledge Hub Stabilization).
+# El Knowledge Hub lee README.md, SIGCT_RURAL_SYSTEM_BOOT.md y docs/** vía
+# import.meta.glob en tiempo de build (docLoader.js) — por eso el contexto ya
+# no puede acotarse a src/frontend/. Ver .dockerignore en la raíz del repo.
 
 FROM node:18-alpine AS build
 WORKDIR /app
 
-# Copiar archivos del frontend
-COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps 
+# Copiar solo el manifiesto de dependencias primero (aprovecha cache de capas)
+COPY src/frontend/package.json src/frontend/package-lock.json* ./src/frontend/
+WORKDIR /app/src/frontend
+RUN npm install --legacy-peer-deps
 
+# Copiar el resto del repositorio (filtrado por .dockerignore): src/frontend/
+# completo + README.md + SIGCT_RURAL_SYSTEM_BOOT.md + docs/**
+WORKDIR /app
 COPY . .
+
+WORKDIR /app/src/frontend
 
 # Permite inyectar endpoints en build (Vite lee .env.* en build)
 ARG VITE_API_URL
@@ -34,6 +43,6 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
-COPY --from=build /app/dist /usr/share/nginx/html 
+COPY --from=build /app/src/frontend/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,25 @@
+# .dockerignore — FASE 9B.1 (Knowledge Hub Stabilization)
+#
+# El contexto de build del frontend se amplió a la raíz del repositorio
+# porque docLoader.js (Knowledge Hub) necesita leer README.md, SIGCT_RURAL_SYSTEM_BOOT.md
+# y docs/** vía import.meta.glob en tiempo de build. Este archivo mantiene el contexto
+# acotado exclusivamente a lo que ese build necesita, excluyendo todo lo demás
+# (backend, ai_models, node_modules, .git, backups, etc.) para no inflar la imagen.
+
+# Excluir todo por defecto
+*
+
+# Repermitir solo lo que el build del frontend necesita
+!src/frontend
+!src/frontend/**
+
+!README.md
+!SIGCT_RURAL_SYSTEM_BOOT.md
+!docs
+!docs/**
+
+# Volver a excluir, dentro de lo repermitido, lo que no debe entrar a la imagen
+src/frontend/node_modules
+src/frontend/node_modules/**
+src/frontend/dist
+src/frontend/dist/**

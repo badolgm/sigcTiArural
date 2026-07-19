@@ -1,0 +1,854 @@
+{
+  "generated_at": "2026-07-19T12:43:05.824Z",
+  "source_version": "local-workspace-mvp-expanded",
+  "documents": [
+    {
+      "id": "readme",
+      "title": "🌾 SIGC&T Rural",
+      "canonical_path": "README.md",
+      "route": "/knowledge/doc/readme",
+      "category": "project-core",
+      "level": 1,
+      "document_type": "canonical",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": true,
+      "tags": [
+        "readme"
+      ]
+    },
+    {
+      "id": "masterdoc",
+      "title": "📘 MASTERDOC v8 - SIGC&T RURAL / EIARC",
+      "canonical_path": "docs/MASTERDOC.md",
+      "route": "/knowledge/doc/masterdoc",
+      "category": "project-core",
+      "level": 1,
+      "document_type": "canonical",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": true,
+      "tags": [
+        "masterdoc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "plan_maestro",
+      "title": "PLAN_MAESTRO",
+      "canonical_path": "docs/PLAN_MAESTRO.md",
+      "route": "/knowledge/doc/plan_maestro",
+      "category": "project-core",
+      "level": 1,
+      "document_type": "canonical",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": true,
+      "tags": [
+        "roadmap",
+        "fases"
+      ]
+    },
+    {
+      "id": "system_boot",
+      "title": "SIGCT_RURAL_SYSTEM_BOOT",
+      "canonical_path": "SIGCT_RURAL_SYSTEM_BOOT.md",
+      "route": "/knowledge/doc/system_boot",
+      "category": "project-core",
+      "level": 1,
+      "document_type": "canonical",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": true,
+      "tags": [
+        "boot",
+        "gobernanza",
+        "entrada"
+      ]
+    },
+    {
+      "id": "adso_guia",
+      "title": "GUÍA TÉCNICA DE REFACTORIZACIÓN A ARQUITECTURA HEXAGONAL / CLEAN ARCHITECTURE",
+      "canonical_path": "docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md",
+      "route": "/knowledge/doc/adso_guia",
+      "category": "project-core",
+      "level": 2,
+      "document_type": "canonical",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": true,
+      "tags": [
+        "adso",
+        "hexagonal",
+        "refactor"
+      ]
+    },
+    {
+      "id": "eiarc_mission",
+      "title": "EIARC Mission",
+      "canonical_path": "docs/eiarc/01_FOUNDATION/EIARC_MISSION.md",
+      "route": "/knowledge/doc/eiarc_mission",
+      "category": "eiarc-foundation",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "foundation"
+      ]
+    },
+    {
+      "id": "eiarc_scope",
+      "title": "EIARC Scope",
+      "canonical_path": "docs/eiarc/01_FOUNDATION/EIARC_SCOPE.md",
+      "route": "/knowledge/doc/eiarc_scope",
+      "category": "eiarc-foundation",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "foundation"
+      ]
+    },
+    {
+      "id": "eiarc_vision",
+      "title": "EIARC Vision",
+      "canonical_path": "docs/eiarc/01_FOUNDATION/EIARC_VISION.md",
+      "route": "/knowledge/doc/eiarc_vision",
+      "category": "eiarc-foundation",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "foundation"
+      ]
+    },
+    {
+      "id": "eiarc_ai_context_implementation_guide",
+      "title": "AI Context Implementation Guide",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/AI_CONTEXT_IMPLEMENTATION_GUIDE.md",
+      "route": "/knowledge/doc/eiarc_ai_context_implementation_guide",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_ai_context_refactor_plan",
+      "title": "AI Context Refactor Plan",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/AI_CONTEXT_REFACTOR_PLAN.md",
+      "route": "/knowledge/doc/eiarc_ai_context_refactor_plan",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_ai_pr1_code_review",
+      "title": "AI PR1 Code Review",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/AI_PR1_CODE_REVIEW.md",
+      "route": "/knowledge/doc/eiarc_ai_pr1_code_review",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_ai_semantic_contract",
+      "title": "EIARC AI Semantic Contract",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/EIARC_AI_SEMANTIC_CONTRACT.md",
+      "route": "/knowledge/doc/eiarc_ai_semantic_contract",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_canonical_data_model",
+      "title": "EIARC Canonical Data Model",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/EIARC_CANONICAL_DATA_MODEL.md",
+      "route": "/knowledge/doc/eiarc_canonical_data_model",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_canonical_principles",
+      "title": "EIARC Canonical Principles",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/EIARC_CANONICAL_PRINCIPLES.md",
+      "route": "/knowledge/doc/eiarc_canonical_principles",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_contexts",
+      "title": "EIARC Contexts",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/EIARC_CONTEXTS.md",
+      "route": "/knowledge/doc/eiarc_contexts",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_implementation_blueprint",
+      "title": "EIARC Implementation Blueprint",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/EIARC_IMPLEMENTATION_BLUEPRINT.md",
+      "route": "/knowledge/doc/eiarc_implementation_blueprint",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_transformation_plan",
+      "title": "EIARC Transformation Plan",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/EIARC_TRANSFORMATION_PLAN.md",
+      "route": "/knowledge/doc/eiarc_transformation_plan",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_telemetry_context_implementation_guide",
+      "title": "Telemetry Context Implementation Guide",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/TELEMETRY_CONTEXT_IMPLEMENTATION_GUIDE.md",
+      "route": "/knowledge/doc/eiarc_telemetry_context_implementation_guide",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_telemetry_context_refactor_plan",
+      "title": "Telemetry Context Refactor Plan",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/TELEMETRY_CONTEXT_REFACTOR_PLAN.md",
+      "route": "/knowledge/doc/eiarc_telemetry_context_refactor_plan",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_telemetry_database_diagnostic",
+      "title": "TELEMETRY DATABASE DIAGNOSTIC",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md",
+      "route": "/knowledge/doc/eiarc_telemetry_database_diagnostic",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "eiarc_telemetry_pr1_code_review",
+      "title": "TELEMETRY PR1 Code Review",
+      "canonical_path": "docs/eiarc/02_ARCHITECTURE/TELEMETRY_PR1_CODE_REVIEW.md",
+      "route": "/knowledge/doc/eiarc_telemetry_pr1_code_review",
+      "category": "eiarc-architecture",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "eiarc",
+        "architecture"
+      ]
+    },
+    {
+      "id": "kb_001_trae_independent_repository_audit",
+      "title": "KB-001 - TRAE Independent Repository Audit",
+      "canonical_path": "docs/project_knowledge_base/KB-001-TRAE-INDEPENDENT-REPOSITORY-AUDIT.md",
+      "route": "/knowledge/doc/kb_001_trae_independent_repository_audit",
+      "category": "knowledge-base",
+      "level": 3,
+      "document_type": "evidence",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "knowledge-base",
+        "auditoria"
+      ]
+    },
+    {
+      "id": "kb_002_readme_reality_check",
+      "title": "KB-002 - README Reality Check",
+      "canonical_path": "docs/project_knowledge_base/KB-002-README-REALITY-CHECK.md",
+      "route": "/knowledge/doc/kb_002_readme_reality_check",
+      "category": "knowledge-base",
+      "level": 3,
+      "document_type": "evidence",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "knowledge-base",
+        "auditoria"
+      ]
+    },
+    {
+      "id": "kb_003_ai_integration_audit",
+      "title": "KB-003 - AI Integration Audit",
+      "canonical_path": "docs/project_knowledge_base/KB-003-AI-INTEGRATION-AUDIT.md",
+      "route": "/knowledge/doc/kb_003_ai_integration_audit",
+      "category": "knowledge-base",
+      "level": 3,
+      "document_type": "evidence",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "knowledge-base",
+        "auditoria"
+      ]
+    },
+    {
+      "id": "kb_004_ai_semantic_contract_audit",
+      "title": "KB-004 - AI Semantic Contract Audit",
+      "canonical_path": "docs/project_knowledge_base/KB-004-AI-SEMANTIC-CONTRACT-AUDIT.md",
+      "route": "/knowledge/doc/kb_004_ai_semantic_contract_audit",
+      "category": "knowledge-base",
+      "level": 3,
+      "document_type": "evidence",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "knowledge-base",
+        "auditoria"
+      ]
+    },
+    {
+      "id": "kb_005_eiarc_ai_canonical_model",
+      "title": "KB-005 - EIARC AI Canonical Model",
+      "canonical_path": "docs/project_knowledge_base/KB-005-EIARC-AI-CANONICAL-MODEL.md",
+      "route": "/knowledge/doc/kb_005_eiarc_ai_canonical_model",
+      "category": "knowledge-base",
+      "level": 3,
+      "document_type": "evidence",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "knowledge-base",
+        "auditoria"
+      ]
+    },
+    {
+      "id": "kb_006_pending_changes_audit",
+      "title": "KB-006 - Pending Changes Audit",
+      "canonical_path": "docs/project_knowledge_base/KB-006-PENDING-CHANGES-AUDIT.md",
+      "route": "/knowledge/doc/kb_006_pending_changes_audit",
+      "category": "knowledge-base",
+      "level": 3,
+      "document_type": "evidence",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "knowledge-base",
+        "auditoria"
+      ]
+    },
+    {
+      "id": "historical_informe_analisis_y_plan_de_accion",
+      "title": "📑 BITÁCORA DE INTERVENCIÓN TÉCNICA - SIGC&T RURAL",
+      "canonical_path": "docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md",
+      "route": "/knowledge/doc/historical_informe_analisis_y_plan_de_accion",
+      "category": "historical",
+      "level": 6,
+      "document_type": "historical",
+      "format": "markdown",
+      "visibility": "historical",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "historico"
+      ]
+    },
+    {
+      "id": "historical_readme_reality_check",
+      "title": "README Reality Check",
+      "canonical_path": "docs/historical/README_REALITY_CHECK.md",
+      "route": "/knowledge/doc/historical_readme_reality_check",
+      "category": "historical",
+      "level": 6,
+      "document_type": "historical",
+      "format": "markdown",
+      "visibility": "historical",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "historico"
+      ]
+    },
+    {
+      "id": "historical_trae_ai_integration_audit",
+      "title": "TRAE AI Integration Audit",
+      "canonical_path": "docs/historical/TRAE_AI_INTEGRATION_AUDIT.md",
+      "route": "/knowledge/doc/historical_trae_ai_integration_audit",
+      "category": "historical",
+      "level": 6,
+      "document_type": "historical",
+      "format": "markdown",
+      "visibility": "historical",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "historico"
+      ]
+    },
+    {
+      "id": "historical_trae_independent_repository_audit",
+      "title": "TRAE Independent Repository Audit",
+      "canonical_path": "docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md",
+      "route": "/knowledge/doc/historical_trae_independent_repository_audit",
+      "category": "historical",
+      "level": 6,
+      "document_type": "historical",
+      "format": "markdown",
+      "visibility": "historical",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "historico"
+      ]
+    },
+    {
+      "id": "research_v2_agriculture_ai_v2_benchmark_readiness",
+      "title": "AGRICULTURE_AI_V2_BENCHMARK_READINESS",
+      "canonical_path": "docs/ai/research_v2/AGRICULTURE_AI_V2_BENCHMARK_READINESS.md",
+      "route": "/knowledge/doc/research_v2_agriculture_ai_v2_benchmark_readiness",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_agriculture_ai_v2_dataset_inventory",
+      "title": "AGRICULTURE_AI_V2_DATASET_INVENTORY",
+      "canonical_path": "docs/ai/research_v2/AGRICULTURE_AI_V2_DATASET_INVENTORY.md",
+      "route": "/knowledge/doc/research_v2_agriculture_ai_v2_dataset_inventory",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_agriculture_ai_v2_data_quality_framework",
+      "title": "AGRICULTURE_AI_V2_DATA_QUALITY_FRAMEWORK",
+      "canonical_path": "docs/ai/research_v2/AGRICULTURE_AI_V2_DATA_QUALITY_FRAMEWORK.md",
+      "route": "/knowledge/doc/research_v2_agriculture_ai_v2_data_quality_framework",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_agriculture_ai_v2_execution_plan",
+      "title": "AGRICULTURE_AI_V2_EXECUTION_PLAN",
+      "canonical_path": "docs/ai/research_v2/AGRICULTURE_AI_V2_EXECUTION_PLAN.md",
+      "route": "/knowledge/doc/research_v2_agriculture_ai_v2_execution_plan",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_agriculture_ai_v2_label_schema",
+      "title": "AGRICULTURE_AI_V2_LABEL_SCHEMA",
+      "canonical_path": "docs/ai/research_v2/AGRICULTURE_AI_V2_LABEL_SCHEMA.md",
+      "route": "/knowledge/doc/research_v2_agriculture_ai_v2_label_schema",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_agriculture_ai_v2_notebook_roadmap",
+      "title": "AGRICULTURE_AI_V2_NOTEBOOK_ROADMAP",
+      "canonical_path": "docs/ai/research_v2/AGRICULTURE_AI_V2_NOTEBOOK_ROADMAP.md",
+      "route": "/knowledge/doc/research_v2_agriculture_ai_v2_notebook_roadmap",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_agriculture_ai_v2_split_specification",
+      "title": "AGRICULTURE_AI_V2_SPLIT_SPECIFICATION",
+      "canonical_path": "docs/ai/research_v2/AGRICULTURE_AI_V2_SPLIT_SPECIFICATION.md",
+      "route": "/knowledge/doc/research_v2_agriculture_ai_v2_split_specification",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_agriculture_ai_v2_taxonomy",
+      "title": "AGRICULTURE_AI_V2_TAXONOMY",
+      "canonical_path": "docs/ai/research_v2/AGRICULTURE_AI_V2_TAXONOMY.md",
+      "route": "/knowledge/doc/research_v2_agriculture_ai_v2_taxonomy",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_context_v2_architecture",
+      "title": "AI_CONTEXT_V2_ARCHITECTURE",
+      "canonical_path": "docs/ai/research_v2/AI_CONTEXT_V2_ARCHITECTURE.md",
+      "route": "/knowledge/doc/research_v2_ai_context_v2_architecture",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_context_v2_implementation_audit",
+      "title": "AI_CONTEXT_V2_IMPLEMENTATION_AUDIT",
+      "canonical_path": "docs/ai/research_v2/AI_CONTEXT_V2_IMPLEMENTATION_AUDIT.md",
+      "route": "/knowledge/doc/research_v2_ai_context_v2_implementation_audit",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_context_v2_remediation_report",
+      "title": "AI_CONTEXT_V2_REMEDIATION_REPORT",
+      "canonical_path": "docs/ai/research_v2/AI_CONTEXT_V2_REMEDIATION_REPORT.md",
+      "route": "/knowledge/doc/research_v2_ai_context_v2_remediation_report",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_dataset_discovery_and_audit",
+      "title": "AI_DATASET_DISCOVERY_AND_AUDIT",
+      "canonical_path": "docs/ai/research_v2/AI_DATASET_DISCOVERY_AND_AUDIT.md",
+      "route": "/knowledge/doc/research_v2_ai_dataset_discovery_and_audit",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_dataset_strategy_v2",
+      "title": "AI_DATASET_STRATEGY_V2",
+      "canonical_path": "docs/ai/research_v2/AI_DATASET_STRATEGY_V2.md",
+      "route": "/knowledge/doc/research_v2_ai_dataset_strategy_v2",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_mlops_and_training_governance_v2",
+      "title": "AI_MLOPS_AND_TRAINING_GOVERNANCE_V2",
+      "canonical_path": "docs/ai/research_v2/AI_MLOPS_AND_TRAINING_GOVERNANCE_V2.md",
+      "route": "/knowledge/doc/research_v2_ai_mlops_and_training_governance_v2",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_prediction_validation_audit",
+      "title": "AI PREDICTION VALIDATION AUDIT",
+      "canonical_path": "docs/ai/research_v2/AI_PREDICTION_VALIDATION_AUDIT.md",
+      "route": "/knowledge/doc/research_v2_ai_prediction_validation_audit",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_scientific_correction_design",
+      "title": "AI SCIENTIFIC CORRECTION DESIGN",
+      "canonical_path": "docs/ai/research_v2/AI_SCIENTIFIC_CORRECTION_DESIGN.md",
+      "route": "/knowledge/doc/research_v2_ai_scientific_correction_design",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_ai_training_pipeline_v2",
+      "title": "AI_TRAINING_PIPELINE_V2",
+      "canonical_path": "docs/ai/research_v2/AI_TRAINING_PIPELINE_V2.md",
+      "route": "/knowledge/doc/research_v2_ai_training_pipeline_v2",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    },
+    {
+      "id": "research_v2_sigct_rural_ai_research_program_v2",
+      "title": "SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2",
+      "canonical_path": "docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md",
+      "route": "/knowledge/doc/research_v2_sigct_rural_ai_research_program_v2",
+      "category": "research-v2",
+      "level": 2,
+      "document_type": "operational",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": false,
+      "tags": [
+        "ai",
+        "research",
+        "v2"
+      ]
+    }
+  ]
+}

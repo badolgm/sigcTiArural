@@ -115,13 +115,18 @@ const LabCatalog = ({ onNavigate }) => {
     'Documentación Técnica',
     'Web3 & Blockchain',
   ];
-  const sortedCategories = [...labCategories].sort((a, b) => {
-    const ia = desiredOrder.indexOf(a.title);
-    const ib = desiredOrder.indexOf(b.title);
-    const ra = ia === -1 ? 999 : ia;
-    const rb = ib === -1 ? 999 : ib;
-    return ra - rb;
-  });
+  // "Documentación Técnica" se reubicó conceptualmente al Centro de Conocimiento
+  // (FASE 9A) — el contenido y los enlaces originales permanecen intactos en
+  // lab-data.js, solo se retira de esta grilla para no duplicar la navegación.
+  const sortedCategories = [...labCategories]
+    .filter((c) => c.title !== 'Documentación Técnica')
+    .sort((a, b) => {
+      const ia = desiredOrder.indexOf(a.title);
+      const ib = desiredOrder.indexOf(b.title);
+      const ra = ia === -1 ? 999 : ia;
+      const rb = ib === -1 ? 999 : ib;
+      return ra - rb;
+    });
   return (
     <div className="p-6 pt-20 min-h-screen" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
       <div className="max-w-7xl mx-auto text-white">

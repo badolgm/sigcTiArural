@@ -18,6 +18,7 @@ import DocsMasterdoc from './pages/DocsMasterdoc.jsx';
 import DocsReadme from './pages/DocsReadme.jsx';
 import DocsPlanMaestro from './pages/DocsPlanMaestro.jsx';
 import DocsApiReference from './pages/DocsApiReference.jsx';
+import KnowledgeHubLayout from './knowledge-hub/pages/KnowledgeHubLayout.jsx';
 import AIPredictiva from './pages/AIPredictiva.jsx';
 import DataScienceLab from './pages/DataScienceLab.jsx';
 import VoiceAssistant from './components/VoiceAssistant.jsx'; // Tu Asistente
@@ -130,6 +131,10 @@ const AppContent = () => {
           <Route path="/docs/readme" element={<DocsReadme />} />
           <Route path="/docs/plan" element={<DocsPlanMaestro />} />
           <Route path="/docs/api" element={<DocsApiReference />} />
+
+          {/* --- KNOWLEDGE HUB (MVP — FASE 8D, entrada principal — FASE 9A) --- */}
+          <Route path="/knowledge" element={<KnowledgeHubLayout />} />
+          <Route path="/knowledge/doc/:docId" element={<KnowledgeHubLayout />} />
 
           {/* --- ERROR 404 --- */}
           <Route path="*" element={
