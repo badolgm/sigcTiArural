@@ -173,6 +173,10 @@ docs/*
 !docs/database/
 !docs/database/**
 
+# Historical Documentation (FASE 7M — bitácoras secundarias archivadas, gobernanza V8)
+!docs/historical/
+!docs/historical/**
+
 # Diagram archive (FASE 6B — archivos retirados de docs/diagrams/ sin equivalente V8)
 # docs/diagrams/ no tenía excepción previa (solo visible por archivos ya trackeados);
 # git no permite re-incluir una ruta si su directorio padre sigue excluido, por eso

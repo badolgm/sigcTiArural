@@ -54,7 +54,7 @@ Realizar un inventario maestro completo del repositorio SIGCT-Rural, clasificand
 - `docs/DEPLOYMENT_AWS.md`
 - `docs/EDGE_SETUP.md`
 - `docs/HEXAGONAL_REFACTOR_PLAN.md`
-- `docs/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
+- `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
 - `docs/architect_master/` con 8 documentos maestros
 - `docs/project_knowledge_base/` con 6 KB
 - `docs/eiarc/` con 26 artefactos entre fundacion, arquitectura y diagramas
@@ -94,7 +94,7 @@ Se identifican redundancias de funcion, no duplicacion literal:
   - `HANDOFF_TRAE_sigcTiArual.md`
   - `docs/CONTINUITY_RUNBOOK.md`
   - `docs/reports/continuity_status.md`
-  - `docs/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
+  - `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
 - Familia de auditoria y realidad documental:
   - `README_REALITY_CHECK.md`
   - `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
@@ -147,7 +147,7 @@ Se clasifican como historicos los que preservan trazabilidad, auditoria pasada o
 - `TRAE_AI_INTEGRATION_AUDIT.md`
 - `README_REALITY_CHECK.md`
 - `docs/project_knowledge_base/KB-*`
-- `docs/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
+- `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
   - Evidencia: se define como bitacora de intervencion tecnica append-only.
 - `PROJECT_ARCHIVE_MANIFEST.md`
 - `PROJECT_RECORDS_REGISTER.md`

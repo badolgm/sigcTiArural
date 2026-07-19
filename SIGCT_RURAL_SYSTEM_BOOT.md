@@ -76,6 +76,7 @@ Los documentos canónicos que una nueva IA debe considerar obligatorios son esto
 12. `docs/MASTERDOC.md`
 13. `docs/PLAN_MAESTRO.md`
 14. `INDICE_PROYECTO.md`
+15. `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` — **documentación operativa oficial** (guía de continuidad, backlog técnico detallado y estructura objetivo de contextos para la refactorización hexagonal; ver regla de precedencia REGLA 4 en SECCIÓN 18)
 
 Documentos de soporte de alta prioridad:
 
@@ -88,6 +89,10 @@ Documentos de soporte de alta prioridad:
 - `docs/sena_artifacts/PRESENTACION_SUSTENTACION.md`
 - `docs/sena_artifacts/DEPLOYMENT_FINAL.md`
 - `docs/sena_artifacts/API_DELIVERY_PACKAGE.md`
+
+Documentación histórica (gobernada, no canónica — ver REGLA 2 en SECCIÓN 18):
+
+- `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md` — bitácora de sesiones de trabajo (ene-may 2026), secundaria a `docs/MASTERDOC.md` §5. Contiene eventos históricos únicos (sesiones de 17-feb y 23-may-2026) no registrados en MASTERDOC; ante cualquier discrepancia con MASTERDOC.md, prevalece MASTERDOC.md.
 
 ---
 
@@ -696,6 +701,18 @@ Si dos fuentes parecen contradecirse, la precedencia correcta es:
 3. código real y migraciones cuando el tema es comportamiento o esquema ejecutable
 4. inventarios y auditorías generales
 5. documentos históricos o dumps desactualizados
+
+### 9. Reglas de gobernanza documental — bitácora técnica y refactorización hexagonal (FASE 7L/7M)
+
+Estas reglas resuelven de forma definitiva el conflicto de gobernanza identificado entre `docs/MASTERDOC.md` y `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`, y formalizan el rol de `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`:
+
+**REGLA 1** — `docs/MASTERDOC.md` (en particular su Sección 5, "Bitácora de Intervenciones Técnicas") es la **bitácora oficial** del proyecto. No existe otra bitácora con estatus canónico equivalente.
+
+**REGLA 2** — Ante cualquier discrepancia entre `docs/MASTERDOC.md` y `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md` (por ejemplo, cifras o cronologías divergentes sobre el mismo evento), **prevalece `docs/MASTERDOC.md`**. `INFORME_ANALISIS_Y_PLAN_DE_ACCION.md` se conserva como documentación histórica secundaria por su valor de continuidad (contiene sesiones de trabajo, como las de 17-feb y 23-may-2026, no registradas en MASTERDOC), pero no tiene estatus de fuente de verdad.
+
+**REGLA 3** — `docs/PLAN_MAESTRO.md` manda sobre el roadmap y el estado de fases del proyecto (qué fase está activa, completada o planificada).
+
+**REGLA 4** — `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` manda sobre el detalle técnico de implementación de la refactorización hexagonal (backlog granular, estructura objetivo de `contexts/`, guía de reanudación) cuando ese detalle no está cubierto o es más granular que `docs/PLAN_MAESTRO.md`. Ante conflicto entre ambos sobre el **estado de una fase**, prevalece PLAN_MAESTRO.md (REGLA 3); ante conflicto sobre el **detalle técnico de una tarea**, prevalece ADSO_GUIA_TECNICA (REGLA 4).
 
 ---
 

@@ -864,10 +864,12 @@ Este README es un documento de entrada público, **no** un reemplazo de la docum
 |---|---|---|
 | 1. Arranque y auditoría maestra | Continuidad, recuperación, inventario global | Raíz del proyecto, `SIGCT_RURAL_SYSTEM_BOOT.md` |
 | 2. Documentación base del producto | Arquitectura, despliegue, API | `docs/MASTERDOC.md`, `docs/PLAN_MAESTRO.md`, `docs/API_REFERENCE.md`, `docs/DEPLOYMENT.md` |
+| 2.1 Documentación operativa — refactorización hexagonal | Backlog técnico detallado, estructura objetivo de contextos, guía de reanudación | [`docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`](docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md) |
 | 3. Base formal de conocimiento | Hallazgos de auditoría y decisiones consolidadas | `docs/project_knowledge_base/` (KB-001 a KB-006) |
 | 4. Línea arquitectónica EIARC | Visión, contextos, modelo de datos, blueprint | `docs/eiarc/` |
 | 5. Cierre académico SENA | Entregables finales ADSO | `docs/sena_artifacts/` |
 | 6. Respaldo, archivo y retención | Manifiestos de backup, política de retención | `PROJECT_ARCHIVE_MANIFEST.md`, `DOCUMENT_RETENTION_POLICY.md` |
+| 7. Documentación histórica | Bitácoras secundarias de sesiones de trabajo, no canónicas (ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9) | [`docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`](docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md) |
 
 Si tu objetivo es entender el estado real del proyecto en profundidad —o continuar el trabajo como colaborador o como IA sin contexto previo— empieza siempre por `SIGCT_RURAL_SYSTEM_BOOT.md`; ese documento define el orden de lectura obligatorio y la fuente de verdad vigente por categoría.
 

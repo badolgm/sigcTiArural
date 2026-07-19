@@ -851,7 +851,7 @@ $aiResp      = curl.exe -s --max-time 5 "http://localhost:$aiPort/health" 2>$nul
 ## 11. REFERENCIAS Y ANEXOS
 
 - Plan principal: `docs/HEXAGONAL_REFACTOR_PLAN.md`.
-- Bitácora histórica: `docs/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`.
+- Bitácora histórica (secundaria a `docs/MASTERDOC.md` §5 — ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9): `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`.
 - Arquitectura visual: `docs/diagrams/`, `docs/uml/`, `docs/architecture/`.
 - Documento maestro y plan maestro (visión general y hoja de ruta).
 - Código clave:

@@ -67,7 +67,7 @@ sigcTiArural/
 │   │   └── requirements.txt           # tensorflow-cpu pesado + psycopg2 directo
 │   └── embedded/                      # **PLACEHOLDERS VACÍOS** (0 bytes) — solo documentación
 ├── docs/                              # **EXTREMADAMENTE RICA** (C4, ER, UML, bitácora, MASTERDOC, PLAN_MAESTRO)
-│   ├── INFORME_ANALISIS_Y_PLAN_DE_ACCION.md  # Bitácora append-only (incluye sesiones May 23 2026 de hexagonal)
+│   ├── historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md  # Bitácora append-only, secundaria a MASTERDOC.md §5 (incluye sesiones May 23 2026 de hexagonal)
 │   ├── diagrams/, uml/, architecture/
 │   └── MASTERDOC.md, PLAN_MAESTRO.md
 ├── scripts/                           # Generación de diagramas, reportes, mantenimiento Docker
