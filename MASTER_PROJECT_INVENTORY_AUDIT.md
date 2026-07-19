@@ -28,11 +28,11 @@ Realizar un inventario maestro completo del repositorio SIGCT-Rural, clasificand
 ### 1.1 Raiz del repositorio
 
 - `README.md`
-- `README_REALITY_CHECK.md`
+- `docs/historical/README_REALITY_CHECK.md`
 - `INDICE_PROYECTO.md`
 - `HANDOFF_TRAE_sigcTiArual.md`
-- `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
-- `TRAE_AI_INTEGRATION_AUDIT.md`
+- `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
+- `docs/historical/TRAE_AI_INTEGRATION_AUDIT.md`
 - `PROJECT_ARCHIVE_MANIFEST.md`
 - `PROJECT_RECORDS_REGISTER.md`
 - `DOCUMENT_RETENTION_POLICY.md`
@@ -70,11 +70,11 @@ No se detectaron duplicados exactos entre `*.md` y `*.mmd` por hash SHA-256.
 
 Se detectaron familias documentales derivadas, no duplicados exactos:
 
-- `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md` y `docs/project_knowledge_base/KB-001-TRAE-INDEPENDENT-REPOSITORY-AUDIT.md`
-  - Evidencia: `KB-001` declara como fuente `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`.
-- `README_REALITY_CHECK.md` y `docs/project_knowledge_base/KB-002-README-REALITY-CHECK.md`
+- `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md` y `docs/project_knowledge_base/KB-001-TRAE-INDEPENDENT-REPOSITORY-AUDIT.md`
+  - Evidencia: `KB-001` declara como fuente `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`.
+- `docs/historical/README_REALITY_CHECK.md` y `docs/project_knowledge_base/KB-002-README-REALITY-CHECK.md`
   - Evidencia: `KB-002` formaliza el contraste del `README.md`.
-- `TRAE_AI_INTEGRATION_AUDIT.md` y `docs/project_knowledge_base/KB-003-AI-INTEGRATION-AUDIT.md`
+- `docs/historical/TRAE_AI_INTEGRATION_AUDIT.md` y `docs/project_knowledge_base/KB-003-AI-INTEGRATION-AUDIT.md`
   - Evidencia: `KB-003` formaliza la auditoria de integracion IA.
 
 ## 3. Documentos redundantes
@@ -96,8 +96,8 @@ Se identifican redundancias de funcion, no duplicacion literal:
   - `docs/reports/continuity_status.md`
   - `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
 - Familia de auditoria y realidad documental:
-  - `README_REALITY_CHECK.md`
-  - `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
+  - `docs/historical/README_REALITY_CHECK.md`
+  - `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
   - `docs/architect_master/03_DOCUMENT_TRUTH_MATRIX.md`
   - `docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md`
 
@@ -143,9 +143,9 @@ Se clasifican como criticos los que el propio repositorio posiciona como fuente 
 
 Se clasifican como historicos los que preservan trazabilidad, auditoria pasada o cierre/archivo:
 
-- `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
-- `TRAE_AI_INTEGRATION_AUDIT.md`
-- `README_REALITY_CHECK.md`
+- `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
+- `docs/historical/TRAE_AI_INTEGRATION_AUDIT.md`
+- `docs/historical/README_REALITY_CHECK.md`
 - `docs/project_knowledge_base/KB-*`
 - `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
   - Evidencia: se define como bitacora de intervencion tecnica append-only.
@@ -216,9 +216,9 @@ Se clasifican fuera de entrega SENA por ser operativos, de respaldo, de auditori
 - `schema_postgresql.sql` como fuente primaria del modelo
   - Evidencia: `docs/eiarc/02_ARCHITECTURE/EIARC_CANONICAL_DATA_MODEL.md` establece que el dump SQL esta desactualizado y que la fuente de verdad recomendada son las migraciones.
 - Secciones aspiracionales del `README.md`
-  - Evidencia: `README_REALITY_CHECK.md` marca afirmaciones desactualizadas sobre JWT, modelo de datos, estructura y madurez real.
+  - Evidencia: `docs/historical/README_REALITY_CHECK.md` marca afirmaciones desactualizadas sobre JWT, modelo de datos, estructura y madurez real.
 - Fallbacks y convivencias legacy documentadas como deuda
-  - Evidencia: `HANDOFF_TRAE_sigcTiArual.md`, `README_REALITY_CHECK.md` y `docs/architect_master/03_DOCUMENT_TRUTH_MATRIX.md` registran coexistencia V1/V2/V3, fallbacks silenciosos y adaptadores legacy.
+  - Evidencia: `HANDOFF_TRAE_sigcTiArual.md`, `docs/historical/README_REALITY_CHECK.md` y `docs/architect_master/03_DOCUMENT_TRUTH_MATRIX.md` registran coexistencia V1/V2/V3, fallbacks silenciosos y adaptadores legacy.
 
 ## 11. Componentes de software terminados
 
@@ -234,7 +234,7 @@ Terminados en el sentido de presencia de codigo, ruta de integracion y evidencia
 ## 12. Componentes parcialmente terminados
 
 - Arquitectura hexagonal backend
-  - Evidencia: `README_REALITY_CHECK.md` la clasifica `PARCIAL`; coexisten capas hexagonales y vistas ORM legacy.
+  - Evidencia: `docs/historical/README_REALITY_CHECK.md` la clasifica `PARCIAL`; coexisten capas hexagonales y vistas ORM legacy.
 - Telemetry Context V3
   - Evidencia: `Dashboard.jsx` consume `/api/v3/telemetry/history/`; `views.py` expone V3; `TELEMETRY_DATABASE_DIAGNOSTIC.md` muestra que la ruta existia pero dependia de migraciones pendientes.
 - AI Context V3
@@ -266,13 +266,13 @@ Terminados en el sentido de presencia de codigo, ruta de integracion y evidencia
 - Matriz de verdad documental:
   - `docs/architect_master/03_DOCUMENT_TRUTH_MATRIX.md`
 - Auditoria integral del repositorio:
-  - `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
+  - `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
   - `docs/project_knowledge_base/KB-001-TRAE-INDEPENDENT-REPOSITORY-AUDIT.md`
 - Contraste README vs codigo:
-  - `README_REALITY_CHECK.md`
+  - `docs/historical/README_REALITY_CHECK.md`
   - `docs/project_knowledge_base/KB-002-README-REALITY-CHECK.md`
 - Auditorias de IA:
-  - `TRAE_AI_INTEGRATION_AUDIT.md`
+  - `docs/historical/TRAE_AI_INTEGRATION_AUDIT.md`
   - `docs/project_knowledge_base/KB-003`, `KB-004`, `KB-005`
   - `docs/eiarc/02_ARCHITECTURE/AI_PR1_CODE_REVIEW.md`
 - Evidencia de telemetria:

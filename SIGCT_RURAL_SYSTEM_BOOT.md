@@ -73,10 +73,11 @@ Los documentos canónicos que una nueva IA debe considerar obligatorios son esto
 9. `AI_SERVICE_FORENSIC_AUDIT.md`
 10. `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 11. `AI_SERVICE_RECOVERY_PLAN.md`
-12. `docs/MASTERDOC.md`
-13. `docs/PLAN_MAESTRO.md`
-14. `INDICE_PROYECTO.md`
-15. `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` — **documentación operativa oficial** (guía de continuidad, backlog técnico detallado y estructura objetivo de contextos para la refactorización hexagonal; ver regla de precedencia REGLA 4 en SECCIÓN 18)
+12. `AI_SERVICE_EXECUTION_READINESS.md` — determina si el proyecto está listo para ejecutar la recuperación real del AI Service; se lee junto con los tres documentos anteriores como una sola familia de incidente
+13. `docs/MASTERDOC.md`
+14. `docs/PLAN_MAESTRO.md`
+15. `INDICE_PROYECTO.md`
+16. `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` — **documentación operativa oficial** (guía de continuidad, backlog técnico detallado y estructura objetivo de contextos para la refactorización hexagonal; ver regla de precedencia REGLA 4 en SECCIÓN 18)
 
 Documentos de soporte de alta prioridad:
 
@@ -90,9 +91,15 @@ Documentos de soporte de alta prioridad:
 - `docs/sena_artifacts/DEPLOYMENT_FINAL.md`
 - `docs/sena_artifacts/API_DELIVERY_PACKAGE.md`
 
+Programa oficial de I+D (vigente, en diseño — no implementado, no absorbido aún por `docs/eiarc/`):
+
+- `docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md` — programa rector de investigación aplicada de IA (Agriculture AI, Animal Health AI, Telemetry AI, Audio/Signal Intelligence, Knowledge AI, Multimodal Fusion). Reúne `AI_CONTEXT_V2_*`, `AI_DATASET_*`, `AI_MLOPS_AND_TRAINING_GOVERNANCE_V2.md`, `AI_PREDICTION_VALIDATION_AUDIT.md`, `AI_SCIENTIFIC_CORRECTION_DESIGN.md`, `AI_TRAINING_PIPELINE_V2.md` y la familia `AGRICULTURE_AI_V2_*` (primera línea de ejecución). Diseñado para converger con EIARC a medida que cada línea madure, pero es un track paralelo, no una duplicación.
+
 Documentación histórica (gobernada, no canónica — ver REGLA 2 en SECCIÓN 18):
 
 - `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md` — bitácora de sesiones de trabajo (ene-may 2026), secundaria a `docs/MASTERDOC.md` §5. Contiene eventos históricos únicos (sesiones de 17-feb y 23-may-2026) no registrados en MASTERDOC; ante cualquier discrepancia con MASTERDOC.md, prevalece MASTERDOC.md.
+- `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md` y `docs/historical/TRAE_AI_INTEGRATION_AUDIT.md` — auditorías estáticas independientes ya absorbidas como fuente de `docs/project_knowledge_base/KB-001` y `KB-003` respectivamente. Sin valor operativo remanente; se conservan por trazabilidad.
+- `docs/historical/README_REALITY_CHECK.md` — comparación README-vs-código ya absorbida como fuente de `docs/project_knowledge_base/KB-002`. Sin valor operativo remanente; se conserva por trazabilidad.
 
 ---
 
@@ -125,6 +132,7 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 10. `AI_SERVICE_FORENSIC_AUDIT.md`
 11. `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 12. `AI_SERVICE_RECOVERY_PLAN.md`
+13. `AI_SERVICE_EXECUTION_READINESS.md`
 
 ### Fase 5. Contexto general del proyecto
 
@@ -363,6 +371,7 @@ Base documental:
 - `AI_SERVICE_FORENSIC_AUDIT.md`
 - `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 - `AI_SERVICE_RECOVERY_PLAN.md`
+- `AI_SERVICE_EXECUTION_READINESS.md`
 
 Descripción:
 
@@ -627,6 +636,7 @@ El mapa de continuidad operativo es este:
 - `AI_SERVICE_FORENSIC_AUDIT.md`
 - `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 - `AI_SERVICE_RECOVERY_PLAN.md`
+- `AI_SERVICE_EXECUTION_READINESS.md`
 
 ### Continuidad académica y de entrega
 
@@ -680,6 +690,7 @@ Regla explícita:
 - `AI_SERVICE_FORENSIC_AUDIT.md`
 - `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 - `AI_SERVICE_RECOVERY_PLAN.md`
+- `AI_SERVICE_EXECUTION_READINESS.md`
 
 ### 6. Fuente de verdad para continuidad documental futura
 

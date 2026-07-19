@@ -485,13 +485,19 @@ La IA de SIGC&T Rural se documenta en tres niveles distintos, que **no deben con
 
 Diseño de una plataforma de IA multimodal en ocho bloques coordinados (Agriculture, Animal Health, Telemetry, Feature Engineering, Computer Vision, Time Series, Recommendation Engine, Knowledge AI). **Este es un diseño arquitectónico: no implica cambios de código, entrenamiento de modelos ni descarga de datasets.**
 
-→ Ver [`AI_CONTEXT_V2_ARCHITECTURE.md`](AI_CONTEXT_V2_ARCHITECTURE.md)
+→ Ver [`docs/ai/research_v2/AI_CONTEXT_V2_ARCHITECTURE.md`](docs/ai/research_v2/AI_CONTEXT_V2_ARCHITECTURE.md)
 
 ### 8.3 Agriculture AI V2 *(plan concreto de evolución — no entrenado, no desplegado)*
 
 Plan de ejecución para un baseline multiclase de agricultura (tomate, papa, maíz): 16 clases sobre un subconjunto auditado de 21,160 imágenes RGB (PlantVillage), con `EfficientNet-B0` como arquitectura candidata y benchmark contra `MobileNetV3-Large`, `ResNet50` y `ConvNeXt-Tiny`, usando `macro-F1` como métrica principal. **Explícitamente sin entrenar y sin pipelines implementados.**
 
-→ Ver [`AGRICULTURE_AI_V2_EXECUTION_PLAN.md`](AGRICULTURE_AI_V2_EXECUTION_PLAN.md)
+→ Ver [`docs/ai/research_v2/AGRICULTURE_AI_V2_EXECUTION_PLAN.md`](docs/ai/research_v2/AGRICULTURE_AI_V2_EXECUTION_PLAN.md)
+
+### 8.4 AI Research Program V2 *(programa rector de I+D — diseño, no implementación)*
+
+`docs/ai/research_v2/` reúne el programa completo de investigación aplicada de IA para SIGC&T Rural V2: arquitectura multimodal, estrategia y auditoría de datasets, gobierno científico/MLOps, validación de predicción, corrección científica y el plan de entrenamiento — incluyendo la línea Agriculture AI V2 de las secciones 8.2 y 8.3 como su primera línea de ejecución. **Este programa no entrena, no implementa código y no descarga datasets: solo diseña la hoja de ruta científica.** Está pensado para converger con EIARC a medida que cada línea madure, pero hoy es un track de I+D independiente y paralelo a `docs/eiarc/`.
+
+→ Punto de entrada: [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md)
 
 ---
 
@@ -869,7 +875,8 @@ Este README es un documento de entrada público, **no** un reemplazo de la docum
 | 4. Línea arquitectónica EIARC | Visión, contextos, modelo de datos, blueprint | `docs/eiarc/` |
 | 5. Cierre académico SENA | Entregables finales ADSO | `docs/sena_artifacts/` |
 | 6. Respaldo, archivo y retención | Manifiestos de backup, política de retención | `PROJECT_ARCHIVE_MANIFEST.md`, `DOCUMENT_RETENTION_POLICY.md` |
-| 7. Documentación histórica | Bitácoras secundarias de sesiones de trabajo, no canónicas (ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9) | [`docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`](docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md) |
+| 7. Documentación histórica | Bitácoras secundarias de sesiones de trabajo, no canónicas (ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9); incluye auditorías TRAE y README Reality Check ya absorbidas por `docs/project_knowledge_base/` | `docs/historical/` (`INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`, `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`, `TRAE_AI_INTEGRATION_AUDIT.md`, `README_REALITY_CHECK.md`) |
+| 8. Programa de I+D — IA V2 | Arquitectura multimodal, estrategia de datasets, MLOps, línea Agriculture AI V2 (planificado, converge con EIARC) | [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md) |
 
 Si tu objetivo es entender el estado real del proyecto en profundidad —o continuar el trabajo como colaborador o como IA sin contexto previo— empieza siempre por `SIGCT_RURAL_SYSTEM_BOOT.md`; ese documento define el orden de lectura obligatorio y la fuente de verdad vigente por categoría.
 
