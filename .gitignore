@@ -1,4 +1,3 @@
-
 # ==========================
 # Entornos Virtuales de Python
 # ==========================
@@ -47,7 +46,7 @@ htmlcov/
 # Logs
 # ==========================
 *.log
-logs/
+/logs/
 
 # ==========================
 # Datos Locales (Datasets, Logs, etc)
@@ -71,10 +70,12 @@ config/settings.ini
 auditor_arquitectura.sh
 check_tools.py
 create_subdirs.sh
+create_test_data.py
 import_local_dataset.py
 run_local_ai.ps1
 run_local_ai.sh
 run_local_backend.ps1
+test_endpoints.py
 scripts/compact_docker.txt
 scripts/docker_maintain.ps1
 scripts/docker_maintenance.ps1
@@ -82,10 +83,10 @@ scripts/docker_maintenance.ps1
 # ==========================
 # Respaldos y Archivos Temporales
 # ==========================
-_deprecated_backups/
-_local_docs_backup/
-preview/
-backups/
+/_deprecated_backups/
+/_local_docs_backup/
+/preview/
+/backups/
 *.bak
 docs/**/*.bak
 
@@ -139,3 +140,52 @@ READMEV4.md
 # Calidad de Código
 # ==========================
 AUDITORIA_COMPLETA_*.md
+HANDOFF_TRAE_sigcTiArural.md
+
+# Ignorar docs por defecto
+docs/*
+
+# Architect Master Knowledge Base
+!docs/architect_master/
+!docs/architect_master/**
+
+# Project Knowledge Base
+!docs/project_knowledge_base/
+!docs/project_knowledge_base/**
+
+# EIARC Architecture
+!docs/eiarc/
+!docs/eiarc/**
+
+# SENA Academic Deliverables
+!docs/sena_artifacts/
+!docs/sena_artifacts/**
+
+# AI Dataset/Training Manifests
+!docs/ai/
+!docs/ai/**
+
+# Continuity Reports
+!docs/reports/
+!docs/reports/**
+
+# Database Documentation (canonical ERD and future DB artifacts)
+!docs/database/
+!docs/database/**
+
+# Historical Documentation (FASE 7M — bitácoras secundarias archivadas, gobernanza V8)
+!docs/historical/
+!docs/historical/**
+
+# Diagram archive (FASE 6B — archivos retirados de docs/diagrams/ sin equivalente V8)
+# docs/diagrams/ no tenía excepción previa (solo visible por archivos ya trackeados);
+# git no permite re-incluir una ruta si su directorio padre sigue excluido, por eso
+# se abre docs/diagrams/ y se vuelve a cerrar a nivel de archivo suelto, dejando
+# _archive/ como única excepción real (alcance exclusivo, sin abrir el resto de la carpeta).
+!docs/diagrams/
+docs/diagrams/*
+!docs/diagrams/_archive/
+!docs/diagrams/_archive/**
+
+# Loose documentation files directly under docs/
+!docs/*.md

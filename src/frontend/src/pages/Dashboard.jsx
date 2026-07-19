@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ClusterCard from '../components/ClusterCard.jsx';
 import LoginModal from '../components/LoginModal.jsx';
 import GlobalChart from '../components/GlobalChart.jsx';
@@ -28,6 +28,31 @@ const defaultChartData = [
   { time: '18:00', temp: 26, humidity: 70 },
   { time: '21:00', temp: 22, humidity: 80 },
 ];
+
+const telemetryHistoryUrl = import.meta.env.VITE_TELEMETRY_HISTORY_URL?.trim();
+
+const TELEMETRY_ENDPOINTS = [
+  telemetryHistoryUrl,
+  '/api/v3/telemetry/history/',
+].filter(Boolean);
+
+async function fetchTelemetryEnvelope() {
+  for (const url of TELEMETRY_ENDPOINTS) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        continue;
+      }
+      const data = await response.json();
+      if (data?.context === 'telemetry' && Array.isArray(data?.items)) {
+        return data;
+      }
+    } catch (error) {
+      // Intentar siguiente endpoint
+    }
+  }
+  throw new Error('No fue posible obtener telemetria oficial V3');
+}
 
 // --- TARJETAS DE INTEGRACIONES FUTURAS (Tu código original) ---
 const futureNodes = [
@@ -74,7 +99,51 @@ const futureNodes = [
 
 const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => { 
     const [loginOpen, setLoginOpen] = useState(false);
+    const [telemetryEnvelope, setTelemetryEnvelope] = useState(null);
+    const [telemetryLoading, setTelemetryLoading] = useState(true);
+    const [telemetryError, setTelemetryError] = useState(null);
     const onRequireAuth = () => setLoginOpen(true);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const loadTelemetry = async () => {
+            try {
+                setTelemetryLoading(true);
+                const data = await fetchTelemetryEnvelope();
+                if (isMounted) {
+                    setTelemetryEnvelope(data);
+                    setTelemetryError(null);
+                }
+            } catch (error) {
+                if (isMounted) {
+                    setTelemetryError(error.message);
+                }
+            } finally {
+                if (isMounted) {
+                    setTelemetryLoading(false);
+                }
+            }
+        };
+
+        loadTelemetry();
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    const telemetryItems = telemetryEnvelope?.items ?? [];
+
+    const telemetryChartData = useMemo(() => {
+        return telemetryItems.map((item) => ({
+            time: String(item.timestamp || '').includes('T')
+                ? String(item.timestamp).slice(11, 16)
+                : String(item.timestamp || ''),
+            temp: item.temperature,
+            humidity: item.humidity,
+            sensor: item.sensor_id,
+        }));
+    }, [telemetryItems]);
 
     return (
         <div className="p-6 pt-24 min-h-screen text-white font-sans" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
@@ -102,7 +171,12 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                 </div>
 
                 {/* 2. NUEVO PANEL DE TELEMETRÍA (Insertado Aquí) */}
-                <TelemetryPanel />
+                <TelemetryPanel
+                    items={telemetryItems}
+                    sourceMode={telemetryEnvelope?.source_mode ?? 'unknown'}
+                    loading={telemetryLoading}
+                    error={telemetryError}
+                />
 
                 {/* 3. GRID DE NODOS BBB (Tu código original) */}
                 <h2 className="text-[#00FFFF] text-lg font-bold mb-4 mt-8 uppercase border-l-4 border-[#00FFFF] pl-3">
@@ -120,7 +194,22 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                     <h2 className="text-2xl font-bold uppercase mb-4 flex items-center gap-2" style={{ color: NEON_COLORS.secondary }}>
                         📈 Telemetría Global
                     </h2>
-                    <GlobalChart data={chartData} compact={false} />
+                    <GlobalChart data={telemetryChartData} compact={false} />
+                    {telemetryLoading && (
+                        <p className="mt-3 text-sm text-gray-400">
+                            Cargando telemetría oficial...
+                        </p>
+                    )}
+                    {!telemetryLoading && telemetryError && (
+                        <p className="mt-3 text-sm font-semibold text-[#FF3131]">
+                            La grafica se oculto porque la telemetria oficial no esta disponible.
+                        </p>
+                    )}
+                    {!telemetryLoading && !telemetryError && telemetryChartData.length === 0 && (
+                        <p className="mt-3 text-sm text-gray-400">
+                            No hay lecturas oficiales disponibles para graficar.
+                        </p>
+                    )}
                 </div>
 
                 {/* 5. INTEGRACIONES FUTURAS (Tu código original) */}

@@ -8,9 +8,12 @@ Modified for SIGC&T Rural: Soporte Multi-Entorno (Docker/Postgres prioritario).
 import os
 from pathlib import Path
 import dj_database_url  # Vital para leer la configuración de BD dinámicamente
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BASE_DIR.parent.parent
+load_dotenv(PROJECT_ROOT / '.env')
 
 # ==============================================================================
 # 1. SEGURIDAD Y CONFIGURACIÓN BÁSICA

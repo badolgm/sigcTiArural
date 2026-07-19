@@ -1,0 +1,91 @@
+%% EIARC AI Canonical Flow
+%% Fecha: 2026-07-12
+%% Versión: v1.0.0
+%% Propósito:
+%% Mostrar el flujo canónico de IA en EIARC desde los modelos hasta los
+%% consumidores oficiales, destacando que class_index no forma parte
+%% del contrato semántico oficial de negocio.
+
+flowchart LR
+    %% Fuentes de inferencia
+    subgraph MODELS["Modelos"]
+        direction TB
+        SCREENING[Screening Models]
+        CLASSIFICATION[Classification Models]
+        SEVERITY[Severity Models]
+        CONTEXTUAL[Contextual Models]
+        EDGE[Edge Models]
+        CLOUD[Cloud Models]
+    end
+
+    %% Capa de resolución semántica
+    RESOLUTION[Semantic Resolution Layer<br/>traducción, normalización,<br/>gobierno semántico]
+
+    %% Contrato canónico EIARC
+    subgraph CONTRACT["EIARC AI Semantic Contract"]
+        direction TB
+        PCODE[prediction_code]
+        PLABEL[prediction_label]
+        CNAME[condition_name]
+        SEV[severity]
+        RACTION[recommended_action]
+        OTHER[plant_species<br/>condition_group<br/>health_state<br/>confidence<br/>model_id<br/>model_version<br/>semantic_contract_version<br/>source_mode]
+    end
+
+    %% Consumidores del contrato
+    subgraph CONSUMERS["Consumidores oficiales"]
+        direction TB
+        FRONTEND[Frontend]
+        LABS[Labs]
+        DASHBOARDS[Dashboards]
+        VOICE[Voice]
+        EDGEOUT[Edge]
+    end
+
+    SCREENING --> RESOLUTION
+    CLASSIFICATION --> RESOLUTION
+    SEVERITY --> RESOLUTION
+    CONTEXTUAL --> RESOLUTION
+    EDGE --> RESOLUTION
+    CLOUD --> RESOLUTION
+
+    RESOLUTION --> PCODE
+    RESOLUTION --> PLABEL
+    RESOLUTION --> CNAME
+    RESOLUTION --> SEV
+    RESOLUTION --> RACTION
+    RESOLUTION --> OTHER
+
+    PCODE --> FRONTEND
+    PLABEL --> FRONTEND
+    CNAME --> LABS
+    SEV --> DASHBOARDS
+    RACTION --> VOICE
+    OTHER --> EDGEOUT
+
+    PCODE --> LABS
+    PCODE --> DASHBOARDS
+    PCODE --> VOICE
+    PCODE --> EDGEOUT
+
+    %% Explicitar lo que NO pertenece al contrato oficial
+    CLASSINDEX[class_index<br/>dato técnico interno]
+    CLASSINDEX -. NO es contrato oficial .-> RESOLUTION
+    CLASSINDEX -. no debe ser consumido por .-> FRONTEND
+    CLASSINDEX -. no debe ser consumido por .-> LABS
+    CLASSINDEX -. no debe ser consumido por .-> DASHBOARDS
+    CLASSINDEX -. no debe ser consumido por .-> VOICE
+    CLASSINDEX -. no debe ser consumido por .-> EDGEOUT
+
+    %% Estilos visuales
+    classDef model fill:#1f2937,color:#ffffff,stroke:#60a5fa,stroke-width:2px;
+    classDef semantic fill:#0f766e,color:#ffffff,stroke:#2dd4bf,stroke-width:2px;
+    classDef contract fill:#581c87,color:#ffffff,stroke:#c084fc,stroke-width:2px;
+    classDef consumer fill:#78350f,color:#ffffff,stroke:#fbbf24,stroke-width:2px;
+    classDef forbidden fill:#7f1d1d,color:#ffffff,stroke:#f87171,stroke-width:2px,stroke-dasharray: 5 5;
+
+    class SCREENING,CLASSIFICATION,SEVERITY,CONTEXTUAL,EDGE,CLOUD model;
+    class RESOLUTION semantic;
+    class PCODE,PLABEL,CNAME,SEV,RACTION,OTHER contract;
+    class FRONTEND,LABS,DASHBOARDS,VOICE,EDGEOUT consumer;
+    class CLASSINDEX forbidden;

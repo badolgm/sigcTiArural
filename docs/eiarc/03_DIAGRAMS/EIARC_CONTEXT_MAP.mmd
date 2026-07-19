@@ -1,0 +1,72 @@
+%% EIARC Context Map
+%% Propósito:
+%% Representar la transición arquitectónica desde SIGCT-Rural hacia EIARC,
+%% mostrando los contextos principales que EIARC debe gobernar como marco fundacional.
+%% Lectura:
+%% - A la izquierda: SIGCT-Rural como sistema de origen.
+%% - Al centro: transición y formalización de EIARC.
+%% - A la derecha: contextos canónicos que EIARC organiza y alinea.
+
+flowchart LR
+    %% Estado de origen
+    SIG[SIGCT-Rural<br/>Plataforma híbrida Cloud + Edge<br/>con semántica fragmentada]
+    GAP[Brechas detectadas<br/>contrato, semántica,<br/>despliegue y evolución]
+    EIARC[EIARC<br/>Marco arquitectónico fundacional]
+
+    SIG --> GAP --> EIARC
+
+    %% Contextos gobernados por EIARC
+    subgraph CANON["EIARC - Contextos canónicos"]
+        direction TB
+
+        subgraph OPS["Operational Contexts"]
+            direction LR
+            TELEMETRY[Telemetry<br/>Observación, eventos y trazabilidad]
+            AI[AI<br/>Inferencia, resolución semántica y multi-modelo]
+            IOT[IoT<br/>Sensores, nodos edge y sincronización]
+            DEPLOYMENT[Deployment<br/>Cloud, Edge, entornos y topologías]
+        end
+
+        subgraph EXPERIENCE["Experience Contexts"]
+            direction LR
+            LABS[Labs<br/>Laboratorios, simulación y experiencias interactivas]
+            IDENTITY[Identity<br/>Actores, roles, acceso y contexto de uso]
+        end
+
+        subgraph GOVERNANCE["Governance Contexts"]
+            direction LR
+            KNOWLEDGE[Knowledge<br/>Documentación, verdad arquitectónica y trazabilidad]
+        end
+    end
+
+    %% EIARC no reemplaza SIGCT-Rural; lo gobierna y lo hace evolucionar
+    EIARC --> TELEMETRY
+    EIARC --> AI
+    EIARC --> LABS
+    EIARC --> KNOWLEDGE
+    EIARC --> IDENTITY
+    EIARC --> IOT
+    EIARC --> DEPLOYMENT
+
+    %% Relaciones estructurales entre contextos
+    TELEMETRY --> AI
+    IOT --> TELEMETRY
+    AI --> LABS
+    IDENTITY --> LABS
+    KNOWLEDGE --> AI
+    KNOWLEDGE --> DEPLOYMENT
+    DEPLOYMENT --> IOT
+    DEPLOYMENT --> AI
+    KNOWLEDGE --> TELEMETRY
+
+    %% Estilos para separar origen, transición y canon
+    classDef source fill:#1f2937,color:#ffffff,stroke:#60a5fa,stroke-width:2px;
+    classDef transition fill:#3f3f46,color:#ffffff,stroke:#f59e0b,stroke-width:2px;
+    classDef canonical fill:#0f766e,color:#ffffff,stroke:#2dd4bf,stroke-width:2px;
+    classDef governance fill:#581c87,color:#ffffff,stroke:#c084fc,stroke-width:2px;
+
+    class SIG source;
+    class GAP transition;
+    class EIARC transition;
+    class TELEMETRY,AI,LABS,IDENTITY,IOT,DEPLOYMENT canonical;
+    class KNOWLEDGE governance;

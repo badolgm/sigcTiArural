@@ -8,7 +8,7 @@
 [![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyMmMxLjEgMCAyLS45IDItMlYxMmMwLTEuMS0uOS0yLTItMkg0Yy0xLjEgMC0yIC45LTIgMnY4YzAgMS4xLjkgMiAyIDJoOHoiLz48cGF0aCBkPSJNMjAgMTJjMC0xLjEtLjktMi0yLTJoLTR2NGg0YzEuMSAwIDItLjkgMi0yeiIvPjwvc3ZnPg==)](https://www.sena.edu.co/)
 [![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo%20Activo-00d4ff?style=for-the-badge&logo=StatusPage&logoColor=white)](https://github.com/badolgm/sigcTiArural)
 [![Versión](https://img.shields.io/badge/Versión-7.0-7c3aed?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/badolgm/sigcTiArural/releases)
-[![Arquitectura](https://img.shields.io/badge/Arquitectura-Hexagonal-ff6f00?style=for-the-badge&logo=hexo&logoColor=white)](docs/MASTERDOC.md#9-arquitectura-hexagonal)
+[![Arquitectura](https://img.shields.io/badge/Arquitectura-En%20Transición%20V1→V3-ff6f00?style=for-the-badge&logo=hexo&logoColor=white)](docs/HEXAGONAL_REFACTOR_PLAN.md)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-fbbf24?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
@@ -25,7 +25,7 @@
 
 **Plataforma web híbrida (Cloud/Edge) que integra IoT, Inteligencia Artificial y educación técnica para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.**
 
-📚 [Documentación Completa (MASTERDOC)](docs/MASTERDOC.md) • 🚀 [Plan Maestro](docs/PLAN_MAESTRO.md) • 🐞 [Reportar Bug](https://github.com/badolgm/sigcTiArural/issues) • 💡 [Solicitar Mejora](https://github.com/badolgm/sigcTiArural/issues/new)
+📚 [Documentación Completa (MASTERDOC)](docs/MASTERDOC.md) • 🧭 [Punto de Entrada del Proyecto (SYSTEM BOOT)](SIGCT_RURAL_SYSTEM_BOOT.md) • 🚀 [Plan Maestro](docs/PLAN_MAESTRO.md) • 🩺 [Runbook de Continuidad](docs/CONTINUITY_RUNBOOK.md) • 🐞 [Reportar Bug](https://github.com/badolgm/sigcTiArural/issues) • 💡 [Solicitar Mejora](https://github.com/badolgm/sigcTiArural/issues/new)
 
 </div>
 
@@ -38,21 +38,25 @@
 
 ### Secciones Principales
 1. [🎯 Visión General del Proyecto](#-visión-general-del-proyecto)
-2. [✨ Características Principales](#-características-principales)
-3. [🏗️ Arquitectura del Sistema](#️-arquitectura-del-sistema)
-4. [📊 Stack Tecnológico](#-stack-tecnológico)
-5. [🗄️ Base de Datos (PostgreSQL)](#️-base-de-datos-postgresql)
-6. [🤖 Inteligencia Artificial](#-inteligencia-artificial)
-7. [🧩 Edge Computing](#-edge-computing)
-8. [🔬 Laboratorios Técnicos](#-laboratorios-técnicos)
-9. [🚀 Guía de Instalación Rápida](#-guía-de-instalación-rápida)
-10. [🧱 Estructura del Proyecto](#-estructura-del-proyecto)
-11. [📅 Estado del Proyecto y Roadmap](#-estado-del-proyecto-y-roadmap)
-12. [🤝 Contribuciones](#-contribuciones)
-13. [🎓 Contexto Académico SENA](#-contexto-académico-sena)
-14. [🌍 Impacto Social (ODS)](#-impacto-social-ods)
-15. [📄 Licencia](#-licencia)
-16. [👤 Autor](#-autor)
+2. [⚠️ Estado Operativo Actual](#-estado-operativo-actual)
+3. [✨ Características Principales](#-características-principales)
+4. [🏗️ Arquitectura del Sistema](#️-arquitectura-del-sistema)
+5. [🌐 EIARC — Evolución Arquitectónica](#-eiarc--evolución-arquitectónica)
+6. [📊 Stack Tecnológico](#-stack-tecnológico)
+7. [🗄️ Base de Datos (PostgreSQL)](#️-base-de-datos-postgresql)
+8. [🤖 Inteligencia Artificial](#-inteligencia-artificial)
+9. [🧩 Edge Computing](#-edge-computing)
+10. [🔬 Laboratorios Técnicos](#-laboratorios-técnicos)
+11. [🚀 Guía de Instalación Rápida](#-guía-de-instalación-rápida)
+12. [🧱 Estructura del Proyecto](#-estructura-del-proyecto)
+13. [📅 Estado del Proyecto y Roadmap](#-estado-del-proyecto-y-roadmap)
+14. [🗺️ Mapa Documental](#️-mapa-documental)
+15. [🤝 Contribuciones](#-contribuciones)
+16. [🎓 Contexto Académico SENA](#-contexto-académico-sena)
+17. [🏆 Entregables Académicos SENA](#-entregables-académicos-sena)
+18. [🌍 Impacto Social (ODS)](#-impacto-social-ods)
+19. [📄 Licencia](#-licencia)
+20. [👤 Autor](#-autor)
 
 </details>
 
@@ -61,7 +65,7 @@
 <a name="-visión-general-del-proyecto"></a>
 ## 🎯 Visión General del Proyecto
 
-**SIGC&T Rural** (Sistema Integrado de Gestión del Conocimiento y Tecnología Rural) es un **ecosistema autónomo y agnóstico en hardware y software**, de código abierto, que integra **sensores, robots, sistemas de inteligencia artificial y personas como nodos cooperantes**, orientados a observar, cuidar, aprender y actuar sobre **entornos vivos** de manera sostenible, resiliente y educativa
+**SIGC&T Rural** (Sistema Integrado de Gestión del Conocimiento y Tecnología Rural) es un **ecosistema autónomo y agnóstico en hardware y software**, de código abierto, que integra **sensores, robots, sistemas de inteligencia artificial y personas como nodos cooperantes**, orientados a observar, cuidar, aprender y actuar sobre **entornos vivos** de manera sostenible, resiliente y educativa.
 
 ### 🌟 Características Distintivas
 
@@ -75,9 +79,9 @@ Combina procesamiento en la nube (Cloud) con computación en el borde (Edge), pe
 </td>
 <td width="50%">
 
-#### 🤖 IA Dual
-- **Cloud:** TensorFlow para entrenamiento y análisis complejo
-- **Edge:** TensorFlow Lite optimizado para BeagleBone Black
+#### 🤖 IA en Evolución
+- **Estado actual:** clasificación binaria (sano/enfermo) implementada
+- **En diseño:** arquitectura multimodal V2 (ver [Inteligencia Artificial](#-inteligencia-artificial))
 
 </td>
 </tr>
@@ -102,10 +106,40 @@ Alineado con los **Objetivos de Desarrollo Sostenible (ODS)** de la ONU: Hambre 
 | ID | Objetivo | Descripción | Estado |
 |:--:|----------|-------------|:------:|
 | **O-01** | Dashboard Centralizado | Visualización web de datos de sensores en tiempo real | ✅ Completado |
-| **O-02** | Modelo de IA | Clasificación de enfermedades de plantas (>85% accuracy) | ✅ Completado |
-| **O-03** | Laboratorio Hardware | Clúster de 3 BeagleBone Black operacional | 🟡 En Progreso |
-| **O-04** | Biblioteca Educativa | Repositorio de 20+ recursos curados | 🟡 En Progreso |
-| **O-05** | Cumplimiento ADSO | Entregables completos del Proyecto Productivo | 🟡 En Progreso |
+| **O-02** | Modelo de IA | Clasificación binaria de estado de planta (sano/enfermo) implementada; evolución a clasificación multiclase en planificación (ver [Agriculture AI V2](#-inteligencia-artificial)) | 🟡 En Progreso |
+| **O-03** | Laboratorio Hardware | Clúster de 3 BeagleBone Black (arquitectura de referencia definida, integración física en progreso) | 🟡 En Progreso |
+| **O-04** | Biblioteca Educativa | Repositorio de recursos curados | 🟡 En Progreso |
+| **O-05** | Cumplimiento ADSO | Entregables de cierre generados (ver [Entregables Académicos SENA](#-entregables-académicos-sena)) | 🟡 En Progreso |
+
+---
+
+<a name="-estado-operativo-actual"></a>
+## ⚠️ Estado Operativo Actual
+
+Este proyecto está en desarrollo activo, con componentes en distintos niveles de madurez. Esta sección documenta el estado real y conocido — no aspiracional — para que cualquier persona que clone el repositorio sepa qué esperar.
+
+> *Nota metodológica: los estados descritos a continuación se basan en inspección del código y en documentación de auditoría del propio proyecto; no se realizó una prueba de ejecución en vivo del sistema completo como parte de esta revisión.*
+
+### ✅ Componentes con implementación verificable en el repositorio
+- Dashboard IoT (React)
+- Backend Django (API REST)
+- Base de datos PostgreSQL (esquema y migraciones definidos)
+- Telemetry Context — documentado y auditado como el contexto con mayor evidencia de implementación (ver [`TELEMETRY_DATABASE_DIAGNOSTIC.md`](docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md))
+- Laboratorios técnicos (Robótica, Matemáticas, Ciencia de Datos)
+
+### 🔴 Incidente conocido: AI Service
+El contenedor Docker local `ai_service` puede fallar al iniciar. La causa diagnosticada es una imagen local con archivos de dependencias Python corruptos (0 bytes), **no** un defecto en `fastapi_app.py`. Este incidente está acotado al microservicio de IA — no afecta Dashboard, Backend, Frontend ni Telemetry.
+
+- Diagnóstico forense: [`AI_SERVICE_FORENSIC_AUDIT.md`](AI_SERVICE_FORENSIC_AUDIT.md)
+- Causa raíz probable: [`AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`](AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md)
+- Plan de recuperación: [`AI_SERVICE_RECOVERY_PLAN.md`](AI_SERVICE_RECOVERY_PLAN.md)
+
+### 🟡 Componentes diseñados pero no implementados
+- **Knowledge Hub** (portal documental local) — diseñado y documentado, pero no implementado actualmente. Ver [`KNOWLEDGE_HUB_ARCHITECTURE.md`](KNOWLEDGE_HUB_ARCHITECTURE.md).
+- Integración física completa del clúster BeagleBone Black
+- Sistema de alertas en tiempo real (WebSockets/Channels)
+
+> Para el estado operativo detallado y ordenado por prioridad, consulta [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md).
 
 ---
 
@@ -117,165 +151,218 @@ Alineado con los **Objetivos de Desarrollo Sostenible (ODS)** de la ONU: Hambre 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#c2ba91','primaryTextColor':'#412402','primaryBorderColor':'#3f9999','lineColor':'#6e854349','secondaryColor':'#1887b3','tertiaryColor':'#9badcf'}}}%%
 mindmap
-  root((SIGC&T Rural))
-    Cloud Platform
-      Dashboard IoT
-      API RESTful
-      PostgreSQL 15
-      IA Service
-    Edge Computing
-      BeagleBone Black x3
-      MQTT Broker
-      TensorFlow Lite
-      Sensor Array
-    Education
-      Laboratorio Robótica
-      Laboratorio Matemáticas
-      Ciencia de Datos
-      Asistente IA Voz
-    Integrations
-      PlantVillage Dataset
-      Webots Simulator
-      Docker Compose
+  root((SIGCT-Rural<br/>🟢 Implementado · 🔷 Objetivo Oficial · ⚪ Especulativo))
+    🟢 Laboratorios
+      Motor Strategy/Factory reutilizable
+      🟢 Agricultura
+      🟢 Electrónica
+      🟢 Robótica
+      🟢 Telecomunicaciones
+      🟢 Sistemas Embebidos
+      🟢 Matemáticas Avanzadas
+      🟢 Ciencia de Datos
+    🔷 Academic and Research Community
+      🔷 Cursos / Biblioteca Educativa
+      🔷 Investigación
+      🔷 Recursos Académicos / Documentación
+    🟢🔷 AI Context
+      🟢 Clasificador binario MobileNetV2
+      🟢 Semantic Resolution Layer
+      🔷 Pipeline multi-modal V2 imagen-audio-telemetria-series
+      🔷 Recommendation Engine / Knowledge AI Layer
+    🟢🔷 Telemetría e IoT
+      🟢 Input Port backend PostgreSQL Dashboard
+      🟢 BeagleBone Black referencia código vacío
+      🔷 LoRaWAN ilustrativo
+      ⚪ Fuente real hoy generador simulado
+    🔷 Knowledge Hub
+      🔷 Diseñado no implementado
+      🔷 Puente con AI Context
+      ⚪ Vectorización búsqueda semántica asistente
+    🟢🔷 Contextos Productivos
+      🟢 Agricultura Electrónica Robótica Telecom
+      🔷 Ganadería Porcicultura Apicultura Piscicultura Invernaderos
+      🔷 Investigación transversal
+    🟢🔷 EIARC
+      🟢 Gobernanza parcial implementada
+      🔷 Expansión productiva Fase 9 sin avance
 ```
+
+**Leyenda:** 🟢 Implementado en el repositorio · 🔷 Objetivo oficial (diseñado, aún no completamente implementado) · ⚪ Especulativo / ilustrativo
 
 </div>
 
 ### 🔥 Funcionalidades Core
 
-- 📈 **Dashboard IoT en Tiempo Real:** Visualización de telemetría de sensores con latencia <2s
-- 🧠 **Diagnóstico IA:** Clasificación de enfermedades en plantas (Cloud + Edge)
+- 📈 **Dashboard IoT en Tiempo Real:** Visualización de telemetría de sensores
+- 🧠 **Diagnóstico IA:** Clasificación binaria del estado de la planta (Cloud); evolución multiclase en diseño
 - 🎓 **Biblioteca Educativa:** Cursos, videos y laboratorios interactivos
-- 🔌 **Arquitectura Híbrida:** Lógica *store-and-forward* tolerante a fallos de red
-- 🔐 **Seguridad:** Autenticación JWT + HTTPS + CORS configurado
-- 📡 **Comunicaciones:** API REST + WebSockets para datos en vivo
+- 🔌 **Arquitectura Híbrida:** Lógica *store-and-forward* orientada a tolerancia a fallos de red
+- 🔐 **Seguridad:** HTTPS + CORS configurado
+- 📡 **Comunicaciones:** API REST (WebSockets planificados)
 - 📱 **Diseño Responsivo:** Interfaz moderna con React + TailwindCSS (Mobile-First)
 
 ---
 
-
 <a name="️-arquitectura-del-sistema"></a>
 ## 🏗️ Arquitectura del Sistema
 
-> **Nota Técnica:** El entrenamiento de IA se realiza en Cloud/Local; las BeagleBone Black actúan como nodos Edge para adquisición, preprocesamiento e inferencia optimizada con TFLite.
+> **Nota Técnica:** El entrenamiento de IA se realiza en Cloud/Local; las BeagleBone Black actúan como nodos Edge para adquisición, preprocesamiento e inferencia optimizada con TFLite (arquitectura de referencia — ver [Edge Computing](#-edge-computing)).
 
 ### 📐 Nivel 1: Vista de Contexto (C4 Model)
 
 ```mermaid
 %%{init: {'theme':'dark', 'themeVariables': { 'primaryColor':'#7c3aed','fontSize':'16px'}}}%%
 flowchart TB
-    subgraph users["👥 Usuarios"]
-        A["🌾 Agricultor"]
-        B["🎓 Estudiante SENA"]
+    subgraph users["👥 Usuarios Principales"]
+        A["🌾 Actores de Contextos Productivos<br/>(Agricultor/Técnico — multi-dominio)"]
+        B["🎓 Estudiantes e Investigadores SENA"]
         C["🔧 Administrador"]
     end
 
-    subgraph sigct["🌐 SIGC&T Rural Platform"]
-        S["☁️ Plataforma Web Híbrida<br/>Cloud + Edge Computing"]
+    ROOT(("🌐 SIGCT-Rural<br/>Agnóstico en hardware y en dominio"))
+
+    subgraph core["🏛️ Pilares de la Plataforma"]
+        direction TB
+        ARC["🔷 Academic &amp; Research Community<br/>Cursos · Biblioteca Educativa · Documentación"]
+        PRODCTX["🟢🔷 Contextos Productivos<br/>Agricultura/Electrónica/Robótica/Telecom implementados<br/>Ganadería/Apicultura/Piscicultura/Invernaderos diseñados"]
+        RESEARCH["🔷 Investigación<br/>dominio transversal, no un contexto más"]
+        KHUB["🔷 Knowledge Hub<br/>diseñado, no implementado"]
+        EIARC["🟢🔷 EIARC<br/>Gobernanza (parcial) + Expansión productiva (Fase 9)"]
     end
 
-    subgraph external["🔗 Sistemas Externos"]
-        E1["🤖 Cluster 3x BeagleBone Black<br/>(Edge Devices)"]
-        E2["📊 PlantVillage Dataset<br/>(Kaggle)"]
-        E3["🎓 SENA SofiaPlus<br/>(Futuro - OAuth 2.0)"]
+    subgraph external["🔗 Sistemas Externos Reales"]
+        direction TB
+        DATA["📊 Fuentes de datos de dominio<br/>(ej. PlantVillage/Kaggle — una entre varias)"]
+        SENAX["🎓 SENA SofiaPlus<br/>(integración futura, no central)"]
+        IOTX["📡 Hardware IoT vía Input Port<br/>(agnóstico, no BBB como identidad)"]
     end
 
-    A -->|"Consulta Dashboard<br/>Monitoreo de Cultivos"| S
-    B -->|"Accede a Cursos<br/>y Laboratorios"| S
-    C -->|"Administra Sistema<br/>y Usuarios"| S
-    
-    E1 -->|"MQTT/HTTPS<br/>Telemetría IoT"| S
-    S -->|"Uso de Modelos<br/>Offline/Online"| E2
-    S -.->|"Autenticación SSO<br/>(Planificado)"| E3
+    users --> ROOT
+    ROOT --> core
+    ROOT -.->|"consume/integra"| external
 
+    style ROOT fill:#7c3aed,stroke:#a78bfa,stroke-width:3px
     style users fill:#1e293b,stroke:#8b5cf6,stroke-width:2px
-    style sigct fill:#7c3aed,stroke:#a78bfa,stroke-width:3px
-    style external fill:#0f172a,stroke:#6366f1,stroke-width:2px
+    style core fill:#0f172a,stroke:#6366f1,stroke-width:2px
+    style external fill:#0f172a,stroke:#10b981,stroke-width:2px
+    style PRODCTX fill:#052e16,stroke:#4ade80
+    style EIARC fill:#052e16,stroke:#4ade80
+    style ARC fill:#1e3a8a,stroke:#60a5fa
+    style RESEARCH fill:#1e3a8a,stroke:#60a5fa
+    style KHUB fill:#1e3a8a,stroke:#60a5fa
 ```
 
-### ⚙️ Nivel 3: Arquitectura Hexagonal (Backend Clean Architecture)
+### ⚙️ Nivel 3: Arquitectura Backend — Estado Real de Migración
+
+El backend **no es un único estilo arquitectónico**: coexisten tres generaciones de API mientras avanza una migración progresiva hacia arquitectura hexagonal. La cobertura hexagonal real se estima en **~15–25%** (ver [`docs/HEXAGONAL_REFACTOR_PLAN.md`](docs/HEXAGONAL_REFACTOR_PLAN.md)).
 
 ```mermaid
-graph TD
-    subgraph "Capa de Adaptadores (Infraestructura)"
-        UI[React Frontend] -->|REST API| Views[Django Views V2]
-        Views --> DB_Adap[Django ORM Adapter]
-        Views --> AI_Adap[FastAPI AI Adapter]
+flowchart TB
+    Frontend["⚛️ React Frontend"] --> V1
+    Frontend --> V2
+    Frontend --> V3
+
+    subgraph V1["🔴 V1 — Legacy"]
+        V1views["api/views.py<br/>(vistas originales)"]
+        V1models["api/models.py"]
     end
 
-    subgraph "Capa de Puertos (Interfaces)"
-        Views --> Lab_Port[ProcesadorLaboratorioPort]
-        DB_Adap -.-> Repo_Port[RepositoryPort]
-        AI_Adap -.-> AI_Port[AIServicePort]
+    subgraph V2["🟡 V2 — Strangler Fig"]
+        V2logic["api/logic/<br/>(capa de transición)"]
     end
 
-    subgraph "Capa de Dominio (Lógica Pura)"
-        Lab_Port --> Service[LaboratorioService]
-        Service --> Strategy[Strategy Pattern]
-        Strategy --> Robotica[ProcesadorRobotica]
-        Strategy --> Agricultura[ProcesadorAgricultura]
-        Strategy --> Telecom[ProcesadorTelecom]
-        Strategy --> Electronica[ProcesadorElectronica]
+    subgraph V3["🟢 V3 — Hexagonal (núcleo objetivo)"]
+        Domain["core/domain/<br/>entidades · servicios · estrategias"]
+        Ports["core/ports/<br/>contratos"]
+        Infra["infrastructure/<br/>adapters: Django ORM, IA, persistencia"]
+        Domain --- Ports
+        Ports -.-> Infra
     end
 
-    style Service fill:#f96,stroke:#333,stroke-width:4px
-    style Lab_Port fill:#bbf,stroke:#333,stroke-width:2px
-    style Views fill:#dfd,stroke:#333,stroke-width:2px
+    V3 -.->|"migración progresiva"| V2
+    V2 -.->|"migración progresiva"| V1
+
+    style V1 fill:#450a0a,stroke:#f87171,stroke-width:2px
+    style V2 fill:#451a03,stroke:#fbbf24,stroke-width:2px
+    style V3 fill:#052e16,stroke:#4ade80,stroke-width:2px
 ```
+
+> Las tres generaciones son código real y activo, no solo histórico. Para el plan de retiro progresivo de V1/V2, ver [`docs/HEXAGONAL_REFACTOR_PLAN.md`](docs/HEXAGONAL_REFACTOR_PLAN.md).
 
 ### 🔧 Nivel 2: Vista de Contenedores
 
 ```mermaid
-%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor':'#7c3aed'}}}%%
+%%{init: {'theme':'dark', 'flowchart': {'curve':'basis', 'subGraphTitleMargin': {'top': 12, 'bottom': 18}}}}%%
 flowchart TB
     U["🌐 Usuario<br/>(Navegador Web)"]
 
     subgraph cloud["☁️ Cloud Infrastructure (Docker Compose)"]
+        direction TB
         subgraph frontend["🎨 Frontend Layer"]
             FE["⚛️ React App<br/>Vite + TailwindCSS<br/>Puerto: 5173"]
         end
-        
+
         subgraph backend["⚙️ Backend Layer"]
-            API["🐍 Django API<br/>DRF + Channels<br/>Puerto: 8000"]
+            API["🐍 Django API<br/>DRF<br/>Puerto: 8000"]
         end
-        
-        subgraph ai["🧠 AI Service Layer"]
-            AIS["🤖 TensorFlow Server<br/>FastAPI<br/>Puerto: 8081"]
+
+        subgraph ai["🧠 AI Service Layer ⚠️"]
+            AIS["🤖 TensorFlow Server<br/>FastAPI<br/>Puerto: 8081<br/>(incidente conocido, ver §2)"]
         end
-        
+
         subgraph db["🗄️ Database Layer"]
             DB[("🐘 PostgreSQL 15<br/>Puerto: 5432")]
         end
-        
+
         FE -->|"REST API<br/>/api/v1/"| API
-        FE -->|"WebSockets<br/>/ws/"| API
         API -->|"SQL Queries<br/>ORM Django"| DB
         API -->|"HTTP POST<br/>Inferencia IA"| AIS
     end
 
-    subgraph edge["🏭 Laboratorio Edge (Red Local)"]
-        GW["🔌 BBB-01 Gateway<br/>Mosquitto + Sync<br/>192.168.1.10"]
-        IA_EDGE["🧠 BBB-02 IA Edge<br/>Flask + TFLite<br/>192.168.1.11"]
-        IOT["📡 BBB-03 Sensores<br/>Cámara + DHT22<br/>192.168.1.12"]
-        
-        IOT -->|"MQTT (LAN)<br/>readings/*"| GW
-        IOT -->|"HTTP POST<br/>imagen crop"| IA_EDGE
-        IA_EDGE -->|"MQTT<br/>diagnosis/*"| GW
+    subgraph edge["🧪 Laboratorio Edge de Referencia<br/>(agnóstico en hardware — demostrador)"]
+        GW["🔌 Nodo Gateway<br/>(ejemplo: BeagleBone Black)"]
+        IA_EDGE["🧠 Nodo IA Edge<br/>Inferencia local TFLite<br/>(ejemplo: BeagleBone Black)"]
+        IOT["📡 Nodo Adquisición de Señales<br/>Sensores intercambiables<br/>(ejemplo: BeagleBone Black)"]
     end
 
     U -->|"HTTPS:5173"| FE
-    U -->|"HTTPS/WSS:8000"| API
-    GW -->|"HTTPS POST<br/>/api/v1/readings/"| API
+    U -->|"HTTPS:8000"| API
 
     style cloud fill:#1e293b,stroke:#8b5cf6,stroke-width:2px
     style edge fill:#0f172a,stroke:#10b981,stroke-width:2px
-    style frontend fill:#7c3aed,stroke:#a78bfa
-    style backend fill:#6366f1,stroke:#818cf8
-    style ai fill:#8b5cf6,stroke:#a78bfa
-    style db fill:#0891b2,stroke:#22d3ee
+    style ai fill:#7c2d12,stroke:#f97316
 ```
 
-> 📖 **Diagramas Completos:** Consulta [MASTERDOC.md](docs/MASTERDOC.md) para vistas de Componentes, Despliegue y Diagramas Entidad-Relación (ERD).
+> 📖 **Diagramas Completos:** Consulta [MASTERDOC.md](docs/MASTERDOC.md) para vistas ampliadas de Componentes, Despliegue y Diagramas Entidad-Relación (ERD).
+
+---
+
+<a name="-eiarc--evolución-arquitectónica"></a>
+## 🌐 EIARC — Evolución Arquitectónica
+
+SIGC&T Rural evoluciona dentro de una línea arquitectónica más amplia llamada **EIARC**. El nombre se usa en la documentación del proyecto con **dos significados distintos** que deben leerse por separado:
+
+### A) EIARC como marco arquitectónico y de gobernanza *(vigente, parcialmente implementado)*
+
+Documentado en [`docs/eiarc/`](docs/eiarc/). Define:
+- Contratos semánticos de IA — la resolución binaria `prediction_code` / `health_state` está implementada en [`semantic_prediction_resolver.py`](src/backend/infrastructure/external/ai_service/semantic_prediction_resolver.py)
+- Contextos delimitados: `Telemetry`, `AI`, `Labs`, `Knowledge`, `Identity`, `IoT`, `Deployment`
+- Reglas de gobernanza documental y de precedencia entre fuentes
+
+Según la autoevaluación documentada en [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md), la madurez relativa por contexto es: **Telemetry** (más avanzado) > **AI** (con incidente activo) > **Knowledge** (fuerte en documentación, sin implementar) > **Labs** (heterogéneo) > **Identity / IoT / Deployment** (incompletos frente a la visión objetivo). Esta clasificación es una autoevaluación del propio proyecto, no una medición externa independiente.
+
+→ Entrada: [`docs/eiarc/01_FOUNDATION/EIARC_VISION.md`](docs/eiarc/01_FOUNDATION/EIARC_VISION.md)
+
+### B) EIARC como visión futura de expansión productiva *(planificada — Fase 9, sin fecha de cierre)*
+
+Documentada principalmente en [`docs/PLAN_MAESTRO.md`](docs/PLAN_MAESTRO.md) (Fase 9). Contempla futuras líneas de dominio más allá de agricultura, usando la misma nomenclatura que el plan maestro:
+- Apicultura
+- Piscicultura
+- Ganadería/Avicultura
+- Invernaderos
+
+Esta fase es explícitamente posterior al cierre de las Fases 7–8 del refactor hexagonal actual y **no tiene fecha de inicio definida** (0% de avance registrado).
 
 ---
 
@@ -302,9 +389,8 @@ flowchart TB
 ### ⚙️ Backend
 - **Framework:** Django 4.2+
 - **API:** Django REST Framework
-- **WebSockets:** Django Channels
+- **WebSockets:** Django Channels (planificado)
 - **ASGI Server:** Daphne
-- **Auth:** JWT (djangorestframework-simplejwt)
 - **CORS:** django-cors-headers
 - **DB Connector:** psycopg2-binary
 - **Env Config:** python-dotenv
@@ -316,9 +402,9 @@ flowchart TB
 - **Framework:** TensorFlow 2.15+
 - **Edge Inference:** TensorFlow Lite
 - **API Service:** FastAPI + Uvicorn
-- **Modelos:** MobileNetV2, EfficientNet
+- **Modelo actual:** MobileNetV2 (binario)
 - **Datasets:** PlantVillage (Kaggle)
-- **Audio:** Pydub, SpeechRecognition
+- **Audio:** Pydub, SpeechRecognition, gTTS
 - **Visión:** OpenCV (cv2)
 
 </td>
@@ -365,149 +451,82 @@ flowchart TB
 
 ### 📊 Modelo de Datos Principal
 
-```mermaid
-%%{init: {'theme':'dark', 'er': {'layoutDirection': 'TB'}}}%%
-erDiagram
-    USER ||--o{ ROBOT : posee
-    USER ||--o{ SENSOR_READING : registra
-    ROBOT ||--o{ ROBOT_TELEMETRY : genera
-    ROBOT ||--o{ ROBOT_COMMAND : recibe
-    
-    USER {
-        int id PK
-        string username UK
-        string email UK
-        string password_hash
-        boolean is_active
-        datetime date_joined
-    }
-    
-    ROBOT {
-        int id PK
-        string robot_id UK "Ej: RBT-001"
-        string name
-        string type "ground|aerial|arm"
-        string status "active|idle|maintenance"
-        int owner_id FK
-        datetime created_at
-    }
-    
-    ROBOT_TELEMETRY {
-        int id PK
-        int robot_id FK
-        float battery_level "0-100%"
-        float position_x
-        float position_y
-        float position_z
-        float velocity
-        jsonb sensors_data
-        datetime timestamp
-    }
-    
-    ROBOT_COMMAND {
-        int id PK
-        int robot_id FK
-        string command_type "move|stop|calibrate"
-        jsonb parameters
-        string status "pending|executed|failed"
-        datetime created_at
-        datetime executed_at
-    }
-    
-    SENSOR_READING {
-        int id PK
-        int user_id FK
-        string node_id "Ej: BBB-03"
-        float temperature
-        float humidity
-        float soil_moisture
-        datetime timestamp
-    }
-```
+> **Diagrama pendiente de validación contra modelos y migraciones reales.**
+>
+> El diagrama entidad-relación anterior fue retirado porque no coincidía de forma verificable con `src/backend/api/models.py`. No se genera un ERD alternativo hasta validarlo directamente contra los modelos y migraciones activos.
 
 ### 🔑 Características de la Base de Datos
 
-- ✅ **Integridad Referencial:** Claves foráneas con `ON DELETE CASCADE`
-- ✅ **Índices Optimizados:** Búsquedas por `timestamp`, `robot_id`, `user_id`
-- ✅ **Tipos Avanzados:** JSONB para datos flexibles de sensores
-- ✅ **Migraciones Versionadas:** Django Migrations para control de cambios
-- ✅ **Respaldos Automáticos:** Scripts de `pg_dump` programados
+- **Integridad Referencial:** Claves foráneas con `ON DELETE CASCADE`
+- **Índices:** Búsquedas por `timestamp`, `robot_id`
+- **Tipos Avanzados:** Campos `JSONField` para parámetros de comandos de robot
+- **Migraciones Versionadas:** Django Migrations para control de cambios (ver nota de Telemetry Context sobre aplicación de migraciones)
+- Se documentan scripts de respaldo con `pg_dump` (programación/automatización no verificada en esta revisión)
 
-> 📖 **Schema Completo:** Consulta `schema_postgresql.sql` en la raíz del proyecto.
+> 📖 **Fuente de verdad del esquema:** `src/backend/api/migrations/` y `src/backend/api/models.py`. El archivo `schema_postgresql.sql` en la raíz se conserva como **referencia histórica**, pero no debe tratarse como fuente única del esquema actual (ver [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md)).
 
 ---
 
 <a name="-inteligencia-artificial"></a>
 ## 🤖 Inteligencia Artificial
 
-### 🧠 Modelo de Clasificación de Enfermedades en Plantas
+La IA de SIGC&T Rural se documenta en tres niveles distintos, que **no deben confundirse entre sí**: lo que está implementado hoy, la arquitectura objetivo conceptual, y un plan de ejecución concreto todavía sin entrenar.
 
-<table>
-<tr>
-<td width="50%">
+### 8.1 Estado Actual de IA *(implementado en el repositorio)*
 
-#### ☁️ Infraestructura Cloud
-- **Arquitectura:** MobileNetV2 (Transfer Learning)
-- **Dataset:** PlantVillage (54,305 imágenes)
-- **Clases:** 38 enfermedades (tomate, papa, maíz)
-- **Accuracy:** 92.5% (validación)
-- **Framework:** TensorFlow/Keras
-- **Formato:** `.h5` (150 MB)
-
-</td>
-<td width="50%">
-
-#### 🏭 Infraestructura Edge
-- **Arquitectura:** MobileNetV2 (Cuantizado INT8)
-- **Framework:** TensorFlow Lite
-- **Plataforma:** BeagleBone Black
-- **Formato:** `.tflite` (4.2 MB)
-- **Latencia:** ~800 ms/imagen
-- **Memoria:** <50 MB RAM
-
-</td>
-</tr>
-</table>
-
-### 🎙️ Asistente de Voz Conversacional
-
-- **Reconocimiento:** SpeechRecognition (Google/Sphinx)
-- **Procesamiento:** Memoria contextual (sesiones)
-- **Síntesis:** pyttsx3 (TTS local)
-- **Integración:** Consulta datos en PostgreSQL en tiempo real
-- **Capacidades:** Responde preguntas sobre telemetría de robots y sensores
+- **Modelo:** `plant_disease_mbv2.h5` — MobileNetV2, clasificación **binaria**
+- **Clases:** `enferma` / `sana` (no diagnostica enfermedades específicas)
+- **Servicio:** implementado (código verificado en `src/ai_models/fastapi_app.py`); sujeto al incidente descrito en [Estado Operativo Actual](#-estado-operativo-actual)
+- **Asistente de voz conversacional:** reconocimiento de voz (SpeechRecognition), memoria contextual de sesión, síntesis por voz con **gTTS** (Google Text-to-Speech — requiere conexión a internet, no es síntesis local), consulta datos de telemetría en PostgreSQL (sujeto a que las migraciones de la tabla de sensores estén aplicadas — ver Telemetry Context en §2)
 
 > 📖 **Notebooks de Entrenamiento:** Disponibles en `src/ai_models/notebooks/`
+
+### 8.2 AI Context V2 *(arquitectura objetivo — conceptual, no implementada)*
+
+Diseño de una plataforma de IA multimodal en ocho bloques coordinados (Agriculture, Animal Health, Telemetry, Feature Engineering, Computer Vision, Time Series, Recommendation Engine, Knowledge AI). **Este es un diseño arquitectónico: no implica cambios de código, entrenamiento de modelos ni descarga de datasets.**
+
+→ Ver [`docs/ai/research_v2/AI_CONTEXT_V2_ARCHITECTURE.md`](docs/ai/research_v2/AI_CONTEXT_V2_ARCHITECTURE.md)
+
+### 8.3 Agriculture AI V2 *(plan concreto de evolución — no entrenado, no desplegado)*
+
+Plan de ejecución para un baseline multiclase de agricultura (tomate, papa, maíz): 16 clases sobre un subconjunto auditado de 21,160 imágenes RGB (PlantVillage), con `EfficientNet-B0` como arquitectura candidata y benchmark contra `MobileNetV3-Large`, `ResNet50` y `ConvNeXt-Tiny`, usando `macro-F1` como métrica principal. **Explícitamente sin entrenar y sin pipelines implementados.**
+
+→ Ver [`docs/ai/research_v2/AGRICULTURE_AI_V2_EXECUTION_PLAN.md`](docs/ai/research_v2/AGRICULTURE_AI_V2_EXECUTION_PLAN.md)
+
+### 8.4 AI Research Program V2 *(programa rector de I+D — diseño, no implementación)*
+
+`docs/ai/research_v2/` reúne el programa completo de investigación aplicada de IA para SIGC&T Rural V2: arquitectura multimodal, estrategia y auditoría de datasets, gobierno científico/MLOps, validación de predicción, corrección científica y el plan de entrenamiento — incluyendo la línea Agriculture AI V2 de las secciones 8.2 y 8.3 como su primera línea de ejecución. **Este programa no entrena, no implementa código y no descarga datasets: solo diseña la hoja de ruta científica.** Está pensado para converger con EIARC a medida que cada línea madure, pero hoy es un track de I+D independiente y paralelo a `docs/eiarc/`.
+
+→ Punto de entrada: [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md)
 
 ---
 
 <a name="-edge-computing"></a>
 ## 🧩 Edge Computing
 
-### 🔌 Arquitectura del Clúster BeagleBone Black
+> **Estado:** arquitectura de referencia de laboratorio. Las direcciones IP y roles descritos a continuación corresponden a la configuración objetivo, no a un despliegue productivo activo — la integración física completa está marcada 🟡 En Progreso (ver [Roadmap](#-estado-del-proyecto-y-roadmap)).
+
+### 🔌 Arquitectura de Referencia del Clúster BeagleBone Black
 
 ```mermaid
 %%{init: {'theme':'dark', 'flowchart': {'curve':'basis'}}}%%
 flowchart LR
-    subgraph cluster["🏭 Laboratorio Edge (192.168.1.0/24)"]
+    subgraph cluster["🏭 Laboratorio Edge (Referencia — 192.168.1.0/24)"]
         BBB1["🔌 BBB-01 Gateway<br/>IP: 192.168.1.10<br/>Roles:<br/>- Broker MQTT<br/>- Sync Cloud"]
         BBB2["🧠 BBB-02 IA Edge<br/>IP: 192.168.1.11<br/>Roles:<br/>- Inferencia TFLite<br/>- API Flask"]
         BBB3["📡 BBB-03 Sensores<br/>IP: 192.168.1.12<br/>Roles:<br/>- Adquisición Datos<br/>- Cámara USB"]
-        
+
         BBB3 -->|"MQTT: readings/*"| BBB1
         BBB3 -->|"POST /predict"| BBB2
         BBB2 -->|"MQTT: diagnosis/*"| BBB1
     end
-    
+
     BBB1 -->|"HTTPS POST<br/>/api/v1/readings/"| CLOUD["☁️ Cloud Backend<br/>(Django API)"]
-    
+
     style cluster fill:#0f172a,stroke:#10b981,stroke-width:2px
-    style BBB1 fill:#7c3aed,stroke:#a78bfa
-    style BBB2 fill:#8b5cf6,stroke:#a78bfa
-    style BBB3 fill:#6366f1,stroke:#818cf8
 ```
 
-### 🛠️ Funcionalidades Edge
+### 🛠️ Funcionalidades Edge (Diseño de Referencia)
 
 | Nodo | Hardware | Software | Responsabilidad |
 |------|----------|----------|-----------------|
@@ -577,45 +596,35 @@ flowchart LR
   - Python 3.10+ (para desarrollo local)
   - Node.js 18+ y npm 9+ (para desarrollo local)
 
+> ⚠️ **Antes de empezar:** el contenedor `ai_service` tiene un incidente conocido en el entorno Docker local actual (ver [Estado Operativo Actual](#-estado-operativo-actual)). El resto de la plataforma (backend, frontend, base de datos) no se ve afectado — puedes continuar la instalación con normalidad.
+
 ---
 
 ### 💻 Instalación Local (Desarrollo Híbrido - Modo Rápido)
 
 ```bash
-Esta opción es ideal para desarrollo activo. Usamos Docker para las bases de datos (estabilidad) y la terminal local para el código (velocidad).
+# Esta opción es ideal para desarrollo activo. Usamos Docker para las bases de datos (estabilidad) y la terminal local para el código (velocidad).
 
 # 1. Levantar solo las Bases de Datos
-# Encendemos los "motores" de datos en segundo plano
 docker-compose up -d db db-mysql
 
 # 2. Configurar el "Puente" (.env local)
-En tu archivo src/backend/.env, asegúrate de ajustar el host para que el código local encuentre el contenedor:
-
-Cambia: DB_HOST=db ➔ DB_HOST=localhost
-
-Manten: DB_PORT=5432
+# En tu archivo src/backend/.env, ajusta el host:
+# Cambia: DB_HOST=db ➔ DB_HOST=localhost
+# Mantén: DB_PORT=5432
 
 # 3. Backend (Django)
 cd src/backend
-
-# Crear y activar entorno virtual
 python -m venv venv
 source venv/Scripts/activate
-
-# Instalar dependencias y sincronizar tablas
 pip install -r requirements.txt
 python manage.py migrate
-
-# Iniciar servidor de desarrollo
 python manage.py runserver
 
 # 4. Frontend (React + Vite)
 cd src/frontend
-
-# Instalar y arrancar interfaz
 npm install
 npm run dev
-
 ```
 
 ### ⚡ Instalación con Docker (Recomendado para producción)
@@ -626,38 +635,20 @@ git clone https://github.com/badolgm/sigcTiArural.git
 cd sigcTiArural
 
 # 2. Configurar variables de entorno
-## Copiamos el ejemplo para crear nuestro archivo real
 cp .env.example .env
-# Editar .env con tus configuraciones (opcional para desarrollo local)
 
 # 3. Levantar todos los servicios
-## El flag --build asegura que se construyan las imágenes con los últimos cambios
 docker-compose up -d --build
 
 # 4. Verificar que los contenedores estén corriendo
 docker-compose ps
-
-# Salida esperada:
-# NAME                IMAGE                    STATUS
-# sigct_backend       sigctiArural-backend     Up
-# sigct_db            postgres:15-alpine       Up
-# sigct_frontend      sigctiArural-frontend    Up
-# sigct_ai_service    sigctiArural-ai_service  Up
+# Nota: ai_service puede fallar al iniciar por el incidente conocido — ver §2 y AI_SERVICE_RECOVERY_PLAN.md
 
 # 5. CONFIGURACIÓN INICIAL DE BASE DE DATOS (Solo la primera vez)
-# Importante: Los contenedores deben estar en estado "Up"
-
-Una vez que los contenedores estén corriendo, es necesario preparar la estructura de la base de datos (Migraciones) y, opcionalmente, crear un superusuario para el panel de administración.
-
-# A. Construir las tablas en PostgreSQL (Migraciones):
 docker exec -it sigct_backend python manage.py migrate
-
-## Crear usuario administrador para el panel de Django (Opcional):
 docker exec -it sigct_backend python manage.py createsuperuser
-
-## Nota: Estos pasos solo se ejecutan cuando clonas el proyecto por primera vez o si borras los volúmenes de Docker.
-
 ```
+
 ### 🌐 Acceder a la Aplicación
 
 | Servicio | URL | Descripción |
@@ -665,24 +656,15 @@ docker exec -it sigct_backend python manage.py createsuperuser
 | **Frontend** | http://localhost:5173 | Interfaz de usuario principal |
 | **Backend API** | http://localhost:8000 | API RESTful (Django) |
 | **API Docs** | http://localhost:8000/api/docs/ | Documentación interactiva |
-| **AI Service** | http://localhost:8081 | Servicio de IA (FastAPI) |
+| **AI Service** | http://localhost:8081 | Servicio de IA (⚠️ ver incidente conocido) |
 | **Admin Django** | http://localhost:8000/admin/ | Panel de administración |
-
-> 🔐 **Usuario Admin por Defecto:** Ejecuta `docker-compose exec backend python manage.py createsuperuser` para crear un usuario administrador.
 
 ### 🔧 Detener y Limpiar Servicios
 
 ```bash
-# Detener todos los servicios
 docker-compose down
-
-# Detener y eliminar volúmenes (⚠️ BORRA LA BASE DE DATOS)
-docker-compose down -v
-
-# Ver logs en tiempo real
+docker-compose down -v   # ⚠️ BORRA LA BASE DE DATOS
 docker-compose logs -f
-
-# Ver logs de un servicio específico
 docker-compose logs -f backend
 ```
 
@@ -690,52 +672,23 @@ docker-compose logs -f backend
 
 ### 💻 Instalación Local (Desarrollo Sin Docker)
 
-Esta opción es más larga que el Desarrollo Híbrido (Modo Rápido) , también es  ideal para **desarrollo activo** donde necesitas hacer cambios frecuentes en el código.
-
 #### 📦 Paso 1: Backend (Django)
 
 ```bash
-# Navegar al directorio del backend
 cd src/backend
-
-# Crear entorno virtual
 python -m venv venv
-
-# Activar entorno virtual
-# En Linux/Mac:
-source venv/bin/activate
-# En Windows (Git Bash):
-source venv/Scripts/activate
-# En Windows (PowerShell):
-.\venv\Scripts\Activate.ps1
-
-# Instalar dependencias
+source venv/bin/activate       # Linux/Mac
+source venv/Scripts/activate   # Windows (Git Bash)
 pip install --upgrade pip
 pip install -r requirements.txt
-
-# Configurar base de datos local (PostgreSQL debe estar instalado)
-# Opción 1: Usar PostgreSQL local
 createdb sigct_db
-# Opción 2: Usar el contenedor de Docker solo para la BD
-# Encender el motor (Docker)
-docker-compose up -d db
-
-# Configurar variables de entorno
 cp .env.example .env
-# Editar .env con tus credenciales de BD local
-
-# Aplicar migraciones
 python manage.py migrate
-
-# Crear superusuario
 python manage.py createsuperuser
-
-# Ejecutar servidor de desarrollo (Puerto 8000)
 python manage.py runserver
 ```
 
 ```bash
-# En otra terminal, probar la API
 curl http://localhost:8000/api/health/
 # Salida esperada: {"status": "ok", "database": "connected"}
 ```
@@ -743,65 +696,26 @@ curl http://localhost:8000/api/health/
 #### ⚛️ Paso 2: Frontend (React + Vite)
 
 ```bash
-# En una NUEVA terminal, navegar al directorio del frontend
 cd src/frontend
-
-# Instalar dependencias de Node.js
 npm install
-
-# Configurar variables de entorno
 echo "VITE_API_URL=http://localhost:8000" > .env.local
-
-# Iniciar servidor de desarrollo (Puerto 5173)
 npm run dev
 ```
----
-**Verificación:**
-- Abre tu navegador en `http://localhost:5173`
-- Deberías ver el Dashboard principal con las 12 categorías de laboratorios
 
----
-
-#### 🤖 Paso 3: Servicio de IA (FastAPI) - Opcional
+#### 🤖 Paso 3: Servicio de IA (FastAPI) — Opcional, sujeto al incidente conocido
 
 ```bash
-# En una NUEVA terminal, navegar al directorio de IA
 cd src/ai_models
-
-# Crear entorno virtual independiente
 python -m venv venv
-source venv/bin/activate  # o venv\Scripts\activate en Windows
-
-# Instalar dependencias (⚠️ Esto puede tardar varios minutos por TensorFlow)
+source venv/bin/activate
 pip install -r requirements.txt
-
-# Configurar variables de entorno
 export DATABASE_URL="postgresql://user:password@localhost:5432/sigct_db"
-
-# Ejecutar servidor FastAPI (Puerto 8081)
 uvicorn fastapi_app:app --host 0.0.0.0 --port 8081 --reload
 ```
 
-**Verificación:**
 ```bash
 curl http://localhost:8081/health
-# Salida esperada: {"status": "ready", "model": "loaded"}
 ```
-
----
-
-#### 🎯 Resumen de Puertos en Modo Local
-
-| Servicio | Puerto | Comando | Estado Requerido |
-|----------|--------|---------|------------------|
-| **Backend Django** | 8000 | `python manage.py runserver` | ✅ Obligatorio |
-| **Frontend React** | 5173 | `npm run dev` | ✅ Obligatorio |
-| **AI Service** | 8081 | `uvicorn fastapi_app:app --reload` | 🟡 Opcional |
-| **PostgreSQL** | 5432 | `docker-compose up -d db` | ✅ Obligatorio |
-
-> 💡 **Consejo:** Usa **terminales separadas** para cada servicio o herramientas como `tmux` (Linux/Mac) o Windows Terminal con pestañas.
-
----
 
 ### 🐛 Solución de Problemas Comunes
 
@@ -809,67 +723,38 @@ curl http://localhost:8081/health
 <summary><b>❌ Error: "Port 8000 already in use"</b></summary>
 
 ```bash
-# Identificar el proceso usando el puerto
-# En Linux/Mac:
-lsof -i :8000
-# En Windows:
-netstat -ano | findstr :8000
-
-# Matar el proceso (reemplaza PID con el número del proceso)
-kill -9 PID  # Linux/Mac
-taskkill /PID PID /F  # Windows
+lsof -i :8000                    # Linux/Mac
+netstat -ano | findstr :8000     # Windows
+kill -9 PID                      # Linux/Mac
+taskkill /PID PID /F              # Windows
 ```
-
 </details>
 
 <details>
 <summary><b>❌ Error: "ModuleNotFoundError: No module named 'django'"</b></summary>
 
-Esto significa que el entorno virtual no está activado o las dependencias no se instalaron correctamente.
-
 ```bash
-# Verifica que el entorno virtual esté activado (deberías ver (venv) en tu terminal)
-source venv/bin/activate  # Linux/Mac
-source venv/Scripts/activate  # Windows Git Bash
-
-# Reinstala las dependencias
+source venv/bin/activate
 pip install -r requirements.txt
 ```
-
 </details>
 
 <details>
-<summary><b>❌ Error: "Connection refused" en PostgreSQL</b></summary>
+<summary><b>❌ AI Service no inicia / falla el contenedor</b></summary>
 
-```bash
-# Verificar que PostgreSQL esté corriendo
-docker-compose ps db
-
-# Si no está corriendo, iniciarlo
-docker-compose up -d db
-
-# Verificar la conexión
-docker exec -it sigct_db psql -U user -d sigct_db -c "SELECT 1;"
-```
-
+Este es el incidente conocido descrito en [Estado Operativo Actual](#-estado-operativo-actual). Consulta [`AI_SERVICE_RECOVERY_PLAN.md`](AI_SERVICE_RECOVERY_PLAN.md) antes de intentar rebuilds manuales repetidos.
 </details>
 
 <details>
 <summary><b>❌ Frontend muestra pantalla blanca</b></summary>
 
 ```bash
-# Limpiar caché de Node.js y reinstalar
 cd src/frontend
 rm -rf node_modules package-lock.json
 npm install
-
-# Limpiar caché de Vite
 rm -rf .vite
-
-# Reiniciar servidor
 npm run dev
 ```
-
 </details>
 
 ---
@@ -881,150 +766,119 @@ npm run dev
 sigcTiArural/
 │
 ├── 📄 README.md                          # Este archivo
-├── 📄 LICENSE                            # Licencia MIT
-├── 📄 docker-compose.yml                 # Orquestación de contenedores
-├── 📄 schema_postgresql.sql              # Schema de base de datos
-├── 📄 .gitignore                         # Archivos ignorados por Git
-├── 📄 .env.example                       # Plantilla de variables de entorno
+├── 📄 LICENSE
+├── 📄 docker-compose.yml
+├── 📄 schema_postgresql.sql              # Referencia histórica (ver §7)
+├── 📄 .env.example
+├── 📄 SIGCT_RURAL_SYSTEM_BOOT.md         # Punto de entrada documental (ver §14)
+├── 📁 [40+ documentos de auditoría/arquitectura en raíz] → ver Mapa Documental (§14)
 │
-├── 📁 docs/                              # Documentación técnica
+├── 📁 docs/
 │   ├── 📄 MASTERDOC.md                   # Documento maestro de arquitectura
-│   ├── 📄 PLAN_MAESTRO.md                # Cronograma y fases del proyecto
-│   ├── 📁 diagrams/                      # Diagramas de arquitectura
-│   │   ├── 🖼️ banner.svg                 # Banner del proyecto
-│   │   ├── 🖼️ architecture_c4.svg        # Diagrama C4
-│   │   └── 🖼️ database_erd.svg           # Diagrama Entidad-Relación
-│   └── 📁 reports/                       # Reportes técnicos (local only)
+│   ├── 📄 PLAN_MAESTRO.md                # Roadmap y fases del proyecto
+│   ├── 📄 HEXAGONAL_REFACTOR_PLAN.md     # Plan técnico de migración V1→V3
+│   ├── 📁 eiarc/                         # Marco arquitectónico EIARC
+│   │   ├── 01_FOUNDATION/
+│   │   ├── 02_ARCHITECTURE/
+│   │   └── 03_DIAGRAMS/
+│   ├── 📁 architect_master/              # Auditoría de arquitectura (01-08)
+│   ├── 📁 project_knowledge_base/        # Registro de auditoría KB-001..006
+│   ├── 📁 sena_artifacts/                # Entregables de cierre ADSO (ver §17)
+│   ├── 📁 ai/manifests/                  # Manifiestos YAML dataset/entrenamiento
+│   ├── 📁 diagrams/ · uml/ · database/ · edge/
+│   └── 📁 reports/
 │
-├── 📁 src/                               # Código fuente
-│   │
+├── 📁 src/
 │   ├── 📁 backend/                       # Backend Django
-│   │   ├── 📁 api/                       # Aplicación de API REST
-│   │   │   ├── 📁 logic/                 # ⬢ ARQUITECTURA HEXAGONAL (Core)
-│   │   │   │   ├── 📁 domain/            # Lógica de Negocio (Python Puro)
-│   │   │   │   ├── 📁 ports/             # Interfaces y Contratos
-│   │   │   │   └── 📁 adapters/          # Implementaciones (Django ORM, AI, Notificaciones)
-│   │   │   ├── 📄 models.py              # Modelos de BD (Legacy/Persistence)
-│   │   │   ├── 📄 serializers.py         # Serializadores DRF
-│   │   │   ├── 📄 views.py               # Vistas de API (V1 y V2 Hexagonal)
-│   │   │   └── 📄 urls.py                # Rutas de API
-│   │   ├── 📁 sigct_backend/             # Configuración del proyecto
-│   │   └── 📄 manage.py                  # CLI de Django
+│   │   ├── 📁 api/                       # V1 (models/views legacy) + V2 (api/logic/)
+│   │   ├── 📁 core/                      # V3 — Núcleo Hexagonal
+│   │   │   ├── domain/                   # Entidades, servicios, estrategias
+│   │   │   ├── application/
+│   │   │   └── ports/                    # Contratos
+│   │   ├── 📁 infrastructure/            # Adapters: Django ORM, IA, persistencia
+│   │   ├── 📁 interfaces/web/
+│   │   └── 📄 manage.py
 │   │
 │   ├── 📁 frontend/                      # Frontend React
-│   │   ├── 📁 src/                       # Código fuente React
-│   │   │   ├── 📁 components/            # Componentes reutilizables
-│   │   │   ├── 📁 pages/                 # Páginas de la aplicación (Dashboard, Labs, etc.)
-│   │   │   ├── 📁 labs/                  # Módulos de laboratorios especializados
-│   │   │   ├── 📁 data/                  # Datos estáticos (lab-data.js)
-│   │   │   ├── 📁 hooks/                 # Custom React Hooks
-│   │   │   └── 📄 App.jsx                # Router y raíz
-│   │   └── 📄 vite.config.js             # Configuración de Vite
+│   │   └── src/{components,pages,labs,data,hooks,services,stores}
 │   │
 │   ├── 📁 ai_models/                     # Microservicio de IA (FastAPI)
-│   │   ├── 📁 production_models/         # Modelos entrenados (.h5, .keras)
-│   │   ├── 📁 notebooks/                 # Entrenamiento y experimentación
-│   │   ├── 📄 fastapi_app.py             # API de Inferencia y Voz
-│   │   └── 📄 conversation_context.py    # Memoria contextual
+│   │   ├── 📁 production_models/         # Modelo binario actual (.h5)
+│   │   ├── 📁 notebooks/
+│   │   └── 📄 fastapi_app.py
 │   │
 │   └── 📁 embedded/                      # Edge Computing (BeagleBone Black)
-│       ├── 📁 bbb_01_gateway/            # Gateway MQTT y Sincronización
-│       ├── 📁 bbb_02_ia_edge/            # Inferencia local TFLite
-│       └── 📁 bbb_03_sensors/            # Adquisición de datos y cámara
+│       ├── bbb_01_gateway/
+│       ├── bbb_02_ia_edge/
+│       └── bbb_03_sensors/
 │
-├── 📁 scripts/                           # Automatización y Simulación
-│   ├── 📄 physics_sim.py                 # Simulador de drones y telemetría
-│   └── 📄 generate-diagrams.mjs          # Generación de documentación visual
-│
-└── 📁 docs/                              # Documentación Maestra
-    ├── 📄 MASTERDOC.md                   # DAS y Arquitectura
-    ├── 📄 PLAN_MAESTRO.md                # Roadmap v7.0
-    └── 📄 INFORME_ANALISIS_Y_PLAN_DE_ACCION.md # Bitácora de reingeniería
+└── 📁 scripts/                           # Automatización y simulación
 ```
 
-> 📝 **Nota:** Las carpetas `data/`, `backups/`, `venv/` y `node_modules/` están excluidas del control de versiones mediante `.gitignore`.
+> 📝 **Nota:** Las carpetas `data/`, `venv/` y `node_modules/` están excluidas del control de versiones mediante `.gitignore`. El repositorio contiene más de 40 documentos de auditoría/arquitectura en la raíz — no se listan individualmente aquí; ver [Mapa Documental](#️-mapa-documental).
 
 ---
 
 <a name="-estado-del-proyecto-y-roadmap"></a>
 ## 📅 Estado del Proyecto y Roadmap
 
-### 🎯 Estado Actual (Enero 2026)
+> Reemplaza el roadmap por fechas fijas anterior por un resumen de estado — más confiable dado el ritmo real de avance del proyecto.
 
-<table>
-<tr>
-<td width="50%">
+### ✅ Implementado
 
-#### ✅ Completado
-- [x] Arquitectura C4 completa
-- [x] Backend Django con API RESTful
-- [x] Frontend React responsive
-- [x] Migración a PostgreSQL 15
-- [x] Modelo de IA (92.5% accuracy)
-- [x] Conversión a TensorFlow Lite
-- [x] Sistema de autenticación JWT
-- [x] Dashboard con visualización 3D
-- [x] Integración Docker Compose
-- [x] Asistente de voz conversacional
-- [x] Documentación técnica completa
+- Arquitectura C4 documentada
+- Backend Django con API RESTful (V1/V2 implementados)
+- Núcleo hexagonal V3 real (`core/domain`, `core/ports`, `infrastructure/`) — cobertura parcial
+- Frontend React responsive
+- PostgreSQL 15 como motor de base de datos (aplicación de migraciones sujeta a verificación por entorno — ver Telemetry Context)
+- Clasificación binaria de IA (sano/enfermo) implementada (sujeta al incidente del AI Service, ver §2)
+- Asistente de voz conversacional
+- Dashboard con visualización 3D
+- Integración Docker Compose
+- Telemetry Context documentado y auditado como el contexto más maduro del proyecto
+- Baseline arquitectónico EIARC definido
+- Artefactos de cierre académico SENA materializados
 
-</td>
-<td width="50%">
+### 🟡 En Progreso
 
-#### 🟡 En Progreso
-- [ ] Integración física con BeagleBone Black
-- [ ] Sistema de alertas en tiempo real
-- [ ] Biblioteca educativa completa
-- [ ] Panel de administración avanzado
-- [ ] Tests unitarios y de integración
-- [ ] Monitoreo con Prometheus/Grafana
+- Recuperación del AI Service (incidente conocido, ver §2)
+- Migración hexagonal completa (fases 0–8, ver `HEXAGONAL_REFACTOR_PLAN.md`)
+- Implementación controlada del Knowledge Hub (diseño cerrado, código pendiente)
+- Integración física del clúster BeagleBone Black
+- Sistema de alertas en tiempo real (WebSockets)
+- Consolidación completa de los 7 contextos EIARC en código
 
-#### 🔴 Planificado
-- [ ] Integración con SofiaPlus (SENA)
-- [ ] App móvil nativa (React Native)
-- [ ] CI/CD con GitHub Actions
-- [ ] Kubernetes para producción
+### 🔵 Próximos Pasos
 
-</td>
-</tr>
-</table>
+1. Ejecutar recuperación del AI Service siguiendo `AI_SERVICE_RECOVERY_PLAN.md`
+2. Iniciar implementación del Knowledge Hub (Fase 0 de `KNOWLEDGE_HUB_MIGRATION_PLAN.md`)
+3. Continuar fases 0–8 del refactor hexagonal antes de abordar EIARC como expansión productiva
+4. Ejecutar el baseline de entrenamiento de Agriculture AI V2 (aún no iniciado)
+
+> Estado detallado y priorizado: [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md) §§7–13.
 
 ---
 
-### 🗓️ Roadmap 2026
+<a name="️-mapa-documental"></a>
+## 🗺️ Mapa Documental
 
-```mermaid
-%%{init: {'theme':'dark', 'gantt': {'fontSize': '14px'}}}%%
-gantt
-    title SIGC&T Rural - Roadmap 2026
-    dateFormat YYYY-MM-DD
-    section Infraestructura
-    Migración PostgreSQL       :done, infra1, 2026-01-16, 3d
-    Optimización Docker        :done, infra2, 2026-01-20, 2d
-    Cluster BeagleBone        :active, infra3, 2026-01-25, 15d
-    
-    section Inteligencia Artificial
-    Modelo Plantas (Cloud)     :done, ia1, 2025-12-10, 21d
-    Conversión TFLite         :done, ia2, 2025-12-28, 4d
-    Asistente de Voz          :done, ia3, 2026-01-22, 2d
-    Integración LLM           :active, ia4, 2026-01-26, 10d
-    
-    section Frontend
-    Dashboard Principal        :done, fe1, 2025-11-15, 10d
-    Laboratorios 3D           :done, fe2, 2026-01-24, 1d
-    Sistema de Alertas        :active, fe3, 2026-01-27, 7d
-    Biblioteca Educativa      :milestone, fe4, 2026-02-10, 0d
-    
-    section Backend
-    API RESTful               :done, be1, 2025-11-20, 5d
-    WebSockets                :active, be2, 2026-01-25, 5d
-    Sistema de Backup         :active, be3, 2026-01-28, 3d
-    
-    section Producción
-    Tests Unitarios           :milestone, prod1, 2026-02-15, 0d
-    CI/CD GitHub Actions      :milestone, prod2, 2026-03-01, 0d
-    Despliegue Producción     :milestone, prod3, 2026-04-01, 0d
-```
+> 🧭 **Punto de entrada principal para orientación completa del proyecto — humanos e IA:** [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md)
+
+Este README es un documento de entrada público, **no** un reemplazo de la documentación técnica extensa del proyecto. La documentación está organizada en niveles:
+
+| Nivel | Contenido | Ubicación |
+|---|---|---|
+| 1. Arranque y auditoría maestra | Continuidad, recuperación, inventario global | Raíz del proyecto, `SIGCT_RURAL_SYSTEM_BOOT.md` |
+| 2. Documentación base del producto | Arquitectura, despliegue, API | `docs/MASTERDOC.md`, `docs/PLAN_MAESTRO.md`, `docs/API_REFERENCE.md`, `docs/DEPLOYMENT.md` |
+| 2.1 Documentación operativa — refactorización hexagonal | Backlog técnico detallado, estructura objetivo de contextos, guía de reanudación | [`docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`](docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md) |
+| 3. Base formal de conocimiento | Hallazgos de auditoría y decisiones consolidadas | `docs/project_knowledge_base/` (KB-001 a KB-006) |
+| 4. Línea arquitectónica EIARC | Visión, contextos, modelo de datos, blueprint | `docs/eiarc/` |
+| 5. Cierre académico SENA | Entregables finales ADSO | `docs/sena_artifacts/` |
+| 6. Respaldo, archivo y retención | Manifiestos de backup, política de retención | `PROJECT_ARCHIVE_MANIFEST.md`, `DOCUMENT_RETENTION_POLICY.md` |
+| 7. Documentación histórica | Bitácoras secundarias de sesiones de trabajo, no canónicas (ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9); incluye auditorías TRAE y README Reality Check ya absorbidas por `docs/project_knowledge_base/` | `docs/historical/` (`INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`, `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`, `TRAE_AI_INTEGRATION_AUDIT.md`, `README_REALITY_CHECK.md`) |
+| 8. Programa de I+D — IA V2 | Arquitectura multimodal, estrategia de datasets, MLOps, línea Agriculture AI V2 (planificado, converge con EIARC) | [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md) |
+
+Si tu objetivo es entender el estado real del proyecto en profundidad —o continuar el trabajo como colaborador o como IA sin contexto previo— empieza siempre por `SIGCT_RURAL_SYSTEM_BOOT.md`; ese documento define el orden de lectura obligatorio y la fuente de verdad vigente por categoría.
 
 ---
 
@@ -1046,7 +900,9 @@ gantt
 - **Python:** Seguir PEP 8, usar `black` para formateo
 - **JavaScript/React:** Seguir Airbnb Style Guide, usar ESLint
 - **Commits:** Usar Conventional Commits (`feat:`, `fix:`, `docs:`, etc.)
-- **Documentación:** Actualizar MASTERDOC.md si cambias arquitectura
+- **Documentación:** Actualizar `MASTERDOC.md` si cambias arquitectura
+
+> 🧭 Si tu contribución afecta la arquitectura o la documentación técnica del proyecto, consulta primero [`docs/eiarc/`](docs/eiarc/) y [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md) antes de proponer cambios estructurales.
 
 ### 🐛 Reportar Bugs
 
@@ -1064,14 +920,16 @@ Usa el [Issue Tracker](https://github.com/badolgm/sigcTiArural/issues) de GitHub
 
 Este proyecto es el **Proyecto Productivo** del programa **Tecnología en Análisis y Desarrollo de Software (ADSO)** del **SENA** (Servicio Nacional de Aprendizaje de Colombia).
 
+> ℹ️ **Información institucional pendiente de validación independiente.** Los siguientes datos provienen únicamente del README original del proyecto; no se encontró corroboración adicional en otros documentos del repositorio.
+
 ### 🏫 Información del Programa
 
 - **Institución:** SENA - Regional Antioquia
-- **Centro:** Centro de Logística y Promoción Ecoturística del MAgdalena
+- **Centro:** Centro de Logística y Promoción Ecoturística del Magdalena
 - **Programa:** Tecnología en Análisis y Desarrollo de Software (ADSO)
-- **Ficha:** 3070388
+- **Ficha:** 3070388 *(pendiente de validación independiente)*
 - **Duración:** 24 meses (2024-2026)
-- **Instructor Líder:** Ing. Carlos Alberto Estuwe Roldan
+- **Instructor Líder:** Ing. Carlos Alberto Estuwe Roldan *(pendiente de validación independiente)*
 
 ### 🎯 Competencias Desarrolladas
 
@@ -1082,6 +940,23 @@ Este proyecto es el **Proyecto Productivo** del programa **Tecnología en Análi
 | 220501014 | Desarrollar software con programación orientada a objetos | ✅ Completado |
 | 220501032 | Aplicar buenas prácticas de calidad | 🟡 En Progreso |
 | 220501048 | Integrar sistemas siguiendo estándares de interoperabilidad | 🟡 En Progreso |
+
+---
+
+<a name="-entregables-académicos-sena"></a>
+## 🏆 Entregables Académicos SENA
+
+Los artefactos de cierre formal del Proyecto Productivo ADSO están consolidados en [`docs/sena_artifacts/`](docs/sena_artifacts/):
+
+| Documento | Contenido |
+|---|---|
+| [`PROYECTO_FORMATIVO_FINAL.md`](docs/sena_artifacts/PROYECTO_FORMATIVO_FINAL.md) | Documento formativo final del proyecto |
+| [`EVIDENCIAS_ADSO_MASTER.md`](docs/sena_artifacts/EVIDENCIAS_ADSO_MASTER.md) | Registro maestro de evidencias ADSO |
+| [`PRESENTACION_SUSTENTACION.md`](docs/sena_artifacts/PRESENTACION_SUSTENTACION.md) | Material de sustentación |
+| [`DEPLOYMENT_FINAL.md`](docs/sena_artifacts/DEPLOYMENT_FINAL.md) | Estado final de despliegue |
+| [`API_DELIVERY_PACKAGE.md`](docs/sena_artifacts/API_DELIVERY_PACKAGE.md) | Paquete de entrega de API |
+
+> Estado de preparación para graduación: [`SENA_GRADUATION_READINESS_AUDIT.md`](SENA_GRADUATION_READINESS_AUDIT.md)
 
 ---
 
@@ -1157,7 +1032,7 @@ SOFTWARE.
 
 <img src="https://github.com/badolgm.png" width="150px" style="border-radius: 50%;" alt="Bernardo Gómez">
 
-**Tecnólogo en Análisis y Desarrollo de Software**  
+**Tecnólogo en Análisis y Desarrollo de Software**
 **SENA - Medellín, Colombia**
 
 [![Email](https://img.shields.io/badge/Email-badolfogm%40gmail.com-red?style=for-the-badge&logo=gmail&logoColor=white)](mailto:badolfogm@gmail.com)

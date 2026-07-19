@@ -1,1109 +1,886 @@
-# GUÍA TÉCNICA COMPLETA DE REFACTORIZACIÓN A ARQUITECTURA HEXAGONAL / CLEAN ARCHITECTURE
-## Proyecto: SIGC&T Rural (sigcTiArural)
-### Guía de Estudio para Análisis y Desarrollo de Software (ADSO - SENA)
+# GUÍA TÉCNICA DE REFACTORIZACIÓN A ARQUITECTURA HEXAGONAL / CLEAN ARCHITECTURE
 
-**Fecha de creación del documento:** 2026 (basado en sesiones de refactorización)
-**Rama actual:** `feature/hex-refactor/phase-00-prep-baseline`
-**Autor del análisis y ejecución:** Basado en trabajo colaborativo con Arquitecto de Software Senior
-**Versión del documento:** 1.0 - Estado post-Fase 0
-**Propósito:** Documento técnico exhaustivo como guía de estudio y manual de continuidad para retomar el proyecto. Nivel avanzado técnico para ADSO.
+## Proyecto: SIGC&T Rural (sigcTiArural)
+### Guía de Estudio — Análisis y Desarrollo de Software (ADSO - SENA)
+
+**Última actualización registrada:** 06 de julio de 2026
+**Rama de referencia más reciente:** `feature/refactor-modular-contexts`
+**Versión del documento:** 2.0 — Consolidado y reorganizado cronológicamente
+**Propósito:** Documento técnico de estudio y manual de continuidad para el proyecto SIGC&T Rural. Reúne el objetivo del proyecto, la arquitectura objetivo, el plan de refactorización, el inventario técnico y la bitácora histórica de avance, ordenada por fecha.
+
+---
+
+## ÍNDICE
+
+1. Objetivo General del Proyecto y de la Refactorización
+2. Arquitectura Objetivo: Hexagonal + Clean Architecture
+3. Plan de Refactorización por Fases
+4. Inventario Técnico del Proyecto
+5. Cambios de Refactorización Realizados (Detalle Técnico — Fase 0)
+6. Estado de Avance Hacia el Objetivo Planteado
+7. Backlog Técnico para Producción (TODO Completo)
+8. Bitácora Histórica de Avance (orden cronológico)
+9. Guía para Retomar el Proyecto
+10. Glosario Técnico
+11. Referencias y Anexos
+12. Declaración de Cierre — Fase 0
 
 ---
 
 ## 1. OBJETIVO GENERAL DEL PROYECTO Y DE LA REFACTORIZACIÓN
 
 ### 1.1 Objetivo del Proyecto SIGC&T Rural
+
 Desarrollar una **plataforma web híbrida (Cloud + Edge)** que integra:
-- IoT (sensores, robots en BeagleBone Black)
-- Inteligencia Artificial (TensorFlow Cloud + TFLite Edge para diagnóstico de enfermedades en plantas)
-- Educación técnica interactiva (laboratorios virtuales 3D de robótica, electrónica, matemáticas, telecom, ciencia de datos)
-- Impacto social en zonas rurales de Colombia (alineado con ODS de la ONU y proyectos productivos SENA ADSO)
 
-**Stack actual (2026):**
-- Backend: Django 4.2 + DRF (monolito con intento parcial hexagonal)
-- Frontend: React 18 + Vite + Three.js + Zustand (monolitos de labs muy grandes)
-- AI Service: FastAPI + TensorFlow (MobileNetV2)
-- DB: PostgreSQL 15 (con legacy MySQL)
-- Infra: Docker Compose (5 servicios)
-- Edge: Placeholders vacíos (BBB cluster documentado pero no implementado en código)
+- IoT (sensores, robots en BeagleBone Black).
+- Inteligencia Artificial aplicada (TensorFlow Cloud + TFLite Edge para diagnóstico de enfermedades en plantas).
+- Educación técnica interactiva (laboratorios virtuales 3D de robótica, electrónica, matemáticas, telecomunicaciones y ciencia de datos).
+- Impacto social en zonas rurales de Colombia, alineado con los ODS de la ONU y los proyectos productivos SENA ADSO.
 
-**Estado general antes de refactor:** Funcional para demos educativas, pero con alto acoplamiento, deuda técnica, zero tests, y no lista para producción real (seguridad, escalabilidad, mantenimiento).
+**Stack tecnológico actual:**
+
+- Backend: Django 4.2 + DRF (monolito con un intento parcial de arquitectura hexagonal).
+- Frontend: React 18 + Vite + Three.js + Zustand (módulos de laboratorios muy extensos, pendientes de dividir).
+- Servicio de IA: FastAPI + TensorFlow (MobileNetV2).
+- Base de datos: PostgreSQL 15 (con una instancia MySQL heredada).
+- Infraestructura: Docker Compose (5 servicios).
+- Edge: Carpetas y contratos documentados, pendientes de implementación (clúster de BeagleBone Black).
+
+**Estado general antes de la refactorización:** Funcional para demostraciones educativas, pero con alto acoplamiento, deuda técnica considerable, ausencia total de pruebas automatizadas y sin cumplir los requisitos mínimos para producción (seguridad, escalabilidad, mantenibilidad).
 
 ### 1.2 Objetivo Específico de la Refactorización
-**Refactorizar progresivamente el proyecto hacia Arquitectura Hexagonal (Ports & Adapters) combinada con Clean Architecture**, manteniendo **todas las funcionalidades existentes** (nunca romper lo que funciona).
 
-**Principios rectores (del plan):**
-- Strangler Fig Pattern + Branch by Abstraction + Migración Incremental.
-- "Python puro" en el dominio (sin dependencias de Django, FastAPI, etc.).
-- Testabilidad como primera clase (pytest sin DB para dominio).
-- Documentación como código (actualizar bitácora, MASTERDOC, diagramas en cada fase).
-- Verificación obligatoria por fase (docker up, curls, pytest, flujos UI manuales).
-- Ramas por cambio importante + commits atómicos + `git add -p`.
+Refactorizar progresivamente el proyecto hacia **Arquitectura Hexagonal (Ports & Adapters)** combinada con **Clean Architecture**, manteniendo siempre las funcionalidades existentes (regla principal: nunca romper lo que ya funciona).
 
-**Meta final:** Proyecto 100% listo para producción (prod server, security, env vars estrictas, tests con cobertura, CI básico, sin legacy, full hexagonal en backend, frontend limpio, auth real, edge listo para hardware).
+**Principios rectores del plan:**
+
+- Strangler Fig Pattern + Branch by Abstraction + migración incremental.
+- Dominio en "Python puro" (sin dependencias de Django, FastAPI, etc.).
+- Testabilidad como primera prioridad (pytest sin base de datos para el dominio).
+- Documentación como código: actualizar bitácora, documento maestro y diagramas en cada fase.
+- Verificación obligatoria por fase: `docker up`, `curl`, `pytest`, flujos de UI manuales.
+- Ramas por cambio importante, commits atómicos y uso de `git add -p`.
+
+**Meta final:** Proyecto 100% listo para producción — servidor de producción, variables de entorno estrictas, cobertura de pruebas adecuada, integración continua básica, sin código heredado innecesario, arquitectura hexagonal completa en backend, frontend modular, autenticación real y capa edge lista para hardware.
 
 ---
 
-## 2. ARQUITECTURA DESEADA: HEXAGONAL + CLEAN ARCHITECTURE
+## 2. ARQUITECTURA OBJETIVO: HEXAGONAL + CLEAN ARCHITECTURE
 
-### 2.1 ¿Qué es la Arquitectura Deseada?
-**Hexagonal Architecture (Ports and Adapters / Onion / Clean Architecture adaptada)** para un sistema multi-servicio (Django + FastAPI + React + Edge).
+### 2.1 Definición en el contexto del proyecto
 
-**Diagrama conceptual de capas (adaptado del plan y C4 existente):**
+**Arquitectura Hexagonal (Ports and Adapters)** aplicada a un sistema multi-servicio compuesto por Django, FastAPI, React y una capa Edge.
+
+**Diagrama conceptual de capas:**
 
 ```
-[Interfaces / Adapters de Entrada]
-  - Django Views (thin controllers, solo orquestan)
+[Interfaces / Adaptadores de Entrada]
+  - Django Views (controladores delgados, solo orquestan)
   - DRF Serializers (DTOs de entrada/salida)
-  - FastAPI endpoints (AI)
-  - Frontend React (adapters HTTP)
+  - Endpoints FastAPI (servicio de IA)
+  - Frontend React (adaptadores HTTP)
 
           ↓ (usa puertos)
 
-[Application Layer / Use Cases]
-  - Orchestrators (LaboratorioService, RobotCommandUseCase, etc.)
+[Capa de Aplicación / Casos de Uso]
+  - Orquestadores (LaboratorioService, RobotCommandUseCase, etc.)
   - DTOs de aplicación
 
           ↓ (usa puertos de salida)
 
-[Domain Layer (Core / Hexágono - Python Puro, sin framework)]
-  - Entities / Value Objects (SensorReadingEntity, RobotAggregate, etc.)
-  - Domain Services (LaboratorioService puro)
-  - Domain Events
-  - Ports (Interfaces abstractas):
+[Capa de Dominio (Núcleo Hexagonal - Python Puro, sin framework)]
+  - Entidades / Value Objects (SensorReadingEntity, RobotAggregate, etc.)
+  - Servicios de Dominio (LaboratorioService puro)
+  - Eventos de Dominio
+  - Puertos (interfaces abstractas):
     - RepositoryPort (list_recent_readings, save_telemetry...)
     - AIServicePort (predecir_enfermedad, obtener_sugerencias)
     - NotificationPort
-    - EventBusPort (futuro)
-  - Strategies / Factories (para los 4 laboratorios: robotica, agricultura, electronica, telecom)
+    - EventBusPort (a futuro)
+  - Estrategias / Fábricas (para los 4 laboratorios: robótica, agricultura, electrónica, telecomunicaciones)
 
           ↑ (implementados por)
 
-[Infrastructure / Adapters de Salida]
-  - Django ORM Adapter (mappers Entidad <-> Model)
-  - FastAPI AI Adapter (HTTP client + fallback)
-  - Console / Email / WebSocket Notification Adapter
-  - MQTT Adapter (para edge futuro)
-  - InMemory Adapter (para tests)
+[Infraestructura / Adaptadores de Salida]
+  - Adaptador Django ORM (mapeo Entidad <-> Modelo)
+  - Adaptador FastAPI de IA (cliente HTTP + mecanismo de respaldo)
+  - Adaptador de notificaciones (consola / correo / WebSocket)
+  - Adaptador MQTT (para la capa edge, a futuro)
+  - Adaptador en memoria (para pruebas)
 
-[Frameworks & Drivers (outermost)]
-  - Django (models, migrations, admin, wsgi/asgi)
-  - DRF
+[Frameworks y Drivers (capa más externa)]
+  - Django (modelos, migraciones, admin, WSGI/ASGI)
+  - Django REST Framework
   - FastAPI + Uvicorn
   - React + Vite
   - PostgreSQL
   - Docker
 ```
 
-**Características clave de esta arquitectura en el contexto del proyecto:**
-- **Dominio aislado:** `src/backend/core/domain/` o `src/backend/api/logic/domain/` (mover/refinar) **no importa nada de Django**. Se puede testear con `pytest` puro.
-- **Inyección de Dependencias explícita:** Composition Root en views/urls o un contenedor simple (no new() dentro de dominio).
-- **Strangler Fig:** Endpoints legacy (V1 ViewSets directos a models) coexisten con V2/V3 que usan la capa hexagonal. Migración vertical por bounded context (Telemetry, Robots, Labs, etc.).
-- **Mappers obligatorios:** Nunca exponer Django Models al dominio. Adapter de persistencia hace la traducción.
-- **Bounded Contexts candidatos:** 
-  - IoT / Telemetría (SensorReading, Robot, Commands)
-  - Laboratorios Educativos (estrategias por tipo)
-  - IA (predicción de enfermedades)
-  - Usuarios / Auth (futuro)
-- **Multi-servicio:** El AI Service es un adapter externo (HTTP). Edge (MQTT) será otro puerto.
-- **Frontend:** Adoptar Feature-Sliced o Clean-Arch adaptada (entities, use-cases/adapters, ui). Extraer lógica de simulación de los labs gigantes (SchematicEditor ~80kB, ElectronicsLab ~74kB).
-- **Production-ready cross-cutting:** Structured logging, error handling ports, config centralizada (pydantic-settings o django-environ), security (JWT real, CORS estricto, rate limiting), observability (healthchecks, /metrics básico).
+**Características clave de esta arquitectura para el proyecto:**
 
-**Ventajas para este proyecto (educativo + productivo + edge):**
-- Testabilidad alta del dominio (simulaciones de labs, lógica de estrés hídrico, etc.) sin levantar DB ni Docker.
-- Flexibilidad: Cambiar PostgreSQL por otro DB solo tocando adapter + migraciones.
-- Mantenibilidad: Lógica de los 4 laboratorios centralizada y extensible (nuevo lab = nueva estrategia en factory).
-- Resiliencia: Fallbacks en adapters (IA down → sugerencias básicas locales).
-- Alineado con ADSO SENA: Demuestra principios SOLID, patrones (Strategy, Factory, Repository, Adapter), separación de concerns, TDD/characterization tests.
+- **Dominio aislado:** ubicado en `src/backend/core/domain/` (o su equivalente en reorganización, `src/backend/api/logic/domain/`), sin ninguna dependencia de Django. Debe poder probarse con `pytest` puro.
+- **Inyección de dependencias explícita:** un "composition root" en las vistas/urls o un contenedor simple (sin instanciación directa dentro del dominio).
+- **Strangler Fig:** los endpoints heredados (ViewSets V1 con acceso directo a modelos) conviven con versiones V2/V3 que usan la capa hexagonal. Migración vertical por contexto delimitado (Telemetría, Robots, Laboratorios, etc.).
+- **Mappers obligatorios:** nunca exponer los modelos de Django al dominio; el adaptador de persistencia realiza la traducción.
+- **Contextos delimitados (bounded contexts) candidatos:**
+  - IoT / Telemetría (SensorReading, Robot, Commands).
+  - Laboratorios educativos (estrategias por tipo).
+  - IA (predicción de enfermedades).
+  - Usuarios / Autenticación (a futuro).
+- **Multi-servicio:** el servicio de IA es un adaptador externo (HTTP). La capa Edge (MQTT) será otro puerto.
+- **Frontend:** adoptar una organización tipo Feature-Sliced o Clean Architecture adaptada (entities, use-cases/adapters, ui), extrayendo la lógica de simulación de los laboratorios más grandes (SchematicEditor ~80kB, ElectronicsLab ~74kB).
+- **Aspectos transversales de producción:** logging estructurado, manejo de errores mediante puertos, configuración centralizada (pydantic-settings o django-environ), seguridad (JWT real, CORS estricto, limitación de tasa), observabilidad (healthchecks, métricas básicas).
 
-**Estado actual vs deseado (resumen técnico):**
-- Existe `src/backend/api/logic/` con domain/ports/adapters (introducido Mayo 2026 como Strangler Fig).
-- Cobertura real ~15-25%. Solo 2 endpoints V2 usan la lógica hexagonal.
-- Legacy anémico domina (models.py como data bags, views directas a ORM, sim data duplicada).
-- Sin entidades ricas, sin mappers reales, sin DI container, sin tests (hasta Fase 0).
+**Ventajas de esta arquitectura para el proyecto (educativo + productivo + edge):**
+
+- Alta testabilidad del dominio (simulaciones de laboratorios, lógica de estrés hídrico, etc.) sin necesidad de base de datos ni de Docker.
+- Flexibilidad: cambiar de motor de base de datos afecta solo al adaptador y a las migraciones.
+- Mantenibilidad: la lógica de los 4 laboratorios queda centralizada y es extensible (un nuevo laboratorio implica una nueva estrategia en la fábrica).
+- Resiliencia: mecanismos de respaldo en los adaptadores (si el servicio de IA falla, se ofrecen sugerencias básicas locales).
+- Alineación con los objetivos de ADSO SENA: aplica principios SOLID, patrones de diseño (Strategy, Factory, Repository, Adapter), separación de responsabilidades y pruebas de caracterización (TDD).
+
+**Comparación estado actual vs. estado deseado:**
+
+- Existe `src/backend/api/logic/` con dominio/puertos/adaptadores, introducido en mayo de 2026 bajo el patrón Strangler Fig.
+- Cobertura real de pruebas: entre 15% y 25%. Solo 2 endpoints V2 usan la lógica hexagonal.
+- Predomina el modelo anémico: `models.py` como simples contenedores de datos, vistas con acceso directo al ORM, datos de simulación duplicados.
+- Faltan entidades ricas, mappers reales, contenedor de inyección de dependencias y pruebas (hasta antes de la Fase 0).
 
 ---
 
-## 3. PLAN DE REFACTORIZACIÓN (EXPLICACIÓN DETALLADA)
+## 3. PLAN DE REFACTORIZACIÓN POR FASES
 
-El plan está documentado en `docs/HEXAGONAL_REFACTOR_PLAN.md` (creado/actualizado en esta sesión).
+El plan completo está documentado en `docs/HEXAGONAL_REFACTOR_PLAN.md`.
 
-**Metodología global:** 
-- Strangler Fig Pattern (mantener legacy funcionando, introducir nueva impl "al lado").
-- Vertical slices por bounded context (no big-bang).
-- Cada fase: rama dedicada, cambios pequeños, verificación obligatoria (docker, curls, pytest, UI manual), commit atómico, actualización de bitácora + diagramas.
-- Ramas: `feature/hex-refactor/phase-XX-...`
+**Metodología general:**
 
-### 3.1 Fases del Plan (resumidas y expandidas)
+- Patrón Strangler Fig: mantener el código heredado funcionando e introducir la nueva implementación en paralelo.
+- Slices verticales por contexto delimitado (sin cambios masivos de una sola vez).
+- Cada fase requiere: rama dedicada, cambios pequeños, verificación obligatoria (Docker, `curl`, pytest, revisión manual de UI), commit atómico y actualización de bitácora y diagramas.
+- Convención de ramas: `feature/hex-refactor/phase-XX-...`
 
-**FASE 0 — Preparación, Baseline y Saneamiento Inmediato (P0 - Crítica) - COMPLETADA EN ESTA SESIÓN**
-- Objetivo: Línea base segura + andamiaje.
-- Realizado (detallado en sección 5):
-  - Fix crítico /infer en FastAPI (removido Request param que causaba FastAPIError con Pydantic).
-  - Actualización requirements backend (pytest).
-  - Creación estructura tests: `src/backend/tests/`, `pytest.ini`, `tests/domain/test_factories.py`, `tests/domain/test_services.py` (characterization tests puros).
-  - Creación y mejoras iterativas de `scripts/verify_refactor.ps1` (y .sh): contenedores robustos (docker ps + parseo), curl.exe, detección de no-running, pytest friendly, contadores $passed/$warnings/$failed + resumen final con colores.
-  - Saneamiento menor (.gitignore implícito vía cambios).
-  - Verificación: tests pasan, script ejecutable, contenedores healthy.
-- Criterios de done: `pytest src/backend/tests/ -q` pasa, script da resumen útil, /infer devuelve JSON correcto.
-- Rama: feature/hex-refactor/phase-00-prep-baseline (actual).
+### 3.1 Fases del plan
 
-**FASE 1 — Consolidar y Mejorar el Núcleo Hexagonal Existente (P0 - Alta)**
-- Mover/refinar `api/logic/` → estructura más limpia (`core/domain`, `application/`, `infrastructure/`).
-- Definir Entities ricas + Value Objects.
-- Mejorar Ports (métodos específicos por aggregate).
-- Mappers en adapters.
-- Mover sim data a dominio (eliminar duplicados en views).
-- Tests exhaustivos (>70% cobertura dominio).
-- Actualizar READMEs y docs.
+**FASE 0 — Preparación, Línea Base y Saneamiento Inmediato (prioridad crítica) — COMPLETADA**
+- Objetivo: establecer una línea base segura y el andamiaje de pruebas.
+- Detalle completo en la Sección 5.
+- Criterios de cierre: `pytest src/backend/tests/ -q` pasa correctamente, el script de verificación entrega un resumen útil, el endpoint `/infer` responde con el JSON esperado.
+- Rama: `feature/hex-refactor/phase-00-prep-baseline`.
 
-**FASE 2 — Migrar Lógica de Negocio Principal (P1)**
-- Vertical slices: Telemetry, Robots+Telemetry, Commands.
-- Crear Use Cases en application layer.
-- Vistas legacy → thin (delegan a use cases).
-- Actualizar adapters.
-- Tests de integración (mocks o test DB).
-- Mantener legacy funcionando.
+**FASE 1 — Consolidar y Mejorar el Núcleo Hexagonal Existente (prioridad alta)**
+- Mover y refinar `api/logic/` hacia una estructura más limpia (`core/domain`, `application/`, `infrastructure/`).
+- Definir entidades ricas y value objects.
+- Mejorar los puertos (métodos específicos por agregado).
+- Mappers en los adaptadores.
+- Trasladar los datos de simulación al dominio (eliminando duplicados en las vistas).
+- Pruebas exhaustivas (meta: más del 70% de cobertura en el dominio).
+- Actualizar README y documentación relacionada.
 
-**FASE 3 — Capa de Infraestructura, Adaptadores y Composition Root (P1)**
-- Extraer adapters a `infrastructure/`.
+**FASE 2 — Migrar Lógica de Negocio Principal (prioridad media-alta)**
+- Slices verticales: Telemetría, Robots + Telemetría, Comandos.
+- Crear casos de uso en la capa de aplicación.
+- Convertir las vistas heredadas en controladores delgados que delegan a los casos de uso.
+- Actualizar adaptadores.
+- Pruebas de integración (mocks o base de datos de prueba).
+- Mantener el código heredado operativo durante la migración.
+
+**FASE 3 — Capa de Infraestructura, Adaptadores y Composition Root (prioridad media-alta)**
+- Extraer los adaptadores a `infrastructure/`.
 - Mappers bidireccionales reales.
-- Composition Root simple (container.py o dependencies.py).
-- Soporte InMemory para tests.
-- Config centralizada.
+- Composition root simple (`container.py` o `dependencies.py`).
+- Soporte de adaptador en memoria para pruebas.
+- Configuración centralizada.
 
-**FASE 4 — Servicio de IA, Notificaciones y Resiliencia (P1)**
-- Cablear adapter IA completo (incluyendo /suggest si aplica).
-- Implementar adapters reales de notificaciones (WebSocket básico, etc.).
-- Circuit breaker / retry en adapters externos.
-- Tests de resiliencia (IA down → fallback).
+**FASE 4 — Servicio de IA, Notificaciones y Resiliencia (prioridad media-alta)**
+- Completar el cableado del adaptador de IA (incluyendo `/suggest` si aplica).
+- Implementar adaptadores reales de notificaciones (WebSocket básico, etc.).
+- Circuit breaker / reintentos en adaptadores externos.
+- Pruebas de resiliencia (comportamiento cuando el servicio de IA no responde).
 
-**FASE 5 — Refactor Progresivo del Frontend (P2 - Alta complejidad)**
-- Adoptar Feature-Sliced Design o Clean-Arch para React.
-- Estructura: shared/, entities/, features/ (labs como features), widgets/, pages/, adapters/api/.
-- Extraer lógica de simulación de labs gigantes (priorizar Electronics/Schematic).
-- Centralizar API client (con manejo de env, errores).
-- Actualizar hooks/stores para usar adapters.
-- Mantener UI idéntica (demos paralelas si necesario).
+**FASE 5 — Refactor Progresivo del Frontend (prioridad media, alta complejidad)**
+- Adoptar Feature-Sliced Design o Clean Architecture para React.
+- Estructura propuesta: `shared/`, `entities/`, `features/` (laboratorios como features), `widgets/`, `pages/`, `adapters/api/`.
+- Extraer la lógica de simulación de los laboratorios más grandes (priorizando Electrónica / Editor de Esquemas).
+- Centralizar el cliente de API (manejo de entorno y errores).
+- Actualizar hooks y stores para usar los nuevos adaptadores.
+- Mantener la interfaz idéntica durante la migración.
 
-**FASE 6 — Autenticación, Autorización y Protección (P2)**
-- Añadir simplejwt (o similar).
-- Endpoints reales login/register.
-- Proteger vistas (IsAuthenticated + permisos).
-- Actualizar frontend AuthContext.
-- Modo demo configurable por env (para no romper demos educativas).
-- Port CurrentUser si necesario.
+**FASE 6 — Autenticación, Autorización y Protección (prioridad media)**
+- Incorporar `simplejwt` (o equivalente).
+- Endpoints reales de login/registro.
+- Proteger vistas (`IsAuthenticated` + permisos).
+- Actualizar el `AuthContext` del frontend.
+- Modo demo configurable por variable de entorno (para no interrumpir las demostraciones educativas).
+- Puerto `CurrentUser` si es necesario.
 
-**FASE 7 — Edge Computing, Ingesta y Eventos (P3)**
-- Diseñar puertos: SensorIngestionPort, RobotCommandPort, EdgeInferencePort.
-- Implementar adapters MQTT cuando hardware disponible.
-- Event Bus (Redis/RabbitMQ) para async (alertas, telemetría).
-- No bloquear otras fases.
+**FASE 7 — Edge Computing, Ingesta y Eventos (prioridad baja, no bloqueante)**
+- Diseñar los puertos: `SensorIngestionPort`, `RobotCommandPort`, `EdgeInferencePort`.
+- Implementar adaptadores MQTT cuando el hardware esté disponible.
+- Bus de eventos (Redis/RabbitMQ) para procesamiento asíncrono (alertas, telemetría).
+- No debe bloquear el avance de las demás fases.
 
-**FASE 8 — Pruebas, Observabilidad, Hardening, Deprecación y Cierre (P0 ongoing)**
-- Cobertura meta: >60% backend domain/application, >40% overall.
-- E2E ligeros (puppeteer ya en deps).
-- Prod ready:
-  - Backend: gunicorn + Daphne (o uvicorn workers) en Dockerfile (no runserver).
-  - SECRET_KEY real, DEBUG=False por default, ALLOWED_HOSTS estricto.
-  - Whitenoise o similar para static.
-  - Rate limiting, structured logging (structlog).
-- Eliminar legacy (solo después de verificación full).
-- Quitar db-mysql si no se usa.
-- Actualizar TODOS diagramas + MASTERDOC + README.
-- Healthchecks robustos, métricas básicas.
-- Documento final "Arquitectura Objetivo Alcanzada" + lecciones.
+**FASE 8 — Pruebas, Observabilidad, Hardening, Depreciación y Cierre (prioridad crítica, continua)**
+- Meta de cobertura: más del 60% en dominio/aplicación del backend, más del 40% general.
+- Pruebas E2E ligeras (Puppeteer ya está entre las dependencias).
+- Preparación para producción:
+  - Backend: gunicorn + Daphne (o uvicorn workers) en el Dockerfile, no `runserver`.
+  - `SECRET_KEY` real, `DEBUG=False` por defecto, `ALLOWED_HOSTS` estricto.
+  - Whitenoise (o equivalente) para archivos estáticos.
+  - Limitación de tasa, logging estructurado (structlog).
+- Eliminar código heredado (solo después de verificación completa).
+- Retirar la base de datos MySQL legacy si ya no se usa.
+- Actualizar todos los diagramas, el documento maestro y el README.
+- Healthchecks robustos y métricas básicas.
+- Documento final "Arquitectura Objetivo Alcanzada" con lecciones aprendidas.
 
-**Cronograma aproximado (del plan):** Fase 0 (1 sem), 1 (1.5 sem), 2-3 (2-3 sem), 4-6 (3-4+ sem), 7 variable, 8 (2 sem). Total ~4.5-7 meses part-time.
+**Cronograma aproximado:** Fase 0 (1 semana), Fase 1 (1.5 semanas), Fases 2-3 (2-3 semanas), Fases 4-6 (3-4+ semanas), Fase 7 (variable), Fase 8 (2 semanas). Total estimado: 4.5 a 7 meses en dedicación parcial.
 
-**Herramientas recomendadas:** pytest + pytest-django (gradual), ruff, mypy gradual en core/domain, etc.
+**Herramientas recomendadas:** pytest + pytest-django (adopción gradual), ruff, mypy gradual en `core/domain`, entre otras.
 
 ---
 
-## 4. ESTADO ACTUAL DEL PROYECTO (INVENTARIO TÉCNICO DETALLADO - JUNIO 2026)
+## 4. INVENTARIO TÉCNICO DEL PROYECTO
 
-### 4.1 Rama y Cambios Recientes
-- **Rama actual:** `feature/hex-refactor/phase-00-prep-baseline` (up-to-date con origin en algunos commits previos).
-- **Cambios en esta sesión de refactor (Fase 0):**
-  - `src/ai_models/fastapi_app.py`: Reemplazo completo de `async def infer(...)` para eliminar `request: Optional[Request] = None` (causaba `FastAPIError: Invalid args for response field` con Pydantic/Starlette). Versión minimalista solo con `file: Optional[UploadFile]`.
-  - `src/backend/requirements.txt`: Agregada sección de Testing con `pytest>=7.4`.
-  - `src/backend/pytest.ini`: Nueva configuración (pythonpath=., testpaths=tests, sin forzar Django aún).
-  - `src/backend/tests/`: Estructura completa creada:
-    - `tests/__init__.py`, `tests/conftest.py`, `tests/domain/__init__.py`
-    - `tests/domain/test_factories.py`: 5 tests characterization (ROBOTICA, case-insensitive, TELECOM, error ValueError, instancias frescas).
-    - `tests/domain/test_services.py`: 5 tests (default, cambiar_laboratorio, ejecutar_analisis estructura, simulacion default 24, manejo error init). Ajustes para characterization real (service no forwardea 'horas').
-  - `scripts/verify_refactor.ps1`: Creado e **mejorado iterativamente** (varias rondas):
-    - Reemplazo total `curl` → `curl.exe` (alias PowerShell conflictivo).
-    - Detección contenedores robusta (try/catch, Trim/Where-Object, -contains, docker ps directo para evitar warning "version: obsolete").
-    - Manejo explícito $LASTEXITCODE en backend tests (mensaje claro "container probably not running").
-    - Pytest section: chequeo comando + módulo, fallback python -m pytest, mensajes ultra amigables con comandos exactos de instalación.
-    - Contadores globales `$passed`, `$warnings`, `$failed`.
-    - Resumen final al final del script con conteos + "=== Resumen Fase 0 ===" coloreado (rojo/amarillo/verde).
-  - `scripts/verify_refactor.sh`: Versión básica creada para Linux/macOS.
-  - `src/ai_models/test_leaf.jpg`: Imagen de prueba generada para /infer.
-- **Git status actual (al momento de este documento):** Cambios unstaged/modificados en requirements, fastapi_app, verify.ps1; untracked: tests/, pytest.ini, verify.sh, test_leaf.jpg.
-- **Commits relacionados:** f23516a (docs: agregar plan), 2eaa425 (ARCH final hexagonal previo), etc. Rama dedicada para Fase 0.
+### 4.1 Rama y Cambios de la Fase 0
 
-### 4.2 Inventario Técnico por Componente (Estado Junio 2026)
+- **Rama:** `feature/hex-refactor/phase-00-prep-baseline`.
+- **Cambios realizados en esta fase:**
+  - `src/ai_models/fastapi_app.py`: reemplazo completo de la función `infer` para eliminar el parámetro `request: Optional[Request] = None`, que causaba un error de tipo `FastAPIError` con Pydantic/Starlette. Se dejó una versión minimalista que solo recibe `file: Optional[UploadFile]`.
+  - `src/backend/requirements.txt`: se agregó la sección de pruebas con `pytest>=7.4`.
+  - `src/backend/pytest.ini`: nueva configuración (`pythonpath=.`, `testpaths=tests`, sin forzar Django todavía).
+  - `src/backend/tests/`: estructura completa creada, incluyendo `tests/__init__.py`, `tests/conftest.py`, `tests/domain/__init__.py`, `tests/domain/test_factories.py` (5 pruebas de caracterización) y `tests/domain/test_services.py` (5 pruebas iniciales).
+  - `scripts/verify_refactor.ps1`: creado y mejorado en varias iteraciones — reemplazo de `curl` por `curl.exe`, detección robusta de contenedores, manejo explícito de `$LASTEXITCODE`, mensajes accionables, contadores globales de aprobados/advertencias/fallidos y resumen final coloreado.
+  - `scripts/verify_refactor.sh`: versión básica para Linux/macOS.
+  - `src/ai_models/test_leaf.jpg`: imagen de prueba generada para el endpoint `/infer`.
+- **Estado del control de versiones al cierre de la fase:** cambios sin confirmar en `requirements`, `fastapi_app.py` y `verify.ps1`; archivos nuevos sin seguimiento: `tests/`, `pytest.ini`, `verify.sh`, `test_leaf.jpg`.
+- **Commits relacionados:** `f23516a` (documentación: agregar plan), `2eaa425` (arquitectura hexagonal previa), entre otros, en la rama dedicada de la Fase 0.
+
+### 4.2 Inventario por Componente
 
 **Backend (Django):**
-- Estructura: `src/backend/api/` (models anémicos, views legacy + V2 parcial, serializers, urls mixtas, logic/ con domain/ports/adapters).
-- `logic/domain/`: 4 estrategias + services + factories + interfaces (puro Python, usa random/datetime para sims).
-- `logic/ports/`: RepositoryInterface, AIServicePort, NotificationPort (abstractos).
-- `logic/adapters/`: DjangoRepository (usa strings 'api.Model' + apps.get_model - frágil), FastAPI_AIAdapter (con fallback), ConsoleNotification.
-- Problemas: Acoplamiento alto, duplicación sim data, sin mappers, sin entidades ricas, sin DI real, views no thin.
-- Tests: **Nuevo en Fase 0** - 10 characterization tests puros en `tests/domain/`. pytest.ini configurado.
-- Settings: DEBUG=True, ALLOWED_HOSTS=['*'], SECRET_KEY dev inseguro, sin simplejwt, sin whitenoise, WSGI (no ASGI completo aunque docs mencionan Channels).
-- Requirements: Actualizado con pytest. Falta gunicorn, etc.
-- Migrations: 2 existentes (SensorReading + Robot/Telemetry/Command).
-- Users app: Casi vacío.
+- Estructura: `src/backend/api/` (modelos anémicos, vistas heredadas + V2 parcial, serializadores, urls mixtas, `logic/` con dominio/puertos/adaptadores).
+- `logic/domain/`: 4 estrategias + servicios + fábricas + interfaces (Python puro).
+- `logic/ports/`: `RepositoryInterface`, `AIServicePort`, `NotificationPort` (abstractos).
+- `logic/adapters/`: `DjangoRepository` (usa referencias por string a modelos, lo cual es frágil), `FastAPI_AIAdapter` (con mecanismo de respaldo), `ConsoleNotification`.
+- Problemas identificados: acoplamiento alto, duplicación de datos de simulación, ausencia de mappers y entidades ricas, sin inyección de dependencias real, vistas no delgadas.
+- Pruebas: 10 pruebas de caracterización puras en `tests/domain/` (nuevas en la Fase 0). `pytest.ini` configurado.
+- Configuración: `DEBUG=True`, `ALLOWED_HOSTS=['*']`, `SECRET_KEY` de desarrollo insegura, sin `simplejwt`, sin whitenoise, WSGI (no ASGI completo, aunque la documentación menciona Channels).
+- Requisitos: actualizados con pytest; falta gunicorn y otras dependencias de producción.
+- Migraciones: 2 existentes (SensorReading y Robot/Telemetry/Command).
+- Aplicación de usuarios: prácticamente vacía.
 
-**AI Service (FastAPI):**
-- `src/ai_models/fastapi_app.py`: /health, /assist (voz+PG), /analyze-circuit, **/infer arreglado en Fase 0** (solo file multipart, reutiliza load_latest_model + preprocess_image, mock estable "Tomato_Early_blight", escribe INFER_LOG).
-- Problema previo: Faltaba /infer (causaba fallback siempre). Ahora funcional.
-- Modelo: plant_disease_mbv2.h5 (MobileNetV2), metadata binario ("enferma"/"sana") pero entrenamiento full PlantVillage.
-- Reqs: Pesado (tensorflow-cpu, etc.). Usa psycopg2 directo (bypass backend en algunos casos).
-- Dockerfile: Multi-stage con ffmpeg, etc.
+**Servicio de IA (FastAPI):**
+- `src/ai_models/fastapi_app.py`: endpoints `/health`, `/assist` (voz + procesamiento), `/analyze-circuit`, y `/infer` (corregido en la Fase 0), que reutiliza `load_latest_model` y `preprocess_image`, con predicción simulada estable ("Tomato_Early_blight") y registro en `INFER_LOG`.
+- Problema previo: faltaba `/infer`, lo que forzaba siempre el mecanismo de respaldo. Ahora funcional.
+- Modelo: `plant_disease_mbv2.h5` (MobileNetV2), con metadatos binarios ("enferma"/"sana") pero entrenado sobre el conjunto completo PlantVillage.
+- Dependencias pesadas (tensorflow-cpu, etc.). Usa `psycopg2` directo en algunos casos, sin pasar por el backend.
+- Dockerfile multi-stage con ffmpeg, entre otros.
 
 **Frontend (React):**
-- Estructura monolítica: pages/, labs/ (archivos gigantes), components/, stores (zustand para electronics), hooks (useRoboticsApi), services/cloud.js (mezcla mocks y externos).
-- Problemas: Lógica de simulación + UI mezclada en labs (SchematicEditor 80kB+, Electronics 74kB+), hardcode URLs, auth demo-only, no centralizado API client.
-- Sin tests frontend visibles.
-- Vite + Tailwind + Three.js + ReactFlow + Recharts.
+- Estructura monolítica: `pages/`, `labs/` (archivos muy grandes), `components/`, stores (Zustand para electrónica), hooks (`useRoboticsApi`), `services/cloud.js` (mezcla de datos simulados y servicios externos).
+- Problemas: lógica de simulación mezclada con UI en los laboratorios (SchematicEditor 80kB+, Electronics 74kB+), URLs codificadas de forma fija, autenticación solo de demostración, sin cliente de API centralizado.
+- Sin pruebas de frontend visibles.
+- Stack: Vite + Tailwind + Three.js + ReactFlow + Recharts.
 
-**Infra y DevOps:**
-- docker-compose.yml: 5 servicios (db postgres, db-mysql legacy, backend, ai_service, frontend nginx). Warning "version: obsolete".
-- Backend Dockerfile: usa runserver (dev).
-- AI Dockerfile: uvicorn.
-- Scripts: verify_refactor.ps1 (mejorado), docker_maintain.ps1, generate-*.mjs, physics_sim.py, etc.
-- No CI visible, no prod deployment config (gunicorn, env strict, etc.).
-- .env.example básico.
+**Infraestructura y DevOps:**
+- `docker-compose.yml`: 5 servicios (Postgres, MySQL heredado, backend, servicio de IA, frontend con nginx). Advertencia de versión obsoleta en el archivo de compose.
+- Dockerfile del backend: usa `runserver` (modo desarrollo).
+- Dockerfile del servicio de IA: usa uvicorn.
+- Scripts existentes: `verify_refactor.ps1` (mejorado), `docker_maintain.ps1`, generadores de diagramas, simulación de física, etc.
+- Sin integración continua visible, sin configuración de despliegue de producción (gunicorn, variables de entorno estrictas, etc.).
+- `.env.example` básico.
 
 **Documentación:**
-- Extremadamente rica: MASTERDOC.md, PLAN_MAESTRO.md, INFORME_ANALISIS_Y_PLAN_DE_ACCION.md (bitácora con sesiones Mayo 2026 hexagonal), diagrams/ (C4, ER, UML), architecture/, uml/, reports/.
-- HEXAGONAL_REFACTOR_PLAN.md actualizado con Fase 0.
-- Drift docs vs código (Channels mencionado pero no en reqs).
+- Muy completa: documento maestro, plan maestro, informe de análisis y bitácora con sesiones de mayo de 2026 sobre el trabajo hexagonal, diagramas (C4, ER, UML), arquitectura, etc.
+- `HEXAGONAL_REFACTOR_PLAN.md` actualizado con la Fase 0.
+- Existe cierto desfase entre documentación y código (por ejemplo, se menciona Channels pero no está en los requisitos).
 
 **Otros:**
-- Edge: 3 carpetas con archivos 0 bytes.
-- No tests E2E frontend (puppeteer en deps root pero no usado).
-- Base de datos: schema_postgresql.sql, import scripts.
+- Edge: 3 carpetas con archivos de 0 bytes (solo estructura, sin implementación).
+- Sin pruebas E2E de frontend (Puppeteer está en las dependencias raíz pero no se usa).
+- Base de datos: `schema_postgresql.sql` y scripts de importación disponibles.
 
-**Estado de Fase 0 (criterios del plan):**
-- Tests: `pytest src/backend/tests/domain/ -q` → pasa (10 tests).
-- Verify script: Ejecutable, da conteos + resumen coloreado.
-- /infer: Funciona (retorna JSON con diagnosis/confidence/status).
-- Contenedores: Verificables con script.
-- No se tocó legacy ni UI.
+**Estado de la Fase 0 según los criterios del plan:**
+- Pruebas: `pytest src/backend/tests/domain/ -q` se ejecuta correctamente (10 pruebas).
+- Script de verificación: ejecutable, entrega conteos y resumen coloreado.
+- `/infer`: funciona (retorna JSON con diagnóstico, confianza y estado).
+- Contenedores: verificables mediante el script.
+- No se modificó código heredado ni la interfaz de usuario.
 
 ---
 
-## 5. CAMBIOS DE REFACTORIZACIÓN REALIZADOS (DETALLE TÉCNICO)
+## 5. CAMBIOS DE REFACTORIZACIÓN REALIZADOS (DETALLE TÉCNICO — FASE 0)
 
 ### 5.1 Cambios en Código Fuente
-- **AI Service (fix integración crítica):**
-  - Archivo: `src/ai_models/fastapi_app.py`
-  - Antes: infer aceptaba Request para base64 + file (causaba error Pydantic al startup del contenedor).
-  - Después: Solo `file: Optional[UploadFile] = File(default=None)`. Lógica minimalista: read → preprocess → predict (o mock) → result con log a INFER_LOG.
-  - Compatibilidad: Mantiene formato esperado por adapter backend y frontend AIPredictiva.
-  - Diff clave: Removida rama elif request, simplificado if file is None, mock estable.
 
-- **Backend Domain Tests (characterization - primer paso hacia testabilidad):**
+- **Servicio de IA (corrección crítica de integración):**
+  - Archivo: `src/ai_models/fastapi_app.py`.
+  - Antes: `infer` aceptaba un objeto `Request` para manejar tanto base64 como archivo, lo cual causaba un error de Pydantic al iniciar el contenedor.
+  - Después: solo recibe `file: Optional[UploadFile] = File(default=None)`. Lógica simplificada: lectura → preprocesamiento → predicción (o mecanismo de respaldo) → resultado con registro en `INFER_LOG`.
+  - Se mantiene compatibilidad con el formato esperado por el adaptador del backend y por el componente `AIPredictiva` del frontend.
+
+- **Pruebas de dominio del backend (caracterización — primer paso hacia la testabilidad):**
   - Nueva estructura completa en `src/backend/tests/`.
-  - `test_factories.py`: Tests puros que verifican comportamiento actual de LaboratorioStrategyFactory (incluyendo error ValueError y case insensitivity).
-  - `test_services.py`: Tests de LaboratorioService (delegación a estrategias, estructura de resultados, longitud simulaciones). Ajustes para reflejar que el service actual **no forwardea** parámetros a la estrategia (characterization real, no idealizada).
-  - Importan directamente de `api.logic.domain.*` (funciona con pythonpath en pytest.ini).
-  - Sin Django: Corren en aislamiento.
+  - `test_factories.py`: pruebas puras que verifican el comportamiento actual de `LaboratorioStrategyFactory` (incluyendo el error `ValueError` esperado y la insensibilidad a mayúsculas/minúsculas).
+  - `test_services.py`: pruebas de `LaboratorioService` (delegación a estrategias, estructura de resultados, longitud de las simulaciones). Los casos reflejan el comportamiento real y actual del servicio (no un comportamiento idealizado).
+  - Ambos módulos importan directamente de `api.logic.domain.*`, habilitado por la configuración de `pythonpath` en `pytest.ini`.
+  - Se ejecutan en aislamiento, sin depender de Django.
 
-- **Requirements y Config de Tests:**
-  - `src/backend/requirements.txt`: Sección Testing agregada.
-  - `src/backend/pytest.ini`: Config básica (testpaths=tests, pythonpath=., addopts para quiet + short tb). Comentado DJANGO_SETTINGS para futuro.
+- **Requisitos y configuración de pruebas:**
+  - `src/backend/requirements.txt`: sección de pruebas agregada.
+  - `src/backend/pytest.ini`: configuración básica (`testpaths=tests`, `pythonpath=.`, opciones para salida silenciosa y trazas cortas). Configuración de Django comentada para uso futuro.
 
-### 5.2 Scripts Utilizados y Creados/Mejorados
-- **scripts/verify_refactor.ps1** (principal, mejorado en múltiples iteraciones):
-  - Estructura: 5 secciones numeradas + resumen final.
-  - Mejoras aplicadas:
-    - curl → curl.exe explícito (con comentario detallado sobre alias PowerShell).
-    - Contenedores: try/catch + parseo robusto (Trim, Where-Object, -contains) + fallback a docker ps directo (evita warning version:).
-    - Backend tests: Chequeo explícito $LASTEXITCODE → mensaje claro "container probably not running".
-    - Pytest: Doble chequeo (Get-Command + python -c import), fallback python -m pytest, mensajes con comandos exactos de pip + venv.
-    - Contadores: $passed, $warnings, $failed incrementados en cada check.
-    - Resumen final: Conteos + "=== Resumen Fase 0 ===" con color dinámico (basado en failed/warnings).
-  - Uso: `.\scripts\verify_refactor.ps1` o con `-StartServices`.
-  - También genera test_leaf.jpg si falta.
+### 5.2 Scripts Creados y Mejorados
 
-- **scripts/verify_refactor.sh**: Versión bash básica (contenedores, curls, pytest).
+- **`scripts/verify_refactor.ps1`** (principal, mejorado en múltiples iteraciones):
+  - Estructura de 5 secciones numeradas más un resumen final.
+  - Mejoras aplicadas: uso explícito de `curl.exe` (evitando el alias conflictivo de PowerShell); detección robusta de contenedores mediante `try/catch` y filtrado; verificación explícita de `$LASTEXITCODE` en las pruebas de backend con mensajes claros cuando el contenedor no está activo; doble verificación de pytest con mensajes de instalación exactos; contadores globales de aprobados, advertencias y fallidos; resumen final con color dinámico según el resultado.
+  - Uso: `.\scripts\verify_refactor.ps1` o con el parámetro `-StartServices`.
+  - También genera `test_leaf.jpg` si no existe.
 
-- Otros scripts existentes (usados/referenciados): docker_maintain.ps1, generate-diagrams.mjs, run_local_*.ps1, etc. (para docs y mantenimiento).
+- **`scripts/verify_refactor.sh`**: versión básica para entornos bash (verificación de contenedores, `curl` y pytest).
 
-### 5.3 Cambios en Estructura y Config
-- Creación de `src/backend/tests/domain/` con characterization tests (primera base para >60% cobertura futura).
-- Actualizaciones menores en .gitignore (implícito por cambios previos en sesión).
+- Otros scripts existentes referenciados: `docker_maintain.ps1`, generadores de diagramas, scripts de ejecución local, entre otros, usados para documentación y mantenimiento.
+
+### 5.3 Cambios en Estructura y Configuración
+
+- Creación de `src/backend/tests/domain/` con pruebas de caracterización (base inicial para alcanzar más del 60% de cobertura a futuro).
+- Actualizaciones menores en `.gitignore`.
 
 ### 5.4 Documentación Actualizada
-- `docs/HEXAGONAL_REFACTOR_PLAN.md`: Plan completo incorporado/actualizado con Fase 0 ejecutada.
-- Este documento (el que estás leyendo).
+
+- `docs/HEXAGONAL_REFACTOR_PLAN.md`: plan completo incorporado y actualizado con la Fase 0 ejecutada.
+- El presente documento.
 
 ---
 
-## 6. ESTADO PARA LLEGAR AL OBJETIVO PLANTEADO
+## 6. ESTADO DE AVANCE HACIA EL OBJETIVO PLANTEADO
 
-**Progreso general:** ~10-15% del refactor hexagonal + prep para producción (solo Fase 0 completada + algunos fixes previos de labs).
+**Progreso general:** aproximadamente 10-15% del refactor hexagonal completo más la preparación para producción (Fase 0 completada, junto con algunas correcciones previas en los laboratorios).
 
-**Lo que está "listo" (post Fase 0):**
-- Integración IA básica funcional (/infer estable).
-- Tests unitarios puros del dominio (10 tests characterization).
-- Script de verificación robusto para Windows (con resumen automático).
-- Base de pytest configurada.
-- Rama y commits atómicos.
-- Conocimiento claro del plan y gaps.
+**Lo que ya está listo (posterior a la Fase 0):**
+- Integración básica de IA funcional (`/infer` estable).
+- Pruebas unitarias puras de dominio (10 pruebas de caracterización iniciales).
+- Script de verificación robusto para Windows, con resumen automático.
+- Base de configuración de pytest lista.
+- Rama y commits atómicos establecidos.
+- Conocimiento claro del plan completo y de las brechas pendientes.
 
-**Brechas mayores (ver sección 7 para backlog exhaustivo):**
-- Arquitectura: Solo ~20% hexagonal real (legacy domina, sin mappers, sin entities, sin composition root).
-- Tests: 0 cobertura en adapters, views, integración E2E, frontend.
-- Producción: DEBUG, runserver, sin auth real, sin gunicorn, CORS abierto, sin logging estructurado, db-mysql legacy, sin CI/CD.
-- Frontend: Monolitos de código (imposible mantener).
-- Edge: 0% código (solo docs).
-- Seguridad/Auth: Demo-only.
-- Docs drift vs código.
+**Brechas principales (ver Sección 7 para el backlog completo):**
+- Arquitectura: solo aproximadamente 20% hexagonal real (predomina el código heredado, sin mappers, sin entidades ni composition root).
+- Pruebas: sin cobertura en adaptadores, vistas, integración E2E ni frontend.
+- Producción: `DEBUG` activo, uso de `runserver`, sin autenticación real, sin gunicorn, CORS abierto, sin logging estructurado, base de datos MySQL heredada, sin integración/despliegue continuo.
+- Frontend: módulos de código muy extensos, difíciles de mantener.
+- Edge: 0% de código implementado (solo documentación).
+- Seguridad/Autenticación: solo modo demostración.
+- Desfase entre documentación y código.
 
-**Métricas actuales (aprox):**
-- Cobertura tests: ~0% (solo los 10 nuevos de dominio).
-- Endpoints usando hexagonal: 2 de muchos.
-- Archivos legacy vs nuevo: Mayoría legacy.
-- Listo para prod: No (crítico para seguridad y estabilidad).
+**Métricas aproximadas en este punto:**
+- Cobertura de pruebas: cercana al 0% (solo las 10 pruebas nuevas de dominio).
+- Endpoints que usan la capa hexagonal: 2 de muchos.
+- Proporción de archivos heredados frente a nuevos: mayoría heredados.
+- Listo para producción: no (crítico en seguridad y estabilidad).
 
 ---
 
-## 7. TODO ABSOLUTO: TODO LO QUE FALTA PARA 100% LISTO PARA PRODUCCIÓN + ARQUITECTURA COMPLETA
+## 7. BACKLOG TÉCNICO PARA PRODUCCIÓN (TODO COMPLETO)
 
-**Categorizado por prioridad y área. Cada ítem incluye archivos aproximados a tocar y estimación.**
+Categorizado por área. Cada ítem representa una tarea pendiente identificada durante el análisis del proyecto.
 
-### 7.1 Arquitectura Hexagonal (Core - Bloqueante para todo lo demás)
-- [ ] Mover/refinar `api/logic/` a estructura limpia (`core/domain`, `application/`, `infrastructure/persistence/django/`, `interfaces/web/api/`).
-  - Archivos: Nueva estructura + mappers.
-- [ ] Definir Entities ricas + VOs (SensorReadingEntity, Robot, Telemetry, Command aggregates con invariantes).
-- [ ] Mejorar Ports (métodos query/command específicos, no solo listar_todos(string)).
-- [ ] Implementar mappers completos en todos adapters (nunca pasar Models al dominio).
-- [ ] Composition Root real (dependencies.py o container).
-- [ ] Mover toda lógica de simulación/generación histórica a estrategias de dominio (eliminar de views.py legacy).
-- [ ] Actualizar V2 views para usar use cases puros.
-- [ ] Refactor AI adapter y ports para /suggest si se usa.
+### 7.1 Arquitectura Hexagonal (núcleo — bloqueante para el resto)
+- [ ] Mover/refinar `api/logic/` a una estructura limpia (`core/domain`, `application/`, `infrastructure/persistence/django/`, `interfaces/web/api/`).
+- [ ] Definir entidades ricas y value objects (SensorReadingEntity, Robot, Telemetry, Command, con sus invariantes).
+- [ ] Mejorar los puertos (métodos de consulta/comando específicos, no solo un `listar_todos(string)` genérico).
+- [ ] Implementar mappers completos en todos los adaptadores (nunca exponer modelos al dominio).
+- [ ] Composition root real (`dependencies.py` o contenedor equivalente).
+- [ ] Mover toda la lógica de simulación/generación histórica a estrategias de dominio (eliminarla de las vistas heredadas).
+- [ ] Actualizar las vistas V2 para usar casos de uso puros.
+- [ ] Refactorizar el adaptador y los puertos de IA para `/suggest`, si se usa.
 
-### 7.2 Migración de Lógica de Negocio (Backend Legacy → Hexagonal)
-- [ ] Vertical slice 1: Telemetry (history V1/V2, models → entities).
-- [ ] Vertical slice 2: Robots + RobotTelemetry.
-- [ ] Vertical slice 3: RobotCommand (escritura, comandos a edge).
-- [ ] Crear Use Cases en application layer.
-- [ ] Hacer vistas legacy thin (solo llaman application + devuelven DTOs).
-- [ ] Actualizar urls para mantener legacy + nuevo.
-- [ ] Tests de integración por slice (con mocks de ports o test DB).
+### 7.2 Migración de Lógica de Negocio (Backend heredado → Hexagonal)
+- [ ] Slice vertical 1: Telemetría (histórico V1/V2, modelos → entidades).
+- [ ] Slice vertical 2: Robots + RobotTelemetry.
+- [ ] Slice vertical 3: RobotCommand (escritura, comandos hacia edge).
+- [ ] Crear casos de uso en la capa de aplicación.
+- [ ] Convertir las vistas heredadas en controladores delgados (solo invocan la aplicación y devuelven DTOs).
+- [ ] Actualizar las urls manteniendo en paralelo lo heredado y lo nuevo.
+- [ ] Pruebas de integración por slice (con mocks de puertos o base de datos de prueba).
 
 ### 7.3 Infraestructura y Adaptadores
-- [ ] Extraer todos adapters a infrastructure/.
-- [ ] Soporte InMemoryRepository para tests puros.
-- [ ] Config centralizada (pydantic o django settings limpio).
-- [ ] Adapter de notificaciones real (al menos WebSocket básico vía Channels o Redis).
+- [ ] Extraer todos los adaptadores a `infrastructure/`.
+- [ ] Soporte de repositorio en memoria para pruebas puras.
+- [ ] Configuración centralizada (pydantic o settings de Django limpios).
+- [ ] Adaptador real de notificaciones (al menos WebSocket básico vía Channels o Redis).
 
-### 7.4 AI Service y Resiliencia
-- [ ] Completar wiring de /suggest o integrarlo en dominio.
-- [ ] Circuit breaker/retry en AI adapter (tenacity).
-- [ ] Tests de resiliencia (simular AI down).
-- [ ] Posiblemente mover infer logic si se quiere (pero mantener FastAPI como adapter).
+### 7.4 Servicio de IA y Resiliencia
+- [ ] Completar el cableado de `/suggest` o integrarlo en el dominio.
+- [ ] Circuit breaker/reintentos en el adaptador de IA (tenacity).
+- [ ] Pruebas de resiliencia (simulación de caída del servicio de IA).
+- [ ] Evaluar mover la lógica de inferencia si se decide, manteniendo FastAPI como adaptador.
 
-### 7.5 Frontend (Limpieza masiva - uno de los mayores dolores)
-- [ ] Adoptar estructura Feature-Sliced / Clean (shared/ui, entities, features/labs/*, adapters/api).
-- [ ] Centralizar API client (con baseURL desde env, interceptors de error, auth).
-- [ ] Extraer lógica de simulación de ElectronicsLab + SchematicEditor (mover a features/electronics/model o similar).
-- [ ] Refactor labs grandes en fases (empezar por los más pequeños).
-- [ ] Actualizar useRoboticsApi, cloud.js, useLabStore para usar adapters limpios.
-- [ ] Auth real (integrar con backend JWT).
-- [ ] Tests unitarios de features/adapters (vitest o jest).
-- [ ] Resolver hardcodes de URLs y mezcla prod/local.
+### 7.5 Frontend (una de las tareas de mayor esfuerzo)
+- [ ] Adoptar estructura Feature-Sliced/Clean (`shared/ui`, `entities`, `features/labs/*`, `adapters/api`).
+- [ ] Centralizar el cliente de API (URL base desde entorno, interceptores de error, autenticación).
+- [ ] Extraer la lógica de simulación de ElectronicsLab y SchematicEditor.
+- [ ] Refactorizar los laboratorios grandes por fases, comenzando por los más pequeños.
+- [ ] Actualizar `useRoboticsApi`, `cloud.js` y `useLabStore` para usar los nuevos adaptadores.
+- [ ] Autenticación real (integración con JWT del backend).
+- [ ] Pruebas unitarias de features/adaptadores (vitest o jest).
+- [ ] Resolver URLs codificadas de forma fija y la mezcla entre entorno productivo y local.
 
-### 7.6 Autenticación, Seguridad y Protección (Crítico para prod)
-- [ ] Añadir djangorestframework-simplejwt a requirements.
-- [ ] Endpoints reales /auth/login, /auth/register (o usar allauth).
-- [ ] Proteger todos los endpoints (IsAuthenticated, permisos por rol si aplica).
-- [ ] Actualizar frontend AuthContext para usar tokens reales (access+refresh).
-- [ ] Mantener "modo demo" por env (VITE_DEMO_MODE o similar) para no romper demos educativas.
-- [ ] CORS estricto (no * en prod).
-- [ ] Rate limiting básico.
-- [ ] SECRET_KEY real vía env (nunca default).
-- [ ] ALLOWED_HOSTS estricto.
-- [ ] HTTPS en prod (nginx o proxy).
+### 7.6 Autenticación, Seguridad y Protección (crítico para producción)
+- [ ] Añadir `djangorestframework-simplejwt` a los requisitos.
+- [ ] Endpoints reales `/auth/login` y `/auth/register` (o usar allauth).
+- [ ] Proteger todos los endpoints (`IsAuthenticated`, permisos por rol si aplica).
+- [ ] Actualizar el `AuthContext` del frontend para usar tokens reales (access + refresh).
+- [ ] Mantener un "modo demo" configurable por entorno para no interrumpir las demostraciones educativas.
+- [ ] CORS estricto (sin comodín `*` en producción).
+- [ ] Limitación de tasa básica.
+- [ ] `SECRET_KEY` real desde variable de entorno (nunca un valor por defecto).
+- [ ] `ALLOWED_HOSTS` estricto.
+- [ ] HTTPS en producción (nginx o proxy).
 
-### 7.7 DevOps, Producción y Hardening (100% listo para prod)
-- [ ] Backend Dockerfile: Cambiar CMD a gunicorn + Daphne/uvicorn workers (no runserver).
-- [ ] Añadir gunicorn, whitenoise (o collectstatic config) a requirements.
-- [ ] Settings: DEBUG=False por default, logging estructurado (structlog o django-structlog).
-- [ ] Healthcheck endpoint robusto + /metrics básico (para docker/orchestrator).
-- [ ] Quitar db-mysql del compose (o documentar por qué legacy).
-- [ ] Variables de entorno estrictas (.env.example completo, validación en settings).
-- [ ] .dockerignore completo.
-- [ ] CI básico (GitHub Actions: lint, tests, build images) - scripts ya existen para generar reports.
-- [ ] Deployment docs actualizados (DEPLOYMENT.md ya existe, expandir con prod).
+### 7.7 DevOps, Producción y Hardening
+- [ ] Dockerfile del backend: cambiar el comando a gunicorn + Daphne/uvicorn workers (no `runserver`).
+- [ ] Añadir gunicorn y whitenoise (o configuración de `collectstatic`) a los requisitos.
+- [ ] `DEBUG=False` por defecto y logging estructurado (structlog o django-structlog).
+- [ ] Endpoint de healthcheck robusto y métricas básicas (para Docker/orquestador).
+- [ ] Retirar MySQL del compose (o documentar por qué se mantiene).
+- [ ] Variables de entorno estrictas (`.env.example` completo, validación en settings).
+- [ ] `.dockerignore` completo.
+- [ ] Integración continua básica (GitHub Actions: lint, pruebas, construcción de imágenes).
+- [ ] Documentación de despliegue actualizada (expandir `DEPLOYMENT.md` con el escenario de producción).
 - [ ] Monitoreo básico (logs centralizados).
-- [ ] Backup scripts para DB (ya hay algo en scripts).
-- [ ] Eliminar pycache del repo (actualizar .gitignore si falta).
-- [ ] Actualizar docker-compose para prod (perfiles o override).
+- [ ] Scripts de respaldo para la base de datos.
+- [ ] Eliminar archivos de caché de Python del repositorio (actualizar `.gitignore` si falta).
+- [ ] Actualizar `docker-compose` para producción (perfiles o archivo de override).
 
-### 7.8 Testing y Calidad
-- [ ] Cobertura completa de adapters (mocks).
-- [ ] Tests de integración (con test DB o pytest-django).
-- [ ] E2E frontend (puppeteer/playwright - ya hay deps).
-- [ ] Aumentar tests de dominio (agregar para todas las estrategias, edge cases de simulaciones).
-- [ ] pytest-django cuando se necesite.
-- [ ] Cobertura report (pytest-cov) + meta >60% domain.
-- [ ] Linting/formatting (ruff + pre-commit).
-- [ ] mypy gradual en core/domain.
+### 7.8 Pruebas y Calidad
+- [ ] Cobertura completa de adaptadores (mocks).
+- [ ] Pruebas de integración (con base de datos de prueba o pytest-django).
+- [ ] E2E de frontend (Puppeteer/Playwright, dependencias ya disponibles).
+- [ ] Aumentar las pruebas de dominio (todas las estrategias, casos extremos de simulación).
+- [ ] Adoptar pytest-django cuando se requiera.
+- [ ] Reporte de cobertura (pytest-cov) con meta superior al 60% en dominio.
+- [ ] Linting y formato (ruff + pre-commit).
+- [ ] mypy de adopción gradual en `core/domain`.
 
 ### 7.9 Edge Computing e Integraciones
-- [ ] Implementar código real en src/embedded/ (mqtt_broker, tflite_api, sensor_reader) - actualmente 0 bytes.
+- [ ] Implementar código real en `src/embedded/` (`mqtt_broker`, `tflite_api`, `sensor_reader`), actualmente vacío.
 - [ ] Puertos para ingesta MQTT y comandos.
-- [ ] Adapter MQTT real.
-- [ ] Event bus (Redis pub/sub recomendado) para async.
-- [ ] Integración real con hardware BBB cuando esté disponible (test con mocks primero).
-- [ ] Actualizar docs EDGE_SETUP.md si es necesario.
+- [ ] Adaptador MQTT real.
+- [ ] Bus de eventos (se recomienda Redis pub/sub) para procesamiento asíncrono.
+- [ ] Integración real con hardware BeagleBone Black cuando esté disponible (probar primero con mocks).
+- [ ] Actualizar `EDGE_SETUP.md` si es necesario.
 
 ### 7.10 Documentación y Continuidad
-- [ ] Actualizar MASTERDOC.md, diagrams/, C4, ER con estado post-refactor (cada fase).
-- [ ] Actualizar INFORME_ANALISIS_Y_PLAN_DE_ACCION.md con entrada de Fase 0 + siguientes.
-- [ ] Actualizar README.md (estado real "Hexagonal incipiente X%", link a esta guía).
-- [ ] Este documento (mantenerlo vivo).
-- [ ] Guía de contribución (cómo correr tests, verify script, cómo agregar nuevo lab).
-- [ ] Screenshots/ videos de verificación (usar puppeteer si existe).
-- [ ] Actualizar PLAN_MAESTRO.md con progreso real.
+- [ ] Actualizar documento maestro, diagramas, C4 y modelo ER con el estado posterior a cada fase de refactorización.
+- [ ] Actualizar el informe de análisis y plan de acción con cada nueva fase.
+- [ ] Actualizar el README con el estado real del avance hexagonal y enlace a esta guía.
+- [ ] Mantener este documento vivo.
+- [ ] Guía de contribución (cómo ejecutar pruebas, el script de verificación, cómo agregar un nuevo laboratorio).
+- [ ] Capturas o videos de verificación.
+- [ ] Actualizar el plan maestro con el progreso real.
 
-### 7.11 Otros / Limpieza
-- [ ] Remover código legacy una vez slices migrados (con feature flags o fecha de deprecación).
-- [ ] Consolidar URLs hardcodeadas (frontend, AI adapter, etc.) en config central.
-- [ ] Revisar y limpiar notebooks vs prod model (metadata vs entrenamiento full).
-- [ ] Posible separación de bounded contexts en paquetes si crece (core_iot, core_labs, etc.).
-- [ ] Performance: Optimizar simulaciones pesadas (Electronics).
-- [ ] Accesibilidad y responsive en frontend (ya es mobile-first pero revisar labs grandes).
-- [ ] Licencia, contribs, SENA artifacts actualizados si aplica.
+### 7.11 Otros / Limpieza General
+- [ ] Retirar el código heredado una vez migrados los slices correspondientes (con banderas de características y fecha de depreciación).
+- [ ] Consolidar URLs codificadas de forma fija (frontend, adaptador de IA, etc.) en configuración central.
+- [ ] Revisar y limpiar los notebooks frente al modelo de producción.
+- [ ] Evaluar separar los contextos delimitados en paquetes independientes si el proyecto crece.
+- [ ] Optimizar el rendimiento de simulaciones pesadas (electrónica).
+- [ ] Revisar accesibilidad y diseño responsive en el frontend, especialmente en los laboratorios más grandes.
+- [ ] Actualizar licencias, contribuciones y materiales SENA si aplica.
 
-**Total estimado de ítems faltantes:** 60+ tareas técnicas detalladas. Prioridad: Arquitectura + Seguridad + Tests + Prod Docker primero. Luego Frontend + Edge.
+**Total estimado de tareas pendientes:** más de 60 tareas técnicas detalladas. Prioridad sugerida: arquitectura + seguridad + pruebas + Docker de producción primero; luego frontend y edge.
 
-**Criterio final de "100% listo":**
-- `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up` funciona sin warnings críticos.
-- `pytest --cov=src/backend --cov-fail-under=60`.
-- Todos los curls del verify script dan OK sin warnings.
-- DEBUG=False, SECRET_KEY desde env, auth real protegida.
-- Cobertura de los 4 laboratorios + IoT + IA en dominio hexagonal.
-- Frontend con features limpios y tests.
+**Criterio final de "100% listo para producción":**
+- `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up` funciona sin advertencias críticas.
+- `pytest --cov=src/backend --cov-fail-under=60` se ejecuta correctamente.
+- Todas las verificaciones del script de verificación resultan exitosas, sin advertencias.
+- `DEBUG=False`, `SECRET_KEY` desde entorno, autenticación real protegida.
+- Cobertura completa de los 4 laboratorios más IoT e IA en el dominio hexagonal.
+- Frontend con features limpios y pruebas.
 - Edge con código funcional (mocks o real).
-- Docs 100% sincronizados.
-- Script verify da "¡Todo bien!" en verde.
+- Documentación 100% sincronizada con el código.
+- El script de verificación reporta un resultado totalmente satisfactorio.
 
 ---
 
-## 8. GUÍA PARA RETOMAR EL PROYECTO (CÓMO CONTINUAR)
+## 8. BITÁCORA HISTÓRICA DE AVANCE (ORDEN CRONOLÓGICO)
 
-1. **Checkout y setup inicial:**
+Esta sección reúne, en orden de fecha, el registro de las sesiones de trabajo realizadas sobre el proyecto. Cada entrada documenta únicamente tareas de bajo riesgo (pruebas de caracterización, scripts de verificación, configuración de pruebas y documentación), sin modificar lógica de negocio en producción, siguiendo la metodología Strangler Fig descrita en la Sección 3.
+
+### 8.1 — 02 de junio de 2026: Fase 0, consolidación de pruebas y scripts
+
+**Rama de trabajo:** `feature/hex-refactor/phase-00-prep-baseline`.
+**Enfoque de la sesión:** tareas de bajo riesgo únicamente — documentación, pruebas de caracterización y pulido de scripts, sin impacto en la lógica de negocio. Validación frecuente mediante `git status`, `git diff` y `verify_refactor.ps1`.
+
+**Tareas priorizadas (según el backlog de la Sección 7):**
+- De *Pruebas y Calidad*: aumentar las pruebas de caracterización de dominio para todas las estrategias y casos extremos; incorporar soporte de cobertura (pytest-cov) sin forzarlo en todas las ejecuciones.
+- De *Documentación y Continuidad*: mantener viva esta guía técnica.
+- Pulido general: mejorar el filtrado de advertencias de "version: obsolete" de docker-compose en el script de verificación.
+
+**Tareas explícitamente no ejecutadas por riesgo:** cualquier tarea de arquitectura (mover carpetas, entidades, composition root), migración de vistas legacy, cambios en Dockerfiles, configuración de producción o implementación de la capa edge.
+
+**Trabajo realizado, en orden:**
+
+1. **Confirmación de estado inicial (línea base):** verificación de la rama activa y del estado de git; ejecución de `verify_refactor.ps1`, que en este entorno reportó 2 errores esperados (contenedores no activos), 2 verificaciones correctas del servicio de IA (`/health` e `/infer` con imagen de prueba) y ejecución de 10 pruebas de dominio.
+
+2. **Incorporación de `pytest-cov`** (dependencia de desarrollo, bajo riesgo): agregado a `src/backend/requirements.txt`.
+
+3. **Actualización de `pytest.ini`** para habilitar cobertura: se añadieron las opciones `--cov=api --cov-report=term-missing --cov-report=html`, junto con comentarios explicativos.
+
+4. **Ampliación de pruebas de dominio, primera ronda:** se agregaron pruebas adicionales sobre `generar_historico_simulado()` para todas las estrategias, incluyendo casos con 0, 1, 5, 24 y 48 horas, y el caso de horas negativas o cero (que caracteriza el retorno de una lista vacía). Total de pruebas: **24**.
+
+5. **Pulido adicional del script de verificación:** mensajes más claros y accionables cuando los contenedores no están activos; conteos globales de aprobados, advertencias y fallidos.
+
+6. **Segunda ronda de pruebas de dominio** (4 nuevas, orientadas a casos débiles de `procesar()`): comportamiento bajo estrés hídrico bajo en agricultura, combinación de estrés crítico con imagen analizada, caso de electrónica con cero nodos, y cálculo de corriente con múltiples componentes. Total de pruebas: **28**.
+
+7. **Mejora del resumen del script de verificación:** se agregó un bloque de "Estado general" (aprobados/advertencias/errores) al inicio del resumen, para una lectura más rápida.
+
+8. **Configuración de cobertura (`.coveragerc`):** creación de un archivo simple con `source = api`, exclusiones para pruebas, migraciones y caché, y opciones de precisión. Complementa `pytest-cov` y la configuración de `pytest.ini`.
+
+9. **Ronda de refuerzo de pruebas (3 nuevas):** casos de valores por defecto vacíos en agricultura (caracterizando el umbral que dispara el estado "Crítico"), comportamiento de eco literal en robótica (sin transformación del payload recibido), y una prueba de integración tipo *smoke* que verifica que la fábrica de estrategias y el servicio de laboratorio producen resultados consistentes para los 4 tipos de laboratorio. Total de pruebas: **31**.
+
+10. **Mejora de `.coveragerc`:** se agregó `branch = True` bajo `[run]` para visualizar cobertura de ramas condicionales, y una sección `[html]` con directorio de salida `htmlcov`.
+
+**Resultado de las validaciones de esta sesión:**
+- 31 pruebas de dominio pasando de forma consistente.
+- Cobertura con análisis de ramas activada: agricultura 66.67%, servicios 87.50%, fábricas y el resto de estrategias 100%.
+- El script de verificación reporta el nuevo bloque de "Estado general" correctamente.
+- Cero cambios en lógica de producción; únicamente adiciones en pruebas, configuración de cobertura y mensajes del script.
+
+**Continuación de la sesión — inicio de la Fase 1 (rama `feature/hex-refactor/phase-01-consolidate-domain`):**
+
+Tras el cierre y commit de la Fase 0, se creó la nueva rama de la Fase 1 para consolidar el núcleo hexagonal existente, manteniendo el mismo criterio de bajo riesgo (solo pruebas, scripts y documentación; ningún cambio en `api/logic/`, vistas, adaptadores, Dockerfiles o configuración de producción).
+
+1. **Ampliación de pruebas de dominio (6 nuevas, de 31 a 37):** se agregaron pruebas que verifican que los 4 laboratorios generan exactamente 24 registros históricos, la estructura de las claves y del identificador de sensor específico de cada laboratorio, y el efecto de cambios repetidos de laboratorio sobre `procesar()` e histórico.
+2. **Actualización del script de verificación** con referencias explícitas a la Fase 1 ("Consolidate Domain Core") y al backlog de pruebas y calidad.
+3. **Actualización de comentarios en `pytest.ini` y `.coveragerc`** indicando que las estrategias de dominio alcanzaron el 100% de cobertura gracias a las nuevas pruebas.
+4. **Mejora de la documentación interna** de los módulos de prueba, con una guía paso a paso sobre cómo agregar pruebas para un nuevo laboratorio en el futuro.
+
+**Resultado:** 37 pruebas de dominio, cobertura del 100% en las 4 estrategias y en la fábrica, script y configuraciones alineados con el enfoque de la Fase 1.
+
+**Segunda sesión de la Fase 1 (misma rama, continuación intensiva de pruebas y calidad):**
+
+1. **Ampliación agresiva de pruebas (de 37 a 48):** nuevos casos sobre bordes de `generar_historico_simulado()` (0, 1, 5, 24, 48 horas y valores negativos o cero en todas las estrategias); casos de error y validaciones que documentan la falta actual de manejo defensivo en el núcleo (`ValueError` al cambiar a un laboratorio inválido, `TypeError` al procesar datos no numéricos en agricultura, `AttributeError` al procesar componentes inválidos en electrónica, sensibilidad a espacios en blanco en la fábrica); una prueba que cubre el camino de retorno de lista vacía cuando una estrategia no implementa el método esperado.
+2. **Mejora de calidad en las pruebas existentes:** migración de pruebas a fixtures compartidas en `conftest.py`, parametrización de las pruebas de fábrica para un reporte más granular.
+3. **Mejora del script de verificación:** parseo automático del número exacto de pruebas de dominio ejecutadas, mostrado tanto en la sección de pytest como en el resumen final.
+4. **Documentación:** actualización de docstrings y comentarios en los módulos de prueba, `conftest.py` y el script, documentando el enfoque de caracterización utilizado.
+
+**Resultado:** 48 pruebas de dominio, cobertura del 100% en agricultura, robótica, electrónica, telecomunicaciones, fábricas y servicios (solo queda fuera la línea abstracta de la interfaz base, inevitable sin instanciar la clase abstracta). Cero cambios en lógica de producción durante toda la sesión.
+
+---
+
+### 8.2 — 04 de junio de 2026: Rediseño hacia Monolito Modular por Contextos
+
+**Contexto:** con el núcleo hexagonal ya consolidado y con 48 pruebas de caracterización protegiendo el comportamiento actual, se realizó un diagnóstico de la arquitectura para definir el rumbo estructural definitivo del backend.
+
+**Diagnóstico:**
+
+El proyecto mantenía dos implementaciones paralelas del mismo dominio:
+- `api/logic/` (V2): `domain/{agricultura,electronica,robotica,telecom}.py` + `factories.py` + `adapters/` + `ports/` — patrón Strategy + Factory, pero con dominio y adaptadores en el mismo espacio de nombres, acoplado a Django desde el propio nombre del paquete.
+- `core/` (V3): `domain/{entities,exceptions,factories,services,strategies,value_objects}/` + `ports/{repositories,services}/` + `application/{commands,queries}/` — arquitectura hexagonal más estricta, con dominio puro sin imports de Django.
+
+`urls.py` exponía ambas versiones simultáneamente (`v2/` y `v3/`) con un mecanismo de respaldo silencioso. Esta convivencia representaba deuda técnica activa: dos fuentes de verdad para "qué es un laboratorio", con el riesgo de que una corrección se aplicara en una implementación y no en la otra.
+
+**Decisión arquitectónica: ni hexagonal "pura" como un solo núcleo global, ni microservicios desde ya.**
+
+- Una arquitectura hexagonal como un único núcleo de dominio gigante repite el error de mezclar bajo un mismo `domain/` conceptos que no comparten un lenguaje ubicuo coherente: "laboratorio de robótica", "modelo de IA de enfermedades de plantas", "telemetría de sensores embebidos" y "cursos" son dominios distintos que deberían evolucionar de forma independiente. Esto es el antipatrón conocido como "hexágono dios".
+- Migrar a microservicios completos tampoco se justifica en esta etapa: implica un costo operativo (descubrimiento de servicios, transacciones distribuidas, observabilidad, versionado de contratos) sin un beneficio real todavía, dado el tamaño del equipo y la ausencia de necesidad de escalar cada dominio de forma independiente.
+- **Solución adoptada: Monolito Modular con límites hexagonales por contexto delimitado.** Cada contexto (laboratorios, telemetría, IA, cursos, identidad) es un hexágono independiente —con su propio `domain/`, `ports/`, `application/` e `infrastructure/`— pero todos se despliegan en el mismo proceso Django, excepto los que ya tienen una frontera física real (como el servicio de IA, que corresponde a otro runtime y otro ciclo de vida de despliegue).
+- **Justificación:** los puertos de cada contexto son exactamente el punto de corte donde se podría extraer un microservicio real el día que el volumen o el equipo lo justifiquen. Por ejemplo, cuando la ingesta de telemetría IoT crezca lo suficiente, el `SensorReadingRepositoryPort` ya existiría, y bastaría con cambiar el adaptador de Django ORM por un cliente gRPC/HTTP sin tocar el dominio. Se diseña para poder separar en microservicios en el futuro, sin hacerlo antes de que sea necesario.
+
+**Estructura objetivo propuesta:**
+
+```
+src/backend/
+├── contexts/
+│   ├── labs/                          # Contexto: laboratorios (agricultura, electrónica, robótica, telecom)
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   ├── value_objects/
+│   │   │   ├── strategies/            # Patrón Strategy: 1 por tipo de laboratorio
+│   │   │   ├── factories/
+│   │   │   └── exceptions/
+│   │   ├── ports/
+│   │   │   ├── repositories.py
+│   │   │   └── notification_port.py
+│   │   ├── application/
+│   │   │   ├── commands/
+│   │   │   └── queries/
+│   │   └── infrastructure/
+│   │       └── persistence/django/
+│   │
+│   ├── telemetry/                     # Contexto: ingesta IoT (separado de labs, cambia por razones distintas)
+│   │   ├── domain/
+│   │   ├── ports/
+│   │   ├── application/
+│   │   └── infrastructure/
+│   │
+│   ├── ai_advisory/                   # Contexto: puente hacia el servicio de IA (FastAPI externo)
+│   │   ├── domain/
+│   │   ├── ports/                     # AIServicePort — adaptador real: fastapi_ai_adapter.py
+│   │   └── application/
+│   │
+│   └── identity/                      # users/ actual, reorganizado de igual forma
+│
+├── interfaces/                        # Capa de entrada única, Django REST
+│   └── web/api/
+│       ├── labs/urls.py
+│       ├── telemetry/urls.py
+│       └── ai_advisory/urls.py
+│
+├── shared_kernel/                     # Solo lo que genuinamente comparten todos los contextos
+│   └── result.py
+│
+└── sigct_backend/                     # settings.py, wsgi, configuración Django — sin lógica de dominio
+```
+
+Diferencia clave frente a la estructura anterior: `core/` deja de existir como una única carpeta plana; se divide en `contexts/{labs,telemetry,ai_advisory,identity}/`, cada uno con su propio hexágono completo. `api/logic/` se elimina por completo tras migrar su lógica — no se fusiona con `core/`, se retira — manteniendo ambas versiones activas solo durante la migración (máximo 1-2 sprints), con la versión V2 marcada como `@deprecated` y con fecha de remoción definida (nunca indefinida).
+
+**Plan de migración (orden secuencial):**
+1. Congelamiento de `api/logic/`: no se escribe código nuevo ahí, salvo correcciones críticas si algo se rompe en producción durante la migración.
+2. Mover `core/` → `contexts/labs/` primero, por concentrar la mayor parte de la lógica real y ser el contexto más maduro.
+3. Extraer `telemetry` de `labs`: `sensor_reading.py` vivía dentro del mismo `core/domain`, pero conceptualmente corresponde a ingesta, no a simulación de laboratorio.
+4. Reescribir `urls.py`/`views.py`, eliminando la bandera `HEXAGONAL_V3_AVAILABLE` y el mecanismo de respaldo silencioso — con una única versión activa, ese `try/except` deja de ser necesario.
+5. Migrar las pruebas (`tests/domain/test_factories.py` y `test_services.py`, con 48 pruebas y 100% de cobertura) para que apunten a `contexts.labs.domain`, sin eliminarlas.
+6. Retirar `api/logic/` una vez migrado y verificado con las pruebas existentes.
+
+**Preparación operativa de la sesión:**
+- Configuración de identidad de git local al repositorio del proyecto.
+- Sincronización verificada contra `origin/main` antes de iniciar cualquier cambio, para evitar conflictos de fusión.
+- Registro en bitácora del inicio de esta etapa, bajo el principio de "cero daño": estado *pre-migración* (consolidación hacia Monolito Modular), objetivo de migrar de `api/logic` (V2) y `core/` (V3) hacia `contexts/` (Monolito Modular), con estrategia "puente" activa (no se elimina código hasta validar las pruebas en la nueva estructura).
+- Creación de la rama de trabajo aislada `refactor/migracion-contexts` para no tocar nada directamente sobre `main`.
+- Marcado con `@deprecated`: en lugar de borrar `api/logic` de inmediato, se planificó inyectar un decorador en sus clases principales, de modo que cualquier uso residual del código antiguo genere una advertencia clara en consola o en los logs.
+- Registro puntual: creación de `src/backend/utils/deprecation.py` para instrumentar el código heredado. Estado: operativo.
+
+**Cierre conceptual de la sesión:** esta refactorización no se plantea como un ejercicio académico aislado, sino como la materialización práctica de los principios de separación de responsabilidades y Diseño Dirigido por el Dominio (DDD) en un entorno real. La meta no es solo que el sistema funcione, sino que el código resulte mantenible, auditable y escalable, transformando el proyecto SIGC&T Rural de un monolito frágil a un sistema modular capaz de evolucionar junto con las necesidades del sector rural colombiano.
+
+---
+
+### 8.3 — 04 de julio de 2026: Estabilización e Integración con Infraestructura Real
+
+**Estado:** integración con infraestructura real verificada.
+
+**1. Diagnóstico y corrección de rumbo:**
+
+Durante las iteraciones previas se presentaron fallos recurrentes (`OperationalError`, `ModuleNotFoundError`) debido a una desconexión entre la configuración de las pruebas y el estado real de la infraestructura en el entorno local (Windows/Mingw64).
+
+- **Error de concepción identificado:** se intentó desacoplar la prueba de integración forzando el uso de SQLite en memoria. Esto constituyó un error de arquitectura, ya que el componente en cuestión (`DjangoRepository`) es un adaptador de infraestructura cuya responsabilidad explícita es comunicarse con el motor de persistencia real (PostgreSQL). Forzar un mock en este punto anulaba la validez de la prueba de integración.
+- **Corrección aplicada:** se confirmó que la infraestructura de contenedores (`sigctiarural_postgres_db`, puerto 5544) estaba operativa. La solución consistió en configurar correctamente las variables de entorno de la sesión de ejecución (`DB_NAME`, `DB_USER`, etc.) para que el ORM de Django pudiera establecer la conexión con el contenedor.
+
+**2. Ejecución y resultados de la prueba:**
+
+Tras corregir la ruta de ejecución y las variables de entorno, se validó la integridad de la capa de persistencia:
+
+- Entorno: Python 3.14.3, Django 4.2.30 (versión presente en el entorno global en ese momento), pytest 9.0.3.
+- Comando: `python -m pytest tests/test_persistence_infra.py -W always`.
+- Resultado: 2 pruebas aprobadas en 0.88 s.
+- Conclusión: los adaptadores de persistencia quedaron correctamente conectados a la base de datos real.
+
+**3. Vulnerabilidad identificada: regresión de dependencias**
+
+Se identificó un riesgo relevante de "contaminación cruzada" en el entorno de desarrollo. Al instalar `requirements.txt` de forma global, el intérprete de Python del sistema sufrió una regresión de Django 6.0.3 a Django 4.2.30. Esto podía afectar a otros proyectos presentes en la misma máquina que dependieran de versiones más recientes de Django.
+
+**Acción correctiva:** se determinó que el aislamiento del proyecto mediante un entorno virtual (`venv`) era obligatorio, tanto para proteger la estabilidad de sigcTiArural como la de otros proyectos en el mismo equipo.
+
+**4. Hoja de ruta de resiliencia aplicada:**
+
+- **Fase A — Aislamiento del entorno:**
+  ```bash
+  # 1. Dentro de src/backend, crear el entorno virtual
+  python -m venv .venv
+
+  # 2. Activar el venv (Git Bash)
+  source .venv/Scripts/activate
+
+  # 3. Reinstalar dependencias limpias solo en este venv
+  pip install --upgrade pip
+  pip install -r requirements.txt
+  ```
+
+- **Fase B — Validación del mecanismo de depreciación (código heredado):** una vez ejecutadas las pruebas en un entorno controlado, se validó que el decorador `@deprecated` funcionara correctamente, confirmando que al ejecutar `pytest -W always` se mostrara el resumen de advertencias esperado. En caso contrario, se revisaría el import del decorador en `persistence.py` y que el método decorado fuera efectivamente el invocado por la prueba.
+
+- **Fase C — Consolidación de la arquitectura:** una vez validado el mecanismo de depreciación, se procedió con la inyección de dependencias para el código nuevo, manteniendo el Monolito Modular con límites hexagonales:
+  - Capa de dominio: sin dependencias externas (Python puro).
+  - Capa de adaptadores: donde residen los `DjangoRepository`, que se comunican con el exterior mediante las interfaces definidas en la capa de puertos.
+  - Capa de infraestructura: gestión de configuraciones, Docker y despliegue.
+
+**Estado al cierre de esta sesión:** la infraestructura responde correctamente, las pruebas de integración son satisfactorias y el camino hacia la refactorización modular está despejado. La prioridad inmediata siguiente fue el aislamiento mediante `venv` para proteger la estabilidad del entorno de desarrollo.
+
+---
+
+### 8.4 — 04 de julio de 2026: Informe de Hallazgos y Plan de Acción
+
+**Hallazgos principales:**
+- Estado de los servicios (Docker): backend expuesto en `localhost:8010`, servicio de IA en `8081`, frontend en `5173`, Postgres en `5544`. Se detectaron además otros contenedores presentes en la misma máquina, ajenos a este proyecto (por ejemplo, un servicio en el puerto 8000).
+- Pruebas de backend: 58 aprobadas, 3 advertencias (relacionadas con la depreciación de adaptadores heredados).
+- Servicio de IA: responde correctamente en `/health`.
+- Backend: una verificación sobre `localhost:8000` devolvió "Not Found", porque el backend del proyecto realmente corre en el puerto 8010; existe un conflicto de puertos entre distintos proyectos en la misma máquina.
+- Los scripts de verificación (`continuity_check.ps1` y `verify_refactor.ps1`) asumían el puerto 8000 de forma fija, generando falsos negativos en entornos donde los puertos se reasignan dinámicamente.
+- El archivo `.env` contenía credenciales en texto plano, lo cual debe evitarse al hacer commit.
+- La documentación y los planes (README, documento maestro, RUNBOOK, plan maestro, plan de refactorización hexagonal, pipeline de IA) se encontraban completos y coherentes entre sí, aunque con algunas referencias inconsistentes a la ruta del servicio de IA en distintos documentos (pendientes de unificar).
+
+**Riesgos identificados:**
+- La automatización que asume puertos fijos provoca falsos fallos o alertas.
+- Exposición de credenciales si el archivo `.env` llega a incluirse en un commit.
+- Las referencias inconsistentes a rutas del servicio de IA pueden confundir a nuevos colaboradores.
+
+**Plan de acción (priorizado, mínimo y seguro):**
+1. Corregir los scripts de verificación para detectar puertos de forma dinámica (variable de entorno → docker compose → valor por defecto), aplicando primero en `continuity_check.ps1` y luego en `verify_refactor.ps1`.
+2. Añadir `.env.example` y agregar `.env` a `.gitignore`; rotar credenciales si ya fueron expuestas públicamente.
+3. Unificar en la documentación las referencias de ruta del servicio de IA (eligiendo una sola: `src/backend/ai_service` o `src/ai_models`).
+4. Ejecutar verificaciones de salud locales y registrar evidencia: `docker compose ps`, `curl` al backend real (puerto detectado) y al servicio de IA, y ejecución de pytest en `src/backend`.
+5. Confirmar los cambios de scripts y ejemplos, manteniendo la bitácora del proyecto actualizada.
+
+**Cambio concreto aplicado — autodetección de puertos en `continuity_check.ps1`:**
+
+```powershell
+# --- Autodetección de puertos (entorno -> docker compose -> valor por defecto) ---
+function Get-PortForService {
+    param($envName, $composeService, $containerPort, $defaultPort)
+
+    if ($env:$envName) { return $env:$envName }
+
+    try {
+        $out = docker compose port $composeService $containerPort 2>$null
+        if ($out -and $out -match ":(\d+)$") { return $matches[1] }
+    } catch { }
+
+    return $defaultPort
+}
+
+$backendPort = Get-PortForService -envName "BACKEND_PORT" -composeService "backend" -containerPort 8000 -defaultPort 8000
+$aiPort      = Get-PortForService -envName "AI_PORT" -composeService "ai_service" -containerPort 8081 -defaultPort 8081
+
+Write-Host "Detected ports -> backend:$backendPort ai:$aiPort" -ForegroundColor Gray
+
+# Reemplazo de las comprobaciones de endpoints por:
+$backendResp = curl.exe -s --max-time 5 "http://localhost:$backendPort/api/telemetry/history/" 2>$null
+$aiResp      = curl.exe -s --max-time 5 "http://localhost:$aiPort/health" 2>$null
+```
+
+---
+
+### 8.5 — 06 de julio de 2026: Estado Verificado Más Reciente
+
+**Proyecto:** SIGC&T Rural (sigcTiArural).
+**Rama activa:** `feature/refactor-modular-contexts`.
+**Último commit validado:** `faf32ef`.
+
+**Estado de sincronización:**
+- Documentación sincronizada entre GitHub y los distintos entornos de desarrollo utilizados.
+- Documento maestro actualizado.
+- Plan maestro actualizado.
+- `INDICE_PROYECTO.md` disponible.
+- `continuity_check.ps1` disponible.
+
+**Próximas validaciones técnicas pendientes:**
+- `docker-compose.yml`
+- `persistence.py`
+- `settings.py`
+- `pytest.ini`
+- `conftest.py`
+
+**Notas:** la documentación se encuentra sincronizada entre los entornos de desarrollo utilizados. Aún no se han incorporado a la rama los cambios técnicos pendientes de validación descritos arriba.
+
+---
+
+## 9. GUÍA PARA RETOMAR EL PROYECTO
+
+1. **Verificación y preparación inicial:**
    ```powershell
-   git checkout feature/hex-refactor/phase-00-prep-baseline
-   cd "C:\Users\Devbadolgm\WorkSpace\ProjectsAndDatasets\Clon-sigcTiArural\sigcTiArural"
-   # Instalar deps
+   git checkout feature/refactor-modular-contexts
    cd src\backend
    python -m pip install -r requirements.txt
-   # (Opcional) venv
+   # Se recomienda usar un entorno virtual (venv) para aislar dependencias
    ```
 
-2. **Verificar estado actual (obligatorio siempre):**
+2. **Verificar el estado actual (obligatorio siempre):**
    ```powershell
-   # Desde raíz
+   # Desde la raíz del proyecto
    .\scripts\verify_refactor.ps1
-   # O con servicios:
+   # O levantando servicios:
    .\scripts\verify_refactor.ps1 -StartServices
    ```
-   - Esperar "Uvicorn running" en logs de ai_service.
-   - El script debe mostrar conteos y "=== Resumen Fase 0 ===" en verde (si todo bien).
+   - Esperar el mensaje "Uvicorn running" en los logs del servicio de IA.
+   - El script debe mostrar los conteos y el resumen de la verificación en verde si todo está correcto.
 
-3. **Correr tests de dominio:**
+3. **Ejecutar las pruebas de dominio:**
    ```powershell
    cd src\backend
    python -m pytest tests/domain/ -q --tb=short
    ```
 
-4. **Próximo paso recomendado (después de Fase 0):**
+4. **Próximo paso recomendado:**
    - Revisar este documento completo.
-   - Leer `docs/HEXAGONAL_REFACTOR_PLAN.md` (especialmente FASE 1).
-   - Crear nueva rama: `feature/hex-refactor/phase-01-consolidate-domain`.
-   - Comenzar por consolidar el núcleo hexagonal (ver sección 3 de este doc).
-   - Actualizar INFORME_ANALISIS_Y_PLAN_DE_ACCION.md con "Inicio Fase 1".
-   - Usar siempre `git add -p` y verificar con el script.
+   - Leer `docs/HEXAGONAL_REFACTOR_PLAN.md`, en particular la fase en curso.
+   - Continuar la migración hacia la estructura `contexts/` descrita en la Sección 8.2.
+   - Completar las validaciones técnicas pendientes listadas en la Sección 8.5.
+   - Actualizar la bitácora del proyecto con el inicio de la siguiente etapa.
+   - Usar siempre `git add -p` y verificar con el script correspondiente.
 
 5. **Convenciones de trabajo:**
-   - Nunca romper legacy hasta que el slice esté migrado + verificado.
-   - Cada fase: actualizar este documento + plan + bitácora.
-   - Verificación mínima por cambio: pytest + verify script + curls manuales + UI si aplica.
-   - Commits: "chore(hex): ...", "feat(hex): ...", "fix(hex): ...".
-   - Si hay dudas técnicas: consultar diagrams/ y MASTERDOC.md.
+   - Nunca romper el código heredado hasta que el slice correspondiente esté migrado y verificado.
+   - En cada fase: actualizar este documento, el plan y la bitácora.
+   - Verificación mínima por cambio: pytest + script de verificación + pruebas manuales de endpoints + revisión de UI si aplica.
+   - Convención de mensajes de commit: `chore(hex): ...`, `feat(hex): ...`, `fix(hex): ...`.
+   - Ante dudas técnicas: consultar los diagramas y el documento maestro.
 
-6. **Cómo saber que estás en el camino correcto:**
-   - Los tests de dominio crecen.
-   - El verify script muestra más "OK" y menos warnings.
-   - Las vistas legacy empiezan a delegar (no contienen lógica).
-   - No hay "import django" dentro de domain/.
-
-**Ruta exacta de este documento:**
-`C:\Users\Devbadolgm\WorkSpace\ProjectsAndDatasets\Clon-sigcTiArural\sigcTiArural\docs\ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`
+6. **Señales de que el trabajo va por buen camino:**
+   - Las pruebas de dominio siguen creciendo.
+   - El script de verificación muestra más resultados correctos y menos advertencias.
+   - Las vistas heredadas comienzan a delegar en la capa de aplicación (dejan de contener lógica propia).
+   - No existe ningún `import django` dentro de `domain/`.
 
 ---
 
-## 9. REFERENCIAS Y ANEXOS
+## 10. GLOSARIO TÉCNICO
 
-- Plan principal: `docs/HEXAGONAL_REFACTOR_PLAN.md`
-- Bitácora histórica: `docs/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
-- Arquitectura visual: `docs/diagrams/`, `docs/uml/`, `docs/architecture/`
-- MASTERDOC y PLAN_MAESTRO (visión general y roadmap).
-- Código clave actual:
-  - Dominio: `src/backend/api/logic/domain/`
-  - Tests: `src/backend/tests/domain/`
-  - Verify: `scripts/verify_refactor.ps1`
-  - AI fixed: `src/ai_models/fastapi_app.py`
-- Diagramas C4 existentes muestran la visión "ideal" vs actual.
+- **Bounded Context (Contexto Delimitado):** frontera lógica dentro de la cual un modelo de dominio es válido y coherente.
+- **Strangler Fig Pattern:** estrategia de migración que consiste en rodear el sistema heredado con nuevas funcionalidades hasta que el sistema antiguo pueda ser retirado por completo.
+- **Composition Root:** punto único de la aplicación donde se inyectan las dependencias (equivalente al "cerebro" del hexágono).
+- **Hexagon/Core (Núcleo Hexagonal):** el núcleo de la aplicación, agnóstico respecto a cualquier framework, base de datos o interfaz externa.
+- **Characterization Tests (Pruebas de Caracterización):** pruebas que documentan el comportamiento actual del código heredado, aunque no sea el ideal, con el fin de garantizar que no se introduzcan regresiones durante la refactorización.
+
+---
+
+## 11. REFERENCIAS Y ANEXOS
+
+- Plan principal: `docs/HEXAGONAL_REFACTOR_PLAN.md`.
+- Bitácora histórica (secundaria a `docs/MASTERDOC.md` §5 — ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9): `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`.
+- Arquitectura visual: `docs/diagrams/`, `docs/uml/`, `docs/architecture/`.
+- Documento maestro y plan maestro (visión general y hoja de ruta).
+- Código clave:
+  - Dominio: `src/backend/api/logic/domain/` (en migración hacia `contexts/labs/domain/`).
+  - Pruebas: `src/backend/tests/domain/`.
+  - Script de verificación: `scripts/verify_refactor.ps1`.
+  - Servicio de IA corregido: `src/ai_models/fastapi_app.py`.
+- Los diagramas C4 existentes muestran la visión "ideal" frente al estado actual del proyecto.
 
 **Notas finales para ADSO:**
-Este proyecto es un excelente caso de estudio real de:
-- Deuda técnica vs refactor incremental.
-- Aplicación de patrones de arquitectura en un stack mixto (Django + React + microservicio AI).
-- Importancia de characterization tests antes de refactor grande.
-- Strangler Fig en práctica.
-- Diferencia entre "funciona para demo" y "listo para producción".
 
-Mantén este documento vivo. Cuando retomes, actualiza la sección de estado y agrega tu nombre/fecha en "Progreso".
+Este proyecto constituye un caso de estudio real de:
+- Deuda técnica frente a refactorización incremental.
+- Aplicación de patrones de arquitectura en un stack mixto (Django + React + microservicio de IA).
+- Importancia de las pruebas de caracterización antes de emprender una refactorización de gran escala.
+- El patrón Strangler Fig llevado a la práctica.
+- La diferencia entre un sistema que "funciona para una demostración" y uno "listo para producción".
 
-**Fin del documento.**
-
-*Documento generado como guía técnica exhaustiva para ADSO. Actualizar en cada fase de refactorización.*## 10. PROGRESO AUTÓNOMO - 02 de Junio 2026
-
-**Fecha/hora de la sesión:** 02 de Junio 2026 (durante la interacción actual como Arquitecto Autónomo)
-**Rama de trabajo:** eature/hex-refactor/phase-00-prep-baseline
-**Enfoque:** Tareas de bajo riesgo únicamente (documentación, testing characterization, pulido de scripts, mejoras de calidad sin impacto en lógica de negocio). Metodología conservadora con validaciones frecuentes vía git status, git diff y erify_refactor.ps1.
-
-### Tareas seguras identificadas y ejecutadas (basado en análisis de Sección 7)
-
-De **7.8 Testing y Calidad** (prioridad alta para esta sesión):
-- Agregar más characterization tests de dominio (para todas las estrategias y edge cases de procesar).
-- Agregar soporte de cobertura (pytest-cov) de forma segura (solo en requirements e ini, sin forzar en todos los runs).
-
-De **7.10 Documentación y Continuidad**:
-- Mantener vivo "este documento" agregando esta sección 10 (sin modificar contenido previo, solo append al final).
-
-De pulido general (bajo riesgo):
-- Mejorar el script scripts/verify_refactor.ps1 específicamente en la sección de contenedores para ignorar mejor los warnings de "version: obsolete" de docker-compose (filtro más robusto en la tubería).
-
-**NO se ejecutaron** (por riesgo):
-- Cualquier tarea de 7.1, 7.2, 7.3, 7.5, 7.6, 7.7, 7.9 (mover carpetas, entities, mappers, cambios en legacy views, dockerfiles, settings prod, edge impl, etc.).
-- Modificaciones a lógica de negocio, vistas, models o adapters existentes.
-
-### Comandos y acciones ejecutadas (en orden, con resultados)
-
-1. **Confirmación inicial de estado (baseline):**
-   `powershell
-   cd "C:\Users\Devbadolgm\WorkSpace\ProjectsAndDatasets\Clon-sigcTiArural\sigcTiArural"
-   git branch --show-current
-   git status --short
-   `
-   Resultado: En rama correcta. Cambios previos staged/untracked de Fase 0 (tests, script, requirements, etc.). Ningún cambio en lógica de negocio.
-
-   `powershell
-   .\scripts\verify_refactor.ps1
-   `
-   Resultado (resumido):
-   - [2] ERROR en contenedores (esperado, Docker no tenía servicios relevantes corriendo en este entorno; mostró warning de version pero se manejó en catch).
-   - [3] AI: 2 OKs (health e infer con test image) ->  incrementado.
-   - [4] Backend: 2 ERRORs (contenedores no up) -> .
-   - [5] pytest: corrió 10 tests (en ese momento) + output.
-   - Resumen: 3 passed, 0 warnings, 3 failed (luego actualizado).
-
-2. **Mejora de testing - agregar pytest-cov (seguro, solo dep dev):**
-   `powershell
-   # Edit via tool (search_replace for precision)
-   `
-   Actualizado src/backend/requirements.txt agregando:
-   `
-   pytest-cov>=4.0
-   `
-   (Bajo la sección de Testing).
-
-3. **Actualizar pytest.ini para cobertura y mejores opciones:**
-   `powershell
-   # Edit via search_replace
-   `
-   Cambios:
-   - addopts incluye --cov=api --cov-report=term-missing --cov-report=html
-   - Agregados comentarios explicando uso futuro y nota sobre correr desde src/backend.
-   - Cambiado cov de "src/backend" a "api" para que funcione correctamente cuando se ejecuta pytest desde el directorio backend/ (los tests importan como "api.*").
-
-4. **Ejecutar tests para validar (frecuente):**
-   `powershell
-   cd "C:\Users\Devbadolgm\WorkSpace\ProjectsAndDatasets\Clon-sigcTiArural\sigcTiArural\src\backend"
-   python -m pytest tests/domain/ -q --tb=no -o "addopts=-q --tb=no"
-   `
-   Resultado: 19 passed in 0.08s (antes eran ~10; se agregaron nuevos sin romper nada).
-
-   Con cov (después de pip install temporal):
-   `powershell
-   python -m pip install -q pytest-cov
-   python -m pytest ... --cov=api ...
-   `
-   Resultado: 19 passed. (Nota: warning de coverage porque el módulo "api" se importa desde los tests; en uso real con PYTHONPATH correcto funciona. No se rompió la suite.)
-
-5. **Agregar más characterization tests (seguro, solo tests):**
-   - Edit de src/backend/tests/domain/test_factories.py (append al final):
-     Agregados 5 tests nuevos:
-     - test_obtener_estrategia_agricultura
-     - test_obtener_estrategia_electronica
-     - test_obtener_estrategia_telecomunicaciones_full
-     - test_todos_los_tipos_son_subclases_de_strategy
-   - Edit de src/backend/tests/domain/test_services.py (append):
-     Agregados 5 tests nuevos para procesar de las estrategias (casos determinísticos de estres, estabilidad, estructura) + smoke test para los 4 tipos:
-     - test_agricultura_procesar_estres_critico
-     - test_agricultura_procesar_estres_moderado
-     - test_electronica_procesar_estabilidad
-     - test_telecom_procesar_estructura
-     - test_todos_los_servicios_retornan_dict_con_estado
-   Total ahora: **19 tests de dominio** (caracterización del comportamiento actual de factories y services/estrategias, incluyendo random pero verificando keys/estructura/rangos donde aplica).
-
-6. **Pulido del script verify_refactor.ps1 (bajo riesgo, solo mejora de robustez y comentarios):**
-   - Edit via search_replace en la sección [2] Check container status:
-     - Agregado comentario explícito sobre el warning "version: obsolete".
-     - Mejorado el pipeline de  para filtrar explícitamente líneas con 'WARNING|obsolete|level=warning' (además del 2>).
-     - Esto hace la detección más robusta incluso cuando docker-compose emite warnings a stderr/stdout.
-   - No se tocaron otras secciones críticas (curl.exe ya estaba, contadores, etc.).
-   - Validación post-edit:
-     `powershell
-     git diff scripts/verify_refactor.ps1
-     .\scripts\verify_refactor.ps1   # (se ejecutó para chequear que no se rompió la salida)
-     `
-
-7. **Validaciones frecuentes de no-breakage (metodología):**
-   - Múltiples git status --short
-   - git diff --no-color --shortstat
-   - .\scripts\verify_refactor.ps1 (varias veces)
-   - python -m pytest tests/domain/ ... (con override de addopts para no depender de cov en el shell actual)
-   - Ningún cambio afectó lógica de negocio, vistas, AI core (más allá de lo ya arreglado), o estructura de carpetas.
-
-**Resultados de validación:**
-- Todos los 19 tests de dominio pasan consistentemente.
-- El script de verificación se ejecuta sin errores de sintaxis y produce el resumen final (aunque con errores esperados por falta de contenedores Docker en el entorno de esta sesión).
-- No se introdujeron breaking changes (git diff muestra solo adiciones en tests/ini/requirements y pulido en script).
-- Cobertura: Los nuevos tests cubren más paths de procesar en agricultura, electronica y telecom (además de los existentes para robotica y factories).
-
-### Resumen de lo avanzado en esta sesión autónoma
-- **Testing:** +9 characterization tests (ahora cubren los 4 laboratorios de forma más completa). Soporte de pytest-cov añadido de forma no intrusiva.
-- **Script:** 1 mejora significativa de robustez en detección de contenedores (mejor filtrado de warnings de docker-compose).
-- **Documentación:** Esta sección 10 agregada (siguiendo la regla de solo append al final del documento).
-- **Total de "pruebas/checks" impactados positivamente:** Mayor cobertura de dominio + script más confiable contra warnings comunes.
-- **Riesgo:** Cero para funcionalidades existentes (solo tests, config de test, pulido de script de verificación, y append a docs).
-
-### Pendiente / No tocado (por reglas)
-- Todo lo listado en 7.1-7.7, 7.9 (alto riesgo estructural o de prod).
-- Actualizaciones a otros documentos (MASTERDOC, INFORME, README) — se documenta aquí pero no se ejecutó para mantener foco en "este documento".
-- Cualquier cambio que requiera aprobación explícita del usuario.
-
-### Próximos pasos recomendados (basado en Sección 8 del documento)
-1. Instalar deps actualizadas: cd src\backend && pip install -r requirements.txt
-2. cd src\backend && python -m pytest tests/domain/ -q --cov=api --cov-report=term-missing (ahora con cov).
-3. Ejecutar .\scripts\verify_refactor.ps1 -StartServices cuando los contenedores estén disponibles.
-4. Proceder a Fase 1 (consolidar núcleo hexagonal) solo después de revisión y aprobación.
-5. Actualizar esta sección 10 con nuevo progreso cuando se retome.
-
-**Fin de la sección 10 (agregada el 02 de Junio 2026 siguiendo instrucciones estrictas).**
-
-*Todo el trabajo se realizó con git status/diff/verify frecuentes. Ninguna funcionalidad de negocio o endpoint legacy fue modificada.*
-
-### Progreso adicional en esta sesión (bajo riesgo, continuando la sesión anterior)
-
-**Tareas ejecutadas (conservadoras, Sección 7.8 y pulido de script):**
-
-1. **Mejora de tests de dominio (agregados 5 nuevos tests enfocados en edge cases de procesar):**
-   - Edit via search_replace en src/backend/tests/domain/test_services.py (append al final del archivo).
-   - Nuevos tests:
-     - test_agricultura_procesar_con_imagen_analizada (verifica que enfermedad está en la lista actual cuando imagen_analizada=True)
-     - test_agricultura_procesar_boundary_estres (characterization exacta de los thresholds >35/<30 Crítico, >30/<45 Moderado, resto Bajo)
-     - test_agricultura_sugerencia_riego_boundary (hum < 50 actual behavior, incluyendo ==50)
-     - test_electronica_procesar_nodos_boundary_estabilidad (nodos <10 Alta, >=10 Compleja)
-     - test_electronica_procesar_empty_componentes (comportamiento actual con lista vacía, sin división por cero)
-   - Total tests de dominio ahora: **24** (19 previos +5).
-   - Enfoque: characterization (verificar comportamiento actual del código, no lo "ideal").
-
-2. **Fix de test existente:**
-   - Ajustado test_agricultura_procesar_boundary_estres para reflejar fielmente la lógica actual del if/elif (evitando expectativas incorrectas que fallaban).
-
-3. **Pulido de scripts/verify_refactor.ps1:**
-   - Mejoras en sección [4] Backend: mensajes de ERROR ahora incluyen comando accionable explícito (docker-compose up -d backend or use -StartServices flag).
-   - Mejoras en sección [2] contenedores: mensajes de WARNING ahora accionables (start with: docker-compose up -d  or rerun script with -StartServices).
-   - Mejora grande en "Resumen final":
-     - Agregado encabezado "Checks ejecutados en esta verificación:" para claridad.
-     - Agregada "Nota:" explicando qué secciones contribuyen a los conteos (2,3,4) y que pytest (5) es separado.
-     - En el bloque de "Hay errores graves": ahora incluye "Acción recomendada: ..." con comando concreto.
-     - Similar para warnings.
-     - Agregados comentarios en el código para los cambios.
-   - Validación: el script ahora produce output más útil y amigable cuando servicios no corren.
-
-**Comandos y validaciones ejecutadas frecuentemente:**
-`powershell
-cd "C:\Users\Devbadolgm\WorkSpace\ProjectsAndDatasets\Clon-sigcTiArural\sigcTiArural"
-git branch --show-current
-git status --short
-git diff --no-color --shortstat
-git diff --no-color -U0 src/backend/tests/domain/test_services.py scripts/verify_refactor.ps1
-cd src\backend
-python -m pytest tests/domain/ -q --tb=no -o "addopts=-q --tb=no"
-cd ..
-.\scripts\verify_refactor.ps1
-`
-- Resultados: siempre 24 tests passing (........................ [100%]).
-- Verify script muestra los nuevos mensajes accionables y resumen mejorado.
-- git diff muestra solo adiciones en el test file y cambios en el script (sin tocar lógica de negocio).
-
-**Resultados de validación:**
-- Todos los nuevos tests son characterization puros y pasan.
-- El script es más útil para el usuario cuando los contenedores no están levantados (mensajes guían la acción).
-- Resumen final ahora explica mejor los números y da consejos accionables.
-- 0 riesgo: solo tests y pulido de mensajes en script de verificación.
-
-**Pendiente esta sesión:** Nada más (se respetó el límite de 4-6 tests nuevos; se enfocó en agricultura/electronica edges).
-
-**Próximo:** Actualizar Sección 10 del documento con este log (append only).
-
-**Fin del log de esta sesión adicional.**
-
-### Progreso en esta sesión final segura (bajo riesgo)
-
-**Opción elegida:** Combinación de A (tests), B (script), C (config testing).
-
-**Tareas ejecutadas:**
-
-1. **Opción A - Tests de dominio (agregados 4 nuevos tests de characterization):**
-   - Edit via search_replace en src/backend/tests/domain/test_services.py (append al final).
-   - Nuevos tests enfocados en edges débiles de procesar():
-     - 	est_agricultura_procesar_bajo_estres (caso bajo estrés: temp bajo, hum alto -> Bajo, no riego)
-     - 	est_agricultura_procesar_critico_con_imagen (combinación estrés crítico + imagen_analizada=True, verifica lista de enfermedades)
-     - 	est_electronica_procesar_nodos_zero (nodos=0 edge, estabilidad y cálculo)
-     - 	est_electronica_procesar_multi_component_sum (cálculo de corriente con múltiples componentes: suma v / nodos)
-   - Total tests de dominio ahora: **28** (antes 24 en la sesión previa).
-   - Validación: python -m pytest tests/domain/ -q --tb=no -o "addopts=-q --tb=no" → 28 passed.
-
-2. **Opción B - Pulido del script scripts/verify_refactor.ps1:**
-   - Mejora en la sección de resumen final:
-     - Agregado al inicio: Estado general:  OK /  Warnings /  Errores (más visual y claro de un vistazo).
-     - Mejorada la estructura del resumen con explicaciones adicionales.
-     - Los mensajes de acción recomendada ya estaban mejorados de sesión previa; se mantuvo y se alineó con el nuevo "Estado general".
-   - Validación: ejecutado el script, se ve "Estado general: ..." en la salida.
-   - Agregados comentarios en el código para los cambios de esta sesión.
-
-3. **Opción C - Config de Testing:**
-   - Creado nuevo archivo src/backend/.coveragerc (simple y limpio) con:
-     - source = api
-     - omit para tests, migrations, pycache
-     - exclude_lines para pragma, main, etc.
-     - precision y show_missing.
-   - Esto complementa el pytest-cov y el ini actualizado de sesiones previas.
-   - No se modificó pytest.ini en esta sesión (ya estaba bien de antes).
-
-**Validaciones frecuentes realizadas:**
-- git status --short
-- git diff --no-color --shortstat
-- git diff --no-color -U0 src/backend/tests/domain/test_services.py scripts/verify_refactor.ps1
-- cd src\backend; python -m pytest tests/domain/ -q --tb=no -o "addopts=-q --tb=no" (28 passed)
-- cd ..; .\scripts\verify_refactor.ps1 (para ver el "Estado general:" en acción)
-
-**Resultados:**
-- 28 tests de dominio pasando consistentemente.
-- Script de verificación ahora tiene "Estado general" más visible al inicio del resumen.
-- .coveragerc creado para mejorar reportes de cobertura en el futuro.
-- 0 riesgo: solo adiciones de tests, un archivo de config nuevo, y pulido de mensajes en script de verificación (sin tocar lógica de negocio ni producción).
-- git diff muestra cambios solo en los archivos de tests, script y el nuevo .coveragerc.
-
-**Próximos pasos (cuando se retome, bajo aprobación para fases siguientes):**
-- Instalar deps: pip install -r src/backend/requirements.txt (incluye pytest-cov)
-- Usar: pytest --cov=api --cov-report=term-missing (usará .coveragerc)
-- Ejecutar verify con -StartServices cuando Docker esté disponible.
-- Documentar esta sesión en la Sección 10 (append only, hecho a continuación).
-
-**Fin del log de esta sesión final segura.**
+Se recomienda mantener este documento vivo: al retomar el proyecto, actualizar la Sección 8 con la fecha y el resumen del progreso correspondiente.
 
 ---
 
-### Refuerzo de la última sesión segura (Opción A + C) — una ronda más de bajo riesgo
+## 12. DECLARACIÓN DE CIERRE — FASE 0
 
-**Contexto:** Se continúa directamente desde la entrada anterior (que reportaba 28 tests de dominio + .coveragerc inicial + pulido de Estado general en script). Se ejecuta **solo una ronda más** como se instruyó, eligiendo la combinación más valiosa: A (tests, recomendada) + C (config), manteniendo B ya cubierto.
+El proyecto ha sido instrumentado. La línea base es segura, las pruebas están configuradas y el plan de migración se encuentra documentado. El sistema cuenta con seguimiento técnico continuo mediante pruebas de caracterización y scripts de verificación.
 
-**Reglas seguidas estrictamente:**
-- Solo bajo riesgo: adiciones de tests characterization + mejora menor de config de testing.
-- Cero cambios a lógica de producción, cero movimiento de archivos, cero toques a ai_models/fastapi_app.py, views, adapters, etc.
-- Validación frecuente con `git diff`, `pytest` y `scripts/verify_refactor.ps1`.
-- Al final: solo append (esta entrada).
+**Fin del documento técnico.**
+**Generado bajo los estándares ADSO-SENA 2026.**
 
-**Opción A — Tests de characterization (agregados 3 nuevos, enfocados en casos débiles):**
-- Edit: append puro al final de `src/backend/tests/domain/test_services.py` (anchor = último test previo + search_replace).
-- Los 3 tests nuevos (cumplen "entre 3 y 5", "prioriza casos que aún estén débiles", "más casos de `procesar()` en agricultura y electrónica, o smoke tests de integración entre factory + service"):
-  1. `test_agricultura_procesar_default_inputs_critico` — inputs vacíos `{}` (defaults temp=0/hum=0/imagen=False). Caracteriza exactamente: hum<30 dispara `if` → "Crítico", `sugerencia_riego=True`, `enfermedad=None`. Cubre el borde de defaults del `procesar` de agricultura que no estaba explícitamente testeado.
-  2. `test_robotica_procesar_echoes_input_exactly` — robotica (el default y más simple) hace echo literal del payload recibido en `"resultado"`, con estado/tipo fijos. Caracteriza el comportamiento actual de `robotica.py:13-17` (sin transformación).
-  3. `test_factory_and_service_integration_smoke` — smoke explícito de integración factory + service. Para los 4 tipos de laboratorio:
-     - Obtiene estrategia vía `LaboratorioStrategyFactory.obtener_estrategia(tipo)` y llama `.procesar(...)` directamente.
-     - Crea `LaboratorioService(tipo)` (que internamente usa la factory) y llama `.ejecutar_analisis(...)`.
-     - Verifica que ambos caminos producen el mismo `"tipo"` esperado por cada estrategia (y que son dicts).
-     - Esto lockea el wiring actual (factory → concrete strategy → service delegation) antes de cualquier refactor de puertos/adapters en fases posteriores.
-- Total tests de dominio ahora: **31** (28 previos en la sesión + 3 de este refuerzo).
-- Estilo 100% characterization: asserts replican comportamiento observado (incluyendo random membership donde aplica, thresholds exactos del if/elif, etc.). No se "mejora" nada.
-
-**Opción C — Config de Testing:**
-- `.coveragerc` ya existía (creado limpio en trabajo previo de la sesión, ?? en git).
-- Se mejoró ligeramente (bajo riesgo, solo config de test):
-  - Agregado `branch = True` bajo `[run]` → ahora los reportes muestran columna "Branch" y BrPart (útil para ver cobertura de los if/elif de `procesar`).
-  - Agregada sección `[html]\ndirectory = htmlcov`.
-  - Comentarios explícitos "Fase 0: simple coverage config for characterization tests of domain strategies."
-- Complementa perfectamente el `addopts` con `--cov` de `src/backend/pytest.ini` y el `pytest-cov` en requirements.
-- Resultado visible: en corridas posteriores de pytest/verify se ve "Branch" y Cover ligeramente más alto.
-
-**Validaciones frecuentes realizadas (después de .coveragerc, después de cada test nuevo, y al final):**
-```powershell
-# Estado inicial de la ronda
-git status --short
-git branch --show-current
-cd src\backend
-python -m pytest tests/domain/test_services.py tests/domain/test_factories.py -q --tb=no
-cd ..
-git diff --no-color --shortstat -- src/backend/tests/domain/test_services.py src/backend/.coveragerc
-
-# Después de edits
-git diff --no-color -U0 -- src/backend/tests/domain/test_services.py | Select-String '^\+def test_'
-python -m pytest ... (ver 31 dots)
-.\scripts\verify_refactor.ps1   # (captura Estado general + los 31 tests ejecutados internamente en secc.5 + coverage branch)
-```
-
-**Resultados de las validaciones:**
-- pytest (directo): `............................... [100%]` → **31 tests** pasando. Cobertura con branch activado (agricultura 66.67%, services 87.50%, factories 100%, robotica/electronica 100%).
-- `.\scripts\verify_refactor.ps1`: 
-  - "Estado general: 3 OK / 0 Warnings / 3 Errores" (secc 2/4 fallan por contenedores off, como se espera; mensajes accionables presentes).
-  - Secc.3 AI: /health y /infer OK (diagnosis Tomato_Early_blight).
-  - Secc.5: ejecuta pytest internamente y muestra los 31 tests + coverage actualizado con branch.
-- git: solo inserciones (test_services +~ nuevas líneas de tests + .coveragerc nuevo/enhanced). Cero deletions en código fuente. (LF/CRLF warnings normales en Windows, sin impacto).
-- 0 breakage: el endpoint /infer sigue estable (verificado por el script), tests de factories/services intactos.
-
-**Valor de esta ronda (última segura):**
-- Aumenta la malla de seguridad characterization específicamente donde se recomendó (procesar edges + smoke factory+service).
-- Mejora la visibilidad de cobertura para cuando se empiece a mover código a carpetas core/ports en Fase 1+.
-- Mantiene el repo en estado "Fase 0 lista para commit" con tests subiendo consistentemente (19→24→28→31 en el arco de sesiones autónomas seguras).
-- Todo documentado, reproducible, append-only.
-
-**Fin del refuerzo / última sesión segura.**
-
-**Instrucciones de resume (actualizado para quien continúe):**
-- Rama actual: `feature/hex-refactor/phase-00-prep-baseline`
-- Estado: tests de dominio = 31, .coveragerc + pytest.ini listos, verify script maduro con Estado general, /infer estable, doc ADSO con histórico completo en Secc 10.
-- Para continuar: `git status`, correr `pytest` y `./scripts/verify_refactor.ps1`, revisar Secc 7 del doc para backlog de alto valor (priorizar siempre tests nuevos primero), crear rama `feature/hex-refactor/phase-01-...` solo después de commit limpio de Fase 0 si se aprueba.
-- Nunca borrar contenido previo de Secc 10; siempre append.
+**Bernardo Adolfo Gómez Montoya**
 
 ---
-
-## 10.x PROGRESO FASE 1 - Sesión inicial en rama phase-01-consolidate-domain (bajo riesgo, autónoma)
-
-**Fecha / contexto:** Inmediatamente después de completar y commitear Fase 0 (commit `da759a0 chore(hex): complete Fase 0 baseline`). Nueva rama `feature/hex-refactor/phase-01-consolidate-domain` creada desde phase-00. Primera sesión de consolidación del núcleo hexagonal existente.
-
-**Análisis previo (Sección 7 - TODO ABSOLUTO):**
-- Se leyó completa la Secc 7 (líneas ~378-500).
-- Se identificaron **solo** ítems de bajo riesgo alineados con "Fase 1: Consolidar y Mejorar el Núcleo Hexagonal Existente":
-  - 7.8 Testing y Calidad (principal): "Aumentar tests de dominio (agregar para todas las estrategias, edge cases de simulaciones)", "Cobertura report (pytest-cov)".
-  - 7.10 Documentación: mantener el doc vivo, guía de contribución (tests, verify, cómo agregar lab).
-  - Pulido de script de verificación y configs de testing (mensajes, Fase awareness, visibilidad de tests de dominio).
-- **Excluidos explícitamente** (alto riesgo, prohibidos en esta sesión):
-  - 7.1 Arquitectura (mover api/logic/ → core/, entities ricas, composition root, mover lógica de views).
-  - 7.2 Migración legacy, vertical slices, use cases, vistas thin.
-  - 7.3+ Extract adapters, cambios en docker-compose, prod hardening, auth, frontend masivo, etc.
-- Criterio: cambios solo en tests/, scripts/verify, pytest.ini/.coveragerc, y append en Sec 10. Validación obligatoria tras cada paso.
-
-**Tareas ejecutadas (ordenadas, conservadoras, 4 ítems principales):**
-
-1. **Aumentar tests de dominio characterization (6 nuevos tests, + de 31 a 37)**:
-   - Archivo: `src/backend/tests/domain/test_services.py` (append al final).
-   - Nuevos tests (todos characterization puros):
-     - `test_todos_labs_historico_genera_exactly_24_registros` (loop 4 labs, len==24).
-     - `test_agricultura_historico_estructura_y_sensor`, `test_robotica_...`, `test_electronica_...`, `test_telecom_...` (estructura de keys + sensor tag específico de cada generar_historico_simulado).
-     - `test_cambiar_laboratorio_multiple_switches_affect_procesar_and_historico` (switch repetido, verifica que procesar["tipo"] y historico["sensor"] cambian consistentemente).
-   - Valor: cubre paths que estaban en missing (agricultura/telecom generar loops ahora ~100% en domain), lockea comportamiento de service como holder de estrategia, contribuye directamente a Sec 7.8.
-   - Estilo mantenido: observar primero (python -c), asertar lo actual (no ideal).
-
-2. **Pulir scripts/verify_refactor.ps1 (Fase 1 awareness + mensajes)**:
-   - Actualizado header y comentarios top para "Fase 1: Consolidate Domain Core".
-   - Título de ejecución: "=== Hex Refactor Verification (Fase 1: Consolidate Domain) ===" + línea de foco + referencia a Sec 7.8.
-   - [5] pytest: agregado note "Domain tests output + coverage above. Growing safety net...".
-   - Resumen final: todos los bloques renombrados a "=== Resumen Verificación (Fase 1: Consolidate Domain Core) ===" (error/warn/success).
-   - Success message actualizado: "Domain core + services checks passed. Fase 1 progress on characterization tests (see Sec 7.8)".
-   - Nota explícita sobre el warning 'version: obsolete' de docker-compose (pre-existente, filtrado, no tocar compose por reglas de riesgo).
-   - Cambios: ~25 ins / 12 del (mensajes y docs, cero lógica de chequeos rota).
-
-3. **Mejorar configs de testing (pytest.ini + .coveragerc)**:
-   - `src/backend/pytest.ini`: comentarios actualizados a "Fase 1: Consolidate Domain Core", referencia a Sec 7.8, explicación del rol de characterization tests para el núcleo.
-   - `src/backend/.coveragerc`: comentarios expandidos explicando que los nuevos tests llevaron domain strategies a 100% coverage, cómo usar con verify [5], "Low-risk only".
-   - Sin cambios funcionales que afecten corridas.
-
-4. **Mejorar documentación interna (guía de contribución incipiente + fase)**:
-   - `src/backend/tests/domain/test_services.py`: docstring de módulo expandido con:
-     - Fase 1 focus items (Sec 7.8).
-     - "How to add a test for a new lab (future)" paso a paso (observar, asertar current, run pytest+verify, nunca mejorar comportamiento).
-     - Nota de que estos tests son la safety net para extracciones futuras.
-   - `src/backend/tests/domain/test_factories.py`: docstring actualizado + referencia al header de services para cómo agregar.
-   - Esto avanza el ítem 7.10 "Guía de contribución (cómo correr tests, verify script, cómo agregar nuevo lab)" de forma segura (dentro del código de tests, sin nuevo archivo grande).
-
-**Archivos modificados (solo estos):**
-- src/backend/tests/domain/test_services.py (principal: +6 tests + docs)
-- scripts/verify_refactor.ps1 (mensajes + fase)
-- src/backend/pytest.ini
-- src/backend/.coveragerc
-- src/backend/tests/domain/test_factories.py (docs)
-
-**Validaciones frecuentes realizadas (tras cada edit significativo + final):**
-```powershell
-git branch --show-current          # feature/hex-refactor/phase-01-consolidate-domain
-git status --short
-git diff --no-color --shortstat -- <archivo(s) tocado(s)>
-cd src\backend
-python -m pytest tests/domain/ -q --tb=no
-( python -m pytest ... --collect-only ... | count ::test_ )   # 37
-cd ..
-.\scripts\verify_refactor.ps1     # captura headers Fase 1, notes Sec 7.8, 37 dots en output interno, coverage domain mejorado
-```
-- Después de tests: collected 37, dots 37, domain strategies ahora 100% (agri/telecom/robotica/electronica/factories), total cov ~33.76% (mejora visible).
-- Después de script/configs: verify muestra "Hex Refactor Verification (Fase 1...)", "Resumen Verificación (Fase 1...)", notes de Sec 7.8 y domain core.
-- git diff siempre mostró solo inserciones en archivos de tests/script/configs (nada de api/logic/*.py, views, compose, etc.).
-- AI /infer y otros checks del verify siguen OK (sin tocarlos).
-- 0 errores, 0 breakage.
-
-**Resultados cuantitativos:**
-- Tests de dominio: **37** (crecimiento sostenido, safety net más gruesa para el núcleo existente).
-- Cobertura de los 4 strategies + factory: **100%** (gracias a tests de historico + switches).
-- Script y configs ahora "hablan" de Fase 1 y guían hacia los TODOs de Sec 7.
-- Rama limpia para continuar (o commit intermedio).
-
-**Qué quedó pendiente (para próximas sesiones autónomas o con aprobación):**
-- Más tests de dominio si se quiere (e.g. más edges de procesar, tests directos de strategies si se exponen, tests de adapters con mocks - pero adapters pueden considerarse infra).
-- Pulido adicional del verify (parsear el número exacto de tests del output de pytest y reportarlo en el estado general; soportar mejor cuando se corre con -StartServices).
-- Crear archivo docs separado tipo `TESTING_GUIDE.md` o `CONTRIBUTING.md` (bajo riesgo, pero se priorizó actualizar in-place + append en Sec 10).
-- Cuando se apruebe: empezar ítems de 7.8 más avanzados o primeros pasos muy controlados de 7.1/7.3 (siempre con tests primero, en slices pequeños).
-- Actualizar el "resume instructions" del final de Sec 10 (lo haremos en esta append o siguiente; rama ahora es phase-01).
-- Commit limpio de esta sesión cuando se decida (mensaje tipo "test+script: Fase 1 consolidate - 37 domain tests, verify Fase 1 polish, config/docs updates").
-
-**Próximos (sujeto a decisión del usuario / fin de sesión):**
-- Revisar git diff completo.
-- Posible `git add -A ; git commit -m "test,script,config: Fase 1 session 1 - strengthen domain characterization (31→37), Fase1 polish in verify + docs (Sec 7.8)"`
-- Luego decidir si más trabajo autónomo en phase-01 o avanzar a items de mayor valor con revisión.
-
-Todo cumplió reglas estrictas: bajo riesgo, nada que rompa, validaciones constantes, solo append al final de Sec 10.
-
-**Fin de la entrada de sesión Fase 1 inicial.**
-
----
-
-## 10.y PROGRESO FASE 1 - Segunda sesión autónoma intensa (testing agresivo + calidad + docs/script polish)
-
-**Contexto y rama:** Continuación directa en `feature/hex-refactor/phase-01-consolidate-domain` después de la primera sesión Fase 1 (que llevó tests de 31→37 + configs + script inicial Fase1 + docs internas). Esta sesión se enfocó en "trabajar con intensidad" en tareas de bajo riesgo de 7.8 y 7.10 hasta máximo avance seguro posible sin detenerse pronto.
-
-**Análisis de Sección 7 (recordatorio de foco):**
-- **7.8 Testing y Calidad** (principal, citado textualmente): 
-  - "Aumentar tests de dominio (agregar para todas las estrategias, edge cases de simulaciones)."
-  - Casos de error y validaciones.
-  - Cobertura report (pytest-cov) + meta >60% domain (logramos 100% en el núcleo de strategies + services).
-- **7.10 Documentación y Continuidad**:
-  - "Este documento (mantenerlo vivo)" → solo append a Sec 10.
-  - "Guía de contribución (cómo correr tests, verify script, cómo agregar nuevo lab)" → avanzado vía docstrings detalladas + ejemplos en tests + mejoras en verify.
-- Se excluyeron todos los ítems de alto riesgo (7.1 mover carpetas/core, 7.2 slices/legacy, docker/prod, auth, frontend, etc.) per reglas estrictas.
-
-**Tareas ejecutadas (intensas, iterativas, validadas tras cada batch):**
-
-1. **Aumentar tests de dominio de forma agresiva pero segura (de 37 → 48 tests, +11 netos gracias a parametrize granular + nuevos)**:
-   - Archivo principal: `src/backend/tests/domain/test_services.py` (append de ~9 nuevos tests + fixes de imports/params).
-   - Enfoque exacto pedido:
-     - **Edge cases de `generar_historico_simulado()` en todas las estrategias**:
-       - `test_estrategias_historico_directo_edges_para_todas_las_labs`: via factory, prueba horas=[0,1,5,24,48] para las 4 labs; verifica len exacto + keys.
-       - `test_estrategias_historico_directo_horas_negativo_o_cero_devuelve_lista_vacia`: caracteriza que range(<=0) → [] en todas (comportamiento actual de los 4 generar).
-     - **Casos de error y validaciones** (lockean la falta actual de defensas en el núcleo):
-       - `test_cambiar_laboratorio_invalido_levanta_valueerror`
-       - `test_ejecutar_analisis_agricultura_datos_no_numericos_levanta_typeerror_actual` (TypeError en '>' de agri.procesar)
-       - `test_ejecutar_analisis_electronica_componentes_invalidos_levanta_attributeerror_actual` (falla en .get cuando componentes no es lista de dicts)
-       - `test_factory_obtener_estrategia_no_tolera_espacios_en_nombre` (whitespace after upper() → ValueError actual)
-     - **Más cobertura de switches y comportamientos de la Factory**:
-       - Reutilizó/expandió switches en historico/procesar.
-       - Factory edges de casing/espacios.
-     - **Guard/branch faltante en service**:
-       - `test_obtener_simulacion_historica_fallback_lista_vacia_si_estrategia_sin_metodo`: hack privado para forzar el path `return []` del hasattr en services.py:21 (ahora services 100%).
-     - Bonus smoke: `test_todos_labs_procesar_con_input_minimo_no_rompe`
-   - Calidad/organización (7.8 + 7.10):
-     - Migración de 1 test antiguo + nuevos a usar fixtures de conftest (DRY).
-     - Parametrize en factories (`test_todos_los_tipos...` ahora 4 items en vez de 1 loop; más granular, mejor reporte).
-     - ~48 tests total (dots confirman).
-   - Resultado cobertura (verificado): **todas las strategies + factories + services 100%** (solo queda la línea abstractmethod pass en interfaces, inevitable sin instanciar ABC).
-
-2. **Mejoras de calidad en tests existentes + organización**:
-   - Actualización de varios headers de comentarios antiguos ("Additional characterization...") con notas de Fase 1, Sec 7.8 y sugerencias de parametrize futuro.
-   - Mejora de docstrings en tests clave (más claros, mencionan "characterization of current...", referencias a código fuente).
-   - `src/backend/tests/conftest.py`: expandido con fixture `make_lab_service` + `lab_service` + docstring detallada para Fase 1 (guía de uso + ref a Sec 7.8). Avanza la "guía de contribución".
-
-3. **7.10 + pulido script de verificación (robusto)**:
-   - `scripts/verify_refactor.ps1`: 
-     - Captura de output de pytest en [5], re-emisión para que usuario vea dots/cov, **parseo robusto del # exacto de tests vía longitud de la línea de dots** (cumple el TODO pendiente de la sesión anterior: "Pulido adicional del verify (parsear el número exacto de tests del output de pytest y reportarlo en el estado general)").
-     - Reporta "Domain tests: 48 passed (see dots/coverage above)" tanto en [5] como en el Resumen Verificación (Fase 1).
-     - Comentarios actualizados con ref a Sec 7.8/7.10, historico edges, error paths, parametrize.
-   - Esto hace el script mucho más útil para visibilidad del safety net de dominio sin depender de docker.
-
-4. **Documentación y continuidad**:
-   - Múltiples actualizaciones de docstrings y comentarios inline en tests, conftest, script y (implícitamente) esta entrada.
-   - Todo mantiene el estilo "characterization primero, observar con python -c, nunca asumir mejor comportamiento".
-   - Avance tangible en "Guía de contribución (cómo correr tests, verify script, cómo agregar nuevo lab)" vía los ejemplos y notas en los archivos de test.
-
-**Archivos modificados esta sesión (solo bajo riesgo):**
-- src/backend/tests/domain/test_services.py (tests nuevos + calidad)
-- src/backend/tests/domain/test_factories.py (parametrize para calidad)
-- src/backend/tests/conftest.py (fixtures + docs)
-- scripts/verify_refactor.ps1 (parseo de conteo + docs Fase1)
-- (doc final append)
-
-**Validaciones frecuentes (después de cada cambio/batch importante):**
-```powershell
-git branch --show-current
-git status --short
-git diff --no-color --shortstat -- <files>
-cd src\backend
-python -m pytest tests/domain/ -q --tb=no
-python -m pytest tests/domain/ --cov=api/logic/domain --cov-report=term-missing -q --tb=no   # chequeo de 100%
-(collect count via Select-String ::test_ | measure)
-cd ..
-.\scripts\verify_refactor.ps1   # chequea que reporte el # actualizado de domain tests + headers Fase 1
-```
-- Ejemplos de resultados intermedios/finales: collected 37→45→48, dots matching, services.py coverage 87.5%→100% (gracias al test del fallback), verify consistentemente "Domain tests: 48 passed...", "Fase 1: Consolidate Domain", AI /infer OK.
-- 0 fallos, 0 cambios a lógica de negocio (solo se observaron comportamientos actuales vía python -c y se lockearon).
-- git diff siempre solo adiciones en tests/conftest/script (nada de api/logic/*.py productivo, nada de views, nada de compose).
-
-**Resultados clave:**
-- Tests de dominio: **48** (crecimiento significativo + cobertura máxima alcanzable en el núcleo existente de forma low-risk).
-- Cobertura domain: **100%** en agricultura/robotica/electronica/telecom/factories/services (solo abstract interface pass queda fuera).
-- Script de verificación ahora reporta dinámicamente el conteo exacto de tests de dominio en el resumen (mejora accionable).
-- Docs internas mucho más ricas (guía de cómo agregar, refs a Sec 7.8, calidad via fixtures/parametrize).
-- Todo 100% characterization, reversible, sin riesgo.
-
-**Qué quedó pendiente (para próximas sesiones low-risk o con aprobación explícita):**
-- Aún más tests si se desea (e.g. más variaciones de datos en historico para caracterizar los cálculos de temp/hum con random/time, o tests de rendimiento triviales, pero ya cubrimos los edges de len/horas/errores principales).
-- Posible creación de docs/ separado (TESTING_GUIDE.md o similar) como se mencionó en sesión previa (bajo riesgo pero se priorizó in-place + append).
-- Actualizar "resume instructions" al final de esta nueva entrada.
-- Commit de los cambios acumulados en la rama (recomendado: "test,script,docs: Fase 1 session 2 - 37→48 domain tests (historico edges 0/1/48/neg + error cases + guard), fixtures + parametrize quality, verify exact count parse + Sec7.8/7.10 docs").
-- Cuando listo: decidir si más autónomo low-risk o pasar a tareas de Sec 7 con revisión (siempre tests primero).
-
-**Próximos (sujeto a user):**
-- Revisar diffs completos.
-- Ejecutar las validaciones finales una vez más.
-- Append de esta entrada (hecho).
-- Posible commit + continuar o branch para siguiente.
-
-Cumplió **todas** las reglas estrictas: solo bajo riesgo (tests + docs + script de verificación), validaciones después de **cada** cambio significativo, nada de mover/tocar prod logic, solo append al final de Sec 10.
-
-**Fin de la segunda sesión autónoma intensa de Fase 1 (testing + docs).**
-
-
-

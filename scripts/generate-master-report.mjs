@@ -2,9 +2,12 @@
 import { execSync } from 'node:child_process';
 import { existsSync, writeFileSync } from 'node:fs';
 
+// FASE 5C (migración V8): 'docs/diagrams/architecture.mmd' fue retirado de este array —
+// no existe en el repositorio (referencia ya rota antes de esta migración, ver FASE 5A).
+// 'class_lab_catalog.mmd' fue redirigido a su equivalente V8. 'sequence_navigation.mmd'
+// permanece sin cambios (Tipo C — sin equivalente V8, pendiente de decisión editorial).
 const diagrams = [
-  { in: 'docs/diagrams/architecture.mmd', out: 'docs/diagrams/architecture.svg' },
-  { in: 'docs/diagrams/class_lab_catalog.mmd', out: 'docs/diagrams/class_lab_catalog.svg' },
+  { in: 'docs/eiarc/03_DIAGRAMS/LABORATORY_ARCHITECTURE_V8.mmd', out: 'docs/eiarc/03_DIAGRAMS/LABORATORY_ARCHITECTURE_V8.svg' },
   { in: 'docs/diagrams/sequence_navigation.mmd', out: 'docs/diagrams/sequence_navigation.svg' },
   { in: 'docs/diagrams/use_cases.mmd', out: 'docs/diagrams/use_cases.svg' },
 ];

@@ -1,0 +1,89 @@
+schema_version: "1.0"
+manifest_type: "curation_manifest"
+
+dataset_id: "agriculture_images_tomato-potato-corn"
+dataset_version: "v1"
+context: "agriculture"
+modality: "computer_vision"
+
+inputs:
+  raw_source_manifest: "raw_source_manifest.agriculture_v2_dataset_v1.yaml"
+
+curation_policy:
+  scope_statement: "Subconjunto V2 inicial: 16 clases, 21.160 imágenes RGB, tomate/papa/maíz, desde PlantVillage raw/color."
+  included_species:
+    - "Tomato"
+    - "Potato"
+    - "Corn_(maize)"
+  excluded_subsets:
+    - "raw/grayscale"
+    - "raw/segmented"
+    - "generated_for_paper"
+  excluded_specific_classes:
+    - "Tomato___Spider_mites Two-spotted_spider_mite"
+
+included_classes:
+  - name: "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot"
+    count: 513
+  - name: "Corn_(maize)___Common_rust_"
+    count: 1192
+  - name: "Corn_(maize)___healthy"
+    count: 1162
+  - name: "Corn_(maize)___Northern_Leaf_Blight"
+    count: 985
+  - name: "Potato___Early_blight"
+    count: 1000
+  - name: "Potato___healthy"
+    count: 152
+  - name: "Potato___Late_blight"
+    count: 1000
+  - name: "Tomato___Bacterial_spot"
+    count: 2127
+  - name: "Tomato___Early_blight"
+    count: 1000
+  - name: "Tomato___healthy"
+    count: 1591
+  - name: "Tomato___Late_blight"
+    count: 1909
+  - name: "Tomato___Leaf_Mold"
+    count: 952
+  - name: "Tomato___Septoria_leaf_spot"
+    count: 443
+  - name: "Tomato___Target_Spot"
+    count: 1404
+  - name: "Tomato___Tomato_mosaic_virus"
+    count: 373
+  - name: "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
+    count: 5357
+
+expected_totals:
+  classes: 16
+  images: 21160
+
+file_quality_rules:
+  allowed_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+  reject_if:
+    - "file_size_bytes == 0"
+    - "decode_failure == true"
+  minimum_resolution:
+    width: 128
+    height: 128
+  recommended_training_resolution:
+    width: 224
+    height: 224
+
+deduplication_rules:
+  exact_duplicates:
+    enabled: true
+    method: "hash"
+  near_duplicates:
+    enabled: true
+    method: "perceptual_hash"
+    note: "La detección de near-duplicates debe ocurrir antes del split para reducir fuga."
+
+known_limitations:
+  - "Dataset de laboratorio, sesgo de fondo limpio."
+  - "Desbalance severo: Potato___healthy (152) vs Tomato___Tomato_Yellow_Leaf_Curl_Virus (5357)."

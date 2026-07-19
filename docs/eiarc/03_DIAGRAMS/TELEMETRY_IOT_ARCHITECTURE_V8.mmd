@@ -1,0 +1,68 @@
+%% TELEMETRY_IOT_ARCHITECTURE_V8
+%% Propósito: responde "¿cómo viajan los datos desde el mundo real?" — el hardware es
+%% infraestructura, no identidad arquitectónica. Cualquier dispositivo se integra vía
+%% un contrato de puerto único (Input Port), independientemente de su origen.
+%% Fuente: FASE 4A §5 + FASE 4B (revisión de 3 niveles) + docs/MASTERDOC.md v8 §3.1
+%% (Input Port, ejemplo ilustrativo LoRaWAN) + docs/database/er_schema_v8.mmd (SensorReading)
+%% + verificación de código: src/embedded/bbb_*/*.py (0 bytes, confirmado vacíos)
+%% Convención de 3 niveles:
+%% 🟢 Implementado · 🔷 Arquitectura Objetivo Oficial · ⚪ Idea Especulativa
+
+flowchart TB
+    NOTE["Hardware = infraestructura, NO identidad (FASE 4A §5)"]
+    NOTE2["🔷 FASE 4C: 'El hardware utilizado por el prototipo<br/>no define la arquitectura.'<br/>Refuerza: hardware agnóstico · sensores agnósticos ·<br/>extensibilidad futura vía Input Port (MASTERDOC v8 §3.1)"]
+    NOTE --> NOTE2
+
+    subgraph PORT["🔷🟢 Input Port — contrato agnóstico de hardware"]
+        IPORT(("Input Port<br/>Principio oficial: MASTERDOC v8 §3.1<br/>Implementación parcial: core/ports/repositories/"))
+    end
+
+    subgraph REFERENCE["🟢 Hardware de referencia — único verificado en código"]
+        BBB["BeagleBone Black<br/>bbb_01/02/03 — archivos .py VACÍOS (0 bytes)"]
+    end
+
+    subgraph MENTIONED["🔷 Mencionado ilustrativamente en fuente autorizada"]
+        LORA["LoRaWAN<br/>MASTERDOC v8 §3.1, ejemplo del principio de agnosticismo"]
+    end
+
+    subgraph FUTURE_HW["⚪ Hardware futuro — SIN respaldo documental"]
+        RPI["Raspberry Pi"]
+        JETSON["Jetson"]
+        ESP["ESP32"]
+        ARD["Arduino"]
+        PLC["PLC"]
+        SCI["Instrumentación científica"]
+        COMM["Equipos comerciales"]
+    end
+
+    REFERENCE --> IPORT
+    MENTIONED --> IPORT
+    FUTURE_HW -.->|"integración futura, sin diseño hoy"| IPORT
+
+    IPORT --> BACKEND["🟢 Backend Django"]
+    BACKEND --> DB["🟢 PostgreSQL 15<br/>SensorReading (er_schema_v8.mmd)"]
+    DB --> DASH["🟢 Dashboard"]
+    DASH --> AI_T["🔷 Telemetry AI Context<br/>bloque de AI_CONTEXT_V2, no construido"]
+    DASH --> LABS_T["🟢 Laboratorios"]
+
+    NOTE_SIM["⚪ Fuente real hoy: generador simulado<br/>scripts/physics_sim.py — NO hardware físico"]
+    NOTE_SIM -.-> BACKEND
+
+    style NOTE fill:#1e3a8a,stroke:#60a5fa
+    style NOTE2 fill:#1e3a8a,stroke:#60a5fa
+    style IPORT fill:#1e3a8a,stroke:#60a5fa
+    style BACKEND fill:#052e16,stroke:#4ade80
+    style DB fill:#052e16,stroke:#4ade80
+    style DASH fill:#052e16,stroke:#4ade80
+    style LABS_T fill:#052e16,stroke:#4ade80
+    style BBB fill:#052e16,stroke:#4ade80
+    style LORA fill:#1e3a8a,stroke:#60a5fa
+    style AI_T fill:#1e3a8a,stroke:#60a5fa
+    style RPI fill:#450a0a,stroke:#f87171
+    style JETSON fill:#450a0a,stroke:#f87171
+    style ESP fill:#450a0a,stroke:#f87171
+    style ARD fill:#450a0a,stroke:#f87171
+    style PLC fill:#450a0a,stroke:#f87171
+    style SCI fill:#450a0a,stroke:#f87171
+    style COMM fill:#450a0a,stroke:#f87171
+    style NOTE_SIM fill:#450a0a,stroke:#f87171

@@ -1,39 +1,18 @@
-"""
-Pytest configuration and shared fixtures for backend tests (Fase 1: Consolidate Domain).
-
-Domain tests are pure Python (no Django needed). These fixtures help DRY the
-characterization tests for the existing hexagonal core (LaboratorioService + Factory).
-
-See test_services.py for how to add tests for new labs/edges, and Sec 7.8 of the
-ADSO guide for the goal of increasing domain coverage with simulation edges + error cases.
-"""
+import os
+import django
 import pytest
+from django.conf import settings
 
 from api.logic.domain.services import LaboratorioService
 
 
-@pytest.fixture
-def make_lab_service():
-    """
-    Factory fixture to create a LaboratorioService for a given lab type.
-    Usage in tests:
-        def test_foo(make_lab_service):
-            svc = make_lab_service("AGRICULTURA")
-            ...
-    Default is ROBOTICA (as in real __init__).
-    """
-    def _factory(tipo_lab: str = "ROBOTICA") -> LaboratorioService:
-        return LaboratorioService(tipo_lab)
-    return _factory
+def pytest_configure():
+    if not settings.configured:
+        # Asegúrate de que 'sigct_backend.settings' sea el nombre correcto de tu carpeta de settings
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sigct_backend.settings')
+        django.setup()
 
 
 @pytest.fixture
-def lab_service(make_lab_service):
-    """Convenience fixture for default (ROBOTICA) service."""
-    return make_lab_service()
-
-
-# Future (higher phases):
-# @pytest.fixture
-# def sample_sensor_data():
-#     return {"temperature": 25.0, "humidity": 60.0}
+def lab_service():
+    return LaboratorioService("ROBOTICA")

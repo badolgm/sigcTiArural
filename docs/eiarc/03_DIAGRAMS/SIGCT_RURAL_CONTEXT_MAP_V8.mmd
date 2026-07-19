@@ -1,0 +1,40 @@
+%% SIGCT_RURAL_CONTEXT_MAP_V8
+%% Propósito: diagrama raíz del sistema — responde "¿qué es SIGCT-Rural?" a nivel de
+%% identidad completa, distinguiendo lo implementado de la arquitectura objetivo oficial
+%% y de las ideas sin respaldo documental.
+%% Fuente: FASE 4A (Alineación Conceptual) + FASE 4B (Revisión de 3 Niveles) +
+%% README.md v8 + docs/MASTERDOC.md v8 (§3.1) + SIGCT_RURAL_SYSTEM_BOOT.md +
+%% docs/PLAN_MAESTRO.md (Fase 9) + AI_CONTEXT_V2_ARCHITECTURE.md + KNOWLEDGE_HUB_ARCHITECTURE.md
+%% Convención de 3 niveles (reemplaza la convención anterior de 4 niveles):
+%% 🟢 Implementado — código real verificado
+%% 🔷 Arquitectura Objetivo Oficial — documentado en fuente autorizada, sin código aún
+%% ⚪ Idea Especulativa — sin respaldo documental en ninguna fuente autorizada
+%% No reutiliza USER/PROJECT/TELEMETRY genérica/IMAGESAMPLE/COURSE/LAB (Fase 1, eliminados).
+%% FASE 4C: "LMS" retirado (sin respaldo) y reemplazado por "Academic & Research
+%% Community", agregación de elementos ya respaldados individualmente (README v8 O-04,
+%% nombre oficial del proyecto, rutas /docs/* reales en App.jsx).
+
+flowchart TB
+    ROOT(("SIGCT-Rural 🟢🔷<br/>Agnóstico en hardware y en dominio<br/>(README v8 · MASTERDOC v8 §3.1)"))
+
+    ROOT --> LABS["🟢 Laboratorios<br/>Motores de experimentación (Strategy/Factory)"]
+    ROOT --> COURSES["🔷 Cursos / Biblioteca Educativa<br/>README v8, Objetivo O-04"]
+    ROOT --> ARC["🔷 Academic &amp; Research Community<br/>Cursos · Biblioteca Educativa · Investigación ·<br/>Recursos Académicos · Documentación (/docs/*) · Laboratorios<br/>(FASE 4C — reemplaza 'LMS', sin respaldo como concepto propio)"]
+    ROOT --> TELEMETRY["🟢 Telemetría<br/>Contexto EIARC más maduro (SYSTEM_BOOT)"]
+    ROOT --> IOT["🔷🟢 IoT<br/>Principio de agnosticismo oficial (Input Port);<br/>modelo de datos real, hardware físico no construido"]
+    ROOT --> AICTX["🟢🔷 AI Context<br/>V1 implementado (clasificador binario) ·<br/>V2 arquitectura objetivo oficial (AI_CONTEXT_V2_ARCHITECTURE.md)"]
+    ROOT --> KHUB["🔷 Knowledge Hub<br/>Diseñado (KNOWLEDGE_HUB_ARCHITECTURE.md), no implementado"]
+    ROOT --> EIARC["🟢🔷 EIARC<br/>A) Gobernanza — parcial implementada<br/>B) Expansión productiva — Fase 9, objetivo oficial, 0% avance"]
+    ROOT --> RESEARCH["🔷 Investigación<br/>Nombre oficial completo del proyecto la incluye<br/>(docs/database/README.md, bibliografía)"]
+    ROOT --> PRODCTX["🟢🔷 Contextos Productivos<br/>Agricultura NO es dominio exclusivo — ver PRODUCTIVE_CONTEXTS_V8.mmd"]
+
+    style LABS fill:#052e16,stroke:#4ade80
+    style TELEMETRY fill:#052e16,stroke:#4ade80
+    style COURSES fill:#1e3a8a,stroke:#60a5fa
+    style IOT fill:#1e3a8a,stroke:#60a5fa
+    style AICTX fill:#1e3a8a,stroke:#60a5fa
+    style KHUB fill:#1e3a8a,stroke:#60a5fa
+    style EIARC fill:#1e3a8a,stroke:#60a5fa
+    style RESEARCH fill:#1e3a8a,stroke:#60a5fa
+    style PRODCTX fill:#1e3a8a,stroke:#60a5fa
+    style ARC fill:#1e3a8a,stroke:#60a5fa

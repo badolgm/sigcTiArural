@@ -1,0 +1,120 @@
+%% EIARC Canonical Data Model
+%% Fecha: 2026-07-12
+%% Versión: v1.0.0
+%% Propósito:
+%% Representar contexts EIARC, entidades principales, relaciones y ownership
+%% recomendado del modelo canónico de datos a partir del estado real auditado.
+
+flowchart TB
+    subgraph CTX["Contexts EIARC"]
+        TELEMETRY[Telemetry Context]
+        IOT[IoT Context]
+        AI[AI Context]
+        IDENTITY[Identity Context]
+        LABS[Labs Context]
+        DEPLOYMENT[Deployment Context]
+        KNOWLEDGE[Knowledge Context]
+    end
+
+    subgraph ENT["Entidades principales"]
+        SR[SensorReading]
+        RB[Robot]
+        RT[RobotTelemetry]
+        RC[RobotCommand]
+        AU[auth_user]
+        AG[auth_group / auth_permission]
+        PR[Prediction]
+        RE[Recommendation]
+        MD[ModelDescriptor]
+        DV[Device]
+        SN[Sensor]
+        LS[LabSession]
+        EN[Environment]
+        TX[Taxonomy]
+    end
+
+    subgraph REL["Relaciones"]
+        R1[Robot 1..N RobotTelemetry]
+        R2[Robot 1..N RobotCommand]
+        R3[Device 1..N Sensor]
+        R4[Sensor 1..N SensorReading]
+        R5[Prediction -> Recommendation]
+        R6[Taxonomy -> Prediction]
+        R7[Actor -> LabSession]
+        R8[Environment -> Device]
+    end
+
+    subgraph OWN["Ownership recomendado"]
+        O1[Telemetry owns SensorReading and RobotTelemetry]
+        O2[IoT owns Robot Device Sensor and RobotCommand]
+        O3[AI owns Prediction Recommendation and ModelDescriptor]
+        O4[Identity owns Actor Role Access]
+        O5[Labs owns LabSession and SimulationState]
+        O6[Deployment owns Environment and Topology]
+        O7[Knowledge owns Taxonomy and canonical registries]
+    end
+
+    %% Contextos a entidades
+    TELEMETRY --> SR
+    TELEMETRY --> RT
+    IOT --> RB
+    IOT --> RC
+    IOT --> DV
+    IOT --> SN
+    AI --> PR
+    AI --> RE
+    AI --> MD
+    IDENTITY --> AU
+    IDENTITY --> AG
+    LABS --> LS
+    DEPLOYMENT --> EN
+    KNOWLEDGE --> TX
+
+    %% Entidades a relaciones
+    RB --> R1
+    RT --> R1
+    RB --> R2
+    RC --> R2
+    DV --> R3
+    SN --> R3
+    SN --> R4
+    SR --> R4
+    PR --> R5
+    RE --> R5
+    TX --> R6
+    PR --> R6
+    AU --> R7
+    LS --> R7
+    EN --> R8
+    DV --> R8
+
+    %% Contextos a ownership
+    TELEMETRY --> O1
+    IOT --> O2
+    AI --> O3
+    IDENTITY --> O4
+    LABS --> O5
+    DEPLOYMENT --> O6
+    KNOWLEDGE --> O7
+
+    %% Dependencias transversales
+    IOT -. alimenta .-> TELEMETRY
+    TELEMETRY -. provee contexto .-> AI
+    AI -. entrega significado .-> LABS
+    KNOWLEDGE -. gobierna taxonomía .-> AI
+    DEPLOYMENT -. contextualiza runtime .-> IOT
+
+    %% Estilos
+    classDef ctx fill:#1f2937,color:#ffffff,stroke:#60a5fa,stroke-width:2px;
+    classDef current fill:#c8e6c9,color:#1a5e20,stroke:#2e7d32,stroke-width:2px;
+    classDef future fill:#fff3e0,color:#e65100,stroke:#ef6c00,stroke-width:2px;
+    classDef infra fill:#f3e5f5,color:#7b1fa2,stroke:#8e24aa,stroke-width:2px;
+    classDef relation fill:#e3f2fd,color:#0d47a1,stroke:#1976d2,stroke-width:2px;
+    classDef owner fill:#ede7f6,color:#4527a0,stroke:#5e35b1,stroke-width:2px;
+
+    class TELEMETRY,IOT,AI,IDENTITY,LABS,DEPLOYMENT,KNOWLEDGE ctx;
+    class SR,RB,RT,RC current;
+    class PR,RE,MD,DV,SN,LS,EN,TX future;
+    class AU,AG infra;
+    class R1,R2,R3,R4,R5,R6,R7,R8 relation;
+    class O1,O2,O3,O4,O5,O6,O7 owner;

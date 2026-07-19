@@ -1,0 +1,57 @@
+%% ERD_CANONICAL_V8
+%% Generado exclusivamente desde: src/backend/api/models.py + src/backend/api/migrations/
+%% (0001_initial.py, 0002_robot_robotcommand_robottelemetry.py — no existen otras migraciones)
+%% Regla de origen: ninguna entidad, campo o relación de este diagrama proviene de un ERD
+%% anterior. No incluye entidades no verificadas (USER, PROJECT, TELEMETRY genérico,
+%% IMAGESAMPLE, COURSE, LAB) presentes en versiones previas ya retiradas por no coincidir
+%% con el código real (docs/database/class_db_models.mmd, docs/database/er_schema.mmd,
+%% docs/uml/class_backend.mmd — eliminados en Fase 1 de architecture-consolidation-v8).
+%% Fuente de verdad: src/backend/api/models.py + src/backend/api/migrations/
+%% Cualquier discrepancia futura entre este diagrama y el código real debe resolverse
+%% a favor del código, no de este archivo.
+
+erDiagram
+    ROBOT ||--o{ ROBOT_TELEMETRY : "telemetries"
+    ROBOT ||--o{ ROBOT_COMMAND : "commands"
+
+    ROBOT {
+        string robot_id PK
+        string name
+        string type "choices: ground|aerial|arm, default: ground"
+        string status "choices: active|inactive|maintenance, default: active"
+        datetime created_at "auto_now_add"
+    }
+
+    ROBOT_TELEMETRY {
+        bigint id PK
+        string robot_id FK
+        float battery_level "0-100"
+        string status_mode "default: idle"
+        float position_x "default: 0.0"
+        float position_y "default: 0.0"
+        float position_z "default: 0.0"
+        float velocity_linear "default: 0.0"
+        datetime timestamp "default: now"
+    }
+
+    ROBOT_COMMAND {
+        bigint id PK
+        string robot_id FK
+        string command_type
+        json payload "default: {}"
+        string priority "choices: low|normal|high|emergency, default: normal"
+        string status "choices: pending|sent|in_progress|completed|failed, default: pending"
+        datetime created_at "auto_now_add"
+        datetime executed_at "nullable"
+        text result_log "nullable"
+    }
+
+    %% SENSOR_READING permanece aislada intencionalmente: no existe ningún ForeignKey
+    %% hacia ni desde esta entidad en models.py. No se infiere ninguna relación.
+    SENSOR_READING {
+        bigint id PK
+        string sensor_id "default: BBB-03"
+        float temperature
+        float humidity
+        datetime timestamp "default: now"
+    }

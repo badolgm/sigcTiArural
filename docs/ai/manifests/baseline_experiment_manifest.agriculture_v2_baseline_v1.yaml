@@ -1,0 +1,66 @@
+schema_version: "1.0"
+manifest_type: "baseline_experiment_manifest"
+
+experiment_id: "agriculture_v2_baseline_v1"
+context: "agriculture"
+modality: "computer_vision"
+
+inputs:
+  dataset_id: "agriculture_images_tomato-potato-corn"
+  dataset_version: "v1"
+  taxonomy_version: "agriculture_v2_taxonomy_v1"
+  label_schema_version: "agriculture_v2_label_schema_v1"
+  split_version: "agriculture_v2_split_v1"
+
+benchmark_models:
+  - name: "EfficientNet-B0"
+    role: "baseline_master_candidate"
+  - name: "MobileNetV3-Large"
+    role: "baseline_edge_candidate"
+  - name: "ResNet50"
+    role: "classic_control"
+  - name: "ConvNeXt-Tiny"
+    role: "experimental_ceiling"
+
+training_policy:
+  image_size: 224
+  transfer_learning: true
+  class_balancing:
+    - "weighted_loss"
+    - "class_balanced_sampling"
+    - "minority_augmented_sampling"
+  augmentation_policy_ref: "AGRICULTURE_AI_V2_EXECUTION_PLAN.md"
+
+evaluation_policy:
+  primary_metric: "macro_f1"
+  secondary_metrics:
+    - "balanced_accuracy"
+    - "per_class_recall"
+    - "per_class_precision"
+    - "weighted_f1"
+    - "confusion_matrix"
+  curves_required:
+    - "roc_one_vs_rest"
+    - "pr_curve_per_class"
+    - "calibration_curve"
+  calibration_required: true
+  calibration_metrics:
+    - "expected_calibration_error"
+
+edge_policy:
+  export_targets:
+    - "tflite_float16"
+    - "tflite_int8"
+  edge_candidate: "MobileNetV3-Large"
+  notes:
+    - "BeagleBone Black: objetivo de inferencia compacta eventual, no entrenamiento."
+
+artifacts_expected:
+  - "benchmark_report.md"
+  - "calibration_report.md"
+  - "error_analysis_report.md"
+  - "model_cards/"
+  - "confusion_matrices/"
+  - "curves/roc/"
+  - "curves/pr/"
+  - "curves/calibration/"

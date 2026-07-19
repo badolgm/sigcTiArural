@@ -1,0 +1,48 @@
+schema_version: "1.0"
+manifest_type: "raw_source_manifest"
+
+dataset_id: "agriculture_images_tomato-potato-corn"
+dataset_version: "v1"
+context: "agriculture"
+modality: "computer_vision"
+
+source:
+  name: "PlantVillage-Dataset-master"
+  source_root: "C:\\Users\\Devbadolgm\\Development\\workspace\\DatosProyectos\\PlantVillage-Dataset-master"
+  subset_root: "C:\\Users\\Devbadolgm\\Development\\workspace\\DatosProyectos\\PlantVillage-Dataset-master\\raw\\color"
+  subset_variant: "raw/color"
+
+audit:
+  inventory_document: "AGRICULTURE_AI_V2_DATASET_INVENTORY.md"
+  discovery_audit_document: "AI_DATASET_DISCOVERY_AND_AUDIT.md"
+  notes:
+    - "El baseline V2 inicial usa exclusivamente raw/color para evitar fuga por variantes derivadas."
+
+scope:
+  included_species:
+    - "Tomato"
+    - "Potato"
+    - "Corn_(maize)"
+  expected_classes: 16
+  expected_images: 21160
+
+exclusions:
+  excluded_subsets:
+    - "raw/grayscale"
+    - "raw/segmented"
+    - "generated_for_paper"
+  excluded_class_patterns:
+    - "All classes not in tomato/potato/corn scope"
+  excluded_specific_classes:
+    - "Tomato___Spider_mites Two-spotted_spider_mite"
+
+integrity:
+  allow_external_path: true
+  expected_image_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+
+known_limitations:
+  - "Dataset de laboratorio: sesgo de fondos limpios y condiciones controladas."
+  - "Desbalance fuerte en clases minoritarias (ej. Potato___healthy)."

@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from .models import SensorReading, Robot, RobotTelemetry, RobotCommand
 from .serializers import SensorReadingSerializer, RobotSerializer, RobotTelemetrySerializer, RobotCommandSerializer
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
 import random
 
 # ==============================================================================
@@ -75,6 +75,15 @@ try:
 except ImportError:
     HEXAGONAL_V3_AVAILABLE = False
 
+try:
+    from infrastructure.config.dependencies import get_ai_service as get_ai_inference_service
+    from infrastructure.external.ai_service.semantic_prediction_resolver import (
+        SemanticPredictionResolver,
+    )
+    AI_INFERENCE_V3_AVAILABLE = True
+except ImportError:
+    AI_INFERENCE_V3_AVAILABLE = False
+
 if HEXAGONAL_V3_AVAILABLE:
     class TelemetryHistoryV3View(APIView):
         permission_classes = [AllowAny]
@@ -93,18 +102,62 @@ if HEXAGONAL_V3_AVAILABLE:
             readings = repository.get_all(limit=24)
             
             if readings:
-                data = []
-                for r in readings:
-                    data.append({
-                        "time": r.timestamp.strftime("%H:%M"),
-                        "temp": r.temperature.value,
+                items = []
+                for r in readings[::-1]:
+                    items.append({
+                        "reading_id": r.id,
+                        "sensor_id": str(r.sensor_id),
+                        "timestamp": r.timestamp.isoformat(),
+                        "temperature": r.temperature.value,
                         "humidity": r.humidity.value,
-                        "sensor": f"{r.sensor_id} ({tipo_lab} V3)"
                     })
-                return Response(data[::-1])
+                return Response({
+                    "context": "telemetry",
+                    "contract_version": "v1",
+                    "source_mode": "live",
+                    "lab_type": tipo_lab,
+                    "count": len(items),
+                    "items": items,
+                })
                 
             data_simulada = service.obtener_simulacion_historica()
-            return Response(data_simulada)
+            items = []
+            for item in data_simulada:
+                raw_timestamp = item.get("timestamp")
+                raw_time = item.get("time")
+
+                if raw_timestamp and "T" in str(raw_timestamp):
+                    normalized_timestamp = str(raw_timestamp)
+                elif raw_time:
+                    try:
+                        parsed_time = datetime.strptime(str(raw_time), "%H:%M")
+                        now = timezone.now()
+                        normalized_timestamp = now.replace(
+                            hour=parsed_time.hour,
+                            minute=parsed_time.minute,
+                            second=0,
+                            microsecond=0,
+                        ).isoformat()
+                    except ValueError:
+                        normalized_timestamp = timezone.now().isoformat()
+                else:
+                    normalized_timestamp = timezone.now().isoformat()
+
+                items.append({
+                    "reading_id": None,
+                    "sensor_id": item.get("sensor", "Simulado"),
+                    "timestamp": normalized_timestamp,
+                    "temperature": item.get("temp"),
+                    "humidity": item.get("humidity"),
+                })
+            return Response({
+                "context": "telemetry",
+                "contract_version": "v1",
+                "source_mode": "simulated",
+                "lab_type": tipo_lab,
+                "count": len(items),
+                "items": items,
+            })
 
     class AICropAdviceV3View(APIView):
         permission_classes = [AllowAny]
@@ -129,6 +182,81 @@ if HEXAGONAL_V3_AVAILABLE:
             return Response({
                 "datos_analizados": datos,
                 "ia_feedback": sugerencia
+            })
+
+if AI_INFERENCE_V3_AVAILABLE:
+    class AIInferenceV3View(APIView):
+        permission_classes = [AllowAny]
+        allowed_mime_types = {"image/jpeg", "image/png", "image/webp"}
+
+        def post(self, request):
+            image_file = request.FILES.get("file")
+            if image_file is None:
+                return Response({
+                    "context": "ai",
+                    "contract_version": "v1",
+                    "operation": "plant_diagnosis",
+                    "source_mode": "fallback",
+                    "error": {
+                        "code": "invalid_request",
+                        "message": "No fue posible completar la inferencia oficial.",
+                        "detail": "El campo 'file' es obligatorio.",
+                    },
+                }, status=400)
+
+            content_type = (image_file.content_type or "").lower()
+            if content_type and content_type not in self.allowed_mime_types:
+                return Response({
+                    "context": "ai",
+                    "contract_version": "v1",
+                    "operation": "plant_diagnosis",
+                    "source_mode": "fallback",
+                    "error": {
+                        "code": "unsupported_media_type",
+                        "message": "No fue posible completar la inferencia oficial.",
+                        "detail": f"Formato no soportado: {content_type}",
+                    },
+                }, status=400)
+
+            ai_adapter = get_ai_inference_service()
+            resolver = SemanticPredictionResolver()
+            raw_result = ai_adapter.predecir_enfermedad(image_file.read())
+            upstream_status = str(raw_result.get("status") or "ok").lower()
+            upstream_detail = raw_result.get("detail")
+
+            if raw_result.get("error"):
+                return Response({
+                    "context": "ai",
+                    "contract_version": "v1",
+                    "operation": "plant_diagnosis",
+                    "source_mode": "fallback",
+                    "error": {
+                        "code": "ai_inference_unavailable",
+                        "message": "No fue posible completar la inferencia oficial.",
+                        "detail": raw_result.get("error"),
+                    },
+                }, status=502)
+
+            resolved = resolver.resolve_prediction(raw_result)
+            if upstream_status == "error":
+                # Regla EIARC: source_mode=fallback mantiene contrato válido
+                # mientras preserve trazabilidad y no publique semántica ficticia.
+                resolved["source_mode"] = "fallback"
+
+            return Response({
+                "context": "ai",
+                "contract_version": "v1",
+                "operation": "plant_diagnosis",
+                "source_mode": resolved["source_mode"],
+                "prediction": resolved["prediction"],
+                "trace": {
+                    "provider": raw_result.get("provider", "fastapi_ai_service"),
+                    "raw_diagnosis": raw_result.get("diagnosis"),
+                    "raw_class_index": raw_result.get("class_index"),
+                    "processing_time": raw_result.get("processing_time"),
+                    "upstream_status": upstream_status,
+                    "upstream_detail": upstream_detail,
+                },
             })
 
 # ==============================================================================

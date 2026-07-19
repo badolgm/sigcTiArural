@@ -2,12 +2,31 @@
 ## SIGC&T Rural → Arquitectura Hexagonal / Clean Architecture
 
 **Proyecto:** sigcTiArural  
-**Ubicación:** C:\Users\Devbadolgm\WorkSpace\ProjectsAndDatasets\Clon-sigcTiArural\sigcTiArural  
 **Rama actual (inicio):** feature/laboratorios-integracion-2026  
-**Fecha de análisis:** (Sesión actual - 2026)  
-**Rol:** Arquitecto de Software Senior  
+**Fecha de creación del plan:** 23 de mayo de 2026  
+**Última actualización:** 4 de julio de 2026  
+**Versión:** 1.1 (revisión de continuidad, alineación EIARC)  
+**Responsable:** B. Gómez  
 **Metodología:** Strangler Fig Pattern + Branch by Abstraction + Migración Incremental  
 **Principio fundamental:** Nunca romper funcionalidades existentes. Todo cambio es verificable y reversible.
+
+### Declaración arquitectónica actual (2026-07-04)
+
+La dirección técnica del proyecto se define como un **Modular Monolith** con límites hexagonales por bounded context. La idea es que cada contexto del negocio —laboratorios, telemetría, IA, cursos, usuarios y administración— tenga su propia estructura interna de dominio, puertos, aplicación e infraestructura, pero que todos se desplieguen dentro del mismo proceso Django como un monolito modular bien delimitado.
+
+> **Nota de alineación EIARC (planificado):** el proyecto documenta una expansión de dominio hacia el ecosistema EIARC (telemetría veterinaria multiespecie, apicultura, piscicultura, invernaderos y multiplataforma educativa), formalizada como **Fase 9 (planificada, no iniciada)** en `PLAN_MAESTRO.md`. Esa expansión reutiliza exactamente los mismos principios de este plan (Strangler Fig, puertos primero, verificación obligatoria por fase) y no debe iniciarse antes de completar las Fases 0-8 descritas aquí.
+
+### Punto de chequeo de continuidad (obligatorio)
+
+La documentación debe bastar para que cualquier persona o agente retome el proyecto sin intervención manual adicional. Por ello, la ruta de continuidad oficial es:
+
+1. Leer [docs/CONTINUITY_RUNBOOK.md](docs/CONTINUITY_RUNBOOK.md).
+2. Ejecutar [scripts/continuity_check.ps1](scripts/continuity_check.ps1) para levantar lo mínimo y validar el estado completo.
+3. Revisar [docs/reports/continuity_status.md](docs/reports/continuity_status.md) y continuar desde el siguiente paso indicado.
+
+Esta ruta se considera parte del proceso de refactorización, no un anexo opcional.
+
+La excepción técnica son los servicios con frontera física real y ciclo de vida independiente, como el servicio de IA en FastAPI/TensorFlow, que sigue viviendo aparte porque tiene runtime, despliegue y dependencias distintas. Esta división permite mantener coherencia y seguridad en la refactorización sin convertir el proyecto en un sistema distribuido prematuramente.
 
 ---
 
@@ -48,7 +67,7 @@ sigcTiArural/
 │   │   └── requirements.txt           # tensorflow-cpu pesado + psycopg2 directo
 │   └── embedded/                      # **PLACEHOLDERS VACÍOS** (0 bytes) — solo documentación
 ├── docs/                              # **EXTREMADAMENTE RICA** (C4, ER, UML, bitácora, MASTERDOC, PLAN_MAESTRO)
-│   ├── INFORME_ANALISIS_Y_PLAN_DE_ACCION.md  # Bitácora append-only (incluye sesiones May 23 2026 de hexagonal)
+│   ├── historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md  # Bitácora append-only, secundaria a MASTERDOC.md §5 (incluye sesiones May 23 2026 de hexagonal)
 │   ├── diagrams/, uml/, architecture/
 │   └── MASTERDOC.md, PLAN_MAESTRO.md
 ├── scripts/                           # Generación de diagramas, reportes, mantenimiento Docker
@@ -467,18 +486,18 @@ Total estimado realista (part-time 4-6h/día): 4.5 - 7 meses calendario
 
 ---
 
-## 8. NOTAS FINALES DEL ARQUITECTO
+## 8. NOTAS FINALES
 
 Este proyecto tiene una base excelente y una ambición alta (educación + IoT + IA + Edge + docs impecables). La refactorización **es viable y deseable**, pero debe hacerse con disciplina quirúrgica.
 
 El trabajo ya realizado en Mayo 2026 (la carpeta `logic/`) es un **activo** muy valioso — la estrategia correcta es "terminar lo que se empezó" en lugar de "empezar de nuevo".
 
-Estoy listo para:
-- Ajustar el plan según tus prioridades (¿prefieres acelerar frontend o backend primero?).
-- Ejecutar Fase 0 tan pronto como des "luz verde".
-- Revisar cada diff antes de commit si lo deseas.
+### Decisiones pendientes antes de avanzar de fase
+
+- **Priorización backend vs. frontend:** definir si se acelera primero la migración del backend (Fases 1-4) o si se adelanta en paralelo el refactor de frontend (Fase 5), según disponibilidad de tiempo.
+- **Revisión de diffs por fase:** cada fase debe cerrarse con revisión de los cambios (`git diff`) antes de hacer commit, siguiendo la regla de oro de la Sección 7.
 
 **Fin del Plan de la Fase de Análisis.**
 
 ---
-*Documento generado como salida de la fase de planificación (plan mode). No se realizaron cambios en el código fuente del proyecto.*
+*Documento de planificación técnica. No implica cambios automáticos en el código fuente del proyecto — cada fase requiere ejecución y verificación explícita.*
