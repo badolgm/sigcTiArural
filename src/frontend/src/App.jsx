@@ -13,8 +13,6 @@ import RoboticsLab from './labs/RoboticsLab.jsx';      // Tu laboratorio de Rob�
 import EmbeddedLab from './labs/EmbeddedLab.jsx';
 import TelecomLab from './labs/TelecomLab.jsx';
 import ElectronicsLab from './labs/ElectronicsLab.jsx';
-import DocsEdgeSetup from './pages/DocsEdgeSetup.jsx';
-import DocsApiReference from './pages/DocsApiReference.jsx';
 import KnowledgeHubLayout from './knowledge-hub/pages/KnowledgeHubLayout.jsx';
 import AIPredictiva from './pages/AIPredictiva.jsx';
 import DataScienceLab from './pages/DataScienceLab.jsx';
@@ -121,10 +119,6 @@ const AppContent = () => {
           <Route path="/lab-embedded" element={<EmbeddedLab />} />
           <Route path="/lab-telecom" element={<TelecomLab />} />
           <Route path="/lab-electronics" element={<ElectronicsLab onNavigate={handleNavigation} />} />
-
-          {/* --- DOCUMENTACIÓN --- */}
-          <Route path="/docs/edge-setup" element={<DocsEdgeSetup />} />
-          <Route path="/docs/api" element={<DocsApiReference />} />
 
           {/* --- KNOWLEDGE HUB (MVP — FASE 8D, entrada principal — FASE 9A) --- */}
           <Route path="/knowledge" element={<KnowledgeHubLayout />} />

@@ -19,6 +19,8 @@ const modules = import.meta.glob(
     '../../../../../docs/MASTERDOC.md',
     '../../../../../docs/PLAN_MAESTRO.md',
     '../../../../../docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md',
+    '../../../../../docs/EDGE_SETUP.md',
+    '../../../../../docs/API_REFERENCE.md',
     '../../../../../docs/eiarc/**/*.md',
     '../../../../../docs/project_knowledge_base/*.md',
     '../../../../../docs/historical/*.md',

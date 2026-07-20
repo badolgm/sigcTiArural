@@ -89,6 +89,44 @@
       ]
     },
     {
+      "id": "edge_setup",
+      "title": "Edge Setup — BeagleBone Black y Sensores",
+      "canonical_path": "docs/EDGE_SETUP.md",
+      "route": "/knowledge/doc/edge_setup",
+      "category": "project-core",
+      "level": 2,
+      "document_type": "canonical",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": true,
+      "tags": [
+        "edge",
+        "beaglebone",
+        "hardware"
+      ]
+    },
+    {
+      "id": "api_reference",
+      "title": "API Reference — SIGC&T Rural",
+      "canonical_path": "docs/API_REFERENCE.md",
+      "route": "/knowledge/doc/api_reference",
+      "category": "project-core",
+      "level": 2,
+      "document_type": "canonical",
+      "format": "markdown",
+      "visibility": "public",
+      "status": "active",
+      "source_of_truth": true,
+      "needs_review": true,
+      "tags": [
+        "api",
+        "backend",
+        "reference",
+        "outdated-jwt-claim"
+      ]
+    },
+    {
       "id": "eiarc_mission",
       "title": "EIARC Mission",
       "canonical_path": "docs/eiarc/01_FOUNDATION/EIARC_MISSION.md",
