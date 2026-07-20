@@ -1,20 +1,25 @@
+%% Convención: 🟢 Implementado · 🔷 Objetivo, no implementado
+%% Evidencia: los 3 scripts principales de src/embedded/bbb_*/ están en 0 bytes;
+%% no hay servicio S3/MinIO en docker-compose.yml. Verificado 20-jul-2026.
+%% (Diagrama equivalente ya honesto: docs/eiarc/03_DIAGRAMS/TELEMETRY_IOT_ARCHITECTURE_V8.mmd)
+
 flowchart LR
-  subgraph BBB01[BBB-01 Gateway]
-    MQTT[MQTT Client]
-    Sync[Sync Service]
+  subgraph BBB01["🔷 BBB-01 Gateway (0 bytes)"]
+    MQTT["🔷 MQTT Client"]
+    Sync["🔷 Sync Service"]
   end
-  subgraph BBB02[BBB-02 IA]
-    Camera[Camera]
-    TFLite[TFLite Inference]
+  subgraph BBB02["🔷 BBB-02 IA (0 bytes)"]
+    Camera["🔷 Camera"]
+    TFLite["🔷 TFLite Inference"]
   end
-  subgraph BBB03[BBB-03 Sensores]
-    Temp[Temp Sensor]
-    Hum[Humidity]
-    Soil[Soil Moisture]
+  subgraph BBB03["🔷 BBB-03 Sensores (0 bytes)"]
+    Temp["🔷 Temp Sensor"]
+    Hum["🔷 Humidity"]
+    Soil["🔷 Soil Moisture"]
   end
   subgraph Cloud[API Cloud]
-    API[Django REST]
-    Store[(S3/MinIO)]
+    API["🟢 Django REST"]
+    Store["🔷 S3/MinIO (no implementado)"]
   end
 
   Camera --> TFLite

@@ -1,10 +1,15 @@
+%% 🔷 DIAGRAMA COMPLETO = Objetivo, no implementado.
+%% Evidencia: no hay broker MQTT en docker-compose.yml, no hay paho-mqtt en
+%% requirements.txt del backend, y src/embedded/bbb_01_gateway/mqtt_broker.py
+%% está en 0 bytes. La ingesta real hoy es vía API REST directa. Verificado 20-jul-2026.
+
 sequenceDiagram
   participant BBB as BBB Gateway
   participant API as Django API
-  participant MQ as MQTT Broker
+  participant MQ as 🔷 MQTT Broker (no implementado)
   participant DB as PostgreSQL
-  BBB->>MQ: Publish telemetry (topic: projects/{id}/metrics)
-  API->>MQ: Subscribe topic
-  MQ-->>API: Message telemetry
+  BBB->>MQ: 🔷 Publish telemetry (no implementado)
+  API->>MQ: 🔷 Subscribe topic (no implementado)
+  MQ-->>API: 🔷 Message telemetry (no implementado)
   API->>DB: Store metric
   API-->>BBB: 200 OK

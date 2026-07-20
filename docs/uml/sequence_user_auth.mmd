@@ -1,13 +1,18 @@
+%% 🔷 DIAGRAMA COMPLETO = Objetivo, no implementado.
+%% Evidencia: no existe /auth/login en src/backend/api/urls.py; no hay
+%% djangorestframework-simplejwt en requirements.txt; el frontend cae a
+%% "demo-token" si falla el login real (AuthContext.jsx). Verificado 20-jul-2026.
+
 sequenceDiagram
   participant U as Usuario
   participant FE as Frontend
   participant API as Django API
   participant DB as PostgreSQL
   U->>FE: Ingresa credenciales
-  FE->>API: POST /auth/login
+  FE->>API: 🔷 POST /auth/login (no implementado)
   API->>DB: Verifica usuario y hash
   DB-->>API: OK
-  API-->>FE: JWT Token
+  API-->>FE: 🔷 JWT Token (no implementado — hoy: demo-token fallback)
   FE->>API: Accede a recurso protegido
   API->>DB: Consulta datos
   API-->>FE: Datos JSON

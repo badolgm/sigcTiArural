@@ -1,7 +1,13 @@
+%% ⚪ DIAGRAMA SUPERADO — modela App.jsx con patrón de estado (currentPage),
+%% pero el App.jsx real usa react-router-dom (<Routes>/<Route>/useNavigate)
+%% desde antes del Día 4. Los miembros marcados con ⚪ abajo (currentPage,
+%% render PageContent()) no existen en el App.jsx real.
+%% Ver docs/diagrams/sequence_navigation.mmd (mismo problema).
+
 classDiagram
   class App {
-    +state currentPage
-    +render PageContent()
+    +state currentPage ⚪
+    +render PageContent() ⚪
   }
   class Dashboard {
     +nodes: Node[]

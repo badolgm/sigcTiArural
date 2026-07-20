@@ -1,3 +1,7 @@
+%% Convención: 🟢 Implementado · 🔷 Objetivo, no implementado · ⚪ Especulativo
+%% Evidencia: src/embedded/bbb_01_gateway/mqtt_broker.py, bbb_02_ia_edge/tflite_api.py,
+%% bbb_03_sensors/sensor_reader.py están en 0 bytes (CLAUDE.md, verificado 19/20-jul-2026).
+
 flowchart LR
   %% C4: Contexto del sistema (Nivel 1)
   subgraph Actors
@@ -9,19 +13,19 @@ flowchart LR
 
   subgraph System
     direction TB
-    Context["Plataforma Web Híbrida\nCloud + Edge"]
+    Context["🟢🔷 Plataforma Web Híbrida\nCloud (🟢) + Edge (🔷, no implementado)"]
   end
 
   subgraph External
     direction TB
-    BBB["Cluster BBB (Edge)"]
-    PV["PlantVillage/Kaggle"]
+    BBB["🔷 Cluster BBB (Edge)<br/>0 bytes en src/embedded/"]
+    PV["🟢 PlantVillage/Kaggle"]
     SENA["SENA SofiaPlus (futuro)"]
   end
 
   Farmer -->|HTTPS| Context
   Student -->|HTTPS| Context
   Admin -->|HTTPS| Context
-  BBB -->|MQTT/HTTPS| Context
+  BBB -.->|"🔷 MQTT/HTTPS (no implementado)"| Context
   Context --> PV
   Context -.->|"OAuth2 (futuro)"| SENA

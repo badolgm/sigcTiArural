@@ -1,11 +1,16 @@
+%% ⚪ DIAGRAMA SUPERADO — la navegación real usa react-router-dom
+%% (useNavigate + <Routes>), no setCurrentPage(). Los elementos marcados
+%% con ⚪ abajo (participante "PageContent", mensaje "setCurrentPage")
+%% no reflejan el App.jsx real. Ver App.jsx.
+
 sequenceDiagram
   participant User
   participant App as App.jsx
-  participant Router as PageContent
+  participant Router as PageContent ⚪
   participant Page as Dashboard/LabCatalog/Lab
 
   User->>App: Abre aplicación
-  App->>Router: setCurrentPage('dashboard')
+  App->>Router: setCurrentPage('dashboard') ⚪
   Router->>Page: Render Dashboard
   User->>Router: Click "Labs" en TopNav
   Router->>Page: Render LabCatalog

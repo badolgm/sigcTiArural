@@ -1,10 +1,15 @@
+%% Convención: 🟢 Implementado · 🔷 Objetivo, no implementado
+%% Evidencia: el modelo en producción es un .h5 servido por FastAPI (binario
+%% enferma/sana); no hay artefacto .tflite versionado ni despliegue a BBB-02
+%% (0 bytes en src/embedded/bbb_02_ia_edge/). Verificado 20-jul-2026.
+
 flowchart TD
-  A["Recolectar datasets (PV/Kaggle)"] --> B[Preprocesar: resize, augment]
-  B --> C[Particionar train/val/test]
-  C --> D["Entrenar modelo (TF)"]
-  D --> E[Evaluar metricas]
+  A["🟢 Recolectar datasets (PV/Kaggle)"] --> B["🟢 Preprocesar: resize, augment"]
+  B --> C["🟢 Particionar train/val/test"]
+  C --> D["🟢 Entrenar modelo (TF)"]
+  D --> E["🟢 Evaluar metricas"]
   E --> F{Metricas aceptables}
-  F -->|Si| G[Exportar TFLite]
+  F -->|Si| G["🔷 Exportar TFLite (no implementado — modelo actual es .h5)"]
   F -->|No| B
-  G --> H[Publicar en Storage]
-  H --> I[Desplegar en BBB-02]
+  G --> H["🔷 Publicar en Storage (no implementado)"]
+  H --> I["🔷 Desplegar en BBB-02 (0 bytes)"]

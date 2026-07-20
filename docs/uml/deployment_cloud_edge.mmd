@@ -1,15 +1,21 @@
+%% Convención: 🟢 Implementado · 🔷 Objetivo, no implementado
+%% Evidencia: sin Celery/Redis en requirements.txt (sin "Jobs/Workers" real);
+%% sin servicio S3/MinIO en docker-compose.yml; Nginx solo en Dockerfile de
+%% frontend para servir estáticos, no como reverse proxy de producción;
+%% BBB-01/02/03 en 0 bytes. Verificado 20-jul-2026.
+
 flowchart TB
   subgraph Cloud[Cloud]
-    Nginx[Nginx/Static]
-    API[Django API]
-    Jobs[Workers]
-    DB[(PostgreSQL)]
-    Storage[(S3/MinIO)]
+    Nginx["🔷 Nginx/Static (no operativo como proxy de producción)"]
+    API["🟢 Django API"]
+    Jobs["🔷 Workers (sin Celery/Redis, no implementado)"]
+    DB[("🟢 PostgreSQL")]
+    Storage["🔷 S3/MinIO (no implementado)"]
   end
   subgraph Edge[Laboratorio]
-    BBB01[BBB-01 Gateway]
-    BBB02[BBB-02 IA]
-    BBB03[BBB-03 Sensores]
+    BBB01["🔷 BBB-01 Gateway (0 bytes)"]
+    BBB02["🔷 BBB-02 IA (0 bytes)"]
+    BBB03["🔷 BBB-03 Sensores (0 bytes)"]
   end
 
   Nginx --> API
