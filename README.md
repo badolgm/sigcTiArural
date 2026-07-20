@@ -23,7 +23,7 @@
 
 ---
 
-**Plataforma web híbrida (Cloud/Edge) que integra IoT, Inteligencia Artificial y educación técnica para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.**
+**Ecosistema autónomo y agnóstico de hardware/software que integra IoT, Inteligencia Artificial, laboratorios interconectados y educación técnica para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.**
 
 📚 [Documentación Completa (MASTERDOC)](docs/MASTERDOC.md) • 🧭 [Punto de Entrada del Proyecto (SYSTEM BOOT)](SIGCT_RURAL_SYSTEM_BOOT.md) • 🚀 [Plan Maestro](docs/PLAN_MAESTRO.md) • 🩺 [Runbook de Continuidad](docs/CONTINUITY_RUNBOOK.md) • 🐞 [Reportar Bug](https://github.com/badolgm/sigcTiArural/issues) • 💡 [Solicitar Mejora](https://github.com/badolgm/sigcTiArural/issues/new)
 
@@ -66,6 +66,8 @@
 ## 🎯 Visión General del Proyecto
 
 **SIGC&T Rural** (Sistema Integrado de Gestión del Conocimiento y Tecnología Rural) es un **ecosistema autónomo y agnóstico en hardware y software**, de código abierto, que integra **sensores, robots, sistemas de inteligencia artificial y personas como nodos cooperantes**, orientados a observar, cuidar, aprender y actuar sobre **entornos vivos** de manera sostenible, resiliente y educativa.
+
+SIGC&T Rural no es una plataforma ni un dashboard aislado: es un **ecosistema** construido sobre Bounded Contexts (DDD) donde Conocimiento, Investigación, IA, Laboratorios, Telemetría y Gobernanza colaboran para producir evidencia verificable y devolverla como conocimiento. Es agnóstico de hardware y software por diseño — cualquier fuente de señal puede conectarse — y sus laboratorios están pensados para comunicarse entre sí (una señal capturada en un laboratorio puede fluir hacia otros dominios), no para funcionar como módulos-vitrina aislados. Para la identidad completa del ecosistema, ver [`docs/ECOSYSTEM_IDENTITY.md`](docs/ECOSYSTEM_IDENTITY.md).
 
 ### 🌟 Características Distintivas
 
@@ -381,7 +383,7 @@ Esta fase es explícitamente posterior al cierre de las Fases 7–8 del refactor
 - **Gráficos:** Recharts, Plotly.js
 - **Estado:** React Hooks (useState, useEffect)
 - **Routing:** React Router v6
-- **HTTP Client:** Axios
+- **HTTP Client:** Fetch API (nativo)
 
 </td>
 <td width="33%" valign="top">
@@ -390,7 +392,7 @@ Esta fase es explícitamente posterior al cierre de las Fases 7–8 del refactor
 - **Framework:** Django 4.2+
 - **API:** Django REST Framework
 - **WebSockets:** Django Channels (planificado)
-- **ASGI Server:** Daphne
+- **ASGI Server:** Daphne (planificado, junto con Channels — no instalado hoy)
 - **CORS:** django-cors-headers
 - **DB Connector:** psycopg2-binary
 - **Env Config:** python-dotenv
@@ -400,12 +402,12 @@ Esta fase es explícitamente posterior al cierre de las Fases 7–8 del refactor
 
 ### 🧠 Inteligencia Artificial
 - **Framework:** TensorFlow 2.15+
-- **Edge Inference:** TensorFlow Lite
+- **Edge Inference:** TensorFlow Lite (arquitectura de referencia — no implementado en código, ver [Edge Computing](#-edge-computing))
 - **API Service:** FastAPI + Uvicorn
 - **Modelo actual:** MobileNetV2 (binario)
 - **Datasets:** PlantVillage (Kaggle)
 - **Audio:** Pydub, SpeechRecognition, gTTS
-- **Visión:** OpenCV (cv2)
+- **Visión (planificado):** OpenCV (cv2) — previsto para el nodo Edge de adquisición, no integrado hoy en el microservicio de IA cloud
 
 </td>
 </tr>
@@ -573,8 +575,8 @@ flowchart LR
 - **Datasets:** PlantVillage, Kaggle agrícolas
 - **Análisis:** Pandas, NumPy (Pyodide)
 - **Visualización:** Plotly.js, D3.js
-- **ML:** Scikit-learn en navegador
-- **Notebooks:** Jupyter embebido
+- **ML:** Pandas + NumPy vía Pyodide (scikit-learn en navegador: planificado, no implementado)
+- **Notebooks:** Editor de código Python embebido (Pyodide) — no es un kernel Jupyter real
 
 </td>
 </tr>
@@ -611,7 +613,7 @@ docker-compose up -d db db-mysql
 # 2. Configurar el "Puente" (.env local)
 # En tu archivo src/backend/.env, ajusta el host:
 # Cambia: DB_HOST=db ➔ DB_HOST=localhost
-# Mantén: DB_PORT=5432
+# Cambia: DB_PORT=5432 ➔ DB_PORT=5544 (puerto publicado por defecto en docker-compose.yml; ajusta si defines POSTGRES_PORT distinto)
 
 # 3. Backend (Django)
 cd src/backend
@@ -627,7 +629,7 @@ npm install
 npm run dev
 ```
 
-### ⚡ Instalación con Docker (Recomendado para producción)
+### ⚡ Instalación con Docker (recomendado para desarrollo/staging — el backend aún corre con el servidor de desarrollo de Django, no un servidor WSGI de producción)
 
 ```bash
 # 1. Clonar el repositorio
@@ -654,10 +656,10 @@ docker exec -it sigct_backend python manage.py createsuperuser
 | Servicio | URL | Descripción |
 |----------|-----|-------------|
 | **Frontend** | http://localhost:5173 | Interfaz de usuario principal |
-| **Backend API** | http://localhost:8000 | API RESTful (Django) |
-| **API Docs** | http://localhost:8000/api/docs/ | Documentación interactiva |
+| **Backend API** | http://localhost:8010 | API RESTful (Django) — puerto publicado por defecto (BACKEND_PORT); 8000 es el puerto interno del contenedor |
+| **API Docs** | _No implementado_ | No existe endpoint de documentación interactiva (Swagger/ReDoc) en `api/urls.py` hoy; planificado |
 | **AI Service** | http://localhost:8081 | Servicio de IA (⚠️ ver incidente conocido) |
-| **Admin Django** | http://localhost:8000/admin/ | Panel de administración |
+| **Admin Django** | http://localhost:8010/admin/ | Panel de administración |
 
 ### 🔧 Detener y Limpiar Servicios
 
@@ -689,8 +691,8 @@ python manage.py runserver
 ```
 
 ```bash
-curl http://localhost:8000/api/health/
-# Salida esperada: {"status": "ok", "database": "connected"}
+curl http://localhost:8000/api/robots/
+# No existe un endpoint /api/health/ dedicado hoy en el backend (ver src/backend/api/urls.py); usa cualquier ruta registrada (p. ej. /api/robots/) para confirmar que el servidor responde.
 ```
 
 #### ⚛️ Paso 2: Frontend (React + Vite)
@@ -771,7 +773,7 @@ sigcTiArural/
 ├── 📄 schema_postgresql.sql              # Referencia histórica (ver §7)
 ├── 📄 .env.example
 ├── 📄 SIGCT_RURAL_SYSTEM_BOOT.md         # Punto de entrada documental (ver §14)
-├── 📁 [40+ documentos de auditoría/arquitectura en raíz] → ver Mapa Documental (§14)
+├── 📁 [~20 documentos de auditoría/arquitectura en raíz] → ver Mapa Documental (§14)
 │
 ├── 📁 docs/
 │   ├── 📄 MASTERDOC.md                   # Documento maestro de arquitectura
@@ -815,7 +817,7 @@ sigcTiArural/
 └── 📁 scripts/                           # Automatización y simulación
 ```
 
-> 📝 **Nota:** Las carpetas `data/`, `venv/` y `node_modules/` están excluidas del control de versiones mediante `.gitignore`. El repositorio contiene más de 40 documentos de auditoría/arquitectura en la raíz — no se listan individualmente aquí; ver [Mapa Documental](#️-mapa-documental).
+> 📝 **Nota:** Las carpetas `data/`, `venv/` y `node_modules/` están excluidas del control de versiones mediante `.gitignore`. El repositorio contiene más de 20 documentos de auditoría/arquitectura en la raíz — no se listan individualmente aquí; ver [Mapa Documental](#️-mapa-documental).
 
 ---
 
