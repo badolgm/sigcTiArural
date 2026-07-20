@@ -14,9 +14,6 @@ import EmbeddedLab from './labs/EmbeddedLab.jsx';
 import TelecomLab from './labs/TelecomLab.jsx';
 import ElectronicsLab from './labs/ElectronicsLab.jsx';
 import DocsEdgeSetup from './pages/DocsEdgeSetup.jsx';
-import DocsMasterdoc from './pages/DocsMasterdoc.jsx';
-import DocsReadme from './pages/DocsReadme.jsx';
-import DocsPlanMaestro from './pages/DocsPlanMaestro.jsx';
 import DocsApiReference from './pages/DocsApiReference.jsx';
 import KnowledgeHubLayout from './knowledge-hub/pages/KnowledgeHubLayout.jsx';
 import AIPredictiva from './pages/AIPredictiva.jsx';
@@ -77,7 +74,7 @@ const AppContent = () => {
       'labs': '/labs',
       'robotics': '/labs/robotics',     // Voz: "Ir a robótica"
       'ai': '/ai-predictive',           // Voz: "Ir a Inteligencia Artificial"
-      'docs': '/docs/masterdoc',
+      'docs': '/knowledge/doc/masterdoc',
       'math': '/advanced-math-v2', // FIX: 'math' key points to correct V2 lab
       'advanced-math': '/advanced-math',
       'advanced-math-v2': '/advanced-math-v2',
@@ -127,9 +124,6 @@ const AppContent = () => {
 
           {/* --- DOCUMENTACIÓN --- */}
           <Route path="/docs/edge-setup" element={<DocsEdgeSetup />} />
-          <Route path="/docs/masterdoc" element={<DocsMasterdoc />} />
-          <Route path="/docs/readme" element={<DocsReadme />} />
-          <Route path="/docs/plan" element={<DocsPlanMaestro />} />
           <Route path="/docs/api" element={<DocsApiReference />} />
 
           {/* --- KNOWLEDGE HUB (MVP — FASE 8D, entrada principal — FASE 9A) --- */}
