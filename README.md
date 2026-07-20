@@ -3,7 +3,7 @@
 
 <div align="center">
 
-![SIGC&T Rural Banner](docs/diagrams/banner.svg)
+![SIGC&T Rural Banner](docs/diagrams/banner.jpg)
 
 [![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyMmMxLjEgMCAyLS45IDItMlYxMmMwLTEuMS0uOS0yLTItMkg0Yy0xLjEgMC0yIC45LTIgMnY4YzAgMS4xLjkgMiAyIDJoOHoiLz48cGF0aCBkPSJNMjAgMTJjMC0xLjEtLjktMi0yLTJoLTR2NGg0YzEuMSAwIDItLjkgMi0yeiIvPjwvc3ZnPg==)](https://www.sena.edu.co/)
 [![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo%20Activo-00d4ff?style=for-the-badge&logo=StatusPage&logoColor=white)](https://github.com/badolgm/sigcTiArural)
@@ -128,6 +128,7 @@ Este proyecto está en desarrollo activo, con componentes en distintos niveles d
 - Base de datos PostgreSQL (esquema y migraciones definidos)
 - Telemetry Context — documentado y auditado como el contexto con mayor evidencia de implementación (ver [`TELEMETRY_DATABASE_DIAGNOSTIC.md`](docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md))
 - Laboratorios técnicos (Robótica, Matemáticas, Ciencia de Datos)
+- **Knowledge Hub** (portal documental local) — implementado y operativo: 49/49 documentos indexados en `knowledgeRegistry.generated.json`, verificado en vivo hoy navegando `/knowledge/doc/*`. Ver [`KNOWLEDGE_HUB_ARCHITECTURE.md`](KNOWLEDGE_HUB_ARCHITECTURE.md).
 
 ### 🔴 Incidente conocido: AI Service
 El contenedor Docker local `ai_service` puede fallar al iniciar. La causa diagnosticada es una imagen local con archivos de dependencias Python corruptos (0 bytes), **no** un defecto en `fastapi_app.py`. Este incidente está acotado al microservicio de IA — no afecta Dashboard, Backend, Frontend ni Telemetry.
@@ -137,7 +138,6 @@ El contenedor Docker local `ai_service` puede fallar al iniciar. La causa diagno
 - Plan de recuperación: [`AI_SERVICE_RECOVERY_PLAN.md`](AI_SERVICE_RECOVERY_PLAN.md)
 
 ### 🟡 Componentes diseñados pero no implementados
-- **Knowledge Hub** (portal documental local) — diseñado y documentado, pero no implementado actualmente. Ver [`KNOWLEDGE_HUB_ARCHITECTURE.md`](KNOWLEDGE_HUB_ARCHITECTURE.md).
 - Integración física completa del clúster BeagleBone Black
 - Sistema de alertas en tiempo real (WebSockets/Channels)
 
@@ -177,8 +177,8 @@ mindmap
       🟢 BeagleBone Black referencia código vacío
       🔷 LoRaWAN ilustrativo
       ⚪ Fuente real hoy generador simulado
-    🔷 Knowledge Hub
-      🔷 Diseñado no implementado
+    🟢 Knowledge Hub
+      🟢 Implementado
       🔷 Puente con AI Context
       ⚪ Vectorización búsqueda semántica asistente
     🟢🔷 Contextos Productivos
@@ -306,7 +306,7 @@ flowchart TB
         end
 
         subgraph backend["⚙️ Backend Layer"]
-            API["🐍 Django API<br/>DRF<br/>Puerto: 8000"]
+            API["🐍 Django API<br/>DRF<br/>Puerto: 8010"]
         end
 
         subgraph ai["🧠 AI Service Layer ⚠️"]
@@ -329,7 +329,7 @@ flowchart TB
     end
 
     U -->|"HTTPS:5173"| FE
-    U -->|"HTTPS:8000"| API
+    U -->|"HTTPS:8010"| API
 
     style cloud fill:#1e293b,stroke:#8b5cf6,stroke-width:2px
     style edge fill:#0f172a,stroke:#10b981,stroke-width:2px
