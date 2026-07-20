@@ -36,6 +36,8 @@ El proyecto se está reconduciendo hacia un enfoque de Modular Monolith con lím
 
 La excepción técnica son los componentes con frontera física real y ciclo de vida independiente, como el servicio de IA en FastAPI + TensorFlow, que continúa operando aparte por sus propias dependencias y despliegue. Esto permite mantener coherencia, seguridad y trazabilidad en la refactorización sin convertir prematuramente el sistema en una arquitectura distribuida compleja.
 
+> **⚠️ DOCUMENTO SUPERADO (20-jul-2026):** La definición de EIARC en este documento fue reemplazada por la identidad canónica vigente. Ver `docs/ECOSYSTEM_IDENTITY.md`. Este documento se conserva como referencia histórica, no como fuente de verdad.
+
 ### Evolución de la Visión del Proyecto: Ecosistema EIARC (06-Jul-2026)
 
 SIGC&T Rural evoluciona conceptualmente hacia **EIARC (Ecosistema de Inteligencia Artificial y Robótica para el Campo)**: un ecosistema agropecuario integral que va más allá de la agricultura de precisión y el diagnóstico de enfermedades en plantas, para cubrir también:
@@ -264,6 +266,8 @@ gantt
 - [ ] Implementar observabilidad mínima: logs estructurados, health checks y trazabilidad de errores
 - [ ] Asegurar que los cambios de puertos no rompan la ejecución de otros proyectos locales
 - [ ] Mantener la documentación como fuente única de continuidad del proceso de refactorización
+
+> **⚠️ DOCUMENTO SUPERADO (20-jul-2026):** La definición de EIARC en este documento fue reemplazada por la identidad canónica vigente. Ver `docs/ECOSYSTEM_IDENTITY.md`. Este documento se conserva como referencia histórica, no como fuente de verdad.
 
 ## ⚪ FASE 9: Expansión de Dominio — Ecosistema EIARC (Planificada)
 **Estado:** 🔲 Planificada (no iniciada)

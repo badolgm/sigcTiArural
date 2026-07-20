@@ -216,6 +216,8 @@ Esta sección documenta únicamente decisiones con fuente trazable — a la bit�
 
 ---
 
+> **⚠️ DOCUMENTO SUPERADO (20-jul-2026):** La definición de EIARC en este documento fue reemplazada por la identidad canónica vigente. Ver `docs/ECOSYSTEM_IDENTITY.md`. Este documento se conserva como referencia histórica, no como fuente de verdad.
+
 ## 3. Modelo de Dominio EIARC (Planificado)
 
 ### 3.1 Vista Ampliada del Diagrama Hexagonal — Ecosistema EIARC (Planificado)
