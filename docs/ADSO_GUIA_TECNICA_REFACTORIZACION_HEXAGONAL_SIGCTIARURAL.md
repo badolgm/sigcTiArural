@@ -124,11 +124,27 @@ Refactorizar progresivamente el proyecto hacia **Arquitectura Hexagonal (Ports &
 - **Inyección de dependencias explícita:** un "composition root" en las vistas/urls o un contenedor simple (sin instanciación directa dentro del dominio).
 - **Strangler Fig:** los endpoints heredados (ViewSets V1 con acceso directo a modelos) conviven con versiones V2/V3 que usan la capa hexagonal. Migración vertical por contexto delimitado (Telemetría, Robots, Laboratorios, etc.).
 - **Mappers obligatorios:** nunca exponer los modelos de Django al dominio; el adaptador de persistencia realiza la traducción.
-- **Contextos delimitados (bounded contexts) candidatos:**
-  - IoT / Telemetría (SensorReading, Robot, Commands).
-  - Laboratorios educativos (estrategias por tipo).
-  - IA (predicción de enfermedades).
-  - Usuarios / Autenticación (a futuro).
+- **Contextos delimitados (bounded contexts) — lista definitiva (reconciliada 20-jul-2026):**
+
+  Reconciliación cerrada entre los candidatos técnicos previos de este documento, la lista de `HEXAGONAL_REFACTOR_PLAN.md` (sección superada, ver ese archivo), los 7 "contextos oficiales" de `docs/eiarc/02_ARCHITECTURE/EIARC_CONTEXTS.md`, y la identidad canónica del proyecto en `docs/ECOSYSTEM_IDENTITY.md` (fuente de verdad para qué es y qué no es un dominio del ecosistema).
+
+  | Contexto | Tipo | Evidencia de código ya existente | Riesgo de construcción |
+  |---|---|---|---|
+  | Laboratorios | Código (bounded context) | `api/logic/domain/{agricultura,electronica,robotica,telecom}.py` + `core/domain/strategies/{...}_strategy.py` — duplicado en 2 capas, el más maduro | Bajo |
+  | Telemetría | Código (bounded context) | `core/domain/entities/sensor_reading.py` + value objects (`sensor_id`, `temperature`, `humidity`) + `sensor_reading_repository.py` | Bajo |
+  | IA (`ai_advisory`) | Código (bounded context) | `infrastructure/external/ai_service/{fastapi_ai_adapter,semantic_prediction_resolver}.py` | Medio |
+  | Identidad | Código (bounded context) | `src/backend/users/` — solo `__init__.py`, vacío | Alto |
+  | Conocimiento (absorbe "Cursos") | Código (bounded context, futuro) | Solo frontend (`src/frontend/src/knowledge-hub/`) — cero backend | Alto |
+  | IoT | Código (bounded context, distinto de Telemetría — gobierna dispositivos, no datos) | Ninguna — `src/embedded/bbb_*/` en 0 bytes | Muy alto (depende de hardware físico no disponible) |
+  | Investigación | Documental/proceso — transversal, no un contexto | N/A por diseño (ver README.md, diagrama C4) | No aplica |
+  | Gobernanza | Documental/proceso | N/A — vive en `docs/eiarc/` y `SIGCT_RURAL_SYSTEM_BOOT.md` | No aplica |
+  | Notificaciones | Infraestructura transversal (no es contexto) | `infrastructure/external/notifications/console_notification_adapter.py` | N/A — se mantiene como `shared_kernel` |
+  | Deployment | Infraestructura/DevOps (no es contexto) | `docker-compose.yml`, Dockerfiles, `.env.example`, `scripts/*.ps1`/`*.sh` — configuración, no dominio | N/A |
+  | EIARC | Marco de gobierno / meta-capa (no es un contexto par) | N/A — audita y da coherencia a los demás, no aporta entidades propias | N/A |
+
+  **Cursos** se absorbe dentro de **Conocimiento** — no es un contexto propio: el Principio 3 de `docs/ECOSYSTEM_IDENTITY.md` describe cursos y recursos académicos curados como la misma responsabilidad de curación (seleccionar, curar, referenciar), sin reglas de negocio distintivas propias.
+
+  **Orden de construcción recomendado (Días 8-10):** 1º Laboratorios, 2º Telemetría — ambos con evidencia de código madura y riesgo bajo de romper lo existente (Strangler Fig puro, sin lógica nueva que inventar). Identidad, Conocimiento e IoT quedan fuera de esta fase: los dos primeros requieren dominio nuevo desde cero, el tercero depende de hardware físico no disponible. El puerto de entrada de Telemetría debe diseñarse agnóstico a IoT (Principio 1 de `docs/ECOSYSTEM_IDENTITY.md`), para no bloquear su construcción hoy ni asumir que IoT ya existe.
 - **Multi-servicio:** el servicio de IA es un adaptador externo (HTTP). La capa Edge (MQTT) será otro puerto.
 - **Frontend:** adoptar una organización tipo Feature-Sliced o Clean Architecture adaptada (entities, use-cases/adapters, ui), extrayendo la lógica de simulación de los laboratorios más grandes (SchematicEditor ~80kB, ElectronicsLab ~74kB).
 - **Aspectos transversales de producción:** logging estructurado, manejo de errores mediante puertos, configuración centralizada (pydantic-settings o django-environ), seguridad (JWT real, CORS estricto, limitación de tasa), observabilidad (healthchecks, métricas básicas).
@@ -590,7 +606,7 @@ El proyecto mantenía dos implementaciones paralelas del mismo dominio:
 
 - Una arquitectura hexagonal como un único núcleo de dominio gigante repite el error de mezclar bajo un mismo `domain/` conceptos que no comparten un lenguaje ubicuo coherente: "laboratorio de robótica", "modelo de IA de enfermedades de plantas", "telemetría de sensores embebidos" y "cursos" son dominios distintos que deberían evolucionar de forma independiente. Esto es el antipatrón conocido como "hexágono dios".
 - Migrar a microservicios completos tampoco se justifica en esta etapa: implica un costo operativo (descubrimiento de servicios, transacciones distribuidas, observabilidad, versionado de contratos) sin un beneficio real todavía, dado el tamaño del equipo y la ausencia de necesidad de escalar cada dominio de forma independiente.
-- **Solución adoptada: Monolito Modular con límites hexagonales por contexto delimitado.** Cada contexto (laboratorios, telemetría, IA, cursos, identidad) es un hexágono independiente —con su propio `domain/`, `ports/`, `application/` e `infrastructure/`— pero todos se despliegan en el mismo proceso Django, excepto los que ya tienen una frontera física real (como el servicio de IA, que corresponde a otro runtime y otro ciclo de vida de despliegue).
+- **Solución adoptada: Monolito Modular con límites hexagonales por contexto delimitado.** Cada contexto de código (laboratorios, telemetría, IA, identidad — ver la lista definitiva reconciliada más abajo en este mismo capítulo) es un hexágono independiente —con su propio `domain/`, `ports/`, `application/` e `infrastructure/`— pero todos se despliegan en el mismo proceso Django, excepto los que ya tienen una frontera física real (como el servicio de IA, que corresponde a otro runtime y otro ciclo de vida de despliegue). "Cursos" no es un contexto propio: se absorbe dentro de Conocimiento (ver lista definitiva).
 - **Justificación:** los puertos de cada contexto son exactamente el punto de corte donde se podría extraer un microservicio real el día que el volumen o el equipo lo justifiquen. Por ejemplo, cuando la ingesta de telemetría IoT crezca lo suficiente, el `SensorReadingRepositoryPort` ya existiría, y bastaría con cambiar el adaptador de Django ORM por un cliente gRPC/HTTP sin tocar el dominio. Se diseña para poder separar en microservicios en el futuro, sin hacerlo antes de que sea necesario.
 
 **Estructura objetivo propuesta:**

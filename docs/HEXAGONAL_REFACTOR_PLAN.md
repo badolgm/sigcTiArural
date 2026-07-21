@@ -12,6 +12,8 @@
 
 ### Declaración arquitectónica actual (2026-07-04)
 
+> **⚠️ LISTA DE CONTEXTOS SUPERADA (20-jul-2026):** la enumeración de contextos de este párrafo fue reemplazada por la lista definitiva y reconciliada. Ver `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`, sección "Contextos delimitados (bounded contexts) — lista definitiva". Este párrafo se conserva como referencia histórica, no como fuente de verdad.
+
 La dirección técnica del proyecto se define como un **Modular Monolith** con límites hexagonales por bounded context. La idea es que cada contexto del negocio —laboratorios, telemetría, IA, cursos, usuarios y administración— tenga su propia estructura interna de dominio, puertos, aplicación e infraestructura, pero que todos se desplieguen dentro del mismo proceso Django como un monolito modular bien delimitado.
 
 > **Nota de alineación EIARC (planificado):** el proyecto documenta una expansión de dominio hacia el ecosistema EIARC (telemetría veterinaria multiespecie, apicultura, piscicultura, invernaderos y multiplataforma educativa), formalizada como **Fase 9 (planificada, no iniciada)** en `PLAN_MAESTRO.md`. Esa expansión reutiliza exactamente los mismos principios de este plan (Strangler Fig, puertos primero, verificación obligatoria por fase) y no debe iniciarse antes de completar las Fases 0-8 descritas aquí.
