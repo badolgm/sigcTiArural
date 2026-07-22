@@ -265,13 +265,14 @@ if AI_INFERENCE_V3_AVAILABLE:
 from .logic.domain.services import LaboratorioService as LegacyLaboratorioService
 from .logic.domain.factories import LaboratorioStrategyFactory
 from .logic.adapters.persistence import DjangoRepository
+from contexts.telemetry.infrastructure.compat.legacy_sensor_reading_adapter import LegacySensorReadingRepositoryAdapter
 
 class TelemetryHistoryV2View(APIView):
     permission_classes = [AllowAny]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.repository = DjangoRepository()
+        self.repository = LegacySensorReadingRepositoryAdapter()
 
     def get(self, request):
         tipo_lab = request.query_params.get('tipo', 'ROBOTICA')
