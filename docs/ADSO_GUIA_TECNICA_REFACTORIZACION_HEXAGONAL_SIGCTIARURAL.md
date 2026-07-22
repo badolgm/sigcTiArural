@@ -100,6 +100,96 @@ Refactorizar progresivamente el proyecto hacia **Arquitectura Hexagonal (Ports &
     - EventBusPort (a futuro)
   - Estrategias / Fábricas (para los 4 laboratorios: robótica, agricultura, electrónica, telecomunicaciones)
 
+### Diseño de `EventBusPort` — mecanismo genérico de interconexión entre labs (Día 11-12, 22-jul-2026)
+
+Diseño de solo documentación, sin código todavía — resuelve el punto de la identidad canónica (principio #2 de `docs/ECOSYSTEM_IDENTITY.md`, "los laboratorios deben poder comunicarse entre sí") con el nivel de cómputo que permite el hardware del proyecto (i3/12GB — nada de Kafka/mensajería pesada). Fundamentado en el código real de los 4 labs existentes en `contexts/labs/domain/strategies/{agricultura,robotica,electronica,telecom}.py`: hoy cada `procesar(datos)` recibe y devuelve un `Dict[str, Any]` completamente ad-hoc, sin ningún vocabulario compartido entre labs.
+
+**Confirmación de alcance (principio #5 de `CLAUDE.md`):** este es el **mecanismo genérico**, no una integración concreta entre labs específicos. No se construyen "Señales" ni "Matemáticas" como labs reales — son ilustrativos en la identidad vigente. El mecanismo debe servir para los 4 labs que ya existen (Robótica, Telecomunicaciones, Agricultura, Electrónica) sin necesitar labs adicionales para probarse.
+
+#### 1. Esquema de señal — `LabSignal`
+
+```python
+@dataclass(frozen=True)
+class LabSignal:
+    signal_id: str
+    source_context: str
+    signal_type: str
+    timestamp: datetime
+    payload: Dict[str, Any]
+    metadata: Dict[str, str] = field(default_factory=dict)
+```
+
+Justificación campo por campo:
+
+- `signal_id`: identifica la señal de forma única para trazabilidad y deduplicación, sin acoplarse al ID de persistencia de ningún contexto de origen.
+- `source_context`: qué contexto la publicó (`"telemetry"`, `"labs.agricultura"`, etc.) — permite a un suscriptor filtrar o auditar procedencia sin conocer la implementación interna del origen.
+- `signal_type`: la etiqueta que un suscriptor usa para decidir si le interesa la señal — es el único acoplamiento real entre publicador y suscriptor. Deliberadamente un string libre, no un enum cerrado, para no bloquear tipos de señal futuros no anticipados hoy.
+- `timestamp`: momento de captura/emisión — necesario para que cualquier consumidor ordene o correlacione señales de distintos orígenes.
+- `payload: Dict[str, Any]`: **deliberadamente sin tipar por value objects todavía.** Los 4 labs reales ya tienen formas de datos completamente heterogéneas hoy (confirmado leyendo su código: Agricultura habla de `nivel_estres`/`enfermedad`, Electrónica de `nodos_detectados`/`corriente_estimada_ma`, Telecom de `frecuencia_dominante`/`snr`). Tipar el payload ahora exigiría diseñar un esquema unificado sin tener un segundo caso de uso real que lo valide — sobre-ingeniería prematura para este paso.
+- `metadata: Dict[str, str]`: trazabilidad/correlación opcional (ej. `correlation_id` de una cadena de señales derivadas de otra), default vacío — no obliga a ningún publicador a usarla.
+
+#### 2. Puerto — `EventBusPort`
+
+```python
+class EventBusPort(ABC):
+    @abstractmethod
+    def publish(self, signal: LabSignal) -> None: ...
+
+    @abstractmethod
+    def subscribe(self, signal_type: str, handler: Callable[[LabSignal], None]) -> None: ...
+```
+
+**Destino final:** `src/backend/shared_kernel/event_bus/`, siguiendo la convención ya decidida en Día 6-7 (commit `5a49e7f`) — Notificaciones es el precedente directo de infraestructura transversal que "se mantiene como `shared_kernel`" (ver tabla de contextos reconciliada, arriba en este mismo documento).
+
+**Esa carpeta no existe todavía.** Ni `shared_kernel/` en general ni `event_bus/` en particular tienen código real hoy (verificado: solo `contexts/labs/` y `contexts/telemetry/` existen físicamente). Su creación queda explícitamente fuera de este paso — Día 11-12 es solo diseño documentado, sin tocar código — y se materializa cuando se implemente el primer caso real de interconexión, probablemente Día 16-17.
+
+#### 3. Adaptador en memoria (propuesto para cuando se implemente)
+
+Mismo patrón que `InMemorySensorReadingRepository` (`contexts/telemetry/infrastructure/persistence/in_memory/`), citado explícitamente como precedente ya validado en este proyecto: cumple el contrato sin infraestructura externa nueva, apto para tests y para producción ligera dado el hardware disponible.
+
+```python
+class InMemoryEventBus(EventBusPort):
+    def __init__(self):
+        self._handlers: Dict[str, List[Callable[[LabSignal], None]]] = {}
+
+    def publish(self, signal: LabSignal) -> None:
+        for handler in self._handlers.get(signal.signal_type, []):
+            handler(signal)
+
+    def subscribe(self, signal_type: str, handler: Callable[[LabSignal], None]) -> None:
+        self._handlers.setdefault(signal_type, []).append(handler)
+```
+
+`publish()` síncrono, sin cola, sin proceso aparte — mismo criterio de "ligero en cómputo" que exige `PLAN_20_DIAS.md` para el Día 11-12.
+
+#### 4. Ejemplo trazado — ILUSTRATIVO, no construido en este paso
+
+Ruta de ejemplo contra código real, para validar que el diseño es aplicable, **no como integración construida hoy**:
+
+```python
+# Publicador (contexts/telemetry/, ilustrativo):
+signal = LabSignal(
+    signal_id=str(uuid4()),
+    source_context="telemetry",
+    signal_type="sensor_reading",
+    timestamp=reading.timestamp,
+    payload={"temperature": reading.temperature.value, "humidity": reading.humidity.value},
+)
+event_bus.publish(signal)
+
+# Suscriptor (contexts/labs/, ilustrativo — traductor vive en el punto de
+# suscripción, el procesar() de Agricultura no se toca):
+def on_sensor_reading(signal: LabSignal) -> None:
+    datos = {"temperature": signal.payload["temperature"], "humidity": signal.payload["humidity"]}
+    laboratorio_service.ejecutar_analisis(datos)
+
+event_bus.subscribe("sensor_reading", on_sensor_reading)
+```
+
+#### 5. Relación con FASE 7 (Bus de eventos Redis/RabbitMQ)
+
+Este diseño (puerto + adaptador en memoria) es el escalón previo al ítem de FASE 7 "Bus de eventos (Redis/RabbitMQ)" (ver más abajo en este documento, y checklist 7.9). No son alternativas — son el mismo puerto (`EventBusPort`) con dos adaptadores distintos: `InMemoryEventBus` hoy, un adaptador Redis/RabbitMQ el día que el volumen de señales o la necesidad de procesamiento asíncrono lo justifique, sin cambiar el contrato ni el código que publica/suscribe.
+
           ↑ (implementados por)
 
 [Infraestructura / Adaptadores de Salida]
@@ -234,7 +324,7 @@ El plan completo está documentado en `docs/HEXAGONAL_REFACTOR_PLAN.md`.
 **FASE 7 — Edge Computing, Ingesta y Eventos (prioridad baja, no bloqueante)**
 - Diseñar los puertos: `SensorIngestionPort`, `RobotCommandPort`, `EdgeInferencePort`.
 - Implementar adaptadores MQTT cuando el hardware esté disponible.
-- Bus de eventos (Redis/RabbitMQ) para procesamiento asíncrono (alertas, telemetría).
+- Bus de eventos (Redis/RabbitMQ) para procesamiento asíncrono (alertas, telemetría). **Escalón previo ya diseñado:** ver "Diseño de `EventBusPort`" arriba en este documento (Día 11-12, 22-jul-2026) — mismo puerto, adaptador `InMemoryEventBus` hoy, Redis/RabbitMQ como evolución futura detrás del mismo contrato.
 - No debe bloquear el avance de las demás fases.
 
 **FASE 8 — Pruebas, Observabilidad, Hardening, Depreciación y Cierre (prioridad crítica, continua)**
@@ -487,7 +577,7 @@ Categorizado por área. Cada ítem representa una tarea pendiente identificada d
 - [ ] Implementar código real en `src/embedded/` (`mqtt_broker`, `tflite_api`, `sensor_reader`), actualmente vacío.
 - [ ] Puertos para ingesta MQTT y comandos.
 - [ ] Adaptador MQTT real.
-- [ ] Bus de eventos (se recomienda Redis pub/sub) para procesamiento asíncrono.
+- [ ] Bus de eventos (se recomienda Redis pub/sub) para procesamiento asíncrono. **Escalón previo ya diseñado:** ver "Diseño de `EventBusPort`" (Día 11-12, 22-jul-2026), sección de la Capa de Dominio — mismo puerto, adaptador en memoria hoy, Redis/RabbitMQ como evolución futura.
 - [ ] Integración real con hardware BeagleBone Black cuando esté disponible (probar primero con mocks).
 - [ ] Actualizar `EDGE_SETUP.md` si es necesario.
 
