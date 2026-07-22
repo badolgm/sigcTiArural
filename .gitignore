@@ -161,6 +161,10 @@ docs/*
 !docs/sena_artifacts/
 !docs/sena_artifacts/**
 
+# Local-only artifact, kept on disk, intentionally never pushed to GitHub
+# (no explicit decision to make it public/canonical) — 21-jul-2026
+docs/sena_artifacts/PnatallasReadme_Vistas.docx
+
 # AI Dataset/Training Manifests
 !docs/ai/
 !docs/ai/**
