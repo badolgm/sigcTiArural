@@ -1,4 +1,10 @@
 # ==========================
+# AI assistant memory files — local-only by design, never public
+# ==========================
+CLAUDE.md
+RECOVERY_BOOT_MASTER.md
+
+# ==========================
 # Entornos Virtuales de Python
 # ==========================
 venv/
