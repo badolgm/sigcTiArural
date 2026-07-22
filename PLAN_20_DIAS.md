@@ -62,6 +62,10 @@
 **Día 11-12 — Diseño del bus de señales entre labs**
 - Diseñar (documentado primero, ligero en cómputo dado tu hardware — nada de Kafka/mensajería pesada) el mecanismo por el cual laboratorios se comunican: contrato de eventos, formato de señal común, ruta de un dato desde captura hasta cualquier lab de destino.
 
+**Día 11-12 (bus de señales entre labs): ✅ COMPLETADO — commit `6e3b592`.** Diseño documentado de EventBusPort/LabSignal en `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` — mecanismo genérico de interconexión, destino final `src/backend/shared_kernel/event_bus/` (no creado todavía, queda para cuando se materialice el primer caso real, ~Día 16-17). Adaptador `InMemoryEventBus` propuesto, mismo patrón que Día 9. Cross-reference bidireccional con el ítem de FASE 7 (Redis/RabbitMQ). Cero código tocado — 100% diseño, tal como pedía el plan original.
+
+**Nota de cierre previa al Día 13:** `AICropAdviceV3View` — confirmado resuelto por el fix de timezone (`75d5d9b`), verificado en vivo 22-jul-2026 (`200`, sin `TypeError`, BD restaurada a 0 tras la prueba) — ver `docs/local/MOVEMENT_LOG.md` para el detalle. No queda ninguna duda abierta antes de arrancar el Día 13.
+
 **Día 13 — Contrato semántico de IA**
 - Resolver la incompatibilidad ya auditada (`TRAE_AI_INTEGRATION_AUDIT.md`): el modelo devuelve `class_N`, el frontend espera nombres agrícolas. Definir el contrato canónico (principio EIARC_MISSION #2: separar inferencia técnica de contrato de negocio) y aplicarlo.
 
