@@ -1,5 +1,49 @@
 # SIGCT_RURAL_SYSTEM_BOOT
 
+> **⚠️ DOCUMENTO PARCIALMENTE SUPERADO (21-jul-2026):** el estado
+> operativo inmediato de este documento fue reemplazado por
+> `CLAUDE.md`, `PLAN_20_DIAS.md` y `RECOVERY_BOOT_MASTER.md`. En
+> particular: el incidente del AI Service (Secciones 8, 11, 13) está
+> resuelto — verificado en vivo el 21-jul-2026, sin evidencia del
+> problema descrito. El Knowledge Hub (Sección 12) está implementado
+> y operativo (49/49 documentos). El modelo de identidad de la
+> Sección 1 (SIGCT-Rural como subconjunto de EIARC) fue invertido —
+> ver `docs/ECOSYSTEM_IDENTITY.md`. Ver tabla de vigencia sección por
+> sección abajo. El checklist de cierre de sesión (Sección 16) y las
+> reglas de precedencia documental (Sección 18, puntos 8-9) SIGUEN
+> VIGENTES — también extraídas en `docs/GOVERNANCE_RULES.md`. Este
+> documento se conserva íntegro como referencia histórica, no como
+> fuente de verdad operativa.
+
+## Tabla de vigencia sección por sección (auditoría 21-jul-2026)
+
+| # | Sección | Veredicto |
+|---|---|---|
+| — | Encabezado (fecha, propósito) | Parcialmente superado — el rol de "fuente de verdad de estado operativo inmediato" lo cumplen hoy `CLAUDE.md`/`PLAN_20_DIAS.md`/`RECOVERY_BOOT_MASTER.md`. |
+| 1 | Qué es SIGCT-Rural | Superado — contradicción de identidad, no solo de dato. Ver `docs/ECOSYSTEM_IDENTITY.md`, definición vigente. |
+| 2 | Estado actual consolidado | Superado en 3 de 4 puntos (Knowledge Hub, Telemetry V3, AI Service). |
+| 3 | Documentos canónicos obligatorios | Válido como mapa — los 15 archivos existen físicamente (verificado). La cadena de "verdad arquitectónica" que citan depende en parte de `EIARC_MISSION/SCOPE/VISION.md`, ya marcados como superados en Día 2. |
+| 4 | Orden exacto de lectura | Parcialmente superado — la "Fase 4: Incidente crítico vigente" ya no describe nada vigente. |
+| 5 | Arquitectura documental (Niveles 1-6) | Válido — taxonomía de carpetas, no depende de estado operativo. |
+| 6 | Arquitectura técnica | Superado en la sub-sección "Contextos EIARC" — lista 7 contextos (incluye IoT, Deployment) que contradicen la lista reconciliada en Día 6-7 (`Labs, Telemetry, AI, Knowledge, Identity, EIARC`). Estado de madurez de Labs/Telemetry desactualizado. |
+| 7 | Problemas resueltos | Válido — registro histórico de diseño/diagnóstico ya cerrado, no reabierto. |
+| 8 | Incidentes abiertos | Superado en #1 (AI Service) y #2 (Knowledge Hub). Parcial en #3 (Docs v5.0 — las 5 páginas específicas ya se archivaron en Día 4) y #4 (consolidación de contextos — 2 ya tienen scaffold+tests). |
+| 9 | Estado actual de Dashboard | Válido — sin evidencia de cambio. |
+| 10 | Estado actual de Telemetry | Superado — necesita reescritura, no parche. V3 tenía 0 tests hasta el 20-jul y un bug de producción real (naive vs. aware datetime) sin detectar hasta esta sesión. |
+| 11 | Estado actual de AI Service | Superado — verificado en vivo 21-jul-2026, sin evidencia del incidente descrito. |
+| 12 | Estado actual de Knowledge Hub | Superado — implementado y operativo (49/49 documentos) desde Día 3-5. |
+| 13 | Próxima acción obligatoria | Superado — no hay nada que recuperar en el AI Service. |
+| 14 | Acciones prohibidas | Válido, mayormente — compatible en espíritu con las reglas de oro de `CLAUDE.md`. Puntos 5-6 (AI Service) sin objeto hoy. |
+| 15 | Checklist de inicio de sesión | Válido, con un paso huérfano — el paso 2 ("confirmar incidente activo actual") no tiene respuesta fija hoy. |
+| 16 | Checklist de cierre de sesión | **Válido — vigente, también extraído en `docs/GOVERNANCE_RULES.md`.** |
+| 17 | Mapa de continuidad del proyecto | Parcialmente superado — el mapa de documentos existe, pero "entrar por AI Service" ya no aplica. |
+| 18.1-7 | Fuente de verdad (puntos 1-7) | Punto 1 superado. Puntos 3 y 5 apuntan a documentos con contenido interno desactualizado, aunque el principio de "esto manda sobre ese tema" siga siendo razonable. |
+| 18.8 | Regla final de precedencia | **Válido — vigente, también extraído en `docs/GOVERNANCE_RULES.md`.** |
+| 18.9 | Reglas 1-4 de gobernanza documental | **Válido — vigente, también extraído en `docs/GOVERNANCE_RULES.md`.** |
+| — | Cierre operativo | Superado en puntos 3-4 (AI Service, Knowledge Hub como próximos frentes). Válido en espíritu en 1-2-5. |
+
+---
+
 ## Fecha
 
 2026-07-16
