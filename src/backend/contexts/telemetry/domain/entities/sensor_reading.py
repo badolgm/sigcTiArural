@@ -20,7 +20,8 @@ class SensorReading:
 
     def __post_init__(self):
         """Validaciones de dominio adicionales."""
-        if self.timestamp > datetime.now():
+        ahora = datetime.now(self.timestamp.tzinfo)
+        if self.timestamp > ahora:
             raise ValueError("La fecha y hora no puede estar en el futuro")
 
     def __str__(self) -> str:

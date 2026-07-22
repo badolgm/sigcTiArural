@@ -19,7 +19,7 @@ Ranges/behavior documented below are read directly from the existing code
 not assumed.
 """
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from contexts.telemetry.domain.value_objects import Temperature, Humidity, SensorId
 from contexts.telemetry.domain.entities import SensorReading
@@ -190,6 +190,31 @@ def test_sensor_reading_timestamp_futuro_no_es_domain_exception():
             )
         except DomainException:
             pytest.fail("Expected plain ValueError, not a DomainException subclass")
+
+
+def test_sensor_reading_acepta_timestamp_aware_sin_typeerror():
+    """Reproduce el escenario real: Postgres con USE_TZ=True entrega
+    timestamps timezone-aware. No debe lanzar TypeError (bug corregido,
+    ver docs/local/MOVEMENT_LOG.md)."""
+    reading = SensorReading(
+        sensor_id=SensorId("BBB-03"),
+        temperature=Temperature(22.5),
+        humidity=Humidity(60.0),
+        timestamp=datetime.now(timezone.utc) - timedelta(minutes=5),
+    )
+    assert reading.timestamp.tzinfo is not None
+
+
+def test_sensor_reading_timestamp_aware_futuro_lanza_valueerror():
+    """La regla 'no puede estar en el futuro' sigue vigente con
+    timestamps aware, no solo con naive."""
+    with pytest.raises(ValueError, match="no puede estar en el futuro"):
+        SensorReading(
+            sensor_id=SensorId("BBB-03"),
+            temperature=Temperature(22.5),
+            humidity=Humidity(60.0),
+            timestamp=datetime.now(timezone.utc) + timedelta(hours=1),
+        )
 
 
 def test_sensor_reading_str_representation():
