@@ -194,6 +194,9 @@ docs/sena_artifacts/PnatallasReadme_Vistas.docx
 # _archive/ como única excepción real (alcance exclusivo, sin abrir el resto de la carpeta).
 !docs/diagrams/
 docs/diagrams/*
+# Excepción: banner oficial del proyecto (sí versionado)
+!docs/diagrams/banner.png
+!docs/diagrams/banner.svg
 !docs/diagrams/_archive/
 !docs/diagrams/_archive/**
 

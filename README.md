@@ -3,7 +3,7 @@
 
 <div align="center">
 
-![SIGC&T Rural Banner](docs/diagrams/banner.jpg)
+![SIGC&T Rural Banner](docs/diagrams/banner.png)
 
 [![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyMmMxLjEgMCAyLS45IDItMlYxMmMwLTEuMS0uOS0yLTItMkg0Yy0xLjEgMC0yIC45LTIgMnY4YzAgMS4xLjkgMiAyIDJoOHoiLz48cGF0aCBkPSJNMjAgMTJjMC0xLjEtLjktMi0yLTJoLTR2NGg0YzEuMSAwIDItLjkgMi0yeiIvPjwvc3ZnPg==)](https://www.sena.edu.co/)
 [![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo%20Activo-00d4ff?style=for-the-badge&logo=StatusPage&logoColor=white)](https://github.com/badolgm/sigcTiArural)
