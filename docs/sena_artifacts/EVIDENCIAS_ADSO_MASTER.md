@@ -52,10 +52,10 @@ Este documento organiza la evidencia existente en cinco bloques:
 ### 4.3 Evidencia de gobierno documental
 
 - `MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `PROJECT_ARCHIVE_MANIFEST.md`
-- `PROJECT_RECORDS_REGISTER.md`
+- `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
+- `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
 - `DOCUMENT_RETENTION_POLICY.md`
-- `PROJECT_STRUCTURE_SNAPSHOT.md`
+- `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
 
 ## 5. Evidencia de implementación de software
 

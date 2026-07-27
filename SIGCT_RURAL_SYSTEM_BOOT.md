@@ -248,13 +248,13 @@ Rol:
 
 Ubicación principal:
 
-- `PROJECT_ARCHIVE_MANIFEST.md`
-- `PROJECT_RECORDS_REGISTER.md`
+- `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
+- `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
 - `DOCUMENT_RETENTION_POLICY.md`
-- `PROJECT_STRUCTURE_SNAPSHOT.md`
-- `PROJECT_BACKUP_MANIFEST.md`
-- `BACKUP_CONTENT_INDEX.md`
-- `BACKUP_VERIFICATION_REPORT.md`
+- `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
+- `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
+- `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
+- `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
 
 Conclusión:
 

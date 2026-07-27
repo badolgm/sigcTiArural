@@ -33,13 +33,13 @@ Realizar un inventario maestro completo del repositorio SIGCT-Rural, clasificand
 - `HANDOFF_TRAE_sigcTiArual.md`
 - `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
 - `docs/historical/TRAE_AI_INTEGRATION_AUDIT.md`
-- `PROJECT_ARCHIVE_MANIFEST.md`
-- `PROJECT_RECORDS_REGISTER.md`
+- `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
+- `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
 - `DOCUMENT_RETENTION_POLICY.md`
-- `PROJECT_STRUCTURE_SNAPSHOT.md`
-- `PROJECT_BACKUP_MANIFEST.md`
-- `BACKUP_CONTENT_INDEX.md`
-- `BACKUP_VERIFICATION_REPORT.md`
+- `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
+- `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
+- `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
+- `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
 - `debug-ai-model-loader.md`
 
 ### 1.2 Documentacion estructurada en `docs/`
@@ -82,12 +82,12 @@ Se detectaron familias documentales derivadas, no duplicados exactos:
 Se identifican redundancias de funcion, no duplicacion literal:
 
 - Familia de respaldo y archivo:
-  - `PROJECT_ARCHIVE_MANIFEST.md`
-  - `PROJECT_BACKUP_MANIFEST.md`
-  - `BACKUP_CONTENT_INDEX.md`
-  - `BACKUP_VERIFICATION_REPORT.md`
-  - `PROJECT_STRUCTURE_SNAPSHOT.md`
-  - `PROJECT_RECORDS_REGISTER.md`
+  - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
+  - `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
+  - `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
+  - `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
+  - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
+  - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
   - `DOCUMENT_RETENTION_POLICY.md`
   - Evidencia: todos son metadocumentos de respaldo, archivo, retencion, estructura o verificacion.
 - Familia de continuidad y bitacora:
@@ -149,13 +149,13 @@ Se clasifican como historicos los que preservan trazabilidad, auditoria pasada o
 - `docs/project_knowledge_base/KB-*`
 - `docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`
   - Evidencia: se define como bitacora de intervencion tecnica append-only.
-- `PROJECT_ARCHIVE_MANIFEST.md`
-- `PROJECT_RECORDS_REGISTER.md`
+- `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
+- `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
 - `DOCUMENT_RETENTION_POLICY.md`
-- `PROJECT_STRUCTURE_SNAPSHOT.md`
-- `PROJECT_BACKUP_MANIFEST.md`
-- `BACKUP_CONTENT_INDEX.md`
-- `BACKUP_VERIFICATION_REPORT.md`
+- `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
+- `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
+- `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
+- `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
 - `debug-ai-model-loader.md`
 
 ## 7. Documentos que haran parte de la entrega SENA
@@ -179,13 +179,13 @@ Se incluyen aqui los que mencionan explicitamente SENA, ADSO, Proyecto Productiv
 
 Se clasifican fuera de entrega SENA por ser operativos, de respaldo, de auditoria tecnica interna o de cierre:
 
-- `PROJECT_ARCHIVE_MANIFEST.md`
-- `PROJECT_RECORDS_REGISTER.md`
+- `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
+- `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
 - `DOCUMENT_RETENTION_POLICY.md`
-- `PROJECT_STRUCTURE_SNAPSHOT.md`
-- `PROJECT_BACKUP_MANIFEST.md`
-- `BACKUP_CONTENT_INDEX.md`
-- `BACKUP_VERIFICATION_REPORT.md`
+- `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
+- `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
+- `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
+- `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
 - `debug-ai-model-loader.md`
 - `docs/eiarc/02_ARCHITECTURE/AI_PR1_CODE_REVIEW.md`
 - `docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md`
@@ -324,13 +324,13 @@ Tomadas exclusivamente de `docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md`:
 ### Que ya no debe volver a tocarse
 
 - Backups y manifiestos de cierre ya creados:
-  - `PROJECT_ARCHIVE_MANIFEST.md`
-  - `PROJECT_RECORDS_REGISTER.md`
+  - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
+  - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
   - `DOCUMENT_RETENTION_POLICY.md`
-  - `PROJECT_STRUCTURE_SNAPSHOT.md`
-  - `PROJECT_BACKUP_MANIFEST.md`
-  - `BACKUP_CONTENT_INDEX.md`
-  - `BACKUP_VERIFICATION_REPORT.md`
+  - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
+  - `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
+  - `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
+  - `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
 - Artefactos historicos de auditoria ya cerrados:
   - `TRAE_*`
   - `docs/project_knowledge_base/KB-*`

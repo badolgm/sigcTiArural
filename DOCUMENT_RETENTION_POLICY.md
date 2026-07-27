@@ -21,9 +21,9 @@ Definir la politica minima de retencion para el respaldo archivistico integral d
 
 Aplica a:
 
-- `PROJECT_ARCHIVE_MANIFEST.md`
-- `PROJECT_RECORDS_REGISTER.md`
-- `PROJECT_STRUCTURE_SNAPSHOT.md`
+- `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
+- `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
+- `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
 - documentacion bajo `docs/`
 - codigo fuente bajo `src/`
 - configuracion y scripts archivados en el respaldo
