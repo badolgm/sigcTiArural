@@ -134,7 +134,7 @@ Fuentes documentales locales:
 - `README.md`
 - `INDICE_PROYECTO.md`
 - `MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `SENA_GRADUATION_READINESS_AUDIT.md`
+- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 - `docs/**/*.md`
 - `docs/**/*.mmd`
 - `docs/**/*.svg`
@@ -576,7 +576,7 @@ Puede mostrarse públicamente, pero con etiqueta de histórico o auditoría:
 - `docs/project_knowledge_base/KB-*`
 - `docs/architect_master/05_FINAL_ARCHITECTURE_BASELINE.md`
 - `MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `SENA_GRADUATION_READINESS_AUDIT.md`
+- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 
 ---
 
@@ -588,10 +588,10 @@ Debe quedar con acceso restringido la documentación que expone continuidad inte
 
 - `HANDOFF_TRAE_sigcTiArual.md`
 - `docs/reports/continuity_status.md`
-- `debug-ai-model-loader.md`
+- `docs/ai/debug-ai-model-loader.md`
 - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
 - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-- `DOCUMENT_RETENTION_POLICY.md`
+- `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
 - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
 - `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
 - `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`

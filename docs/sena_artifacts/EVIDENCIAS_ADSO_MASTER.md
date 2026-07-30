@@ -24,7 +24,7 @@ Este documento organiza la evidencia existente en cinco bloques:
 | Mapa operativo del proyecto | `INDICE_PROYECTO.md` | Disponible |
 | Guía técnica ADSO | `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` | Disponible |
 | Matriz de evidencias | `docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md` | Disponible |
-| Auditoría de preparación para graduación | `SENA_GRADUATION_READINESS_AUDIT.md` | Disponible |
+| Auditoría de preparación para graduación | `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md` | Disponible |
 
 ## 4. Evidencia de arquitectura y diseño
 
@@ -54,7 +54,7 @@ Este documento organiza la evidencia existente en cinco bloques:
 - `MASTER_PROJECT_INVENTORY_AUDIT.md`
 - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
 - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-- `DOCUMENT_RETENTION_POLICY.md`
+- `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
 - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
 
 ## 5. Evidencia de implementación de software
@@ -207,7 +207,7 @@ Estas evidencias ya cuentan con respaldo documental en el repositorio y deben fo
 |---|---|---|
 | Identidad del proyecto | `README.md` | `PROYECTO_FORMATIVO_FINAL.md` |
 | Arquitectura | `docs/MASTERDOC.md` | `docs/architect_master/05_FINAL_ARCHITECTURE_BASELINE.md` |
-| Roadmap y cierre ADSO | `docs/PLAN_MAESTRO.md` | `SENA_GRADUATION_READINESS_AUDIT.md` |
+| Roadmap y cierre ADSO | `docs/PLAN_MAESTRO.md` | `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md` |
 | Evidencias | `EVIDENCIAS_ADSO_MASTER.md` | `docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md` |
 | Sustentación | `PRESENTACION_SUSTENTACION.md` | `README.md` |
 | Despliegue | `DEPLOYMENT_FINAL.md` | `docker-compose.yml` |

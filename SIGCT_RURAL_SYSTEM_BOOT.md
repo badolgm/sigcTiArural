@@ -117,7 +117,7 @@ Los documentos canónicos que una nueva IA debe considerar obligatorios son esto
 9. `AI_SERVICE_FORENSIC_AUDIT.md`
 10. `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 11. `AI_SERVICE_RECOVERY_PLAN.md`
-12. `AI_SERVICE_EXECUTION_READINESS.md` — determina si el proyecto está listo para ejecutar la recuperación real del AI Service; se lee junto con los tres documentos anteriores como una sola familia de incidente
+12. `docs/reports/AI_SERVICE_EXECUTION_READINESS.md` — determina si el proyecto está listo para ejecutar la recuperación real del AI Service; se lee junto con los tres documentos anteriores como una sola familia de incidente
 13. `docs/MASTERDOC.md`
 14. `docs/PLAN_MAESTRO.md`
 15. `INDICE_PROYECTO.md`
@@ -128,7 +128,7 @@ Documentos de soporte de alta prioridad:
 - `docs/project_knowledge_base/KB-001-TRAE-INDEPENDENT-REPOSITORY-AUDIT.md`
 - `docs/project_knowledge_base/KB-006-PENDING-CHANGES-AUDIT.md`
 - `docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md`
-- `SENA_GRADUATION_READINESS_AUDIT.md`
+- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 - `docs/sena_artifacts/PROYECTO_FORMATIVO_FINAL.md`
 - `docs/sena_artifacts/EVIDENCIAS_ADSO_MASTER.md`
 - `docs/sena_artifacts/PRESENTACION_SUSTENTACION.md`
@@ -176,7 +176,7 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 10. `AI_SERVICE_FORENSIC_AUDIT.md`
 11. `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 12. `AI_SERVICE_RECOVERY_PLAN.md`
-13. `AI_SERVICE_EXECUTION_READINESS.md`
+13. `docs/reports/AI_SERVICE_EXECUTION_READINESS.md`
 
 ### Fase 5. Contexto general del proyecto
 
@@ -250,7 +250,7 @@ Ubicación principal:
 
 - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
 - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-- `DOCUMENT_RETENTION_POLICY.md`
+- `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
 - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
 - `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
 - `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
@@ -332,7 +332,7 @@ Ya resuelto mediante:
 
 Ya resuelto mediante:
 
-- `SENA_GRADUATION_READINESS_AUDIT.md`
+- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 - `docs/sena_artifacts/*`
 
 ### 3. Baseline arquitectónico EIARC
@@ -415,7 +415,7 @@ Base documental:
 - `AI_SERVICE_FORENSIC_AUDIT.md`
 - `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 - `AI_SERVICE_RECOVERY_PLAN.md`
-- `AI_SERVICE_EXECUTION_READINESS.md`
+- `docs/reports/AI_SERVICE_EXECUTION_READINESS.md`
 
 Descripción:
 
@@ -680,11 +680,11 @@ El mapa de continuidad operativo es este:
 - `AI_SERVICE_FORENSIC_AUDIT.md`
 - `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 - `AI_SERVICE_RECOVERY_PLAN.md`
-- `AI_SERVICE_EXECUTION_READINESS.md`
+- `docs/reports/AI_SERVICE_EXECUTION_READINESS.md`
 
 ### Continuidad académica y de entrega
 
-- `SENA_GRADUATION_READINESS_AUDIT.md`
+- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 - `docs/sena_artifacts/*`
 
 Lectura sintética del mapa:
@@ -734,7 +734,7 @@ Regla explícita:
 - `AI_SERVICE_FORENSIC_AUDIT.md`
 - `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 - `AI_SERVICE_RECOVERY_PLAN.md`
-- `AI_SERVICE_EXECUTION_READINESS.md`
+- `docs/reports/AI_SERVICE_EXECUTION_READINESS.md`
 
 ### 6. Fuente de verdad para continuidad documental futura
 
@@ -744,7 +744,7 @@ Regla explícita:
 
 ### 7. Fuente de verdad para cierre académico
 
-- `SENA_GRADUATION_READINESS_AUDIT.md`
+- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 - `docs/sena_artifacts/`
 
 ### 8. Regla final de precedencia
