@@ -876,7 +876,7 @@ Este README es un documento de entrada público, **no** un reemplazo de la docum
 | 3. Base formal de conocimiento | Hallazgos de auditoría y decisiones consolidadas | `docs/project_knowledge_base/` (KB-001 a KB-006) |
 | 4. Línea arquitectónica EIARC | Visión, contextos, modelo de datos, blueprint | `docs/eiarc/` |
 | 5. Cierre académico SENA | Entregables finales ADSO | `docs/sena_artifacts/` |
-| 6. Respaldo, archivo y retención | Manifiestos de backup, política de retención | `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`, `DOCUMENT_RETENTION_POLICY.md` |
+| 6. Respaldo, archivo y retención | Manifiestos de backup, política de retención | `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`, `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md` |
 | 7. Documentación histórica | Bitácoras secundarias de sesiones de trabajo, no canónicas (ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9); incluye auditorías TRAE y README Reality Check ya absorbidas por `docs/project_knowledge_base/` | `docs/historical/` (`INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`, `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`, `TRAE_AI_INTEGRATION_AUDIT.md`, `README_REALITY_CHECK.md`) |
 | 8. Programa de I+D — IA V2 | Arquitectura multimodal, estrategia de datasets, MLOps, línea Agriculture AI V2 (planificado, converge con EIARC) | [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md) |
 
@@ -958,7 +958,7 @@ Los artefactos de cierre formal del Proyecto Productivo ADSO están consolidados
 | [`DEPLOYMENT_FINAL.md`](docs/sena_artifacts/DEPLOYMENT_FINAL.md) | Estado final de despliegue |
 | [`API_DELIVERY_PACKAGE.md`](docs/sena_artifacts/API_DELIVERY_PACKAGE.md) | Paquete de entrega de API |
 
-> Estado de preparación para graduación: [`SENA_GRADUATION_READINESS_AUDIT.md`](SENA_GRADUATION_READINESS_AUDIT.md)
+> Estado de preparación para graduación: [`SENA_GRADUATION_READINESS_AUDIT.md`](docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md)
 
 ---
 

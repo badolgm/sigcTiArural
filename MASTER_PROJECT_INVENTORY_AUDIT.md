@@ -35,12 +35,12 @@ Realizar un inventario maestro completo del repositorio SIGCT-Rural, clasificand
 - `docs/historical/TRAE_AI_INTEGRATION_AUDIT.md`
 - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
 - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-- `DOCUMENT_RETENTION_POLICY.md`
+- `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
 - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
 - `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
 - `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
 - `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
-- `debug-ai-model-loader.md`
+- `docs/ai/debug-ai-model-loader.md`
 
 ### 1.2 Documentacion estructurada en `docs/`
 
@@ -88,7 +88,7 @@ Se identifican redundancias de funcion, no duplicacion literal:
   - `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
   - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
   - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-  - `DOCUMENT_RETENTION_POLICY.md`
+  - `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
   - Evidencia: todos son metadocumentos de respaldo, archivo, retencion, estructura o verificacion.
 - Familia de continuidad y bitacora:
   - `HANDOFF_TRAE_sigcTiArual.md`
@@ -151,12 +151,12 @@ Se clasifican como historicos los que preservan trazabilidad, auditoria pasada o
   - Evidencia: se define como bitacora de intervencion tecnica append-only.
 - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
 - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-- `DOCUMENT_RETENTION_POLICY.md`
+- `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
 - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
 - `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
 - `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
 - `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
-- `debug-ai-model-loader.md`
+- `docs/ai/debug-ai-model-loader.md`
 
 ## 7. Documentos que haran parte de la entrega SENA
 
@@ -181,12 +181,12 @@ Se clasifican fuera de entrega SENA por ser operativos, de respaldo, de auditori
 
 - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
 - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-- `DOCUMENT_RETENTION_POLICY.md`
+- `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
 - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
 - `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
 - `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
 - `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
-- `debug-ai-model-loader.md`
+- `docs/ai/debug-ai-model-loader.md`
 - `docs/eiarc/02_ARCHITECTURE/AI_PR1_CODE_REVIEW.md`
 - `docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md`
 - `docs/eiarc/02_ARCHITECTURE/TELEMETRY_PR1_CODE_REVIEW.md`
@@ -326,7 +326,7 @@ Tomadas exclusivamente de `docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md`:
 - Backups y manifiestos de cierre ya creados:
   - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
   - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-  - `DOCUMENT_RETENTION_POLICY.md`
+  - `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
   - `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
   - `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
   - `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`

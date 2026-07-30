@@ -337,7 +337,7 @@ curl -F "file=@src/ai_models/test_leaf.jpg" http://localhost:8081/infer
 - `docs/MASTERDOC.md`
 - `docs/PLAN_MAESTRO.md`
 - `MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `SENA_GRADUATION_READINESS_AUDIT.md`
+- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 
 ## 11. Declaración final
 

@@ -212,7 +212,7 @@ Este proyecto formativo se soporta en los siguientes artefactos:
 - `docs/PLAN_MAESTRO.md`
 - `INDICE_PROYECTO.md`
 - `MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `SENA_GRADUATION_READINESS_AUDIT.md`
+- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 - `docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md`
 - `docs/eiarc/`
 - `docs/project_knowledge_base/`
