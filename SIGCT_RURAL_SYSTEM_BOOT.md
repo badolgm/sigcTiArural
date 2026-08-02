@@ -107,20 +107,20 @@ Lectura de estado global:
 Los documentos canónicos que una nueva IA debe considerar obligatorios son estos:
 
 1. `SIGCT_RURAL_SYSTEM_BOOT.md`
-2. `MASTER_PROJECT_INVENTORY_AUDIT.md`
+2. `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
 3. `docs/eiarc/02_ARCHITECTURE/EIARC_CONTEXTS.md`
 4. `docs/eiarc/02_ARCHITECTURE/EIARC_IMPLEMENTATION_BLUEPRINT.md`
 5. `docs/eiarc/02_ARCHITECTURE/EIARC_CANONICAL_DATA_MODEL.md`
 6. `KNOWLEDGE_HUB_ARCHITECTURE.md`
-7. `KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
-8. `KNOWLEDGE_HUB_MIGRATION_PLAN.md`
+7. `docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
+8. `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`
 9. `AI_SERVICE_FORENSIC_AUDIT.md`
 10. `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
 11. `AI_SERVICE_RECOVERY_PLAN.md`
 12. `docs/reports/AI_SERVICE_EXECUTION_READINESS.md` — determina si el proyecto está listo para ejecutar la recuperación real del AI Service; se lee junto con los tres documentos anteriores como una sola familia de incidente
 13. `docs/MASTERDOC.md`
 14. `docs/PLAN_MAESTRO.md`
-15. `INDICE_PROYECTO.md`
+15. `docs/INDICE_PROYECTO.md`
 16. `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` — **documentación operativa oficial** (guía de continuidad, backlog técnico detallado y estructura objetivo de contextos para la refactorización hexagonal; ver regla de precedencia REGLA 4 en SECCIÓN 18)
 
 Documentos de soporte de alta prioridad:
@@ -156,8 +156,8 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 ### Fase 1. Arranque
 
 1. `SIGCT_RURAL_SYSTEM_BOOT.md`
-2. `MASTER_PROJECT_INVENTORY_AUDIT.md`
-3. `INDICE_PROYECTO.md`
+2. `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
+3. `docs/INDICE_PROYECTO.md`
 
 ### Fase 2. Verdad arquitectónica
 
@@ -168,8 +168,8 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 ### Fase 3. Continuidad documental
 
 7. `KNOWLEDGE_HUB_ARCHITECTURE.md`
-8. `KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
-9. `KNOWLEDGE_HUB_MIGRATION_PLAN.md`
+8. `docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
+9. `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`
 
 ### Fase 4. Incidente crítico vigente
 
@@ -326,7 +326,7 @@ Los siguientes problemas ya no deben ser re-auditados como si siguieran abiertos
 
 Ya resuelto mediante:
 
-- `MASTER_PROJECT_INVENTORY_AUDIT.md`
+- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
 
 ### 2. Preparación de cierre académico ADSO
 
@@ -368,8 +368,8 @@ Conclusión cerrada:
 Ya resuelto a nivel de diseño, especificación y migración mediante:
 
 - `KNOWLEDGE_HUB_ARCHITECTURE.md`
-- `KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
-- `KNOWLEDGE_HUB_MIGRATION_PLAN.md`
+- `docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
+- `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`
 
 Conclusión cerrada:
 
@@ -431,8 +431,8 @@ Estado:
 Base documental:
 
 - `KNOWLEDGE_HUB_ARCHITECTURE.md`
-- `KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
-- `KNOWLEDGE_HUB_MIGRATION_PLAN.md`
+- `docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
+- `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`
 
 Descripción:
 
@@ -623,7 +623,7 @@ Toda IA que entre al proyecto debe ejecutar mentalmente este checklist:
 3. identificar si la tarea es de auditoría, diseño, implementación o recovery
 4. revisar si la tarea ya tiene documento canónico existente
 5. verificar restricciones de no modificación antes de actuar
-6. leer `MASTER_PROJECT_INVENTORY_AUDIT.md` si necesita contexto global
+6. leer `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md` si necesita contexto global
 7. leer `docs/eiarc/02_ARCHITECTURE/EIARC_IMPLEMENTATION_BLUEPRINT.md` si la tarea toca código por contexto
 8. leer documentos del incidente específico antes de proponer acciones
 9. distinguir entre problema resuelto, incidente abierto y backlog de implementación
@@ -660,8 +660,8 @@ El mapa de continuidad operativo es este:
 
 ### Continuidad global
 
-- `MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `INDICE_PROYECTO.md`
+- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
+- `docs/INDICE_PROYECTO.md`
 
 ### Continuidad arquitectónica
 
@@ -672,8 +672,8 @@ El mapa de continuidad operativo es este:
 ### Continuidad documental
 
 - `KNOWLEDGE_HUB_ARCHITECTURE.md`
-- `KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
-- `KNOWLEDGE_HUB_MIGRATION_PLAN.md`
+- `docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
+- `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`
 
 ### Continuidad de incidentes
 
@@ -708,7 +708,7 @@ La fuente de verdad oficial del proyecto queda definida por capas:
 
 ### 2. Fuente de verdad para inventario y clasificación general
 
-- `MASTER_PROJECT_INVENTORY_AUDIT.md`
+- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
 
 ### 3. Fuente de verdad para arquitectura y contextos
 
@@ -739,8 +739,8 @@ Regla explícita:
 ### 6. Fuente de verdad para continuidad documental futura
 
 - `KNOWLEDGE_HUB_ARCHITECTURE.md`
-- `KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
-- `KNOWLEDGE_HUB_MIGRATION_PLAN.md`
+- `docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
+- `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`
 
 ### 7. Fuente de verdad para cierre académico
 

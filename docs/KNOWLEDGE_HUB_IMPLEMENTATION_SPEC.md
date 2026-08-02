@@ -98,11 +98,11 @@ docs/
   ... contenido documental existente ...
 
 README.md
-INDICE_PROYECTO.md
-MASTER_PROJECT_INVENTORY_AUDIT.md
+docs/INDICE_PROYECTO.md
+docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md
 docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md
 KNOWLEDGE_HUB_ARCHITECTURE.md
-KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md
+docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md
 ```
 
 ### 1.3 Regla de coexistencia

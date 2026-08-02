@@ -10,14 +10,14 @@ Determinar, con base exclusiva en el material existente del repositorio, qué fa
 
 ## Alcance auditado
 
-- `MASTER_PROJECT_INVENTORY_AUDIT.md`
+- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
 - `docs/MASTERDOC.md`
 - `docs/PLAN_MAESTRO.md`
 - `docs/sena_artifacts/`
 - `docs/eiarc/`
 - `docs/architect_master/`
 - `README.md`
-- `INDICE_PROYECTO.md`
+- `docs/INDICE_PROYECTO.md`
 - `docs/CONTINUITY_RUNBOOK.md`
 - `docs/API_REFERENCE.md`
 - `docs/EDGE_SETUP.md`
@@ -65,7 +65,7 @@ Este documento no propone nuevas funcionalidades ni nuevas arquitecturas. Solo c
 
 1. Dashboard centralizado
    - Evidencia documental: `README.md` y `docs/MASTERDOC.md` marcan O-01 como `Completado`.
-   - Evidencia tecnica: `src/frontend/src/pages/Dashboard.jsx` y `TelemetryPanel.jsx` existen y estan inventariados en `MASTER_PROJECT_INVENTORY_AUDIT.md`.
+   - Evidencia tecnica: `src/frontend/src/pages/Dashboard.jsx` y `TelemetryPanel.jsx` existen y estan inventariados en `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`.
 2. IA operativa como artefacto software
    - Evidencia documental: `README.md` y `docs/MASTERDOC.md` marcan O-02 como `Completado`.
    - Evidencia tecnica: `src/ai_models/fastapi_app.py`, `src/ai_models/production_models/plant_disease_mbv2.h5`, `docs/AI_PIPELINE.md`.

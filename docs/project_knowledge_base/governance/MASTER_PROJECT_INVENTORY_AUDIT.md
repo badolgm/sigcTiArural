@@ -29,7 +29,7 @@ Realizar un inventario maestro completo del repositorio SIGCT-Rural, clasificand
 
 - `README.md`
 - `docs/historical/README_REALITY_CHECK.md`
-- `INDICE_PROYECTO.md`
+- `docs/INDICE_PROYECTO.md`
 - `HANDOFF_TRAE_sigcTiArual.md`
 - `docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`
 - `docs/historical/TRAE_AI_INTEGRATION_AUDIT.md`
@@ -122,10 +122,10 @@ Son unicos por funcion y no muestran documento par equivalente en el repositorio
 Se clasifican como criticos los que el propio repositorio posiciona como fuente de verdad, continuidad, arquitectura oficial o conocimiento canonico:
 
 - `docs/MASTERDOC.md`
-  - Evidencia: `INDICE_PROYECTO.md` lo define como fuente de verdad tecnica y de arquitectura.
+  - Evidencia: `docs/INDICE_PROYECTO.md` lo define como fuente de verdad tecnica y de arquitectura.
 - `docs/PLAN_MAESTRO.md`
-  - Evidencia: `INDICE_PROYECTO.md` lo define como roadmap y fases del proyecto.
-- `INDICE_PROYECTO.md`
+  - Evidencia: `docs/INDICE_PROYECTO.md` lo define como roadmap y fases del proyecto.
+- `docs/INDICE_PROYECTO.md`
   - Evidencia: se autodefine como mapa operativo del proyecto.
 - `HANDOFF_TRAE_sigcTiArual.md`
   - Evidencia: consolida estado, deuda tecnica y chequeos pendientes.
