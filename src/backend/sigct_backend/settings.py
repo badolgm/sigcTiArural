@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import dj_database_url  # Vital para leer la configuración de BD dinámicamente
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,9 +20,29 @@ load_dotenv(PROJECT_ROOT / '.env')
 # 1. SEGURIDAD Y CONFIGURACIÓN BÁSICA
 # ==============================================================================
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-sigct-rural-2025')
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() == 'true'
+
+# Clave de desarrollo, SOLO se usa si DEBUG=True y no hay SECRET_KEY en el entorno.
+# Marcada como insegura a propósito (prefijo django-insecure-) para que Django
+# la señale si alguna vez termina usándose fuera de un entorno de desarrollo.
+_INSECURE_DEV_SECRET_KEY = 'django-insecure-dev-key-sigct-rural-2025'
+
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = _INSECURE_DEV_SECRET_KEY
+    else:
+        raise ImproperlyConfigured(
+            'SECRET_KEY debe estar definida por entorno cuando DJANGO_DEBUG no es "true". '
+            'No hay fallback inseguro en producción.'
+        )
+
+_default_allowed_hosts = 'localhost,127.0.0.1' if DEBUG else ''
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get('ALLOWED_HOSTS', _default_allowed_hosts).split(',')
+    if host.strip()
+]
 
 # ==============================================================================
 # 2. APLICACIONES INSTALADAS
@@ -113,7 +134,20 @@ else:
 # 5. VALIDACIÓN DE CONTRASEÑAS
 # ==============================================================================
 
-AUTH_PASSWORD_VALIDATORS = []
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 # ==============================================================================
 # 6. INTERNACIONALIZACIÓN Y ZONA HORARIA
@@ -135,4 +169,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 8. CONFIGURACIÓN CORS (INTEGRACIÓN FRONTEND)
 # ==============================================================================
 
-CORS_ALLOW_ALL_ORIGINS = True
+_cors_allowed_origins = [
+    origin.strip()
+    for origin in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+if _cors_allowed_origins:
+    CORS_ALLOWED_ORIGINS = _cors_allowed_origins
+elif DEBUG:
+    # Sin whitelist explícita: permitir todo SOLO en desarrollo local.
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = []
+
+# ==============================================================================
+# 9. ENDURECIMIENTO HTTP EN PRODUCCIÓN (inactivo en DEBUG para no romper local)
+# ==============================================================================
+
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = 0 if DEBUG else 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
