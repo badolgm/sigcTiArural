@@ -132,8 +132,8 @@ flowchart LR
 Fuentes documentales locales:
 
 - `README.md`
-- `INDICE_PROYECTO.md`
-- `MASTER_PROJECT_INVENTORY_AUDIT.md`
+- `docs/INDICE_PROYECTO.md`
+- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
 - `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 - `docs/**/*.md`
 - `docs/**/*.mmd`
@@ -455,7 +455,7 @@ Todo documento debe poder declarar:
 - `README.md`
 - `docs/MASTERDOC.md`
 - `docs/PLAN_MAESTRO.md`
-- `INDICE_PROYECTO.md`
+- `docs/INDICE_PROYECTO.md`
 
 #### Arquitectura y gobierno
 
@@ -553,7 +553,7 @@ Debe estar visible públicamente la documentación que describe identidad, arqui
 - `README.md`
 - `docs/MASTERDOC.md`
 - `docs/PLAN_MAESTRO.md`
-- `INDICE_PROYECTO.md`
+- `docs/INDICE_PROYECTO.md`
 - `docs/API_REFERENCE.md`
 - `docs/DEPLOYMENT.md`
 - `docs/EDGE_SETUP.md`
@@ -575,7 +575,7 @@ Puede mostrarse públicamente, pero con etiqueta de histórico o auditoría:
 
 - `docs/project_knowledge_base/KB-*`
 - `docs/architect_master/05_FINAL_ARCHITECTURE_BASELINE.md`
-- `MASTER_PROJECT_INVENTORY_AUDIT.md`
+- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
 - `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 
 ---

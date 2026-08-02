@@ -884,7 +884,7 @@ $aiResp      = curl.exe -s --max-time 5 "http://localhost:$aiPort/health" 2>$nul
 - Documentación sincronizada entre GitHub y los distintos entornos de desarrollo utilizados.
 - Documento maestro actualizado.
 - Plan maestro actualizado.
-- `INDICE_PROYECTO.md` disponible.
+- `docs/INDICE_PROYECTO.md` disponible.
 - `continuity_check.ps1` disponible.
 
 **Próximas validaciones técnicas pendientes:**

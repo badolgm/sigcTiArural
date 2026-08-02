@@ -21,7 +21,7 @@ Este documento organiza la evidencia existente en cinco bloques:
 | Identificación del proyecto como Proyecto Productivo SENA | `README.md` | Disponible |
 | Documento maestro académico-técnico | `docs/MASTERDOC.md` | Disponible |
 | Plan maestro del proyecto | `docs/PLAN_MAESTRO.md` | Disponible |
-| Mapa operativo del proyecto | `INDICE_PROYECTO.md` | Disponible |
+| Mapa operativo del proyecto | `docs/INDICE_PROYECTO.md` | Disponible |
 | Guía técnica ADSO | `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` | Disponible |
 | Matriz de evidencias | `docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md` | Disponible |
 | Auditoría de preparación para graduación | `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md` | Disponible |
@@ -51,7 +51,7 @@ Este documento organiza la evidencia existente en cinco bloques:
 
 ### 4.3 Evidencia de gobierno documental
 
-- `MASTER_PROJECT_INVENTORY_AUDIT.md`
+- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
 - `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
 - `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
 - `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
@@ -72,7 +72,7 @@ Archivos base:
 Evidencia asociada:
 
 - coexistencia V1, V2 y V3 documentada en `docs/MASTERDOC.md`
-- inventario y clasificación en `MASTER_PROJECT_INVENTORY_AUDIT.md`
+- inventario y clasificación en `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
 - diagnóstico de telemetría en `docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md`
 
 ### 5.2 Frontend

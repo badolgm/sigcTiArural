@@ -853,7 +853,7 @@ sigcTiArural/
 ### 🔵 Próximos Pasos
 
 1. Ejecutar recuperación del AI Service siguiendo `AI_SERVICE_RECOVERY_PLAN.md`
-2. Iniciar implementación del Knowledge Hub (Fase 0 de `KNOWLEDGE_HUB_MIGRATION_PLAN.md`)
+2. Iniciar implementación del Knowledge Hub (Fase 0 de `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`)
 3. Continuar fases 0–8 del refactor hexagonal antes de abordar EIARC como expansión productiva
 4. Ejecutar el baseline de entrenamiento de Agriculture AI V2 (aún no iniciado)
 
