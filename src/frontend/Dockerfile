@@ -34,8 +34,21 @@ FROM nginx:alpine AS runtime
 # --- SOLUCIÓN AL ERROR 404 ---
 # Esta configuración redirige todas las peticiones al index.html
 # permitiendo que el ruteo de React funcione al refrescar la página.
+# --- PROXY /api ---
+# Refleja el proxy /api que ya existe en vite.config.js (server.proxy) para que
+# el frontend servido por nginx en docker-compose pueda alcanzar el backend
+# igual que el dev server de Vite (Día 14-15, Bloque 2, Sub-bloque G).
+# "backend" es el nombre del servicio en docker-compose.yml, resuelto por la
+# red interna de Docker; 8000 es su puerto interno (no el 8010 mapeado al host).
 RUN echo 'server { \
     listen 80; \
+    location /api/ { \
+        proxy_pass http://backend:8000/api/; \
+        proxy_set_header Host $host; \
+        proxy_set_header X-Real-IP $remote_addr; \
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+        proxy_set_header X-Forwarded-Proto $scheme; \
+    } \
     location / { \
         root /usr/share/nginx/html; \
         index index.html; \

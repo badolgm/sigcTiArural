@@ -192,3 +192,19 @@ CSRF_COOKIE_SECURE = not DEBUG
 SECURE_HSTS_SECONDS = 0 if DEBUG else 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
+
+# ==============================================================================
+# 10. DJANGO REST FRAMEWORK / JWT (Día 14-15, Bloque 2)
+# ==============================================================================
+# Default global es AllowAny para no romper las vistas abiertas (IA, telemetría,
+# recomendaciones): cada vista sigue declarando su propio permission_classes
+# explícito, como ya lo hacía antes de este bloque.
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+}

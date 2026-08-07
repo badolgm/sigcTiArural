@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import SensorReading, Robot, RobotTelemetry, RobotCommand
 from .serializers import SensorReadingSerializer, RobotSerializer, RobotTelemetrySerializer, RobotCommandSerializer
 from django.utils import timezone
@@ -22,9 +22,11 @@ class RobotTelemetryViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
 
 class RobotCommandViewSet(viewsets.ModelViewSet):
+    # Enviar comandos a un robot es control/actuación, no consumo de lectura —
+    # única vista de este bloque que pasa a requerir login (Día 14-15, Bloque 2).
     queryset = RobotCommand.objects.all()
     serializer_class = RobotCommandSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 class TelemetryHistoryView(APIView):
     permission_classes = [AllowAny]

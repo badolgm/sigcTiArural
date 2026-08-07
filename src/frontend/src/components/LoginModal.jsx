@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-
-// Si no existe AuthContext, usamos un mock simple para que no falle la compilación
-// En producción, importaríamos: import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth/AuthContext';
 
 const LoginModal = ({ open, onClose }) => {
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -12,19 +11,17 @@ const LoginModal = ({ open, onClose }) => {
   if (!open) return null;
 
   const submit = async (e) => {
-    e.preventDefault(); 
-    setLoading(true); 
+    e.preventDefault();
+    setLoading(true);
     setError(null);
-    
-    // Simular delay de red
-    await new Promise(r => setTimeout(r, 800));
-    
-    if (username === 'admin' && password) {
-        setLoading(false);
-        if(onClose) onClose(true);
+
+    const result = await login(username, password);
+
+    setLoading(false);
+    if (result.ok) {
+      if (onClose) onClose(true);
     } else {
-        setLoading(false);
-        setError('Credenciales inválidas (Prueba user: admin)');
+      setError(result.error || 'Credenciales inválidas');
     }
   };
 
