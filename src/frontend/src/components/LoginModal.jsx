@@ -37,7 +37,7 @@ const LoginModal = ({ open, onClose }) => {
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-xs uppercase font-bold mb-1 tracking-wider" style={{ color:'#39FF14' }}>Usuario</label>
-            <input className="w-full p-3 rounded bg-gray-900 border text-white focus:outline-none focus:border-[#39FF14]" style={{ borderColor:'#334155' }} value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="admin" />
+            <input className="w-full p-3 rounded bg-gray-900 border text-white focus:outline-none focus:border-[#39FF14]" style={{ borderColor:'#334155' }} value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="usuario" />
           </div>
           <div>
             <label className="block text-xs uppercase font-bold mb-1 tracking-wider" style={{ color:'#39FF14' }}>Contraseña</label>
