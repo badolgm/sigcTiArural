@@ -31,7 +31,7 @@ from contexts.telemetry.infrastructure.persistence.in_memory.in_memory_sensor_re
     InMemorySensorReadingRepository,
 )
 from shared_kernel.event_bus.infrastructure.in_memory_event_bus import InMemoryEventBus
-from shared_kernel.event_bus.wiring import wire_all
+from sigct_backend.wiring import wire_all
 
 
 def main():

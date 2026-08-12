@@ -5,6 +5,8 @@ del Día 9 (contexts/telemetry).
 """
 from datetime import datetime
 
+import pytest
+
 from shared_kernel.event_bus.domain.lab_signal import LabSignal
 from shared_kernel.event_bus.ports.event_bus import EventBusPort
 from shared_kernel.event_bus.infrastructure.in_memory_event_bus import InMemoryEventBus
@@ -47,11 +49,46 @@ def test_lab_signal_acepta_signal_id_explicito():
 
 
 def test_lab_signal_metadata_por_defecto_es_diccionario_vacio_e_independiente():
-    """Characterization: default_factory evita el bug clásico de mutable default compartido entre instancias."""
+    """default_factory evita el bug clásico de mutable default compartido entre instancias."""
     s1 = LabSignal(source_context="a", signal_type="b", timestamp=datetime.now(), payload={})
     s2 = LabSignal(source_context="a", signal_type="b", timestamp=datetime.now(), payload={})
-    s1.metadata["x"] = 1
-    assert s2.metadata == {}
+    assert s1.metadata == {} and s2.metadata == {}
+    assert s1.metadata is not s2.metadata
+
+
+def test_lab_signal_es_inmutable():
+    """frozen=True: reasignar cualquier atributo lanza (mismo criterio que
+    Temperature/Humidity/SensorId)."""
+    signal = LabSignal(source_context="a", signal_type="b", timestamp=datetime.now(), payload={})
+    with pytest.raises(Exception):
+        signal.source_context = "c"
+
+
+def test_lab_signal_payload_no_se_puede_mutar_despues_de_construido():
+    """Hallazgo del ultrareview: InMemoryEventBus.publish() entrega la misma
+    instancia a cada suscriptor sin copia defensiva -- payload envuelto en
+    MappingProxyType para que ningún suscriptor pueda mutarlo por accidente
+    y afectar a los suscriptores siguientes."""
+    signal = LabSignal(
+        source_context="a", signal_type="b", timestamp=datetime.now(), payload={"temperature": 36.0}
+    )
+    with pytest.raises(TypeError):
+        signal.payload["temperature"] = 0.0
+
+
+def test_lab_signal_metadata_no_se_puede_mutar_despues_de_construido():
+    signal = LabSignal(source_context="a", signal_type="b", timestamp=datetime.now(), payload={})
+    with pytest.raises(TypeError):
+        signal.metadata["x"] = 1
+
+
+def test_lab_signal_payload_sigue_comparando_igual_a_un_dict_plano():
+    """MappingProxyType compara estructuralmente igual a un dict -- los tests
+    existentes que hacen `signal.payload == {...}` siguen funcionando sin cambios."""
+    signal = LabSignal(
+        source_context="a", signal_type="b", timestamp=datetime.now(), payload={"temperature": 36.0}
+    )
+    assert signal.payload == {"temperature": 36.0}
 
 
 # ============================================================
@@ -107,6 +144,40 @@ def test_in_memory_event_bus_soporta_multiples_suscriptores_del_mismo_tipo():
 
     assert recibidas_1 == [signal]
     assert recibidas_2 == [signal]
+
+
+def test_in_memory_event_bus_aisla_fallos_entre_suscriptores():
+    """Hallazgo del ultrareview: un suscriptor que lanza no debe impedir que
+    los suscriptores siguientes reciban la señal, ni propagar la excepción
+    hasta el publicador."""
+    bus = InMemoryEventBus()
+    recibidas = []
+
+    def suscriptor_que_falla(signal):
+        raise ValueError("boom")
+
+    bus.subscribe("sensor_reading", suscriptor_que_falla)
+    bus.subscribe("sensor_reading", recibidas.append)
+
+    signal = LabSignal(source_context="telemetry", signal_type="sensor_reading", timestamp=datetime.now(), payload={})
+    bus.publish(signal)  # no debe propagar la excepción de suscriptor_que_falla
+
+    assert recibidas == [signal]
+
+
+def test_in_memory_event_bus_registra_en_el_log_el_fallo_del_suscriptor(caplog):
+    bus = InMemoryEventBus()
+
+    def suscriptor_que_falla(signal):
+        raise ValueError("boom")
+
+    bus.subscribe("sensor_reading", suscriptor_que_falla)
+
+    signal = LabSignal(source_context="telemetry", signal_type="sensor_reading", timestamp=datetime.now(), payload={})
+    with caplog.at_level("ERROR"):
+        bus.publish(signal)
+
+    assert "sensor_reading" in caplog.text
 
 
 # ============================================================
