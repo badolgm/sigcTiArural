@@ -190,6 +190,26 @@ event_bus.subscribe("sensor_reading", on_sensor_reading)
 
 Este diseño (puerto + adaptador en memoria) es el escalón previo al ítem de FASE 7 "Bus de eventos (Redis/RabbitMQ)" (ver más abajo en este documento, y checklist 7.9). No son alternativas — son el mismo puerto (`EventBusPort`) con dos adaptadores distintos: `InMemoryEventBus` hoy, un adaptador Redis/RabbitMQ el día que el volumen de señales o la necesidad de procesamiento asíncrono lo justifique, sin cambiar el contrato ni el código que publica/suscribe.
 
+#### 6. ✅ MATERIALIZADO (Día 16-17, 12-ago-2026)
+
+> **Actualización — este diseño dejó de ser solo documentación.** Todo lo descrito en las secciones 1-5 de arriba se implementó y ya está en `main` (commits `4006f67` + `0dc99c5`, PR #21). Esta nota se agrega sin borrar el diseño original, como registro de que la propuesta de Día 11-12 fue validada por el código real.
+
+- **Ubicaciones reales:**
+  - `src/backend/shared_kernel/event_bus/domain/lab_signal.py` — `LabSignal`
+  - `src/backend/shared_kernel/event_bus/ports/event_bus.py` — `EventBusPort`
+  - `src/backend/shared_kernel/event_bus/infrastructure/in_memory_event_bus.py` — `InMemoryEventBus`
+  - `src/backend/shared_kernel/event_bus/infrastructure/config/dependencies.py` — `get_event_bus()` (singleton de proceso)
+  - `src/backend/sigct_backend/wiring.py` — composition root (`wire_all()`), deliberadamente **fuera** de `shared_kernel/` para que este último permanezca neutral y no dependa de `contexts.labs` (hallazgo de arquitectura corregido en `0dc99c5`, tras `/ultrareview`)
+- **Caso piloto real (ya no ilustrativo):** Telemetría → Labs/Agricultura. `RegistrarLecturaSensorCommand` publica una `LabSignal` con `signal_type="sensor_reading"`; `OnSensorReadingHandler` la recibe y delega en `LaboratorioService(AGRICULTURA)`. Con una lectura crítica (38.5°C/18%) la alerta S.O.S. de estrés hídrico/térmico — antes código muerto, solo ejercitado por tests — se dispara de punta a punta con datos reales.
+- **Respecto al diseño original de la sección 1-5:** se mantuvo fiel casi sin cambios, con un endurecimiento post-`/ultrareview` (0 bugs, 4 nits) que vale la pena registrar en el vocabulario de esta guía:
+  - **Pub/Sub** sobre puerto/adaptador, tal como se diseñó.
+  - **Composition root explícito** (`wire_all()`), sin IoC implícita del framework — coherente con el estilo del proyecto.
+  - **Value object inmutable:** `LabSignal` pasó a `@dataclass(frozen=True)` con `payload`/`metadata` envueltos en `MappingProxyType` — el diseño original ya proponía `frozen=True` (sección 1) pero no cubría la mutabilidad de los `Dict` internos; se corrigió para ser coherente con `Temperature`/`Humidity`/`SensorId`.
+  - **Idempotencia:** `wire_all()` es idempotente por instancia de bus (`WeakSet` de buses ya cableados) — una segunda llamada es no-op, evita duplicar suscripciones.
+  - **Aislamiento de fallos:** `InMemoryEventBus.publish()` aísla excepciones por suscriptor (try/except + logging) — un handler que falle no detiene a los demás ni propaga al publicador.
+- **Verificación:** suite completa 210 passed / 0 failed en Docker (178 base + 32 nuevos). `wire_all()` **no** está enganchado todavía al arranque real de Django (`wsgi.py`/`asgi.py`/`apps.py`) — se invoca explícitamente desde el test de integración y desde `verify_dia16_17_pilot.py`; engancharlo al arranque queda fuera de alcance de este piloto.
+- **FASE 7 (Redis/RabbitMQ):** sigue siendo un adaptador futuro pendiente, sin cambios respecto a lo dicho en la sección 5 — el contrato (`EventBusPort`) ya está validado por un caso de uso real, no solo por diseño.
+
           ↑ (implementados por)
 
 [Infraestructura / Adaptadores de Salida]
