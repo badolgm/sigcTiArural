@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLabStore } from '../stores/useLabStore'; // Import Store Global
 import SchematicEditor from './SchematicEditor'; // Importar nuevo editor
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -586,6 +586,16 @@ const ElectronicsLab = ({ onNavigate }) => {
 
   // --- NUEVOS ESTADOS (User Request: SigGen + Scope) ---
   const [waveType, setWaveType] = useState('sine'); // 'sine', 'square', 'triangle'
+
+  // Referencia estable: sin useMemo, este objeto se recreaba en cada render de
+  // ElectronicsLab, lo que disparaba en cada render el useEffect de sincronización
+  // de SchematicEditor (depende de labSignalParams por identidad) -- candidato
+  // principal del bucle detrás de React error #185. Solo cambia de referencia
+  // cuando alguno de los 3 valores realmente cambia.
+  const labSignalParams = useMemo(
+    () => ({ type: waveType, amp: vinAmp, freq: vinFreq }),
+    [waveType, vinAmp, vinFreq]
+  );
   const [timeDiv, setTimeDiv] = useState(0.002); // 2ms/div
   const [voltsDiv, setVoltsDiv] = useState(1.0); // 1V/div
   const [triggerMode, setTriggerMode] = useState('auto'); // 'auto', 'normal'
@@ -869,11 +879,7 @@ const ElectronicsLab = ({ onNavigate }) => {
                  }}>
                     <SchematicEditor 
                         onRunSimulation={runPythonCode}
-                        labSignalParams={{
-                            type: waveType,
-                            amp: vinAmp,
-                            freq: vinFreq
-                        }}
+                        labSignalParams={labSignalParams}
                         timeDiv={timeDiv}
                         voltsDiv={voltsDiv}
                         ch1Offset={ch1Offset}

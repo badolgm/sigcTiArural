@@ -465,26 +465,43 @@ const ShiftRegisterNode = ({ data, selected }) => {
         // 15. Karnaugh Map (Visual Tool)
         const KarnaughMapNode = ({ id, data, selected }) => {
             if (!data) return null;
-            const { setNodes } = useReactFlow();
+            const { setNodes, setEdges } = useReactFlow();
             const values = data?.values || Array(16).fill(0);
-            
+
             const toggleCell = (idx) => {
                 const newValues = [...values];
                 newValues[idx] = newValues[idx] === 0 ? 1 : 0;
+                // El contenedor de la grilla lleva "nodrag" para que arrastrar
+                // sobre una celda no mueva el nodo -- pero en React Flow v11 la
+                // selección de un nodo viaja por el mismo pointerdown nativo de
+                // d3-drag que "nodrag" bloquea (ver diagnóstico: handleNodeClick
+                // se dispara desde el evento 'start' del drag, nunca desde el
+                // onClick de React cuando selectNodesOnDrag=true). Sin la clase
+                // el arrastre accidental vuelve; con ella, node.selected nunca
+                // pasa a true por sí solo. Replicamos aquí manualmente lo que
+                // handleNodeClick haría en modo single-select: este nodo queda
+                // seleccionado, el resto de nodos/edges se deselecciona.
                 setNodes(nds => nds.map(n => {
                     if (n.id === id) {
-                        return { ...n, data: { ...n.data, values: newValues } };
+                        return { ...n, selected: true, data: { ...n.data, values: newValues } };
                     }
-                    return n;
+                    return n.selected ? { ...n, selected: false } : n;
                 }));
+                setEdges(eds => eds.map(e => (e.selected ? { ...e, selected: false } : e)));
             };
 
             return (
                 <NodeShell label="K-Map" value="4-Var" selected={selected}>
-                    <div className="relative w-32 h-32 bg-gray-100 border-2 border-blue-600 rounded flex flex-col items-center justify-center shadow-lg p-1 nodrag">
-                        <div className="w-full h-full grid grid-cols-4 grid-rows-4 gap-0.5 bg-gray-300">
+                    <div className="relative w-32 h-32 bg-gray-100 border-2 border-blue-600 rounded flex flex-col items-center justify-center shadow-lg p-1">
+                        {/* nodrag: evita que arrastrar sobre una celda mueva el nodo.
+                            nopan: sin esto, ese mismo arrastre caía en el filtro de pan
+                            del Pane (que solo respeta "nopan", nunca "nodrag" -- ver
+                            diagnóstico) y paneaba el lienzo completo en vez de no hacer
+                            nada. Acotado a la grilla: el borde/etiqueta de afuera queda
+                            arrastrable como cualquier otro nodo. */}
+                        <div className="w-full h-full grid grid-cols-4 grid-rows-4 gap-0.5 bg-gray-300 nodrag nopan">
                             {values.map((v,i) => (
-                                <div key={i} 
+                                <div key={i}
                                      onClick={(e) => { e.stopPropagation(); toggleCell(i); }}
                                      className="bg-white flex items-center justify-center text-[8px] font-mono text-gray-800 hover:bg-yellow-200 cursor-pointer">
                                     {v}
@@ -515,6 +532,71 @@ const ShiftRegisterNode = ({ data, selected }) => {
           scope: ScopeNode,
         };
 
+// Rol declarado (type="source"|"target") de cada Handle real que expone cada
+// tipo de nodo. Única fuente de verdad para validar/corregir edges -- tanto
+// los que crea el usuario en vivo (onConnect, bajo ConnectionMode.Loose, que
+// permite arrastrar desde cualquier pin) como los que se recuperan de
+// localStorage (esquema histórico: los ids de handles han cambiado varias
+// veces en este archivo). Sin esto, un edge cuyo sourceHandle apunta a un
+// Handle que solo existe como target (ej. 'l' en ScopeNode, que nunca tuvo
+// contraparte source) hace que React Flow no pueda resolver su posición en
+// cada render -- eso es "[React Flow]: Couldn't create edge for source
+// handle id: ..." y el bucle "Maximum update depth exceeded" (Día 18).
+const HANDLE_REGISTRY = {
+    source: { pos: 'source', neg: 'source' },
+    resistor: { l: 'target', r: 'source' },
+    capacitor: { l: 'target', r: 'source' },
+    inductor: { l: 'target', r: 'source' },
+    diode: { l: 'target', r: 'source' },
+    gnd: { g: 'target' },
+    transistor: { c: 'target', b: 'target', e: 'source' },
+    scope: { l: 'target' },
+    mosfet: { g: 'target', d: 'target', s: 'source' },
+    opamp: { inv: 'target', non: 'target', out: 'source' },
+    logic: { a: 'target', b: 'target', out: 'source' },
+    transformer: { p1: 'target', p2: 'target', s1: 'source', s2: 'source' },
+    flipflop: { d: 'target', clk: 'target', q: 'source', qb: 'source' },
+    shiftreg: { data: 'target', clk: 'target', out: 'source' },
+    karnaugh: {},
+};
+
+const getHandleRole = (node, handleId) => {
+    if (!node) return undefined;
+    const table = HANDLE_REGISTRY[node.type];
+    if (!table) return undefined;
+    // LogicGateNode no renderiza el handle 'a' cuando kind==='NOT' (ver
+    // LogicGateNode más arriba) -- sin este caso especial, un edge huérfano
+    // hacia 'a' en una NOT gate se aceptaría como "válido" pese a que el
+    // Handle correspondiente nunca existe en el DOM.
+    if (node.type === 'logic' && handleId === 'a' && node.data?.kind === 'NOT') return undefined;
+    return table[handleId];
+};
+
+// Dada una conexión candidata (de onConnect en vivo, o de un edge guardado
+// en localStorage), devuelve {source, sourceHandle, target, targetHandle}
+// con la orientación que React Flow puede resolver de verdad (sourceHandle
+// contra un Handle type="source" real, targetHandle contra uno type="target"
+// real) -- invirtiendo la conexión si el usuario arrastró en sentido
+// contrario al declarado, o null si ninguna orientación es resoluble (ej.
+// dos handles de solo-target conectados entre sí, o un handle que ya no
+// existe tras un cambio de esquema).
+const resolveEdgeConnection = (nds, params) => {
+    const { source, sourceHandle, target, targetHandle } = params || {};
+    if (!source || !target || !sourceHandle || !targetHandle) return null;
+    const sourceNode = nds.find(n => n.id === source);
+    const targetNode = nds.find(n => n.id === target);
+    const startRole = getHandleRole(sourceNode, sourceHandle);
+    const endRole = getHandleRole(targetNode, targetHandle);
+
+    if (startRole === 'source' && endRole === 'target') {
+        return { source, sourceHandle, target, targetHandle };
+    }
+    if (startRole === 'target' && endRole === 'source') {
+        return { source: target, sourceHandle: targetHandle, target: source, targetHandle: sourceHandle };
+    }
+    return null;
+};
+
 // --- INITIAL NODES ---
 const initialNodes = [
   { id: 'v1', type: 'source', position: { x: 50, y: 200 }, data: { type: 'ac', label: 'Vin', value: '5V' } },
@@ -539,6 +621,7 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams, timeDiv, voltsDiv, 
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [simResult, setSimResult] = useState(null);
   const [simData, setSimData] = useState([]); // For graphs
+  const [simWarning, setSimWarning] = useState(null); // Fallo silencioso del solver (ej. matriz singular)
   const [simStatus, setSimStatus] = useState('idle');
   const [isEngineeringLines, setIsEngineeringLines] = useState(false); // Toggle line type
   const [showNetlist, setShowNetlist] = useState(false);
@@ -610,9 +693,10 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams, timeDiv, voltsDiv, 
   const savedSchematic = useLabStore((state) => state.electronicsData?.schematic);
 
   React.useEffect(() => {
+    let validNodes = null;
     if (savedSchematic && Array.isArray(savedSchematic.nodes) && savedSchematic.nodes.length > 0) {
       // Validate nodes to prevent "Error en el componente" crashes
-      const validNodes = savedSchematic.nodes.filter(n => {
+      validNodes = savedSchematic.nodes.filter(n => {
          if (!n.type) return false;
          // Check if the node type is registered
          if (!nodeTypes[n.type]) {
@@ -625,13 +709,38 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams, timeDiv, voltsDiv, 
       if (validNodes.length < savedSchematic.nodes.length) {
           console.warn(`[SchematicEditor] Se eliminaron ${savedSchematic.nodes.length - validNodes.length} nodos inválidos del historial.`);
       }
-      
+
       setNodes(validNodes);
     }
     if (savedSchematic && Array.isArray(savedSchematic.edges) && savedSchematic.edges.length > 0) {
-      setEdges(savedSchematic.edges);
+      // Mismo saneamiento que arriba para nodos, pero para edges: un edge
+      // guardado antes de un cambio de esquema de handles (o creado bajo el
+      // hueco de ConnectionMode.Loose) puede apuntar a un handle que ya no
+      // existe con ese rol -- eso es lo que dispara el bucle "Maximum update
+      // depth exceeded" reportado la noche del 15-ago. Se valida contra los
+      // nodos ya saneados arriba (o los de fábrica si no había guardados).
+      const nodesForEdgeCheck = validNodes || initialNodes;
+      const validEdges = [];
+      let corrected = 0;
+      savedSchematic.edges.forEach(e => {
+          const resolved = resolveEdgeConnection(nodesForEdgeCheck, e);
+          if (!resolved) {
+              console.warn(`[SchematicEditor] Ignorando edge corrupto o irresoluble del historial: ${e.id || '(sin id)'} (${e.source}:${e.sourceHandle} -> ${e.target}:${e.targetHandle})`);
+              return;
+          }
+          if (resolved.sourceHandle !== e.sourceHandle || resolved.targetHandle !== e.targetHandle) corrected++;
+          validEdges.push({ ...e, ...resolved });
+      });
+      if (corrected > 0) {
+          console.warn(`[SchematicEditor] Se corrigió la orientación source/target de ${corrected} edge(s) del historial.`);
+      }
+      if (validEdges.length < savedSchematic.edges.length) {
+          console.warn(`[SchematicEditor] Se eliminaron ${savedSchematic.edges.length - validEdges.length} edge(s) inválido(s) del historial.`);
+      }
+
+      setEdges(validEdges);
       // Infer line type from first edge if available
-      if (savedSchematic.edges[0]?.type === 'step') {
+      if (validEdges[0]?.type === 'step') {
           setIsEngineeringLines(true);
       }
     }
@@ -687,9 +796,19 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams, timeDiv, voltsDiv, 
   };
 
   const onConnect = useCallback((params) => {
+      // ConnectionMode.Loose deja arrastrar desde cualquier pin, sin importar
+      // su rol declarado -- se corrige aquí la orientación (o se rechaza si
+      // no es resoluble) para que sourceHandle siempre caiga en un Handle
+      // type="source" real. Sin esto, el editor puede volver a producir el
+      // mismo tipo de edge corrupto que causó el crash del 15-ago.
+      const resolved = resolveEdgeConnection(nodes, params);
+      if (!resolved) {
+          console.warn(`[SchematicEditor] Conexión rechazada: no se pudo resolver una orientación source/target válida (${params.source}:${params.sourceHandle} -> ${params.target}:${params.targetHandle}).`);
+          return;
+      }
       const type = isEngineeringLines ? 'step' : 'default';
-      setEdges((eds) => addEdge({ ...params, type }, eds));
-  }, [setEdges, isEngineeringLines]);
+      setEdges((eds) => addEdge({ ...params, ...resolved, type }, eds));
+  }, [setEdges, isEngineeringLines, nodes]);
 
   // --- ADD COMPONENT ---
   const addComponent = (type, subType = null) => {
@@ -825,23 +944,26 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams, timeDiv, voltsDiv, 
             } else {
                 const newVolt = parseFloat(input);
                 if (!isNaN(newVolt)) {
+                    const typeInput = window.prompt(`Tipo de fuente (dc / ac):`, node.data.type || 'dc');
+                    const newType = (typeInput && typeInput.trim().toLowerCase() === 'ac') ? 'ac' : 'dc';
+
                     let newFreq = 0;
                     let newWave = node.data.waveType || 'sine';
 
-                    if (node.data.type === 'ac') {
+                    if (newType === 'ac') {
                         const f = window.prompt(`Frecuencia (Hz):`, node.data.freq || 60);
                         newFreq = parseFloat(f) || 60;
-                        
+
                         const w = window.prompt(`Tipo de Onda (sine, square, triangle):`, newWave);
                         if (w && ['sine', 'square', 'triangle'].includes(w.toLowerCase())) {
                             newWave = w.toLowerCase();
                         }
                     }
-                    
+
                     setNodes((nds) => nds.map((n) => {
                         if (n.id === node.id) {
-                            const displayVal = node.data.type === 'ac' ? `${newVolt}V, ${newFreq}Hz, ${newWave}` : `${newVolt}V`;
-                            return { ...n, data: { ...n.data, useLab: false, value: displayVal, volt: newVolt, freq: newFreq, waveType: newWave } };
+                            const displayVal = newType === 'ac' ? `${newVolt}V, ${newFreq}Hz, ${newWave}` : `${newVolt}V`;
+                            return { ...n, data: { ...n.data, useLab: false, type: newType, value: displayVal, volt: newVolt, freq: newFreq, waveType: newWave } };
                         }
                         return n;
                     }));
@@ -943,70 +1065,177 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams, timeDiv, voltsDiv, 
 
     let lines = [];
     const probes = [];
+    // Probes automáticos (nodo -> net de salida relevante), usados como fallback
+    // en el Osciloscopio local cuando el usuario no agregó ningún Probe manual.
+    // No participan en el netlist ni en lo que ElectronicsLab recibe/reenvía a
+    // "Análisis de Señal Real" (Dr. Binary) — ese camino sigue leyendo el
+    // history/analysis crudo sin filtrar, sin cambios.
+    const autoProbes = [];
+
+    // Grafo a nivel de NET (no de pin) para la validación previa de tierra:
+    // cada componente multi-terminal "conecta" entre sí los nets que toca. Se
+    // reusa para verificar, antes de invocar el solver, que todo net usado
+    // tenga un camino hasta la tierra -- sin esto, una fuente sin retorno a
+    // tierra deja la matriz MNA singular y el solver falla en silencio.
+    const netGraph = new Map();
+    const usedNets = new Set();
+    const connectNets = (...netIds) => {
+        netIds.forEach(id => usedNets.add(id));
+        for (let i = 0; i < netIds.length; i++) {
+            for (let j = i + 1; j < netIds.length; j++) {
+                const a = netIds[i], b = netIds[j];
+                if (a === b) continue;
+                if (!netGraph.has(a)) netGraph.set(a, new Set());
+                if (!netGraph.has(b)) netGraph.set(b, new Set());
+                netGraph.get(a).add(b);
+                netGraph.get(b).add(a);
+            }
+        }
+    };
 
     nodes.forEach(n => {
         const val = n.data.volt !== undefined ? n.data.volt : parseVal(n.data.value);
         const name = `${n.type.toUpperCase().charAt(0)}_${n.id}`;
+        const autoLabel = n.data.label || name;
 
         if (n.type === 'resistor') {
-            lines.push(`c.add_resistor("${name}", ${getHandleNet(n.id, 'l')}, ${getHandleNet(n.id, 'r')}, ${val})`);
+            const nl = getHandleNet(n.id, 'l'), nr = getHandleNet(n.id, 'r');
+            connectNets(nl, nr);
+            lines.push(`c.add_resistor("${name}", ${nl}, ${nr}, ${val})`);
+            autoProbes.push({ label: autoLabel, net: nr });
         } else if (n.type === 'capacitor') {
-            lines.push(`c.add_capacitor("${name}", ${getHandleNet(n.id, 'l')}, ${getHandleNet(n.id, 'r')}, ${val})`);
+            const nl = getHandleNet(n.id, 'l'), nr = getHandleNet(n.id, 'r');
+            connectNets(nl, nr);
+            lines.push(`c.add_capacitor("${name}", ${nl}, ${nr}, ${val})`);
+            autoProbes.push({ label: autoLabel, net: nr });
         } else if (n.type === 'inductor') {
-            lines.push(`c.add_inductor("${name}", ${getHandleNet(n.id, 'l')}, ${getHandleNet(n.id, 'r')}, ${val})`);
+            const nl = getHandleNet(n.id, 'l'), nr = getHandleNet(n.id, 'r');
+            connectNets(nl, nr);
+            lines.push(`c.add_inductor("${name}", ${nl}, ${nr}, ${val})`);
+            autoProbes.push({ label: autoLabel, net: nr });
         } else if (n.type === 'diode') {
             const is = n.data.is || 1e-14;
             const vt = n.data.vt || 0.02585;
-            lines.push(`c.add_diode("${name}", ${getHandleNet(n.id, 'l')}, ${getHandleNet(n.id, 'r')}, ${is}, ${vt})`);
+            const nl = getHandleNet(n.id, 'l'), nr = getHandleNet(n.id, 'r');
+            connectNets(nl, nr);
+            lines.push(`c.add_diode("${name}", ${nl}, ${nr}, ${is}, ${vt})`);
+            autoProbes.push({ label: autoLabel, net: nr });
         } else if (n.type === 'transistor') {
             const beta = n.data.beta || 100;
             const is = n.data.is || 1e-14;
-            lines.push(`c.add_transistor("${name}", ${getHandleNet(n.id, 'c')}, ${getHandleNet(n.id, 'b')}, ${getHandleNet(n.id, 'e')}, ${beta}, ${is})`);
+            const nc = getHandleNet(n.id, 'c'), nb = getHandleNet(n.id, 'b'), ne = getHandleNet(n.id, 'e');
+            connectNets(nc, nb, ne);
+            lines.push(`c.add_transistor("${name}", ${nc}, ${nb}, ${ne}, ${beta}, ${is})`);
+            autoProbes.push({ label: autoLabel, net: nc });
         } else if (n.type === 'mosfet') {
             const k = n.data.k || 0.001;
             const vt = n.data.vt || 2.0;
-            lines.push(`c.add_mosfet("${name}", ${getHandleNet(n.id, 'd')}, ${getHandleNet(n.id, 'g')}, ${getHandleNet(n.id, 's')}, ${k}, ${vt})`);
+            const nd = getHandleNet(n.id, 'd'), ng = getHandleNet(n.id, 'g'), ns = getHandleNet(n.id, 's');
+            connectNets(nd, ng, ns);
+            lines.push(`c.add_mosfet("${name}", ${nd}, ${ng}, ${ns}, ${k}, ${vt})`);
+            autoProbes.push({ label: autoLabel, net: nd });
         } else if (n.type === 'opamp') {
             const gain = n.data.gain || 100000;
-            lines.push(`c.add_opamp("${name}", ${getHandleNet(n.id, 'non')}, ${getHandleNet(n.id, 'inv')}, ${getHandleNet(n.id, 'out')}, ${gain})`);
+            const nnon = getHandleNet(n.id, 'non'), ninv = getHandleNet(n.id, 'inv'), nout = getHandleNet(n.id, 'out');
+            connectNets(nnon, ninv, nout);
+            lines.push(`c.add_opamp("${name}", ${nnon}, ${ninv}, ${nout}, ${gain})`);
+            autoProbes.push({ label: autoLabel, net: nout });
         } else if (n.type === 'transformer') {
             const ratio = n.data.ratio || 1.0;
-            lines.push(`c.add_transformer("${name}", ${getHandleNet(n.id, 'p1')}, ${getHandleNet(n.id, 'p2')}, ${getHandleNet(n.id, 's1')}, ${getHandleNet(n.id, 's2')}, ${ratio})`);
+            const np1 = getHandleNet(n.id, 'p1'), np2 = getHandleNet(n.id, 'p2'), ns1 = getHandleNet(n.id, 's1'), ns2 = getHandleNet(n.id, 's2');
+            connectNets(np1, np2, ns1, ns2);
+            lines.push(`c.add_transformer("${name}", ${np1}, ${np2}, ${ns1}, ${ns2}, ${ratio})`);
+            autoProbes.push({ label: autoLabel, net: ns1 });
         } else if (n.type === 'logic') {
             const kind = n.data.kind || 'AND';
+            const nout = getHandleNet(n.id, 'out');
             if (kind === 'NOT') {
-                 lines.push(`c.add_logic("${name}", "${kind}", [${getHandleNet(n.id, 'b')}], ${getHandleNet(n.id, 'out')})`);
+                 const nb = getHandleNet(n.id, 'b');
+                 connectNets(nb, nout);
+                 lines.push(`c.add_logic("${name}", "${kind}", [${nb}], ${nout})`);
             } else {
-                 lines.push(`c.add_logic("${name}", "${kind}", [${getHandleNet(n.id, 'a')}, ${getHandleNet(n.id, 'b')}], ${getHandleNet(n.id, 'out')})`);
+                 const na = getHandleNet(n.id, 'a'), nb = getHandleNet(n.id, 'b');
+                 connectNets(na, nb, nout);
+                 lines.push(`c.add_logic("${name}", "${kind}", [${na}, ${nb}], ${nout})`);
             }
+            autoProbes.push({ label: autoLabel, net: nout });
         } else if (n.type === 'flipflop') {
             // D-Type FlipFlop: inputs=[clk, d], outputs=[q, qb]
-            lines.push(`c.add_flipflop("${name}", "D", [${getHandleNet(n.id, 'clk')}, ${getHandleNet(n.id, 'd')}], [${getHandleNet(n.id, 'q')}, ${getHandleNet(n.id, 'qb')}])`);
+            const nclk = getHandleNet(n.id, 'clk'), nd = getHandleNet(n.id, 'd'), nq = getHandleNet(n.id, 'q'), nqb = getHandleNet(n.id, 'qb');
+            connectNets(nclk, nd, nq, nqb);
+            lines.push(`c.add_flipflop("${name}", "D", [${nclk}, ${nd}], [${nq}, ${nqb}])`);
+            autoProbes.push({ label: `${autoLabel} Q`, net: nq });
         } else if (n.type === 'shiftreg') {
             // Shift Register: inputs=[clk, data], outputs=[out]
-            lines.push(`c.add_shift_register("${name}", "8-bit", [${getHandleNet(n.id, 'clk')}, ${getHandleNet(n.id, 'data')}], [${getHandleNet(n.id, 'out')}])`);
+            const nclk = getHandleNet(n.id, 'clk'), ndata = getHandleNet(n.id, 'data'), nout = getHandleNet(n.id, 'out');
+            connectNets(nclk, ndata, nout);
+            lines.push(`c.add_shift_register("${name}", "8-bit", [${nclk}, ${ndata}], [${nout}])`);
+            autoProbes.push({ label: autoLabel, net: nout });
         } else if (n.type === 'source') {
-            const freq = n.data.freq !== undefined ? n.data.freq : (n.data.type === 'ac' ? 60 : 0); 
+            const freq = n.data.freq !== undefined ? n.data.freq : (n.data.type === 'ac' ? 60 : 0);
             const wave = n.data.waveType || 'sine';
-            lines.push(`c.add_voltage("${name}", ${getHandleNet(n.id, 'pos')}, ${getHandleNet(n.id, 'neg')}, ${val}, ${freq}, "${wave}")`);
+            const npos = getHandleNet(n.id, 'pos'), nneg = getHandleNet(n.id, 'neg');
+            connectNets(npos, nneg);
+            lines.push(`c.add_voltage("${name}", ${npos}, ${nneg}, ${val}, ${freq}, "${wave}")`);
+            autoProbes.push({ label: autoLabel, net: npos });
         } else if (n.type === 'scope') {
             const net = getHandleNet(n.id, 'l');
+            usedNets.add(net);
             probes.push({ label: n.data.label, net: net });
         }
     });
 
     // Shunt resistors for floating nodes (stability)
     // Simplified: relying on solver robustness or user connectivity
-    
-    return { code: lines.join('\n'), probes };
+
+    // --- VALIDACIÓN PREVIA: ¿todo net usado tiene camino hasta tierra? ---
+    // Mismo union-find de arriba, a nivel de circuito (no de pin). Sin esto,
+    // el solver corre igual pero produce una matriz MNA singular -- history
+    // congelado en 0V para todo, sin ningún aviso (ver hallazgo Día 18).
+    let groundError = null;
+    if (usedNets.size > 0) {
+        if (gndNet === -1) {
+            groundError = 'Este circuito no tiene retorno a tierra -- agrega un GND o conecta el negativo de la fuente.';
+        } else {
+            const groundRefNet = 0; // mapNet ya remapea gndNet -> 0
+            const reachable = new Set([groundRefNet]);
+            const queue = [groundRefNet];
+            while (queue.length) {
+                const cur = queue.shift();
+                for (const nb of (netGraph.get(cur) || [])) {
+                    if (!reachable.has(nb)) { reachable.add(nb); queue.push(nb); }
+                }
+            }
+            const isolated = [...usedNets].some(id => !reachable.has(id));
+            if (isolated) {
+                groundError = 'Este circuito no tiene retorno a tierra -- agrega un GND o conecta el negativo de la fuente.';
+            }
+        }
+    }
+
+    return { code: lines.join('\n'), probes, autoProbes, groundError };
   };
 
   const handleSimulate = async () => {
       if (!onRunSimulation) return;
       setSimStatus('running');
       setSimResult(null);
-      
-      const { code, probes } = generateNetlist(nodes, edges);
+      setSimWarning(null);
+
+      const { code, probes, autoProbes, groundError } = generateNetlist(nodes, edges);
+      // Sin Probe manual: cae a los nets de salida relevante de cada
+      // componente, para que el Osciloscopio local no quede vacío.
+      const effectiveProbes = probes.length > 0 ? probes : autoProbes;
+
+      // Validación previa: sin retorno a tierra, el solver produciría una
+      // matriz singular y una historia congelada en 0V -- se avisa aquí, sin
+      // gastar el ciclo de RUN.
+      if (groundError) {
+          setSimWarning(groundError);
+          setSimData([]);
+          setSimStatus('idle');
+          return;
+      }
 
       // --- PYTHON TRANSIENT SOLVER ---
       const solverCode = `
@@ -1094,6 +1323,7 @@ class Circuit:
         times = np.arange(0, t_end, dt)
         history = {str(n): [] for n in node_list}
         history['time'] = []
+        solver_warning = None
         
         # Initial guess for voltages (0)
         x = np.zeros(dim)
@@ -1354,14 +1584,24 @@ class Circuit:
                         x = x_new
                         break
                     x = x_new
-                except:
+                except Exception as e:
+                    # Antes: "except: break" silencioso -- devolvía JSON válido
+                    # con historia congelada en 0 (x nunca sale de np.zeros),
+                    # indistinguible de una simulación real sin señal. La causa
+                    # más común: circuito sin referencia a tierra (ningún net
+                    # remapeado a 0 en generateNetlist) -> matriz MNA singular.
+                    solver_warning = (
+                        f"Matriz singular en t={t:.4f}s ({type(e).__name__}) -- "
+                        f"revisa que el circuito tenga referencia a tierra (GND) "
+                        f"conectada."
+                    )
                     break # Singular or fail
-            
+
             # Store results
             for n in node_list:
                 history[str(n)].append(float(x[self.node_map[n]]))
             history['time'].append(float(t))
-            
+
             # Update dynamic memory
             for c in self.components:
                 if c['type'] == 'C':
@@ -1372,6 +1612,12 @@ class Circuit:
                     v_diff = x[n1] - x[n2]
                     gl = dt / (c['val'] + 1e-12)
                     c['i_prev'] += gl * v_diff
+
+            if solver_warning:
+                # No tiene caso seguir "simulando" -- la matriz es singular por
+                # topología (no cambia entre timesteps), así que cada paso
+                # siguiente fallaría igual y solo agregaría ceros.
+                break
 
         # --- POST-PROCESSING ANALYSIS (Engineering Metrics) ---
         analysis = {}
@@ -1450,7 +1696,10 @@ class Circuit:
                 "Spectrum": spectrum_data # Array of {f, m}
             }
 
-        return json.dumps({"history": history, "analysis": analysis})
+        result = {"history": history, "analysis": analysis}
+        if solver_warning:
+            result["warning"] = solver_warning
+        return json.dumps(result)
 
 c = Circuit()
 ${code}
@@ -1471,32 +1720,41 @@ c.solve_transient()
 
           const history = data.history || data; // Fallback for backward compat
           const analysis = data.analysis || {};
-          
+
           // Transform for Recharts
           // { time: [...], "1": [...], "2": [...] } -> [{time: t0, "1": v0, "2": v0}, ...]
           const chartData = history.time.map((t, i) => {
               const point = { time: t * 1000 }; // ms
-              probes.forEach(p => {
+              effectiveProbes.forEach(p => {
                   if (history[p.net]) point[p.label] = history[p.net][i];
               });
               return point;
           });
-          
+
           // Inject analysis data into the result string so ElectronicsLab can parse it
           // We can attach it to the data object if we were passing objects, but here we pass string/data via callback usually
           // But wait, ElectronicsLab calls this via onRunCode which returns string.
           // ElectronicsLab needs the FULL object.
-          
+
           // We are returning chartData to local state, but ElectronicsLab expects 'data' via its own 'runPythonCode' logic?
           // Actually, 'SchematicEditor' calls 'onRunSimulation' which is 'runPythonCode' in 'ElectronicsLab'.
           // 'runPythonCode' returns the raw string result.
           // BUT 'ElectronicsLab' also parses it!
-          
+
           // So if we change the JSON structure here, 'ElectronicsLab' needs to know.
-          
-          setSimData(chartData);
-          setSimResult(useCluster ? "Simulación completada en Cluster (12 Nodos) 🚀" : "Simulación completada.");
-          
+
+          if (data.warning) {
+              // El solver detectó una matriz singular (ej. sin retorno a
+              // tierra) y devolvió history congelado en 0 -- no se dibuja el
+              // gráfico plano engañoso, se avisa en su lugar.
+              setSimWarning(data.warning);
+              setSimData([]);
+              setSimResult(null);
+          } else {
+              setSimData(chartData);
+              setSimResult(useCluster ? "Simulación completada en Cluster (12 Nodos) 🚀" : "Simulación completada.");
+          }
+
       } catch (e) {
           setSimResult("Error en simulación: " + e.message);
       } finally {
@@ -1581,6 +1839,7 @@ c.solve_transient()
             nodeTypes={nodeTypes}
             connectionLineType={isEngineeringLines ? ConnectionLineType.Step : ConnectionLineType.Bezier}
             connectionMode={ConnectionMode.Loose}
+            deleteKeyCode={['Backspace', 'Delete']}
             fitView
             >
             <Background color="#222" gap={16} />
@@ -1591,7 +1850,13 @@ c.solve_transient()
       </div>
 
       {/* RESULTS AREA */}
-      {simData.length > 0 && (
+      {simWarning && (
+          <div className="p-4 bg-red-900/30 border-2 border-red-500 text-red-300 rounded-lg text-xs font-mono whitespace-pre-wrap">
+              ⚠️ {simWarning}
+          </div>
+      )}
+
+      {!simWarning && simData.length > 0 && (
           <div className="w-full h-[300px] bg-gray-900 border border-gray-700 rounded-lg p-4">
               <h3 className="text-green-400 text-sm font-bold mb-2">Osciloscopio (Resultados Transitorios)</h3>
               <ResponsiveContainer width="100%" height="100%">
