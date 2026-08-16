@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLabStore } from '../stores/useLabStore'; // Import Store Global
 import SchematicEditor from './SchematicEditor'; // Importar nuevo editor
 import ErrorBoundary from '../components/ErrorBoundary';
+import { LegacySchematicEditorAdapter } from './electronics/adapters/legacySchematicEditorAdapter';
 
 const NEON_COLORS = {
   primary: '#00FFFF',
@@ -563,6 +564,14 @@ const ElectronicsLab = ({ onNavigate }) => {
       }
   };
 
+  // Puerto de simulación de circuitos (Fase A de la migración a Falstad):
+  // SchematicEditor sigue recibiendo el mismo callback string-in/string-out
+  // que siempre esperó (ver legacySchematicEditorAdapter.js), solo que ahora
+  // se obtiene a través del adaptador en vez de pasarle `runPythonCode`
+  // directo -- la costura para poder intercambiarlo por Falstad más
+  // adelante sin que este componente ni SchematicEditor deban cambiar.
+  const circuitSimulationPort = new LegacySchematicEditorAdapter({ runLegacyPythonSimulation: runPythonCode });
+
   const [vinAmp, setVinAmp] = useState(0.1);
   const [vinFreq, setVinFreq] = useState(1000);
   const [useAm, setUseAm] = useState(true);
@@ -878,7 +887,7 @@ const ElectronicsLab = ({ onNavigate }) => {
                      window.location.reload();
                  }}>
                     <SchematicEditor 
-                        onRunSimulation={runPythonCode}
+                        onRunSimulation={circuitSimulationPort.getLegacyRunCallback()}
                         labSignalParams={labSignalParams}
                         timeDiv={timeDiv}
                         voltsDiv={voltsDiv}
