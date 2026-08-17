@@ -282,8 +282,43 @@ const RealSignalAnalysis = ({ electronicsData }) => {
   const width = 500;
   const height = 200;
   const padding = 30;
-  
+
   const selectedSignal = history[selectedNode];
+
+  // Guard: selectedNode arranca en '1' (valor por defecto de useState) y el
+  // useEffect de arriba lo corrige a una clave real de `history` -- pero ese
+  // efecto corre DESPUÉS de este render, no antes. Si el adaptador que llenó
+  // `history` no usa numeración automática de nets (ej. Falstad, que usa los
+  // nombres de nodo que el usuario etiquetó dentro de su propio editor,
+  // nunca '1'), este primer render puede caer con selectedNode apuntando a
+  // una clave que no existe todavía. Antes: Math.min(...undefined) crasheaba
+  // el componente entero a una pantalla en blanco, sin ningún mensaje.
+  if (!Array.isArray(selectedSignal) || selectedSignal.length === 0) {
+    return (
+      <div className="interactive-section" id="section-real-signal">
+        <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>🔬 Análisis de Señal Real</h3>
+        <div className="p-4 border border-dashed border-yellow-600 rounded text-center text-yellow-400">
+          <p>Selecciona un nodo válido para analizar.</p>
+          {nodes.length > 0 ? (
+            <div className="flex flex-wrap gap-2 justify-center mt-3">
+              {nodes.map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setSelectedNode(n)}
+                  className="px-3 py-1 text-xs bg-cyan-900 text-cyan-300 rounded border border-cyan-700 hover:bg-cyan-800"
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm mt-2 text-gray-500">No hay nodos disponibles en los datos recibidos.</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   const minVal = Math.min(...selectedSignal);
   const maxVal = Math.max(...selectedSignal);
   const range = maxVal - minVal || 1;

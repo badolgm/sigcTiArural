@@ -2,6 +2,16 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLabStore } from '../stores/useLabStore'; // Import Store Global
 import SchematicEditor from './SchematicEditor'; // Importar nuevo editor
 import ErrorBoundary from '../components/ErrorBoundary';
+import { LegacySchematicEditorAdapter } from './electronics/adapters/legacySchematicEditorAdapter';
+import FalstadPanel from './electronics/FalstadPanel';
+
+// Migración a Falstad (Día 18, Fase B/C): SchematicEditor (editor legado)
+// sigue existiendo en el código sin cambios -- este flag solo oculta el
+// selector de motor de la navegación normal para no confundir al usuario
+// mientras se confirma que Falstad cubre todo. Poner en `true` reactiva el
+// selector visible "Falstad (nuevo)" / "Editor legado" sin tocar nada más
+// (circuitEngine, FalstadPanel y SchematicEditor siguen intactos debajo).
+const SHOW_LEGACY_ENGINE_TOGGLE = false;
 
 const NEON_COLORS = {
   primary: '#00FFFF',
@@ -563,6 +573,14 @@ const ElectronicsLab = ({ onNavigate }) => {
       }
   };
 
+  // Puerto de simulación de circuitos (Fase A de la migración a Falstad):
+  // SchematicEditor sigue recibiendo el mismo callback string-in/string-out
+  // que siempre esperó (ver legacySchematicEditorAdapter.js), solo que ahora
+  // se obtiene a través del adaptador en vez de pasarle `runPythonCode`
+  // directo -- la costura para poder intercambiarlo por Falstad más
+  // adelante sin que este componente ni SchematicEditor deban cambiar.
+  const circuitSimulationPort = new LegacySchematicEditorAdapter({ runLegacyPythonSimulation: runPythonCode });
+
   const [vinAmp, setVinAmp] = useState(0.1);
   const [vinFreq, setVinFreq] = useState(1000);
   const [useAm, setUseAm] = useState(true);
@@ -623,6 +641,13 @@ const ElectronicsLab = ({ onNavigate }) => {
   // Nuevo estado para alternar vistas
   const [viewMode, setViewMode] = useState('simulation'); // 'simulation' | 'schematic'
 
+  // Migración a Falstad (Día 18, Fase B): SchematicEditor queda en cuarentena
+  // (no se borra, se deja de usar por defecto) mientras se confirma que
+  // Falstad cubre todo -- este toggle permite comparar ambos motores desde
+  // el mismo dashboard real en vez de decidir a ciegas. Default 'falstad'
+  // porque es la dirección de la migración, no una preferencia arbitraria.
+  const [circuitEngine, setCircuitEngine] = useState('falstad'); // 'falstad' | 'legacy'
+
   // Sincronización automática con el "Bridge" (Store Global)
   useEffect(() => {
     // Simulamos que enviamos la señal actual al "Hub" cada vez que cambian los parámetros críticos
@@ -643,43 +668,6 @@ const ElectronicsLab = ({ onNavigate }) => {
                     </h2>
                     
                     <div className="space-y-6">
-                        {/* GRUPO 1: SEÑAL */}
-                        <div>
-                            <label className="text-xs text-cyan-400 font-mono mb-2 block">GENERADOR DE FUNCIONES</label>
-                            
-                            <div className="mb-3">
-                                <label className="text-[10px] text-gray-500 block mb-1">Tipo de Onda</label>
-                                <div className="flex gap-1 bg-black/40 p-1 rounded border border-gray-800">
-                                    {['sine', 'square', 'triangle'].map(type => (
-                                        <button
-                                            key={type}
-                                            onClick={() => setWaveType(type)}
-                                            className={`flex-1 py-1 text-[10px] uppercase font-bold rounded transition-all ${waveType === type ? 'bg-cyan-900 text-cyan-400 border border-cyan-700' : 'text-gray-600 hover:text-gray-400'}`}
-                                        >
-                                            {type === 'sine' ? 'Sen' : type === 'square' ? 'Cua' : 'Tri'}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="space-y-3 p-3 bg-black/40 rounded border border-gray-800">
-                                <div>
-                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                        <span>Amplitud (V)</span>
-                                        <span>{vinAmp.toFixed(2)} V</span>
-                                    </div>
-                                    <input type="range" min={0.01} max={0.5} step={0.01} value={vinAmp} onChange={(e)=>setVinAmp(parseFloat(e.target.value))} className="w-full accent-cyan-500" />
-                                </div>
-                                <div>
-                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                        <span>Frecuencia (Hz)</span>
-                                        <span>{vinFreq} Hz</span>
-                                    </div>
-                                    <input type="range" min={100} max={50000} step={10} value={vinFreq} onChange={(e)=>setVinFreq(parseFloat(e.target.value))} className="w-full accent-cyan-500" />
-                                </div>
-                            </div>
-                        </div>
-
                         {/* GRUPO 2: MODULACIÓN */}
                         {viewMode !== 'schematic' && (
                         <div>
@@ -869,23 +857,51 @@ const ElectronicsLab = ({ onNavigate }) => {
         </header>
 
         {/* CONTENIDO PRINCIPAL (Switcheable) */}
-        {viewMode === 'schematic' ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fadeIn h-[calc(100vh-180px)]">
+        {/* DISEÑO: SIEMPRE montado, oculto con CSS (no desmontado) -- Opción (b),
+            Día 18 Fase B: el iframe de Falstad se destruía y recreaba desde cero
+            en cada cambio de pestaña, perdiendo el circuito/etiquetas del
+            usuario en silencio. Con el componente siempre vivo, eso ya no puede
+            pasar. Ver isVisible en FalstadPanel.jsx. */}
+          <div className={`grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fadeIn h-[calc(100vh-180px)] ${viewMode === 'schematic' ? '' : 'hidden'}`}>
              {/* COLUMNA IZQUIERDA: EDITOR (9 cols) */}
-             <div className="lg:col-span-9 h-full border border-gray-800 rounded-lg overflow-hidden relative bg-[#1a1a1a]">
-                 <ErrorBoundary onReset={() => {
-                     localStorage.removeItem('lab_electronics_schematic');
-                     window.location.reload();
-                 }}>
-                    <SchematicEditor 
-                        onRunSimulation={runPythonCode}
-                        labSignalParams={labSignalParams}
-                        timeDiv={timeDiv}
-                        voltsDiv={voltsDiv}
-                        ch1Offset={ch1Offset}
-                        ch2Offset={ch2Offset}
-                    />
-                 </ErrorBoundary>
+             <div className="lg:col-span-9 h-full border border-gray-800 rounded-lg overflow-hidden relative bg-[#1a1a1a] flex flex-col">
+                 {SHOW_LEGACY_ENGINE_TOGGLE && (
+                 <div className="flex gap-1 p-1 bg-black/60 border-b border-gray-800 shrink-0">
+                     <button
+                         onClick={() => setCircuitEngine('falstad')}
+                         className={`px-3 py-1 text-[10px] font-bold uppercase rounded ${circuitEngine === 'falstad' ? 'bg-orange-900 text-orange-400 border border-orange-600' : 'text-gray-500 hover:text-gray-300'}`}
+                     >
+                         Falstad (nuevo)
+                     </button>
+                     <button
+                         onClick={() => setCircuitEngine('legacy')}
+                         className={`px-3 py-1 text-[10px] font-bold uppercase rounded ${circuitEngine === 'legacy' ? 'bg-orange-900 text-orange-400 border border-orange-600' : 'text-gray-500 hover:text-gray-300'}`}
+                     >
+                         Editor legado
+                     </button>
+                 </div>
+                 )}
+                 <div className="flex-grow relative overflow-hidden">
+                     {circuitEngine === 'falstad' ? (
+                         <ErrorBoundary>
+                            <FalstadPanel onSimulationResult={setSimulationResults} isVisible={viewMode === 'schematic'} />
+                         </ErrorBoundary>
+                     ) : (
+                         <ErrorBoundary onReset={() => {
+                             localStorage.removeItem('lab_electronics_schematic');
+                             window.location.reload();
+                         }}>
+                            <SchematicEditor
+                                onRunSimulation={circuitSimulationPort.getLegacyRunCallback()}
+                                labSignalParams={labSignalParams}
+                                timeDiv={timeDiv}
+                                voltsDiv={voltsDiv}
+                                ch1Offset={ch1Offset}
+                                ch2Offset={ch2Offset}
+                            />
+                         </ErrorBoundary>
+                     )}
+                 </div>
              </div>
 
              {/* COLUMNA DERECHA: CONTROLES (3 cols) */}
@@ -894,19 +910,26 @@ const ElectronicsLab = ({ onNavigate }) => {
                     <h2 className="text-xs font-bold text-orange-400 uppercase tracking-widest mb-2 border-b border-orange-500/30 pb-2">
                         Modo Diseño
                     </h2>
-                    <div className="text-[10px] text-gray-400 space-y-2 font-mono">
-                        <p>1. Arrastra componentes desde la barra superior.</p>
-                        <p>2. <span className="text-orange-400">Doble clic</span> para editar valores.</p>
-                        <p>3. Para usar este Generador, edita una fuente de voltaje y escribe <span className="text-cyan-400 font-bold">LAB</span> como valor.</p>
-                        <p>4. Usa <span className="text-white bg-gray-700 px-1 rounded">Supr</span> para borrar.</p>
-                    </div>
+                    {circuitEngine === 'falstad' ? (
+                        <div className="text-[10px] text-gray-400 space-y-2 font-mono">
+                            <p>1. Usa la barra de herramientas propia de Falstad (arriba del simulador) para agregar componentes.</p>
+                            <p>2. <span className="text-orange-400">Doble clic</span> en un componente para editar sus valores.</p>
+                            <p>3. Menú "Editar" → Cortar (<span className="text-white bg-gray-700 px-1 rounded">Ctrl+X</span>) para quitar un componente seleccionado.</p>
+                            <p>4. <span className="text-cyan-400 font-bold">Sincronizar con Bridge</span> envía la simulación actual al Lab Matemático.</p>
+                        </div>
+                    ) : (
+                        <div className="text-[10px] text-gray-400 space-y-2 font-mono">
+                            <p>1. Arrastra componentes desde la barra superior.</p>
+                            <p>2. <span className="text-orange-400">Doble clic</span> para editar valores.</p>
+                            <p>3. Para usar este Generador, edita una fuente de voltaje y escribe <span className="text-cyan-400 font-bold">LAB</span> como valor.</p>
+                            <p>4. Usa <span className="text-white bg-gray-700 px-1 rounded">Supr</span> para borrar.</p>
+                        </div>
+                    )}
                  </div>
-                 
-                 {/* Reutilizamos los controles existentes */}
-                 {renderControls()}
              </div>
           </div>
-        ) : (
+
+        {viewMode !== 'schematic' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* COLUMNA IZQUIERDA: INSTRUMENTACIÓN (8 cols) */}
