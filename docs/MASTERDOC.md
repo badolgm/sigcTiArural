@@ -9,9 +9,9 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Versión** | 8.0 (Redefinición de alcance documental) |
+| **Versión** | 8.1 (UBTN — telemetría biológica, diseño) |
 | **Fecha Creación** | 24 de Enero 2026 |
-| **Última Actualización** | 17 de Julio 2026 |
+| **Última Actualización** | 13 de Septiembre 2026 |
 | **Autor Principal** | Bernardo Adolfo Gómez Montoya |
 | **Institución** | SENA - Tecnología en ADSO |
 | **Estado** | Documento Vivo - Registro Técnico y Archivo Histórico |
@@ -312,6 +312,22 @@ graph LR
 - Regla de dominio propuesta: filtrado pasa-banda para aislar frecuencias características de rascado repetitivo o sacudidas de cabeza, como indicador predictivo de dermatitis parasitaria u otitis.
 
 **Nota de rigor técnico:** ninguno de los umbrales o parámetros anteriores (`α`, rangos térmicos exactos, frecuencias de filtrado) está calibrado con datos reales todavía. Antes de implementar estas reglas como código de dominio, la Fase 9 exige investigar y documentar rangos fisiológicos normales por especie (ver `PLAN_MAESTRO.md`, tarea 9.2), y comenzar con un único MVP de una sola variable validada end-to-end antes de generalizar.
+
+### 3.3 UBTN — Universal Biological Telemetry Node (Planificado — Fase 9, sin implementación)
+
+**Estado: planificado/no implementado — análisis arquitectónico y diseño cerrados el 2026-09-13 en la rama `feature/ubtn-biological-telemetry`, sin código nuevo.**
+
+La línea de telemetría biológica del ecosistema se formaliza como **UBTN (Universal Biological Telemetry Node)**: collares inteligentes, wearables veterinarios, sensores biométricos (ADS1292R-ECG, MAX30102-PPG, MPU6050-IMU sobre ESP32) y futuros dispositivos biométricos que publican señales vitales por MQTT hacia BBB-01 (gateway edge) y de allí al backend.
+
+**Decisión arquitectónica clave:** se diseña el subdominio DDD **`BiologicalTelemetry`** como bounded context **hermano** del Telemetry Context, **sin modificar `SensorReading` ni `RobotTelemetry`** y **sin romper la señal `sensor_reading`** del `EventBusPort`. Se publica un `signal_type` nuevo (`biological_reading`), se declaran puertos propios (`BiologicalReadingRepositoryPort`, `CollarDeviceRepositoryPort`, `BioAlertPort`) y se conservan intactos V1/V2/V3 y `wiring.py`.
+
+Documentos de referencia (diseño, no implementación):
+
+- [`docs/UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) — análisis del contexto telemetry, propuesta DDD completa, investigación de hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs.
+- [`docs/UBTN_ROADMAP.md`](UBTN_ROADMAP.md) — fases U0-U7 (U0 cerrada en diseño; U1-U7 planificadas al 0%).
+- [`docs/UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — BBB-01 como gateway UBTN (bridge MQTT→HTTPS, store-and-forward, tópicos, seguridad).
+
+**Restricciones de gobernanza:** la implementación (Fases U1+) queda subordinada al cierre de las Fases 7-8 del `PLAN_MAESTRO.md` y al criterio de un único MVP de una variable vital (recomendado: temperatura corporal) antes de escalar.
 
 ---
 
@@ -1335,6 +1351,33 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
 
 ---
 
+#### 📅 **13 de Septiembre 2026 | UBTN — Análisis Arquitectónico de Telemetría Biológica**
+**Sesión**: Diseño del subdominio DDD `BiologicalTelemetry` (UBTN) — análisis sin implementación.
+**Responsable**: Bernardo Gómez + IA de desarrollo
+**Rama**: `feature/ubtn-biological-telemetry`
+
+##### Trabajo Realizado (entregables de la sesión)
+
+1. Análisis arquitectónico completo del Telemetry Context: `SensorReading` (y sus value objects `Temperature`/`Humidity`/`SensorId`), `RobotTelemetry` (Fase 6, V1), `EventBusPort`/`LabSignal`/`InMemoryEventBus`, `SensorReadingRepositoryPort` y adaptadores (`DjangoSensorReadingRepository`, `SensorReadingMapper`, `InMemorySensorReadingRepository`, `LegacySensorReadingRepositoryAdapter`).
+2. Diseño del subdominio **`BiologicalTelemetry`** como bounded context hermano, **sin modificar `SensorReading` ni romper la señal `sensor_reading`** del bus. Entidades nuevas propuestas: `BiologicalReading`, `AnimalSubject`, `CollarDevice`; VOs con rangos fisiológicos por especie; puertos propios (`BiologicalReadingRepositoryPort`, `CollarDeviceRepositoryPort`, `BioAlertPort`).
+3. Investigación de integración futura: ESP32, ADS1292R (ECG), MAX30102 (PPG/SpO₂), MPU6050 (IMU), BeagleBone Black Rev C como gateway, protocolo MQTT y IA predictiva.
+4. Contratos de evento nuevos propuestos: `signal_type="biological_reading"` (source `bio`) — el flujo existente `sensor_reading` queda inalterado.
+5. Documentación materializada: `docs/UBTN_ARCHITECTURE.md`, `docs/UBTN_ROADMAP.md` (fases U0-U7) y `docs/UBTN_BBB_EDGE_GATEWAY.md`. Actualización de `README.md`, `PLAN_MAESTRO.md` (Fase 9) y documentación de onboarding IA.
+
+##### Restricciones respetadas
+
+- Sin trabajo sobre `main`; rama dedicada creada.
+- `SensorReading` y entidades del Telemetry Context intactas.
+- Compatibilidad con Telemetry Context y `EventBusPort` preservada por diseño (ADR-UBTN-01..06).
+
+##### Próximos pasos (backlog, no iniciados)
+
+- Aprobación del diseño; luego Fase U1 (scaffolding DDD + dominio puro + tests) según `docs/UBTN_ROADMAP.md`.
+
+**Resultado**: ✅ Diseño cerrado en documentación; 0% de código nuevo. No se implementó nada en esta rama.
+
+---
+
 ## Apéndice A: Enlaces y Referencias
 
 ### A.1 Ruta de Continuidad Operativa
@@ -1352,6 +1395,7 @@ Fuentes de verdad operativa y técnica:
 - [`DEPLOYMENT.md`](DEPLOYMENT.md)
 - [`PLAN_MAESTRO.md`](PLAN_MAESTRO.md) — roadmap de fases del proyecto, incluida la Fase 9 (expansión de dominio EIARC, planificada)
 - [`ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`](ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md) — guía de estudio ADSO con la bitácora consolidada de la refactorización hexagonal
+- [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md), [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md) y [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — telemetría biológica UBTN (diseño, Fase U0 cerrada; sin implementación)
 - *EIARC_Documento_Maestro_Modelo_Negocio.pdf* — **Documento no disponible en este repositorio** (documento de modelo de negocio y posicionamiento comercial de EIARC; fuera del alcance técnico de este MASTERDOC, referenciado aquí solo para trazabilidad)
 
 ### A.2 Documentos Principales del Proyecto (Autoría y Repositorio)

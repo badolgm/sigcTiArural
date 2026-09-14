@@ -135,6 +135,14 @@ Documentos de soporte de alta prioridad:
 - `docs/sena_artifacts/DEPLOYMENT_FINAL.md`
 - `docs/sena_artifacts/API_DELIVERY_PACKAGE.md`
 
+Línea UBTN (telemetría biológica — **diseño cerrado el 2026-09-13, sin código nuevo**, no debe confundirse con implementación):
+
+- `docs/UBTN_ARCHITECTURE.md` — análisis del Telemetry Context, subdominio DDD `BiologicalTelemetry` (bounded context hermano; `SensorReading`/`sensor_reading` intactos por mandato), hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs.
+- `docs/UBTN_ROADMAP.md` — fases U0-U7 (U0 cerrada; U1-U7 planificadas al 0%).
+- `docs/UBTN_BBB_EDGE_GATEWAY.md` — BBB-01 como gateway UBTN (bridge MQTT→HTTPS, store-and-forward, seguridad).
+
+> **Regla UBTN para agentes IA:** cualquier trabajo futuro sobre UBTN debe leer los tres documentos anteriores **antes** de tocar código, y está **prohibido** modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías ni romper la compatibilidad del Telemetry Context, según ADR-UBTN-01..06.
+
 Programa oficial de I+D (vigente, en diseño — no implementado, no absorbido aún por `docs/eiarc/`):
 
 - `docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md` — programa rector de investigación aplicada de IA (Agriculture AI, Animal Health AI, Telemetry AI, Audio/Signal Intelligence, Knowledge AI, Multimodal Fusion). Reúne `AI_CONTEXT_V2_*`, `AI_DATASET_*`, `AI_MLOPS_AND_TRAINING_GOVERNANCE_V2.md`, `AI_PREDICTION_VALIDATION_AUDIT.md`, `AI_SCIENTIFIC_CORRECTION_DESIGN.md`, `AI_TRAINING_PIPELINE_V2.md` y la familia `AGRICULTURE_AI_V2_*` (primera línea de ejecución). Diseñado para converger con EIARC a medida que cada línea madure, pero es un track paralelo, no una duplicación.
@@ -184,6 +192,14 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 14. `docs/PLAN_MAESTRO.md`
 15. `docs/project_knowledge_base/`
 16. `docs/sena_artifacts/`
+
+### Fase 6. Líneas de dominio en diseño (solo lectura — no implementar)
+
+17. `docs/UBTN_ARCHITECTURE.md`
+18. `docs/UBTN_ROADMAP.md`
+19. `docs/UBTN_BBB_EDGE_GATEWAY.md`
+
+> La Fase 6 es **informativa**: la línea UBTN está diseñada (Fase U0 cerrada el 2026-09-13) y no debe implementarse hasta su aprobación explícita. `SensorReading` y la señal `sensor_reading` están protegidos (ADR-UBTN-01).
 
 Regla operacional:
 
@@ -609,6 +625,7 @@ Las siguientes acciones quedan prohibidas para futuras IA salvo autorización ex
 10. introducir nuevas arquitecturas paralelas no solicitadas
 11. confundir documentos históricos con fuente de verdad vigente
 12. reiniciar trabajo ya cerrado solo por pérdida de contexto conversacional
+13. modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías, ni romper la compatibilidad del Telemetry Context al trabajar la línea UBTN (regla ADR-UBTN-01..06, ver `docs/UBTN_ARCHITECTURE.md`)
 
 ---
 
@@ -687,12 +704,19 @@ El mapa de continuidad operativo es este:
 - `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
 - `docs/sena_artifacts/*`
 
+### Continuidad UBTN (telemetría biológica — diseño)
+
+- `docs/UBTN_ARCHITECTURE.md`
+- `docs/UBTN_ROADMAP.md`
+- `docs/UBTN_BBB_EDGE_GATEWAY.md`
+
 Lectura sintética del mapa:
 
 - si la tarea es general, entrar por `SYSTEM_BOOT`
 - si la tarea es de arquitectura, entrar por `docs/eiarc/`
 - si la tarea es documental, entrar por `Knowledge Hub`
 - si la tarea es operativa crítica, entrar por `AI Service`
+- si la tarea es de telemetría biológica/UBTN, entrar por `docs/UBTN_*` (diseño, sin implementación)
 
 ---
 

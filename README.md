@@ -140,6 +140,7 @@ El contenedor Docker local `ai_service` puede fallar al iniciar. La causa diagno
 ### 🟡 Componentes diseñados pero no implementados
 - Integración física completa del clúster BeagleBone Black
 - Sistema de alertas en tiempo real (WebSockets/Channels)
+- **UBTN — Telemetría biológica:** análisis arquitectónico y subdominio DDD `BiologicalTelemetry` **diseñados**, sin código nuevo (ver [Mapa Documental — UBTN](#️-mapa-documental))
 
 > Para el estado operativo detallado y ordenado por prioridad, consulta [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md).
 
@@ -176,6 +177,7 @@ mindmap
       🟢 Input Port backend PostgreSQL Dashboard
       🟢 BeagleBone Black referencia código vacío
       🔷 LoRaWAN ilustrativo
+      🔷 UBTN — telemetría biológica (BiologicalTelemetry, diseño)
       ⚪ Fuente real hoy generador simulado
     🟢 Knowledge Hub
       🟢 Implementado
@@ -506,7 +508,7 @@ Plan de ejecución para un baseline multiclase de agricultura (tomate, papa, ma�
 <a name="-edge-computing"></a>
 ## 🧩 Edge Computing
 
-> **Estado:** arquitectura de referencia de laboratorio. Las direcciones IP y roles descritos a continuación corresponden a la configuración objetivo, no a un despliegue productivo activo — la integración física completa está marcada 🟡 En Progreso (ver [Roadmap](#-estado-del-proyecto-y-roadmap)).
+> **Estado:** arquitectura de referencia de laboratorio. Las direcciones IP y roles descritos a continuación corresponden a la configuración objetivo, no a un despliegue productivo activo — la integración física completa está marcada 🟡 En Progreso (ver [Roadmap](#-estado-del-proyecto-y-roadmap)). La telemetría biológica UBTN se integra en este mismo clúster (BBB-01 como gateway MQTT de collares inteligentes) — diseño en [docs/UBTN_ARCHITECTURE.md](docs/UBTN_ARCHITECTURE.md) y [docs/UBTN_BBB_EDGE_GATEWAY.md](docs/UBTN_BBB_EDGE_GATEWAY.md).
 
 ### 🔌 Arquitectura de Referencia del Clúster BeagleBone Black
 
@@ -857,6 +859,10 @@ sigcTiArural/
 3. Continuar fases 0–8 del refactor hexagonal antes de abordar EIARC como expansión productiva
 4. Ejecutar el baseline de entrenamiento de Agriculture AI V2 (aún no iniciado)
 
+### 🔷 En Diseño (sin implementar)
+
+- **UBTN (Universal Biological Telemetry Node)** — telemetría biológica de collares inteligentes/wearables veterinarios: arquitectura, subdominio DDD `BiologicalTelemetry`, roadmap e integración edge BBB documentados (Fase U0 cerrada en diseño). Ver [`docs/UBTN_ARCHITECTURE.md`](docs/UBTN_ARCHITECTURE.md), [`docs/UBTN_ROADMAP.md`](docs/UBTN_ROADMAP.md) y [`docs/UBTN_BBB_EDGE_GATEWAY.md`](docs/UBTN_BBB_EDGE_GATEWAY.md).
+
 > Estado detallado y priorizado: [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md) §§7–13.
 
 ---
@@ -879,6 +885,7 @@ Este README es un documento de entrada público, **no** un reemplazo de la docum
 | 6. Respaldo, archivo y retención | Manifiestos de backup, política de retención | `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`, `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md` |
 | 7. Documentación histórica | Bitácoras secundarias de sesiones de trabajo, no canónicas (ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9); incluye auditorías TRAE y README Reality Check ya absorbidas por `docs/project_knowledge_base/` | `docs/historical/` (`INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`, `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`, `TRAE_AI_INTEGRATION_AUDIT.md`, `README_REALITY_CHECK.md`) |
 | 8. Programa de I+D — IA V2 | Arquitectura multimodal, estrategia de datasets, MLOps, línea Agriculture AI V2 (planificado, converge con EIARC) | [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md) |
+| 9. UBTN — Telemetría biológica (diseño, no implementado) | Arquitectura y DDD del subdominio `BiologicalTelemetry`, roadmap faseado, gateway edge BBB | [`docs/UBTN_ARCHITECTURE.md`](docs/UBTN_ARCHITECTURE.md), [`docs/UBTN_ROADMAP.md`](docs/UBTN_ROADMAP.md), [`docs/UBTN_BBB_EDGE_GATEWAY.md`](docs/UBTN_BBB_EDGE_GATEWAY.md) |
 
 Si tu objetivo es entender el estado real del proyecto en profundidad —o continuar el trabajo como colaborador o como IA sin contexto previo— empieza siempre por `SIGCT_RURAL_SYSTEM_BOOT.md`; ese documento define el orden de lectura obligatorio y la fuente de verdad vigente por categoría.
 

@@ -284,13 +284,21 @@ gantt
 - [ ] Extender `LaboratorioStrategyFactory` (o su equivalente en `contexts/labs/domain/factories/`) para registrar las nuevas estrategias sin romper las 4 existentes
 
 #### 9.2 Monitoreo Biométrico Individual de Ganado (contexto `telemetry` + `ai_advisory`)
+
+> **Actualización 2026-09-13:** esta tarea se formaliza como línea **UBTN — Universal Biological Telemetry Node** con diseño cerrado en [`docs/UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) (subdominio DDD `BiologicalTelemetry`), [`docs/UBTN_ROADMAP.md`](UBTN_ROADMAP.md) (Fases U0-U7) y [`docs/UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) (BBB-01 como gateway UBTN). El backlog inicial continúa:
+
 - [ ] Diseñar el contrato de datos del dispositivo sensórico portable (collar u otro formato según la especie): temperatura corporal, ritmo cardíaco, pH cuando aplique, y variables de movimiento/actividad
 - [ ] Definir `AnimalReadingPort` (o extender `SensorReadingRepositoryPort` existente) para que la ingesta de telemetría distinga entre lectura de cultivo/laboratorio y lectura biométrica de un animal individual
+
+> **Decisión de diseño (ADR-UBTN-01):** el diseño UBTN **no extiende** `SensorReadingRepositoryPort`; declara puertos propios del subdominio (`BiologicalReadingRepositoryPort`, `CollarDeviceRepositoryPort`, `BioAlertPort`) para no romper el Telemetry Context. `SensorReading` no se modifica.
+
 - [ ] Investigar y documentar rangos fisiológicos normales por especie (vacas, cerdos, gallinas) como base para la detección de anomalías (fiebre, estrés térmico, taquicardia, hipoactividad)
 - [ ] Aplicar ingeniería de características (feature engineering) sobre las series de tiempo de cada animal (medias móviles, variabilidad, tendencias) como insumo para los modelos
 - [ ] Evaluar modelos de Machine Learning / Deep Learning para clasificación de estado de salud y detección de comportamiento anómalo por animal
 - [ ] Diseñar el mecanismo de alerta temprana (umbral + modelo predictivo) para notificar al productor antes de que la condición se vuelva crítica
 - [ ] Definir el MVP mínimo viable: una sola variable vital (por ejemplo, temperatura) validada end-to-end (sensor → ingesta → almacenamiento → visualización → alerta) antes de sumar más variables o especies
+
+> **Mapa de tareas 9.2 → Fases UBTN:** contrato de datos → UBTN-ARCH; puerto/repositorio → U1-U2; rangos fisiológicos → U2/U5 (calibración); feature engineering → U6; modelos ML/DL → U6; alerta temprana → U3 (+ U6); MVP end-to-end → U7.
 
 #### 9.3 IA de Alertas Tempranas (contexto `ai_advisory`, general para todas las líneas EIARC)
 - [ ] Definir puertos y contratos para modelos de detección de anomalías/alertas tempranas, reutilizables entre cultivos, colmenas, estanques e individuos de ganado
@@ -358,6 +366,9 @@ gantt
 |---|---|---|
 | MASTERDOC.md | docs/MASTERDOC.md | Arquitectura completa |
 | robotics_contracts.md | docs/architecture/robotics_contracts.md | Contratos JSON Robótica |
+| UBTN_ARCHITECTURE.md | docs/UBTN_ARCHITECTURE.md | Telemetría biológica UBTN — arquitectura y DDD (diseño, Fase 9) |
+| UBTN_ROADMAP.md | docs/UBTN_ROADMAP.md | UBTN — plan faseado U0-U7 (0% implementado) |
+| UBTN_BBB_EDGE_GATEWAY.md | docs/UBTN_BBB_EDGE_GATEWAY.md | UBTN — BBB-01 como gateway edge |
 | README.md | Raíz del proyecto | Introducción y setup |
 | API_REFERENCE.md | docs/API_REFERENCE.md | Documentación de APIs |
 | DEPLOYMENT.md | docs/DEPLOYMENT.md | Guía de despliegue |
@@ -367,7 +378,7 @@ gantt
 🌱 "El éxito es la suma de pequeños esfuerzos repetidos día tras día."
 — Proyecto SIGC&T Rural / EIARC
 
-Última actualización: 06 de Julio, 2026
+Última actualización: 13 de Septiembre, 2026 (UBTN — línea de telemetría biológica diseñada en Fase 9)
 Próxima revisión: A definir según cierre de Fase 7-8
 Versión: 8.1
 </div>
