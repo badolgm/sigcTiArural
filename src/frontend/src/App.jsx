@@ -16,6 +16,9 @@ import ElectronicsLab from './labs/ElectronicsLab.jsx';
 import KnowledgeHubLayout from './knowledge-hub/pages/KnowledgeHubLayout.jsx';
 import AIPredictiva from './pages/AIPredictiva.jsx';
 import DataScienceLab from './pages/DataScienceLab.jsx';
+import HardwareCatalogPage from './pages/HardwareCatalogPage.jsx';
+import HardwareDetailPage from './pages/HardwareDetailPage.jsx';
+import ProjectsPage from './pages/ProjectsPage.jsx';
 import VoiceAssistant from './components/VoiceAssistant.jsx'; // Tu Asistente
 
 // Servicios
@@ -79,7 +82,9 @@ const AppContent = () => {
       'lab-embedded': '/lab-embedded',
       'lab-telecom': '/lab-telecom',
       'lab-electronics': '/lab-electronics',
-      'data-lab': '/data-science'
+      'data-lab': '/data-science',
+      'proyectos': '/proyectos',
+      'projectos': '/proyectos'
     };
 
     // Si target empieza con '/', es una ruta directa. Si no, busca en el mapa.
@@ -93,7 +98,7 @@ const AppContent = () => {
       {/* --- DEBUG: GLOBAL STATUS --- */}
       <div className="fixed top-0 left-0 w-full z-50 pointer-events-none p-1 flex justify-center opacity-50">
         <span className="bg-black/80 text-green-400 text-[10px] px-2 rounded border border-green-900">
-            SYSTEM ONLINE: {location.pathname}
+            SYSTEM DEBUG · {location.pathname}
         </span>
       </div>
 
@@ -111,6 +116,9 @@ const AppContent = () => {
           <Route path="/labs" element={<LabCatalog onNavigate={handleNavigation} />} />
           <Route path="/ai-predictive" element={<AIPredictiva />} />
           <Route path="/data-science" element={<DataScienceLab />} />
+          <Route path="/hardware-catalog" element={<HardwareCatalogPage />} />
+          <Route path="/hardware/:id" element={<HardwareDetailPage />} />
+          <Route path="/proyectos" element={<ProjectsPage />} />
 
           {/* --- LABORATORIOS ESPECÍFICOS --- */}
           <Route path="/labs/robotics" element={<RoboticsLab />} /> {/* Tu nuevo lab */}

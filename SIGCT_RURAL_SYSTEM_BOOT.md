@@ -137,11 +137,73 @@ Documentos de soporte de alta prioridad:
 
 Línea UBTN (telemetría biológica — **diseño cerrado el 2026-09-13, sin código nuevo**, no debe confundirse con implementación):
 
-- `docs/UBTN_ARCHITECTURE.md` — análisis del Telemetry Context, subdominio DDD `BiologicalTelemetry` (bounded context hermano; `SensorReading`/`sensor_reading` intactos por mandato), hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs.
-- `docs/UBTN_ROADMAP.md` — fases U0-U7 (U0 cerrada; U1-U7 planificadas al 0%).
+- `docs/UBTN_INDEX.md` — índice general de la familia UBTN (entrada obligatoria): árbol documental, matriz de trazabilidad y verificación de cobertura.
+- `docs/UBTN_ARCHITECTURE.md` — análisis del Telemetry Context, subdominio DDD `BiologicalTelemetry` (bounded context hermano; `SensorReading`/`sensor_reading` intactos por mandato), hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs 01-06.
+- `docs/UBTN_ADR_INDEX.md` — registro central de decisiones (ADRs 01-16).
+- `docs/UBTN_DOMAIN_MODEL.md` — DDD táctico completo (entities, VOs, eventos, agregados, repositorios, context map).
+- `docs/UBTN_USE_CASES.md` — casos de uso por especie (8 líneas: bovinos, caninos, felinos, equinos, caprinos, ovinos, apicultura, piscicultura).
+- `docs/UBTN_SENSOR_CATALOG.md` — comparativa técnica de sensores y enlaces (ESP32, ADS1292R, MAX30102, MPU6050, MAX86150, LoRa, BLE, BBB Rev C).
+- `docs/UBTN_DATA_CONTRACTS.md` — contratos JSON de diseño (`reading`, `burst`, `status`, `alert`, `link`) — NO implementar.
+- `docs/UBTN_EDGE_AI_STRATEGY.md` — edge-first, MQTT, offline-first, TinyML e IA predictiva.
 - `docs/UBTN_BBB_EDGE_GATEWAY.md` — BBB-01 como gateway UBTN (bridge MQTT→HTTPS, store-and-forward, seguridad).
+- `docs/UBTN_RISK_ANALYSIS.md` — registro de riesgos (técnicos, regulatorios, hardware, rural, energía, sensores, interoperabilidad).
+- `docs/UBTN_LAB_INTEGRATION.md` — integración con Robótica, Telecomunicaciones, Electrónica, IA, Agricultura y el piso STEM.
+- `docs/UBTN_RESEARCH_BACKLOG.md` — 18 líneas de investigación priorizadas (P0/P1/P2).
+- `docs/UBTN_ROADMAP.md` — fases U0-U7 (U0 cerrada; U1-U7 planificadas al 0%).
+- `docs/UBTN_CONTEXT_MAP.md` — Context Map DDD (upstream/downstream, ACL, CUI, Published Language).
+- `docs/UBTN_AGGREGATE_DESIGN.md` — diseño de agregados y límites de consistencia.
+- `docs/UBTN_EVENT_STORMING.md` — Big Picture y hot-spots (provisioning/umbral).
+- `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md` — ADR-17: evolución dual-track sin migración retroactiva.
+- `docs/UBTN_MQTT_ARCHITECTURE.md` — broker, tópicos, QoS/RETAIN, LWT y bridge store-and-forward.
+- `docs/UBTN_DATABASE_EVOLUTION.md` — ADR-18: persistencia B/C/D y umbrales de escalado.
+- `docs/UBTN_HARDWARE_ROADMAP.md` — variantes V1-V4, costos y autonomía.
+- `docs/UBTN_FRONTEND_UX_STRATEGY.md` — ADR-20: UX por perfil, sin estado duplicado.
+- `docs/UBTN_SECURITY_MODEL.md` — ADR-19: TLS, identidad, RBAC y privacidad.
+- `docs/UBTN_OPERATIONS_RUNBOOK.md` — playbooks OPR/RR y políticas de operación.
+- `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md` — escenarios de campo y SOP de puesta en marcha.
+- `docs/UBTN_RESEARCH_GAPS.md` — gaps físicos/biológicos y anti-patterns.
+- `docs/UBTN_AUDIT_REVIEW.md` — auditoría crítica de la familia (hallazgos A-1..A-8 y reconciliación).
 
-> **Regla UBTN para agentes IA:** cualquier trabajo futuro sobre UBTN debe leer los tres documentos anteriores **antes** de tocar código, y está **prohibido** modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías ni romper la compatibilidad del Telemetry Context, según ADR-UBTN-01..06.
+> **Regla UBTN para agentes IA:** cualquier trabajo futuro sobre UBTN debe leer primero `UBTN_INDEX.md` y luego los documentos relevantes de la familia **antes** de tocar código, y está **prohibido** modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías ni romper la compatibilidad del Telemetry Context, según ADR-UBTN-01..20. La auditoría critica (`UBTN_AUDIT_REVIEW.md`) y el hallazgo A-7 (variable del MVP) deben consultarse **antes** de decidir compra de hardware o arranque de U1.
+
+Línea Refactorización Global (Gate U0→U0.5 — **diseño de identidad/frontend, sin código**, no confundir con implementación):
+
+- `docs/SIGCTIARURAL_VISION_ALIGNMENT.md` — identidad de SIGCTiArural durante la refactorización (principios y no-negociables). Punto de entrada.
+- `docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md` — mapa de laboratorios, cadena Conocimiento→Proyectos, vacíos GLC-01..07.
+- `docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md` — modelo de aprendizaje por hardware (BBB/ESP32/STM32/Arduino/RPi/Jetson/FPGA/MiniPC), ladder y vacíos GHL-01..05.
+- `docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md` — IA canónica por persona (Estudiante/Instructor/Investigador/Agricultor*/Desarrollador) y flujos.
+- `docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md` — hardware ≠ capacidad (roles/protocolos, anti-patterns).
+- `docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md` — qué no se rompe (GR-01..12) y cómo verificar cada uno.
+- `docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md` — spec visual (wireframes/páginas), sin código.
+- `docs/SIGCTIARURAL_REFACTORING_AUDIT.md` — auditoría crítica de las 7 misiones + respuesta a la Misión Final (veredicto).
+
+Continuación — **Misión Crítica Preservación y Expansión** (regla suprema: NADA DESAPARECE; evolución por ampliación, no por sustitución):
+
+- `docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md` — qué se preserva y jamás se rompe (con justificación). Entrada de la Misión.
+- `docs/SIGCTIARURAL_COMPONENT_MAP.md` — inventario verificado del filesystem (`src/frontend/src/**`) y qué falta/evoluciona.
+- `docs/SIGCTIARURAL_EVOLUTION_MATRIX.md` — por módulo: actual → futuro → compatibilidad → riesgo → prioridad (P0/P1/P2).
+- `docs/SIGCTIARURAL_NAVIGATION_EVOLUTION.md` — navegación aditiva sin romper hábitos (TopNav ampliado, voz ampliada, rutas intactas).
+- `docs/SIGCTIARURAL_IMPLEMENTATION_READINESS.md` — qué está listo / qué no / prohibiciones absolutas / checklist de gate U1.
+- `docs/SIGCTIARURAL_PRESERVATION_AUDIT.md` — auditoría crítica de preservación (PA-01..PA-12) con reconciliación.
+
+Continuación — **MISIÓN CRÍTICA: Transición a la Dashboard Ganadora** (migración frontend en diseño; la Ganadora = `SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`, única referencia de diseño):
+
+- `docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md` — plan de migración a la Dashboard Ganadora (7 fases con feature flags/rollback y gates).
+- `docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md` — clasificación PRESERVAR/AMPLIAR/MOVER/DEPRECAR/NO TOCAR de `src/frontend/src/**`.
+- `docs/SIGCTIARURAL_PAGE_MAPPING.md` — mapa exacto página actual → página futura.
+- `docs/SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md` — Dashboard actual vs Ganadora (existe/falta/sobra/ampliar, sin eliminar).
+- `docs/SIGCTIARURAL_ROUTE_EVOLUTION.md` — inventario de rutas (14 congeladas + 2 añadidas) y redirects.
+- `docs/SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md` — plan del Hardware Catalog (preserva BBB, incorpora ESP32/STM32/Arduino/RPi/Jetson/FPGA/MiniPC).
+- `docs/SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md` — preservación por área (7): nada queda huérfano.
+- `docs/SIGCTIARURAL_MIGRATION_AUDIT.md` — auditoría mínima (riesgos R-01..12, dependencias ocultas, decisiones bloqueantes D-A/D-B/D-C/D-A-7/D-D).
+
+Continuidad — **U1: Preparación de implementación** (bloqueantes de decisión resueltos + bootstrap; sin código — lectura obligatoria antes de tocar React):
+
+- `docs/SIGCTIARURAL_U1_GO_NO_GO.md` — auditoría final del gate U1 (veredicto NO GO y checklist de paso a GO).
+- `docs/SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md` — resolución de D-A/D-B/D-C/D-D/D-A-7/R-13 → **GO CON CONDICIONES**.
+- `docs/SIGCTIARURAL_U1_BOOTSTRAP.md` — plan de ejecución U1.1-U1.4 (primer archivo, snapshot, pruebas manuales, rollback) → **GO para U1.1**.
+
+> **Regla de refactorización global:** cualquier cambio de IA/dashboard debe leer primero `SIGCTIARURAL_VISION_ALIGNMENT.md`, respetar `SIGCTIARURAL_REFACTORING_GUARDRAILS.md`, no eliminar nada inventariado en `SIGCTIARURAL_COMPONENT_MAP.md` (regla NADA DESAPARECE) y pasar por `SIGCTIARURAL_REFACTORING_AUDIT.md`/`SIGCTIARURAL_PRESERVATION_AUDIT.md` **antes** de proponer implementación.
 
 Programa oficial de I+D (vigente, en diseño — no implementado, no absorbido aún por `docs/eiarc/`):
 
@@ -195,11 +257,59 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 
 ### Fase 6. Líneas de dominio en diseño (solo lectura — no implementar)
 
-17. `docs/UBTN_ARCHITECTURE.md`
-18. `docs/UBTN_ROADMAP.md`
-19. `docs/UBTN_BBB_EDGE_GATEWAY.md`
+17. `docs/UBTN_INDEX.md` (índice general de la familia UBTN — entrada obligatoria)
+18. `docs/UBTN_ARCHITECTURE.md`
+19. `docs/UBTN_ADR_INDEX.md`
+20. `docs/UBTN_DOMAIN_MODEL.md`
+21. `docs/UBTN_USE_CASES.md`
+22. `docs/UBTN_SENSOR_CATALOG.md`
+23. `docs/UBTN_DATA_CONTRACTS.md`
+24. `docs/UBTN_EDGE_AI_STRATEGY.md`
+25. `docs/UBTN_BBB_EDGE_GATEWAY.md`
+26. `docs/UBTN_RISK_ANALYSIS.md`
+27. `docs/UBTN_LAB_INTEGRATION.md`
+28. `docs/UBTN_RESEARCH_BACKLOG.md`
+29. `docs/UBTN_ROADMAP.md`
+30. `docs/UBTN_CONTEXT_MAP.md`
+31. `docs/UBTN_AGGREGATE_DESIGN.md`
+32. `docs/UBTN_EVENT_STORMING.md`
+33. `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md`
+34. `docs/UBTN_MQTT_ARCHITECTURE.md`
+35. `docs/UBTN_DATABASE_EVOLUTION.md`
+36. `docs/UBTN_HARDWARE_ROADMAP.md`
+37. `docs/UBTN_FRONTEND_UX_STRATEGY.md`
+38. `docs/UBTN_SECURITY_MODEL.md`
+39. `docs/UBTN_OPERATIONS_RUNBOOK.md`
+40. `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md`
+41. `docs/UBTN_RESEARCH_GAPS.md`
+42. `docs/UBTN_AUDIT_REVIEW.md`
+43. `docs/SIGCTIARURAL_VISION_ALIGNMENT.md` (identidad de la refactorización global)
+44. `docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md`
+45. `docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md`
+46. `docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md` (IA canónica)
+47. `docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md`
+48. `docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md`
+49. `docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`
+50. `docs/SIGCTIARURAL_REFACTORING_AUDIT.md`
+51. `docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md` (Misión Crítica — Regla Suprema: NADA DESAPARECE)
+52. `docs/SIGCTIARURAL_COMPONENT_MAP.md` (inventario verificado del filesystem)
+53. `docs/SIGCTIARURAL_EVOLUTION_MATRIX.md` (evolución por módulo)
+54. `docs/SIGCTIARURAL_NAVIGATION_EVOLUTION.md` (navegación aditiva)
+55. `docs/SIGCTIARURAL_IMPLEMENTATION_READINESS.md` (qué está listo / qué no — checklist U1)
+56. `docs/SIGCTIARURAL_PRESERVATION_AUDIT.md` (auditoría de preservación PA-01..PA-12)
+57. `docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md` (transición a la Dashboard Ganadora — 7 fases)
+58. `docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md` (clasificación PRESERVAR/AMPLIAR/MOVER/DEPRECAR/NO TOCAR)
+59. `docs/SIGCTIARURAL_PAGE_MAPPING.md` (mapa página actual → página futura)
+60. `docs/SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md` (Dashboard actual vs Ganadora — sin eliminar)
+61. `docs/SIGCTIARURAL_ROUTE_EVOLUTION.md` (rutas aditivas y redirects)
+62. `docs/SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md` (plan del Hardware Catalog — preserva BBB)
+63. `docs/SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md` (preservación por área — nada queda huérfano)
+64. `docs/SIGCTIARURAL_MIGRATION_AUDIT.md` (auditoría mínima — riesgos R-01..12, decisiones bloqueantes)
+65. `docs/SIGCTIARURAL_U1_GO_NO_GO.md` (auditoría final del gate U1 — NO GO documentado)
+66. `docs/SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md` (resolución de los 6 bloqueantes → GO CON CONDICIONES)
+67. `docs/SIGCTIARURAL_U1_BOOTSTRAP.md` (plan de ejecución U1.1-U1.4 → GO para U1.1)
 
-> La Fase 6 es **informativa**: la línea UBTN está diseñada (Fase U0 cerrada el 2026-09-13) y no debe implementarse hasta su aprobación explícita. `SensorReading` y la señal `sensor_reading` están protegidos (ADR-UBTN-01).
+> La Fase 6 es **informativa**: la línea UBTN está diseñada y auditada (Fase U0 cerrada el 2026-09-13, ver `UBTN_AUDIT_REVIEW.md`), la refactorización global está en diseño U0.5 (ver `SIGCTIARURAL_REFACTORING_AUDIT.md`), la Misión Crítica de **Preservación y Expansión** garantiza que NADA DESAPARECE (ver `SIGCTIARURAL_PRESERVATION_STRATEGY.md` y `SIGCTIARURAL_PRESERVATION_AUDIT.md`), y la **Transición a la Dashboard Ganadora** registra el plan de migración del frontend (ver `SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md`, `SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md`, `SIGCTIARURAL_ROUTE_EVOLUTION.md` y `SIGCTIARURAL_MIGRATION_AUDIT.md`). La preparación de **U1** (auditoría final, resolución de bloqueantes y bootstrap, ítems 65-67) cierra el NO GO y fija el plan de implementación. Nada se implementa sin gate de aprobación explícito. `SensorReading` y la señal `sensor_reading` están protegidos (ADR-UBTN-01).
 
 Regla operacional:
 
@@ -625,7 +735,7 @@ Las siguientes acciones quedan prohibidas para futuras IA salvo autorización ex
 10. introducir nuevas arquitecturas paralelas no solicitadas
 11. confundir documentos históricos con fuente de verdad vigente
 12. reiniciar trabajo ya cerrado solo por pérdida de contexto conversacional
-13. modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías, ni romper la compatibilidad del Telemetry Context al trabajar la línea UBTN (regla ADR-UBTN-01..06, ver `docs/UBTN_ARCHITECTURE.md`)
+13. modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías, ni romper la compatibilidad del Telemetry Context al trabajar la línea UBTN (regla ADR-UBTN-01..20, ver `docs/UBTN_ADR_INDEX.md`)
 
 ---
 
@@ -706,9 +816,63 @@ El mapa de continuidad operativo es este:
 
 ### Continuidad UBTN (telemetría biológica — diseño)
 
+- `docs/UBTN_INDEX.md` (índice general, árbol y trazabilidad)
 - `docs/UBTN_ARCHITECTURE.md`
-- `docs/UBTN_ROADMAP.md`
+- `docs/UBTN_ADR_INDEX.md`
+- `docs/UBTN_DOMAIN_MODEL.md`
+- `docs/UBTN_USE_CASES.md`
+- `docs/UBTN_SENSOR_CATALOG.md`
+- `docs/UBTN_DATA_CONTRACTS.md`
+- `docs/UBTN_EDGE_AI_STRATEGY.md`
 - `docs/UBTN_BBB_EDGE_GATEWAY.md`
+- `docs/UBTN_RISK_ANALYSIS.md`
+- `docs/UBTN_LAB_INTEGRATION.md`
+- `docs/UBTN_RESEARCH_BACKLOG.md`
+- `docs/UBTN_ROADMAP.md`
+- `docs/UBTN_CONTEXT_MAP.md`
+- `docs/UBTN_AGGREGATE_DESIGN.md`
+- `docs/UBTN_EVENT_STORMING.md`
+- `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md`
+- `docs/UBTN_MQTT_ARCHITECTURE.md`
+- `docs/UBTN_DATABASE_EVOLUTION.md`
+- `docs/UBTN_HARDWARE_ROADMAP.md`
+- `docs/UBTN_FRONTEND_UX_STRATEGY.md`
+- `docs/UBTN_SECURITY_MODEL.md`
+- `docs/UBTN_OPERATIONS_RUNBOOK.md`
+- `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md`
+- `docs/UBTN_RESEARCH_GAPS.md`
+- `docs/UBTN_AUDIT_REVIEW.md`
+
+### Continuidad Refactorización Global (Gate U0.5 — diseño de identidad/frontend)
+
+- `docs/SIGCTIARURAL_VISION_ALIGNMENT.md` (entrada obligatoria)
+- `docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md`
+- `docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md`
+- `docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md`
+- `docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md`
+- `docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md`
+- `docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`
+- `docs/SIGCTIARURAL_REFACTORING_AUDIT.md`
+
+### Continuidad Preservación y Expansión (Misión Crítica — regla suprema: NADA DESAPARECE)
+
+- `docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md` (entrada obligatoria de la Misión)
+- `docs/SIGCTIARURAL_COMPONENT_MAP.md`
+- `docs/SIGCTIARURAL_EVOLUTION_MATRIX.md`
+- `docs/SIGCTIARURAL_NAVIGATION_EVOLUTION.md`
+- `docs/SIGCTIARURAL_IMPLEMENTATION_READINESS.md`
+- `docs/SIGCTIARURAL_PRESERVATION_AUDIT.md`
+
+### Continuidad Transición a la Dashboard Ganadora (MISIÓN CRÍTICA — migración frontend en diseño)
+
+- `docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md` (entrada obligatoria de la Misión)
+- `docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md`
+- `docs/SIGCTIARURAL_PAGE_MAPPING.md`
+- `docs/SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md`
+- `docs/SIGCTIARURAL_ROUTE_EVOLUTION.md`
+- `docs/SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md`
+- `docs/SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md`
+- `docs/SIGCTIARURAL_MIGRATION_AUDIT.md`
 
 Lectura sintética del mapa:
 
@@ -717,6 +881,8 @@ Lectura sintética del mapa:
 - si la tarea es documental, entrar por `Knowledge Hub`
 - si la tarea es operativa crítica, entrar por `AI Service`
 - si la tarea es de telemetría biológica/UBTN, entrar por `docs/UBTN_*` (diseño, sin implementación)
+- si la tarea es de identidad/navegación/dashboard, entrar por `docs/SIGCTIARURAL_*` (diseño U0.5, sin implementación)
+- si la tarea es de preservación (qué no se toca, qué está listo, qué sigue vivo), entrar por `docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md` + `docs/SIGCTIARURAL_PRESERVATION_AUDIT.md`
 
 ---
 

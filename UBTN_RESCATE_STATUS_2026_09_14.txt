@@ -1,0 +1,55 @@
+On branch feature/ubtn-biological-telemetry
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   README.md
+	modified:   SIGCT_RURAL_SYSTEM_BOOT.md
+	modified:   docs/MASTERDOC.md
+	modified:   docs/PLAN_MAESTRO.md
+	modified:   docs/UBTN_ARCHITECTURE.md
+	modified:   docs/UBTN_BBB_EDGE_GATEWAY.md
+	modified:   docs/UBTN_ROADMAP.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	UBTN_RESCATE_2026_09_14.diff
+	UBTN_RESCATE_STATUS_2026_09_14.txt
+	docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md
+	docs/SIGCTIARURAL_COMPONENT_MAP.md
+	docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md
+	docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md
+	docs/SIGCTIARURAL_EVOLUTION_MATRIX.md
+	docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md
+	docs/SIGCTIARURAL_IMPLEMENTATION_READINESS.md
+	docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md
+	docs/SIGCTIARURAL_NAVIGATION_EVOLUTION.md
+	docs/SIGCTIARURAL_PRESERVATION_AUDIT.md
+	docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md
+	docs/SIGCTIARURAL_REFACTORING_AUDIT.md
+	docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md
+	docs/SIGCTIARURAL_VISION_ALIGNMENT.md
+	docs/UBTN_ADR_INDEX.md
+	docs/UBTN_AGGREGATE_DESIGN.md
+	docs/UBTN_AUDIT_REVIEW.md
+	docs/UBTN_CONTEXT_MAP.md
+	docs/UBTN_DATABASE_EVOLUTION.md
+	docs/UBTN_DATA_CONTRACTS.md
+	docs/UBTN_DOMAIN_MODEL.md
+	docs/UBTN_EDGE_AI_STRATEGY.md
+	docs/UBTN_EVENT_STORMING.md
+	docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md
+	docs/UBTN_FRONTEND_UX_STRATEGY.md
+	docs/UBTN_HARDWARE_ROADMAP.md
+	docs/UBTN_INDEX.md
+	docs/UBTN_LAB_INTEGRATION.md
+	docs/UBTN_MQTT_ARCHITECTURE.md
+	docs/UBTN_OPERATIONS_RUNBOOK.md
+	docs/UBTN_RESEARCH_BACKLOG.md
+	docs/UBTN_RESEARCH_GAPS.md
+	docs/UBTN_RISK_ANALYSIS.md
+	docs/UBTN_SECURITY_MODEL.md
+	docs/UBTN_SENSOR_CATALOG.md
+	docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md
+	docs/UBTN_USE_CASES.md
+
+no changes added to commit (use "git add" and/or "git commit -a")

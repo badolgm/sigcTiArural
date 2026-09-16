@@ -9,9 +9,9 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Versión** | 8.1 (UBTN — telemetría biológica, diseño) |
+| **Versión** | 8.7 (UBTN — MISIÓN CRÍTICA + Refactorización Global U0.5 + Preservación y Expansión + Transición a la Dashboard Ganadora + U1 — Bloqueantes Resueltos y Bootstrap) |
 | **Fecha Creación** | 24 de Enero 2026 |
-| **Última Actualización** | 13 de Septiembre 2026 |
+| **Última Actualización** | 14 de Septiembre 2026 |
 | **Autor Principal** | Bernardo Adolfo Gómez Montoya |
 | **Institución** | SENA - Tecnología en ADSO |
 | **Estado** | Documento Vivo - Registro Técnico y Archivo Histórico |
@@ -315,19 +315,23 @@ graph LR
 
 ### 3.3 UBTN — Universal Biological Telemetry Node (Planificado — Fase 9, sin implementación)
 
-**Estado: planificado/no implementado — análisis arquitectónico y diseño cerrados el 2026-09-13 en la rama `feature/ubtn-biological-telemetry`, sin código nuevo.**
+**Estado: planificado/no implementado — análisis arquitectónico, diseño cerrado y auditoría crítica completados el 2026-09-13 en la rama `feature/ubtn-biological-telemetry`, sin código nuevo.**
 
 La línea de telemetría biológica del ecosistema se formaliza como **UBTN (Universal Biological Telemetry Node)**: collares inteligentes, wearables veterinarios, sensores biométricos (ADS1292R-ECG, MAX30102-PPG, MPU6050-IMU sobre ESP32) y futuros dispositivos biométricos que publican señales vitales por MQTT hacia BBB-01 (gateway edge) y de allí al backend.
 
-**Decisión arquitectónica clave:** se diseña el subdominio DDD **`BiologicalTelemetry`** como bounded context **hermano** del Telemetry Context, **sin modificar `SensorReading` ni `RobotTelemetry`** y **sin romper la señal `sensor_reading`** del `EventBusPort`. Se publica un `signal_type` nuevo (`biological_reading`), se declaran puertos propios (`BiologicalReadingRepositoryPort`, `CollarDeviceRepositoryPort`, `BioAlertPort`) y se conservan intactos V1/V2/V3 y `wiring.py`.
+**Decisión arquitectónica clave:** se diseña el subdominio DDD **`BiologicalTelemetry`** como bounded context **hermano** del Telemetry Context, **sin modificar `SensorReading` ni `RobotTelemetry`** y **sin romper la señal `sensor_reading`** del `EventBusPort`. Se publica un `signal_type` nuevo (`biological_reading`), se declaran puertos propios (`BiologicalReadingRepositoryPort`, `BiologicalNodeRepositoryPort`, `BioAlertPort`) y se conservan intactos V1/V2/V3 y `wiring.py`.
 
 Documentos de referencia (diseño, no implementación):
 
+- [`docs/UBTN_INDEX.md`](UBTN_INDEX.md) — índice general de la familia UBTN (26 documentos, entrada recomendada).
 - [`docs/UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) — análisis del contexto telemetry, propuesta DDD completa, investigación de hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs.
 - [`docs/UBTN_ROADMAP.md`](UBTN_ROADMAP.md) — fases U0-U7 (U0 cerrada en diseño; U1-U7 planificadas al 0%).
 - [`docs/UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — BBB-01 como gateway UBTN (bridge MQTT→HTTPS, store-and-forward, tópicos, seguridad).
+- [`docs/UBTN_AUDIT_REVIEW.md`](UBTN_AUDIT_REVIEW.md) — auditoría crítica de la familia (hallazgos A-1..A-8 y estado de reconciliación).
 
-**Restricciones de gobernanza:** la implementación (Fases U1+) queda subordinada al cierre de las Fases 7-8 del `PLAN_MAESTRO.md` y al criterio de un único MVP de una variable vital (recomendado: temperatura corporal) antes de escalar.
+> **Nota de auditoría (2026-09-13):** la familia UBTN fue auditada críticamente (hallazgos A-1..A-8). Los hallazgos altos A-1 y A-2 quedaron reconciliados; A-7 (variable del MVP: temperatura del set actual vs NTC) queda como **deuda abierta** que debe resolverse antes de comprar hardware del prototipo en U5/U7.
+
+**Restricciones de gobernanza:** la implementación (Fases U1+) queda subordinada al cierre de las Fases 7-8 del `PLAN_MAESTRO.md` y al criterio de un único MVP de una variable vital (recomendado: temperatura corporal — variable en revisión por hallazgo A-7) antes de escalar.
 
 ---
 
@@ -1378,6 +1382,176 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
 
 ---
 
+#### 📅 **13 de Septiembre 2026 | UBTN — Profundización U0: Documentación Arquitectónica Completa**
+**Sesión**: Agotar el espacio arquitectónico del UBTN en diseño (análisis, ADRs, gobernanza, DDD, investigación) — sin programar.
+**Responsable**: Bernardo Gómez + IA de desarrollo
+**Rama**: `feature/ubtn-biological-telemetry`
+
+##### Trabajo Realizado (entregables de la sesión)
+
+1. **`docs/UBTN_ADR_INDEX.md`** — registro central de decisiones: ADR-UBTN-01..16 con estado (Propuesta), fuente por documento y decálogo de decisiones protegidas (no-divergencia).
+2. **`docs/UBTN_RISK_ANALYSIS.md`** — registro de riesgos 5×5: técnicos, regulatorios (Ley 1581/2012, bienestar animal, bandas de radio), hardware, conectividad rural, autonomía energética, sensores biométricos e interoperabilidad (22 riesgos; umbrales de detención por fase).
+3. **`docs/UBTN_DOMAIN_MODEL.md`** — DDD táctico completo: bounded context, entities (`BiologicalReading`, `AnimalSubject`, `BiologicalNode`), VOs, domain events, agregados, comandos/queries, repositories/ports y context map ampliado (formas factor + `FacilityId`).
+4. **`docs/UBTN_SENSOR_CATALOG.md`** — comparativa técnica: ESP32 (WROOM-32/S3/C3), ADS1292R, MAX30102, MPU6050, MAX86150, LoRa (SX1276/78), BLE y BBB Rev C; matriz de enlaces, presupuesto energético y ADR-12/13.
+5. **`docs/UBTN_USE_CASES.md`** — 8 líneas: bovinos, caninos, felinos, equinos, caprinos, ovinos, apicultura y piscicultura (canales, forma factor, rangos de referencia, alertas, MVP por caso).
+6. **`docs/UBTN_DATA_CONTRACTS.md`** — contratos JSON de diseño (`reading`, `burst`, `status`, `alert`, `link`) + envelope V4 y señales EventBus del subdominio. NO implementados.
+7. **`docs/UBTN_EDGE_AI_STRATEGY.md`** — gateway BBB-01, MQTT QoS, store-and-forward, offline-first, TinyML (evolución en BBB-02) y pipeline de IA predictiva (alerta ≠ diagnóstico).
+8. **`docs/UBTN_LAB_INTEGRATION.md`** — integración con Robótica, Telecomunicaciones, Electrónica, IA, Agricultura y piso STEM (sin modificar ninguna línea existente).
+9. **`docs/UBTN_RESEARCH_BACKLOG.md`** — 18 líneas de investigación priorizadas (RI-P0/P1/P2) con dependencia por fase.
+10. **`docs/UBTN_INDEX.md`** — índice general, árbol documental de la familia, matriz de trazabilidad (requisito↔ADR↔riesgo↔fase) y verificación de cobertura del espacio arquitectónico.
+11. Refuerzo de la documentación existente: referencias cruzadas nuevas en `UBTN_ARCHITECTURE.md`, `UBTN_ROADMAP.md` y `UBTN_BBB_EDGE_GATEWAY.md`.
+
+##### Restricciones respetadas
+
+- Solo documentación/arquitectura/gobernanza/DDD/investigación. **Cero código.**
+- `src/backend`, `src/frontend`, `SensorReading`, `RobotTelemetry`, `EventBusPort`, `sensor_reading` y `wiring.py` intactos e incompatibles de modificar.
+- Sin migraciones, tablas, endpoints ni código de producción.
+- Rama `feature/ubtn-biological-telemetry`; `main` intacto.
+
+##### Próximos pasos (backlog, no iniciados)
+
+- Aprobar gate U0 (ratifica ADR Propuesta → Aprobada), cerrar Fases 7-8 del `PLAN_MAESTRO.md` y resolver backlog de investigación P0 antes de Fase U1.
+
+**Resultado**: ✅ Espacio arquitectónico UBTN agotado en diseño (13 documentos); 0% de código nuevo.
+
+---
+
+#### 📅 **13 de Septiembre 2026 | UBTN — MISIÓN CRÍTICA: Arquitectura Profunda y Auditoría de la Familia**
+**Sesión**: Transformar el UBTN en especificación técnica casi lista para implementación mediante 12 documentos de arquitectura profunda + auditoría crítica de la familia — sin programar.
+**Responsable**: Bernardo Gómez + IA de desarrollo
+**Rama**: `feature/ubtn-biological-telemetry`
+
+##### Trabajo Realizado (entregables de la sesión)
+
+1. **12 documentos nuevos de arquitectura profunda:**
+   `UBTN_CONTEXT_MAP.md` (mapa de contextos DDD), `UBTN_AGGREGATE_DESIGN.md` (agregados y consistencia), `UBTN_EVENT_STORMING.md` (hot-spots de provisioning y umbral), `UBTN_TELEMETRY_EVOLUTION_STRATEGY.md` (**ADR-17**), `UBTN_MQTT_ARCHITECTURE.md` (broker/LWT/QoS/RETAIN), `UBTN_DATABASE_EVOLUTION.md` (**ADR-18**), `UBTN_HARDWARE_ROADMAP.md` (V1-V4), `UBTN_FRONTEND_UX_STRATEGY.md` (**ADR-20**), `UBTN_SECURITY_MODEL.md` (**ADR-19**), `UBTN_OPERATIONS_RUNBOOK.md` (OPR/RR), `UBTN_FIELD_DEPLOYMENT_GUIDE.md` (escenarios de campo) y `UBTN_RESEARCH_GAPS.md` (gaps físicos/biológicos).
+2. **`docs/UBTN_AUDIT_REVIEW.md`** — auditoría crítica e independiente de la familia: 8 hallazgos (3 altos, 5 medios/bajos) con severidad, evidencia y estado de reconciliación.
+3. **Reconciliación de hallazgos:** renombrado `CollarDevice`→`BiologicalNode` en ARCHITECTURE/ROADMAP/BBB/ADR_INDEX; unificado QoS 1 + RETAIN del tópico `status` (BBB/EDGE_AI/DATA_CONTRACTS); estandarizado `ubtn/{node_id}/alert`; corregidas referencias de sección del ADR_INDEX (ADR-07/08/09/10/12 y puerto ADR-02); nota de variable MVP abierta (A-7) y dependencia de gaps para TinyML (A-5).
+4. **Índices y trazabilidad:** ADR_INDEX con ADR-01..20 + trazabilidad por documento ampliada; UBTN_INDEX v1.1 (árbol de 26 docs, trazabilidad R20-R30, 23 dimensiones de cobertura).
+
+##### Restricciones respetadas
+
+- Solo documentación/arquitectura. **Cero código.**
+- `src/backend`, `src/frontend`, `SensorReading`, `RobotTelemetry`, `EventBusPort`, `sensor_reading` y `wiring.py` intactos.
+- Sin migraciones, tablas, endpoints ni código de producción.
+- Rama `feature/ubtn-biological-telemetry`; `main` intacto.
+
+##### Próximos pasos (backlog, no iniciados)
+
+- Resolver el hallazgo A-7 (variable del MVP: NTC/T° vs HR del set actual) antes de comprar hardware del prototipo.
+- Aprobar gate U0 (ADR Propuesta → Aprobada) y cerrar Fases 7-8 del `PLAN_MAESTRO.md` antes de Fase U1.
+
+**Resultado**: ✅ Especificación técnica profunda completada (26 documentos UBTN, 0% código); auditoría con 3 hallazgos altos reconciliados o etiquetados como deuda abierta.
+
+---
+
+#### 📅 **14 de Septiembre 2026 | SIGCTiArural — Gate U0.5: Arquitectura de Refactorización Global**
+**Sesión**: Preservar la identidad del ecosistema (Conocimiento → Laboratorios → Hardware → Protocolos → Telemetría → IA → Proyectos Reales) mientras se diseña la refactorización de dashboard/navegación/hardware catalog — sin programar.
+**Responsable**: Bernardo Gómez + IA de desarrollo
+**Rama**: `feature/ubtn-biological-telemetry` (sin tocar `main`)
+
+##### Trabajo Realizado (entregables de la sesión)
+
+1. **8 documentos de diseño (familia `SIGCTIARURAL_*`):** `SIGCTIARURAL_VISION_ALIGNMENT.md` (identidad/no-negociables), `SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md` (mapa de labs + gaps GLC-01..07), `SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md` (qué se aprende por hardware + gaps GHL-01..05), `SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md` (IA canónica por 5 personas), `SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md` (hardware ≠ capacidad), `SIGCTIARURAL_REFACTORING_GUARDRAILS.md` (GR-01..12), `SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md` (spec visual, sin código) y `SIGCTIARURAL_REFACTORING_AUDIT.md` (auditoría crítica).
+2. **Auditoría brutal de las propias propuestas:** 5 contradicciones (C-01..05), 2 errores conceptuales (CE-01/02), 2 duplicidades (D-01/02), sobre-ingeniería y riesgos educativos (ER-01..03). Reconciliación aplicada en los documentos fuente.
+3. **Veredicto de la Misión Final:** se construye la **plataforma científica sostenible**, no una interfaz bonita; la prueba es la trazabilidad (cada dato → fuente real).
+4. **Registro en `SIGCT_RURAL_SYSTEM_BOOT.md`** (línea Refactorización Global, Fase 6, mapa de continuidad) y `PLAN_MAESTRO.md` (referencias).
+
+##### Restricciones respetadas
+
+- Solo documentación/diseño. **Cero código.** `src/backend`, `src/frontend` y `src/embedded` intactos.
+- Sin migraciones, endpoints ni código de producción.
+- Rama `feature/ubtn-biological-telemetry`; `main` intacto.
+
+##### Próximos pasos (backlog, no iniciados)
+
+- Gate de aprobación del diseño U0.5; conversión de guardarraíles GR-01..12 en checklist de implementación (Fase U1 de frontend, tras Fases 7-8 del PLAN_MAESTRO).
+
+**Resultado**: ✅ Identidad, hardware model, lab connectivity, knowledge model y navegación validados en diseño; refactorización protegida; 0% de código nuevo.
+
+---
+
+#### 📅 **14 de Septiembre 2026 | Misión Crítica — PRESERVACIÓN + EXPANSIÓN del Ecosistema (Regla Suprema: NADA DESAPARECE)**
+
+**Sesión**: Refactorizar SIGCTiArural por **ampliación, no por sustitución** — preservar BBB-01/02/03, Dashboard, Telemetría, IA, Laboratorios, Conocimiento, Hardware, Proyectos, contextos, `Telemetry`, `RobotTelemetry`, `SensorReading` y el conocimiento histórico, mientras se diseña la v2. Sin programar.
+**Responsable**: Bernardo Gómez + IA de desarrollo
+**Rama**: `feature/ubtn-biological-telemetry` (sin tocar `main`)
+
+##### Trabajo Realizado (entregables de esta sesión)
+
+1. **6 documentos nuevos de la familia `SIGCTIARURAL_*`:** `SIGCTIARURAL_PRESERVATION_STRATEGY.md` (qué se preserva/protege/jamás se rompe con justificación), `SIGCTIARURAL_COMPONENT_MAP.md` (inventario verificado del filesystem `src/frontend/src/**`), `SIGCTIARURAL_EVOLUTION_MATRIX.md` (por módulo: actual→futuro→compatibilidad→riesgo→prioridad), `SIGCTIARURAL_NAVIGATION_EVOLUTION.md` (navegación aditiva sin romper hábitos), `SIGCTIARURAL_IMPLEMENTATION_READINESS.md` (qué está listo / qué no / con checklist U1) y `SIGCTIARURAL_PRESERVATION_AUDIT.md` (auditoría crítica).
+2. **Actualización de Misión 4 (regla NO ELIMINAR NADA):** `SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md` §10 reescrito — los tiles "Integraciones Futuras" (RPI-05/FPGA-X/ARDUINO-UNO-Q/ALEXA-IOT/DRONE-NAV) se realojan en el Hardware Catalog **sin borrarse**; los BBB-01/02/03 permanecen visibles en "Operación".
+3. **Auditoría de preservación (PA-01..PA-12):** auth latente, banner debug, `routeMap` de voz, `_deprecated/*`, generador del knowledge registry, ESP32/Jetson/STM32 sin representación, Falstad/SchematicEditor frágil, estados simulados falsos, riesgos de simplificación excesiva — todos reconciliados y garantizados.
+4. **Inventario exacto del frontend** (rutas, componentes, hooks, servicios, auth, knowledge hub) como fuente de verdad para la refactorización.
+
+##### Restricciones respetadas
+
+- Solo documentación/diseño. **Cero código.** `src/backend`, `src/frontend` y `src/embedded` intactos.
+- Sin migraciones, endpoints ni código de producción.
+- Rama `feature/ubtn-biological-telemetry`; `main` intacto.
+
+##### Próximos pasos (backlog, no iniciados)
+
+- Aprobación del dueño para gate U1: decisión de auth (D-A), banner debug (D-B), localización del generador del registry (D-C), A-7 UBTN (D-A-7) y rol de Jetson/STM32/FPGA/MiniPC (D-E).
+
+**Resultado**: ✅ Estrategia de preservación completa y verificada; inventario total; matriz de evolución; navegación aditiva; readiness con checklist; auditoría brutal con reconciliación. Se puede afirmar: *SIGCTiArural v2 es más grande, más ordenado y más potente que v1; no se perdió absolutamente nada.*
+
+---
+
+#### 📅 **14 de Septiembre 2026 | MISIÓN CRÍTICA — Transición a la Dashboard Ganadora (Migración Frontend)**
+
+**Sesión**: Diseñar la transición completa del frontend desde el Dashboard actual hasta la **Dashboard Ganadora** (`SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`) sin escribir código — responder las 7 preguntas de la Misión (archivos React existentes, componentes que sobreviven/cambian, cómo migrar, orden, qué NO tocar, cómo llegar a la Ganadora) y auditar el plan.
+**Responsable**: Bernardo Gómez + IA de desarrollo
+**Rama**: `feature/ubtn-biological-telemetry` (sin tocar `main`)
+
+##### Trabajo Realizado (entregables de esta sesión)
+
+1. **8 documentos nuevos de la familia `SIGCTIARURAL_*`:** `SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md` (7 fases con features flags/rollback y gates), `SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md` (clasificación PRESERVAR/AMPLIAR/MOVER/DEPRECAR/NO TOCAR de `src/frontend/src/**`), `SIGCTIARURAL_PAGE_MAPPING.md` (mapa actual→futuro por página), `SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md` (existe/falta/sobra/ampliar, sin eliminar), `SIGCTIARURAL_ROUTE_EVOLUTION.md` (14 rutas congeladas + 2 nuevas aditivas + redirects), `SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md` (catálogo preservando BBB-01/02/03 e incorporando ESP32/STM32/Arduino/RPi/Jetson/FPGA/MiniPC), `SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md` (7 áreas — nada queda huérfano) y `SIGCTIARURAL_MIGRATION_AUDIT.md` (riesgos R-01..12, dependencias ocultas, olvidados, decisiones bloqueantes).
+2. **Auditoría final de la migración:** 12 riesgos de implementación categorizados y mitigados; dependencies ocultas (Falstad vendored, `mathHelpers`, doble dot de estado, tuplas de `lab-data.js`, enlaces externos de tiles) inventariadas; verificada la regla NADA DESAPARECE (matriz cerrada).
+3. **Radiografía de decisiones que bloquean U1 (no el diseño):** D-A (Auth), D-B (banner debug), D-C (generador del registry), D-A-7 (MVP UBTN), y nueva **D-D** (fuente de `catalog-data.js`).
+4. **Veredicto del auditor:** listo para Gate U1 en diseño; Fases 1-3 (dashboard/catálogo/breadcrumb) pueden avanzar; Fases 4-6 requieren las decisiones del dueño.
+
+##### Restricciones respetadas
+
+- Solo documentación/diseño. **Cero código.** `src/backend`, `src/frontend` y `src/embedded` intactos.
+- Sin migraciones, endpoints ni código de producción.
+- Rama `feature/ubtn-biological-telemetry`; `main` intacto.
+- No se diseñan nuevas visiones/dashboards: la Ganadora (`DASHBOARD_REIMAGINED_V2`) es la única referencia de diseño.
+
+##### Próximos pasos (backlog, no iniciados)
+
+- Decisiones del dueño bloqueantes: D-A, D-B, D-C, D-A-7 y **D-D** (fuente de `catalog-data.js`).
+- Tras decisiones: convertir los 8 documentos en el checklist de implementación de la **Fase U1 de frontend** (pus, sin sustitución).
+
+**Resultado**: ✅ Plan de migración completo, verificable y auditable; 8 documentos nuevos; ninguna ruta/componente/funcionalidad pierde su lugar; cero líneas de código.
+
+---
+
+#### 📅 **14 de Septiembre 2026 | U1 — Auditoría final, resolución de bloqueantes y Bootstrap (NO GO → GO)**
+**Sesión**: Cerrar el NO GO emitido y preparar la implementación real del frontend: resolver los 6 bloqueantes de decisión (D-A/D-B/D-C/D-D/D-A-7/R-13), fijar el primer archivo React y el plan U1.1-U1.4. Solo documentación/diseño; cero código.
+**Responsable**: Bernardo Gómez + IA de desarrollo
+**Rama**: `feature/ubtn-biological-telemetry` (sin tocar `main`)
+
+##### Trabajo Realizado (entregables de esta sesión)
+
+1. **`SIGCTIARURAL_U1_GO_NO_GO.md`** — auditoría final del gate U1 sobre los 9 documentos autorizados: veredicto **NO GO** documentado (gate formal Fases 7-8 no cerrado + decisiones pendientes + hallazgos R-13/R-14 nuevos) con checklist de paso a GO.
+2. **`SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md`** — resolución de los 6 bloqueantes con verificación en código (solo lectura): **D-A** auth latente (sin rutas), **D-B** relabel honesto del banner en U1.3, **D-C** diferido (el generador `generate_knowledge_registry.py` no existe en el repo), **D-D** = `catalog-data.js` (módulo estático, patrón `lab-data.js`), **D-A-7** = temperatura corporal (DS18B20) como MVP UBTN, **R-13** = instanciación aditiva de `Telemetry3DScene` (hoy solo lo consume `RoboticsLab.jsx`). Veredicto: **GO CON CONDICIONES**.
+3. **`SIGCTIARURAL_U1_BOOTSTRAP.md`** — plan de ejecución: primer archivo `catalog-data.js` (nuevo, 100 % aditivo), riesgo y rollback por "resta", snapshot + pruebas manuales, 14 rutas + `/hardware-catalog`, componentes NO tocables en U1.1, y plan U1.1-U1.4 con criterio de éxito y rollback por fase. Veredicto: **GO para U1.1** (condicionado a firmas del dueño + gate + snapshot).
+
+##### Restricciones respetadas
+
+- Solo documentación/diseño. **Cero código.** `src/backend`, `src/frontend` y `src/embedded` intactos.
+- Sin commits ni push; `main` intacto. No se crearon roadmaps, visiones ni familias documentales nuevas.
+
+##### Próximos pasos (backlog, no iniciados)
+
+- Dueño: firmar las 6 decisiones (checklist `SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md` §7) y confirmar el gate U1 (Fases 7-8 u override).
+- Ejecutar U1.0 (snapshot + regresión baseline) y luego U1.1: `catalog-data.js` + `HardwareCatalogPage.jsx` + ruta `/hardware-catalog`.
+
+**Resultado**: ✅ NO GO → GO CON CONDICIONES → GO para U1.1; plan de ejecución aditivo y reversible; todo el ecosistema preservado (NADA DESAPARECE).
+
+---
+
 ## Apéndice A: Enlaces y Referencias
 
 ### A.1 Ruta de Continuidad Operativa
@@ -1395,7 +1569,29 @@ Fuentes de verdad operativa y técnica:
 - [`DEPLOYMENT.md`](DEPLOYMENT.md)
 - [`PLAN_MAESTRO.md`](PLAN_MAESTRO.md) — roadmap de fases del proyecto, incluida la Fase 9 (expansión de dominio EIARC, planificada)
 - [`ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`](ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md) — guía de estudio ADSO con la bitácora consolidada de la refactorización hexagonal
-- [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md), [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md) y [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — telemetría biológica UBTN (diseño, Fase U0 cerrada; sin implementación)
+- [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md), [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md), [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — telemetría biológica UBTN (diseño, Fase U0; sin implementación)
+- [`UBTN_INDEX.md`](UBTN_INDEX.md) — índice general de la familia documental UBTN (26 documentos con MISIÓN CRÍTICA), árbol documental y matriz de trazabilidad
+- [`UBTN_AUDIT_REVIEW.md`](UBTN_AUDIT_REVIEW.md) — auditoría crítica de la familia UBTN (hallazgos A-1..A-8 y reconciliación)
+- [`SIGCTIARURAL_VISION_ALIGNMENT.md`](SIGCTIARURAL_VISION_ALIGNMENT.md) — identidad y no-negociables de la Refactorización Global (Gate U0.5, entrada)
+- [`SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`](SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md) — spec visual del dashboard reimaginado (sin código)
+- [`SIGCTIARURAL_REFACTORING_AUDIT.md`](SIGCTIARURAL_REFACTORING_AUDIT.md) — auditoría crítica de la refactorización global
+- [`SIGCTIARURAL_PRESERVATION_STRATEGY.md`](SIGCTIARURAL_PRESERVATION_STRATEGY.md) — qué se preserva/protege (Regla Suprema: NADA DESAPARECE)
+- [`SIGCTIARURAL_COMPONENT_MAP.md`](SIGCTIARURAL_COMPONENT_MAP.md) — inventario verificado del filesystem
+- [`SIGCTIARURAL_EVOLUTION_MATRIX.md`](SIGCTIARURAL_EVOLUTION_MATRIX.md) — evolución por módulo (actual→futuro→compatibilidad→riesgo→prioridad)
+- [`SIGCTIARURAL_NAVIGATION_EVOLUTION.md`](SIGCTIARURAL_NAVIGATION_EVOLUTION.md) — navegación aditiva sin romper hábitos
+- [`SIGCTIARURAL_IMPLEMENTATION_READINESS.md`](SIGCTIARURAL_IMPLEMENTATION_READINESS.md) — qué está listo / qué no (checklist U1)
+- [`SIGCTIARURAL_PRESERVATION_AUDIT.md`](SIGCTIARURAL_PRESERVATION_AUDIT.md) — auditoría crítica de preservación (PA-01..PA-12)
+- [`SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md`](SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md) — transición a la Dashboard Ganadora (7 fases: rutas congeladas, feature flags, rollback)
+- [`SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md`](SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md) — clasificación PRESERVAR/AMPLIAR/MOVER/DEPRECAR/NO TOCAR de `src/frontend/src/**`
+- [`SIGCTIARURAL_PAGE_MAPPING.md`](SIGCTIARURAL_PAGE_MAPPING.md) — mapa exacto página actual → página futura
+- [`SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md`](SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md) — Dashboard actual vs Ganadora (existe/falta/sobra/ampliar, sin eliminar)
+- [`SIGCTIARURAL_ROUTE_EVOLUTION.md`](SIGCTIARURAL_ROUTE_EVOLUTION.md) — inventario de rutas, evolución aditiva y redirects
+- [`SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md`](SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md) — plan del Hardware Catalog (preserva BBB, incorpora ESP32/STM32/Arduino/RPi/Jetson/FPGA/MiniPC)
+- [`SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md`](SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md) — preservación por área (7): nada queda huérfano
+- [`SIGCTIARURAL_MIGRATION_AUDIT.md`](SIGCTIARURAL_MIGRATION_AUDIT.md) — auditoría mínima de la transición (riesgos R-01..12, dependencias ocultas, decisiones bloqueantes)
+- [`SIGCTIARURAL_U1_GO_NO_GO.md`](SIGCTIARURAL_U1_GO_NO_GO.md) — auditoría final del gate U1 (veredicto NO GO documentado + checklist de paso)
+- [`SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md`](SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md) — resolución de los 6 bloqueantes (D-A/D-B/D-C/D-D/D-A-7/R-13) → GO CON CONDICIONES
+- [`SIGCTIARURAL_U1_BOOTSTRAP.md`](SIGCTIARURAL_U1_BOOTSTRAP.md) — plan de ejecución U1.1-U1.4 (primer archivo, snapshot, pruebas manuales, rollback) → GO para U1.1
 - *EIARC_Documento_Maestro_Modelo_Negocio.pdf* — **Documento no disponible en este repositorio** (documento de modelo de negocio y posicionamiento comercial de EIARC; fuera del alcance técnico de este MASTERDOC, referenciado aquí solo para trazabilidad)
 
 ### A.2 Documentos Principales del Proyecto (Autoría y Repositorio)

@@ -1,0 +1,695 @@
+diff --git a/README.md b/README.md
+index 417a333..f01dee7 100644
+--- a/README.md
++++ b/README.md
+@@ -140,7 +140,7 @@ El contenedor Docker local `ai_service` puede fallar al iniciar. La causa diagno
+ ### 🟡 Componentes diseñados pero no implementados
+ - Integración física completa del clúster BeagleBone Black
+ - Sistema de alertas en tiempo real (WebSockets/Channels)
+-- **UBTN — Telemetría biológica:** análisis arquitectónico y subdominio DDD `BiologicalTelemetry` **diseñados**, sin código nuevo (ver [Mapa Documental — UBTN](#️-mapa-documental))
++- **UBTN — Telemetría biológica:** análisis arquitectónico y subdominio DDD `BiologicalTelemetry` **diseñados y auditados**, sin código nuevo (ver [Mapa Documental — UBTN](#️-mapa-documental))
+ 
+ > Para el estado operativo detallado y ordenado por prioridad, consulta [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md).
+ 
+@@ -861,7 +861,8 @@ sigcTiArural/
+ 
+ ### 🔷 En Diseño (sin implementar)
+ 
+-- **UBTN (Universal Biological Telemetry Node)** — telemetría biológica de collares inteligentes/wearables veterinarios: arquitectura, subdominio DDD `BiologicalTelemetry`, roadmap e integración edge BBB documentados (Fase U0 cerrada en diseño). Ver [`docs/UBTN_ARCHITECTURE.md`](docs/UBTN_ARCHITECTURE.md), [`docs/UBTN_ROADMAP.md`](docs/UBTN_ROADMAP.md) y [`docs/UBTN_BBB_EDGE_GATEWAY.md`](docs/UBTN_BBB_EDGE_GATEWAY.md).
++- **UBTN (Universal Biological Telemetry Node)** — telemetría biológica de collares inteligentes/wearables veterinarios y nodos in situ (apícola/piscícola): familia documental de 26 documentos (arquitectura, ADRs 01-20, riesgos, sensores, casos de uso, contratos, edge/IA, integración, investigación, arquitectura profunda y auditoría crítica), Fase U0 cerrada en diseño y auditada. Ver [`docs/UBTN_INDEX.md`](docs/UBTN_INDEX.md) y [`docs/UBTN_AUDIT_REVIEW.md`](docs/UBTN_AUDIT_REVIEW.md).
++- **Refactorización Global (Gate U0.5)** — diseño de identidad y dashboard (capacidades ≠ hardware, cadena de conocimiento, navegación por persona) para preservar el corazón educativo/científico del ecosistema durante la refactorización. Familia de 8 documentos de diseño sin código. Ver [`docs/SIGCTIARURAL_VISION_ALIGNMENT.md`](docs/SIGCTIARURAL_VISION_ALIGNMENT.md) y [`docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`](docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md).
+ 
+ > Estado detallado y priorizado: [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md) §§7–13.
+ 
+@@ -885,7 +886,8 @@ Este README es un documento de entrada público, **no** un reemplazo de la docum
+ | 6. Respaldo, archivo y retención | Manifiestos de backup, política de retención | `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`, `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md` |
+ | 7. Documentación histórica | Bitácoras secundarias de sesiones de trabajo, no canónicas (ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9); incluye auditorías TRAE y README Reality Check ya absorbidas por `docs/project_knowledge_base/` | `docs/historical/` (`INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`, `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`, `TRAE_AI_INTEGRATION_AUDIT.md`, `README_REALITY_CHECK.md`) |
+ | 8. Programa de I+D — IA V2 | Arquitectura multimodal, estrategia de datasets, MLOps, línea Agriculture AI V2 (planificado, converge con EIARC) | [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md) |
+-| 9. UBTN — Telemetría biológica (diseño, no implementado) | Arquitectura y DDD del subdominio `BiologicalTelemetry`, roadmap faseado, gateway edge BBB | [`docs/UBTN_ARCHITECTURE.md`](docs/UBTN_ARCHITECTURE.md), [`docs/UBTN_ROADMAP.md`](docs/UBTN_ROADMAP.md), [`docs/UBTN_BBB_EDGE_GATEWAY.md`](docs/UBTN_BBB_EDGE_GATEWAY.md) |
++| 9. UBTN — Telemetría biológica (diseño, no implementado) | Familia documental completa (26 docs): arquitectura y DDD `BiologicalTelemetry`, ADRs 01-20, riesgos, sensores, casos de uso, contratos JSON, edge/IA, integración, roadmap faseado y auditoría crítica | [`docs/UBTN_INDEX.md`](docs/UBTN_INDEX.md) (acceso a toda la familia) · [`docs/UBTN_ARCHITECTURE.md`](docs/UBTN_ARCHITECTURE.md) · [`docs/UBTN_ROADMAP.md`](docs/UBTN_ROADMAP.md) · [`docs/UBTN_AUDIT_REVIEW.md`](docs/UBTN_AUDIT_REVIEW.md) |
++| 10. Refactorización Global (diseño, no implementado) | 8 documentos de diseño U0.5: identidad, mapa de laboratorios, modelo de hardware, navegación por persona, capacidades vs hardware, guardarraíles, dashboard reimaginado y auditoría crítica | [`docs/SIGCTIARURAL_VISION_ALIGNMENT.md`](docs/SIGCTIARURAL_VISION_ALIGNMENT.md) · [`docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`](docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md) · [`docs/SIGCTIARURAL_REFACTORING_AUDIT.md`](docs/SIGCTIARURAL_REFACTORING_AUDIT.md) |
+ 
+ Si tu objetivo es entender el estado real del proyecto en profundidad —o continuar el trabajo como colaborador o como IA sin contexto previo— empieza siempre por `SIGCT_RURAL_SYSTEM_BOOT.md`; ese documento define el orden de lectura obligatorio y la fuente de verdad vigente por categoría.
+ 
+diff --git a/SIGCT_RURAL_SYSTEM_BOOT.md b/SIGCT_RURAL_SYSTEM_BOOT.md
+index ca22074..214b263 100644
+--- a/SIGCT_RURAL_SYSTEM_BOOT.md
++++ b/SIGCT_RURAL_SYSTEM_BOOT.md
+@@ -137,11 +137,47 @@ Documentos de soporte de alta prioridad:
+ 
+ Línea UBTN (telemetría biológica — **diseño cerrado el 2026-09-13, sin código nuevo**, no debe confundirse con implementación):
+ 
+-- `docs/UBTN_ARCHITECTURE.md` — análisis del Telemetry Context, subdominio DDD `BiologicalTelemetry` (bounded context hermano; `SensorReading`/`sensor_reading` intactos por mandato), hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs.
+-- `docs/UBTN_ROADMAP.md` — fases U0-U7 (U0 cerrada; U1-U7 planificadas al 0%).
++- `docs/UBTN_INDEX.md` — índice general de la familia UBTN (entrada obligatoria): árbol documental, matriz de trazabilidad y verificación de cobertura.
++- `docs/UBTN_ARCHITECTURE.md` — análisis del Telemetry Context, subdominio DDD `BiologicalTelemetry` (bounded context hermano; `SensorReading`/`sensor_reading` intactos por mandato), hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs 01-06.
++- `docs/UBTN_ADR_INDEX.md` — registro central de decisiones (ADRs 01-16).
++- `docs/UBTN_DOMAIN_MODEL.md` — DDD táctico completo (entities, VOs, eventos, agregados, repositorios, context map).
++- `docs/UBTN_USE_CASES.md` — casos de uso por especie (8 líneas: bovinos, caninos, felinos, equinos, caprinos, ovinos, apicultura, piscicultura).
++- `docs/UBTN_SENSOR_CATALOG.md` — comparativa técnica de sensores y enlaces (ESP32, ADS1292R, MAX30102, MPU6050, MAX86150, LoRa, BLE, BBB Rev C).
++- `docs/UBTN_DATA_CONTRACTS.md` — contratos JSON de diseño (`reading`, `burst`, `status`, `alert`, `link`) — NO implementar.
++- `docs/UBTN_EDGE_AI_STRATEGY.md` — edge-first, MQTT, offline-first, TinyML e IA predictiva.
+ - `docs/UBTN_BBB_EDGE_GATEWAY.md` — BBB-01 como gateway UBTN (bridge MQTT→HTTPS, store-and-forward, seguridad).
+-
+-> **Regla UBTN para agentes IA:** cualquier trabajo futuro sobre UBTN debe leer los tres documentos anteriores **antes** de tocar código, y está **prohibido** modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías ni romper la compatibilidad del Telemetry Context, según ADR-UBTN-01..06.
++- `docs/UBTN_RISK_ANALYSIS.md` — registro de riesgos (técnicos, regulatorios, hardware, rural, energía, sensores, interoperabilidad).
++- `docs/UBTN_LAB_INTEGRATION.md` — integración con Robótica, Telecomunicaciones, Electrónica, IA, Agricultura y el piso STEM.
++- `docs/UBTN_RESEARCH_BACKLOG.md` — 18 líneas de investigación priorizadas (P0/P1/P2).
++- `docs/UBTN_ROADMAP.md` — fases U0-U7 (U0 cerrada; U1-U7 planificadas al 0%).
++- `docs/UBTN_CONTEXT_MAP.md` — Context Map DDD (upstream/downstream, ACL, CUI, Published Language).
++- `docs/UBTN_AGGREGATE_DESIGN.md` — diseño de agregados y límites de consistencia.
++- `docs/UBTN_EVENT_STORMING.md` — Big Picture y hot-spots (provisioning/umbral).
++- `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md` — ADR-17: evolución dual-track sin migración retroactiva.
++- `docs/UBTN_MQTT_ARCHITECTURE.md` — broker, tópicos, QoS/RETAIN, LWT y bridge store-and-forward.
++- `docs/UBTN_DATABASE_EVOLUTION.md` — ADR-18: persistencia B/C/D y umbrales de escalado.
++- `docs/UBTN_HARDWARE_ROADMAP.md` — variantes V1-V4, costos y autonomía.
++- `docs/UBTN_FRONTEND_UX_STRATEGY.md` — ADR-20: UX por perfil, sin estado duplicado.
++- `docs/UBTN_SECURITY_MODEL.md` — ADR-19: TLS, identidad, RBAC y privacidad.
++- `docs/UBTN_OPERATIONS_RUNBOOK.md` — playbooks OPR/RR y políticas de operación.
++- `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md` — escenarios de campo y SOP de puesta en marcha.
++- `docs/UBTN_RESEARCH_GAPS.md` — gaps físicos/biológicos y anti-patterns.
++- `docs/UBTN_AUDIT_REVIEW.md` — auditoría crítica de la familia (hallazgos A-1..A-8 y reconciliación).
++
++> **Regla UBTN para agentes IA:** cualquier trabajo futuro sobre UBTN debe leer primero `UBTN_INDEX.md` y luego los documentos relevantes de la familia **antes** de tocar código, y está **prohibido** modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías ni romper la compatibilidad del Telemetry Context, según ADR-UBTN-01..20. La auditoría critica (`UBTN_AUDIT_REVIEW.md`) y el hallazgo A-7 (variable del MVP) deben consultarse **antes** de decidir compra de hardware o arranque de U1.
++
++Línea Refactorización Global (Gate U0→U0.5 — **diseño de identidad/frontend, sin código**, no confundir con implementación):
++
++- `docs/SIGCTIARURAL_VISION_ALIGNMENT.md` — identidad de SIGCTiArural durante la refactorización (principios y no-negociables). Punto de entrada.
++- `docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md` — mapa de laboratorios, cadena Conocimiento→Proyectos, vacíos GLC-01..07.
++- `docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md` — modelo de aprendizaje por hardware (BBB/ESP32/STM32/Arduino/RPi/Jetson/FPGA/MiniPC), ladder y vacíos GHL-01..05.
++- `docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md` — IA canónica por persona (Estudiante/Instructor/Investigador/Agricultor*/Desarrollador) y flujos.
++- `docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md` — hardware ≠ capacidad (roles/protocolos, anti-patterns).
++- `docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md` — qué no se rompe (GR-01..12) y cómo verificar cada uno.
++- `docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md` — spec visual (wireframes/páginas), sin código.
++- `docs/SIGCTIARURAL_REFACTORING_AUDIT.md` — auditoría crítica de las 7 misiones + respuesta a la Misión Final (veredicto).
++
++> **Regla de refactorización global:** cualquier cambio de IA/dashboard debe leer primero `SIGCTIARURAL_VISION_ALIGNMENT.md`, respetar `SIGCTIARURAL_REFACTORING_GUARDRAILS.md` y pasar por `SIGCTIARURAL_REFACTORING_AUDIT.md` **antes** de proponer implementación.
+ 
+ Programa oficial de I+D (vigente, en diseño — no implementado, no absorbido aún por `docs/eiarc/`):
+ 
+@@ -195,11 +231,42 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
+ 
+ ### Fase 6. Líneas de dominio en diseño (solo lectura — no implementar)
+ 
+-17. `docs/UBTN_ARCHITECTURE.md`
+-18. `docs/UBTN_ROADMAP.md`
+-19. `docs/UBTN_BBB_EDGE_GATEWAY.md`
+-
+-> La Fase 6 es **informativa**: la línea UBTN está diseñada (Fase U0 cerrada el 2026-09-13) y no debe implementarse hasta su aprobación explícita. `SensorReading` y la señal `sensor_reading` están protegidos (ADR-UBTN-01).
++17. `docs/UBTN_INDEX.md` (índice general de la familia UBTN — entrada obligatoria)
++18. `docs/UBTN_ARCHITECTURE.md`
++19. `docs/UBTN_ADR_INDEX.md`
++20. `docs/UBTN_DOMAIN_MODEL.md`
++21. `docs/UBTN_USE_CASES.md`
++22. `docs/UBTN_SENSOR_CATALOG.md`
++23. `docs/UBTN_DATA_CONTRACTS.md`
++24. `docs/UBTN_EDGE_AI_STRATEGY.md`
++25. `docs/UBTN_BBB_EDGE_GATEWAY.md`
++26. `docs/UBTN_RISK_ANALYSIS.md`
++27. `docs/UBTN_LAB_INTEGRATION.md`
++28. `docs/UBTN_RESEARCH_BACKLOG.md`
++29. `docs/UBTN_ROADMAP.md`
++30. `docs/UBTN_CONTEXT_MAP.md`
++31. `docs/UBTN_AGGREGATE_DESIGN.md`
++32. `docs/UBTN_EVENT_STORMING.md`
++33. `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md`
++34. `docs/UBTN_MQTT_ARCHITECTURE.md`
++35. `docs/UBTN_DATABASE_EVOLUTION.md`
++36. `docs/UBTN_HARDWARE_ROADMAP.md`
++37. `docs/UBTN_FRONTEND_UX_STRATEGY.md`
++38. `docs/UBTN_SECURITY_MODEL.md`
++39. `docs/UBTN_OPERATIONS_RUNBOOK.md`
++40. `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md`
++41. `docs/UBTN_RESEARCH_GAPS.md`
++42. `docs/UBTN_AUDIT_REVIEW.md`
++43. `docs/SIGCTIARURAL_VISION_ALIGNMENT.md` (identidad de la refactorización global)
++44. `docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md`
++45. `docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md`
++46. `docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md` (IA canónica)
++47. `docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md`
++48. `docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md`
++49. `docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`
++50. `docs/SIGCTIARURAL_REFACTORING_AUDIT.md`
++
++> La Fase 6 es **informativa**: la línea UBTN está diseñada y auditada (Fase U0 cerrada el 2026-09-13, ver `UBTN_AUDIT_REVIEW.md`) y la refactorización global está en diseño U0.5 (ver `SIGCTIARURAL_REFACTORING_AUDIT.md`). Nada se implementa sin gate de aprobación explícito. `SensorReading` y la señal `sensor_reading` están protegidos (ADR-UBTN-01).
+ 
+ Regla operacional:
+ 
+@@ -625,7 +692,7 @@ Las siguientes acciones quedan prohibidas para futuras IA salvo autorización ex
+ 10. introducir nuevas arquitecturas paralelas no solicitadas
+ 11. confundir documentos históricos con fuente de verdad vigente
+ 12. reiniciar trabajo ya cerrado solo por pérdida de contexto conversacional
+-13. modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías, ni romper la compatibilidad del Telemetry Context al trabajar la línea UBTN (regla ADR-UBTN-01..06, ver `docs/UBTN_ARCHITECTURE.md`)
++13. modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías, ni romper la compatibilidad del Telemetry Context al trabajar la línea UBTN (regla ADR-UBTN-01..20, ver `docs/UBTN_ADR_INDEX.md`)
+ 
+ ---
+ 
+@@ -706,9 +773,43 @@ El mapa de continuidad operativo es este:
+ 
+ ### Continuidad UBTN (telemetría biológica — diseño)
+ 
++- `docs/UBTN_INDEX.md` (índice general, árbol y trazabilidad)
+ - `docs/UBTN_ARCHITECTURE.md`
+-- `docs/UBTN_ROADMAP.md`
++- `docs/UBTN_ADR_INDEX.md`
++- `docs/UBTN_DOMAIN_MODEL.md`
++- `docs/UBTN_USE_CASES.md`
++- `docs/UBTN_SENSOR_CATALOG.md`
++- `docs/UBTN_DATA_CONTRACTS.md`
++- `docs/UBTN_EDGE_AI_STRATEGY.md`
+ - `docs/UBTN_BBB_EDGE_GATEWAY.md`
++- `docs/UBTN_RISK_ANALYSIS.md`
++- `docs/UBTN_LAB_INTEGRATION.md`
++- `docs/UBTN_RESEARCH_BACKLOG.md`
++- `docs/UBTN_ROADMAP.md`
++- `docs/UBTN_CONTEXT_MAP.md`
++- `docs/UBTN_AGGREGATE_DESIGN.md`
++- `docs/UBTN_EVENT_STORMING.md`
++- `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md`
++- `docs/UBTN_MQTT_ARCHITECTURE.md`
++- `docs/UBTN_DATABASE_EVOLUTION.md`
++- `docs/UBTN_HARDWARE_ROADMAP.md`
++- `docs/UBTN_FRONTEND_UX_STRATEGY.md`
++- `docs/UBTN_SECURITY_MODEL.md`
++- `docs/UBTN_OPERATIONS_RUNBOOK.md`
++- `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md`
++- `docs/UBTN_RESEARCH_GAPS.md`
++- `docs/UBTN_AUDIT_REVIEW.md`
++
++### Continuidad Refactorización Global (Gate U0.5 — diseño de identidad/frontend)
++
++- `docs/SIGCTIARURAL_VISION_ALIGNMENT.md` (entrada obligatoria)
++- `docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md`
++- `docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md`
++- `docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md`
++- `docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md`
++- `docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md`
++- `docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`
++- `docs/SIGCTIARURAL_REFACTORING_AUDIT.md`
+ 
+ Lectura sintética del mapa:
+ 
+@@ -717,6 +818,7 @@ Lectura sintética del mapa:
+ - si la tarea es documental, entrar por `Knowledge Hub`
+ - si la tarea es operativa crítica, entrar por `AI Service`
+ - si la tarea es de telemetría biológica/UBTN, entrar por `docs/UBTN_*` (diseño, sin implementación)
++- si la tarea es de identidad/navegación/dashboard, entrar por `docs/SIGCTIARURAL_*` (diseño U0.5, sin implementación)
+ 
+ ---
+ 
+diff --git a/docs/MASTERDOC.md b/docs/MASTERDOC.md
+index 8607187..41f2dd4 100644
+--- a/docs/MASTERDOC.md
++++ b/docs/MASTERDOC.md
+@@ -9,7 +9,7 @@
+ 
+ | Campo | Valor |
+ |-------|-------|
+-| **Versión** | 8.1 (UBTN — telemetría biológica, diseño) |
++| **Versión** | 8.4 (UBTN — MISIÓN CRÍTICA + Refactorización Global U0.5) |
+ | **Fecha Creación** | 24 de Enero 2026 |
+ | **Última Actualización** | 13 de Septiembre 2026 |
+ | **Autor Principal** | Bernardo Adolfo Gómez Montoya |
+@@ -315,19 +315,23 @@ graph LR
+ 
+ ### 3.3 UBTN — Universal Biological Telemetry Node (Planificado — Fase 9, sin implementación)
+ 
+-**Estado: planificado/no implementado — análisis arquitectónico y diseño cerrados el 2026-09-13 en la rama `feature/ubtn-biological-telemetry`, sin código nuevo.**
++**Estado: planificado/no implementado — análisis arquitectónico, diseño cerrado y auditoría crítica completados el 2026-09-13 en la rama `feature/ubtn-biological-telemetry`, sin código nuevo.**
+ 
+ La línea de telemetría biológica del ecosistema se formaliza como **UBTN (Universal Biological Telemetry Node)**: collares inteligentes, wearables veterinarios, sensores biométricos (ADS1292R-ECG, MAX30102-PPG, MPU6050-IMU sobre ESP32) y futuros dispositivos biométricos que publican señales vitales por MQTT hacia BBB-01 (gateway edge) y de allí al backend.
+ 
+-**Decisión arquitectónica clave:** se diseña el subdominio DDD **`BiologicalTelemetry`** como bounded context **hermano** del Telemetry Context, **sin modificar `SensorReading` ni `RobotTelemetry`** y **sin romper la señal `sensor_reading`** del `EventBusPort`. Se publica un `signal_type` nuevo (`biological_reading`), se declaran puertos propios (`BiologicalReadingRepositoryPort`, `CollarDeviceRepositoryPort`, `BioAlertPort`) y se conservan intactos V1/V2/V3 y `wiring.py`.
++**Decisión arquitectónica clave:** se diseña el subdominio DDD **`BiologicalTelemetry`** como bounded context **hermano** del Telemetry Context, **sin modificar `SensorReading` ni `RobotTelemetry`** y **sin romper la señal `sensor_reading`** del `EventBusPort`. Se publica un `signal_type` nuevo (`biological_reading`), se declaran puertos propios (`BiologicalReadingRepositoryPort`, `BiologicalNodeRepositoryPort`, `BioAlertPort`) y se conservan intactos V1/V2/V3 y `wiring.py`.
+ 
+ Documentos de referencia (diseño, no implementación):
+ 
++- [`docs/UBTN_INDEX.md`](UBTN_INDEX.md) — índice general de la familia UBTN (26 documentos, entrada recomendada).
+ - [`docs/UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) — análisis del contexto telemetry, propuesta DDD completa, investigación de hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs.
+ - [`docs/UBTN_ROADMAP.md`](UBTN_ROADMAP.md) — fases U0-U7 (U0 cerrada en diseño; U1-U7 planificadas al 0%).
+ - [`docs/UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — BBB-01 como gateway UBTN (bridge MQTT→HTTPS, store-and-forward, tópicos, seguridad).
++- [`docs/UBTN_AUDIT_REVIEW.md`](UBTN_AUDIT_REVIEW.md) — auditoría crítica de la familia (hallazgos A-1..A-8 y estado de reconciliación).
+ 
+-**Restricciones de gobernanza:** la implementación (Fases U1+) queda subordinada al cierre de las Fases 7-8 del `PLAN_MAESTRO.md` y al criterio de un único MVP de una variable vital (recomendado: temperatura corporal) antes de escalar.
++> **Nota de auditoría (2026-09-13):** la familia UBTN fue auditada críticamente (hallazgos A-1..A-8). Los hallazgos altos A-1 y A-2 quedaron reconciliados; A-7 (variable del MVP: temperatura del set actual vs NTC) queda como **deuda abierta** que debe resolverse antes de comprar hardware del prototipo en U5/U7.
++
++**Restricciones de gobernanza:** la implementación (Fases U1+) queda subordinada al cierre de las Fases 7-8 del `PLAN_MAESTRO.md` y al criterio de un único MVP de una variable vital (recomendado: temperatura corporal — variable en revisión por hallazgo A-7) antes de escalar.
+ 
+ ---
+ 
+@@ -1378,6 +1382,95 @@ El sistema sufrió una caída total del entorno de desarrollo (frontend inaccesi
+ 
+ ---
+ 
++#### 📅 **13 de Septiembre 2026 | UBTN — Profundización U0: Documentación Arquitectónica Completa**
++**Sesión**: Agotar el espacio arquitectónico del UBTN en diseño (análisis, ADRs, gobernanza, DDD, investigación) — sin programar.
++**Responsable**: Bernardo Gómez + IA de desarrollo
++**Rama**: `feature/ubtn-biological-telemetry`
++
++##### Trabajo Realizado (entregables de la sesión)
++
++1. **`docs/UBTN_ADR_INDEX.md`** — registro central de decisiones: ADR-UBTN-01..16 con estado (Propuesta), fuente por documento y decálogo de decisiones protegidas (no-divergencia).
++2. **`docs/UBTN_RISK_ANALYSIS.md`** — registro de riesgos 5×5: técnicos, regulatorios (Ley 1581/2012, bienestar animal, bandas de radio), hardware, conectividad rural, autonomía energética, sensores biométricos e interoperabilidad (22 riesgos; umbrales de detención por fase).
++3. **`docs/UBTN_DOMAIN_MODEL.md`** — DDD táctico completo: bounded context, entities (`BiologicalReading`, `AnimalSubject`, `BiologicalNode`), VOs, domain events, agregados, comandos/queries, repositories/ports y context map ampliado (formas factor + `FacilityId`).
++4. **`docs/UBTN_SENSOR_CATALOG.md`** — comparativa técnica: ESP32 (WROOM-32/S3/C3), ADS1292R, MAX30102, MPU6050, MAX86150, LoRa (SX1276/78), BLE y BBB Rev C; matriz de enlaces, presupuesto energético y ADR-12/13.
++5. **`docs/UBTN_USE_CASES.md`** — 8 líneas: bovinos, caninos, felinos, equinos, caprinos, ovinos, apicultura y piscicultura (canales, forma factor, rangos de referencia, alertas, MVP por caso).
++6. **`docs/UBTN_DATA_CONTRACTS.md`** — contratos JSON de diseño (`reading`, `burst`, `status`, `alert`, `link`) + envelope V4 y señales EventBus del subdominio. NO implementados.
++7. **`docs/UBTN_EDGE_AI_STRATEGY.md`** — gateway BBB-01, MQTT QoS, store-and-forward, offline-first, TinyML (evolución en BBB-02) y pipeline de IA predictiva (alerta ≠ diagnóstico).
++8. **`docs/UBTN_LAB_INTEGRATION.md`** — integración con Robótica, Telecomunicaciones, Electrónica, IA, Agricultura y piso STEM (sin modificar ninguna línea existente).
++9. **`docs/UBTN_RESEARCH_BACKLOG.md`** — 18 líneas de investigación priorizadas (RI-P0/P1/P2) con dependencia por fase.
++10. **`docs/UBTN_INDEX.md`** — índice general, árbol documental de la familia, matriz de trazabilidad (requisito↔ADR↔riesgo↔fase) y verificación de cobertura del espacio arquitectónico.
++11. Refuerzo de la documentación existente: referencias cruzadas nuevas en `UBTN_ARCHITECTURE.md`, `UBTN_ROADMAP.md` y `UBTN_BBB_EDGE_GATEWAY.md`.
++
++##### Restricciones respetadas
++
++- Solo documentación/arquitectura/gobernanza/DDD/investigación. **Cero código.**
++- `src/backend`, `src/frontend`, `SensorReading`, `RobotTelemetry`, `EventBusPort`, `sensor_reading` y `wiring.py` intactos e incompatibles de modificar.
++- Sin migraciones, tablas, endpoints ni código de producción.
++- Rama `feature/ubtn-biological-telemetry`; `main` intacto.
++
++##### Próximos pasos (backlog, no iniciados)
++
++- Aprobar gate U0 (ratifica ADR Propuesta → Aprobada), cerrar Fases 7-8 del `PLAN_MAESTRO.md` y resolver backlog de investigación P0 antes de Fase U1.
++
++**Resultado**: ✅ Espacio arquitectónico UBTN agotado en diseño (13 documentos); 0% de código nuevo.
++
++---
++
++#### 📅 **13 de Septiembre 2026 | UBTN — MISIÓN CRÍTICA: Arquitectura Profunda y Auditoría de la Familia**
++**Sesión**: Transformar el UBTN en especificación técnica casi lista para implementación mediante 12 documentos de arquitectura profunda + auditoría crítica de la familia — sin programar.
++**Responsable**: Bernardo Gómez + IA de desarrollo
++**Rama**: `feature/ubtn-biological-telemetry`
++
++##### Trabajo Realizado (entregables de la sesión)
++
++1. **12 documentos nuevos de arquitectura profunda:**
++   `UBTN_CONTEXT_MAP.md` (mapa de contextos DDD), `UBTN_AGGREGATE_DESIGN.md` (agregados y consistencia), `UBTN_EVENT_STORMING.md` (hot-spots de provisioning y umbral), `UBTN_TELEMETRY_EVOLUTION_STRATEGY.md` (**ADR-17**), `UBTN_MQTT_ARCHITECTURE.md` (broker/LWT/QoS/RETAIN), `UBTN_DATABASE_EVOLUTION.md` (**ADR-18**), `UBTN_HARDWARE_ROADMAP.md` (V1-V4), `UBTN_FRONTEND_UX_STRATEGY.md` (**ADR-20**), `UBTN_SECURITY_MODEL.md` (**ADR-19**), `UBTN_OPERATIONS_RUNBOOK.md` (OPR/RR), `UBTN_FIELD_DEPLOYMENT_GUIDE.md` (escenarios de campo) y `UBTN_RESEARCH_GAPS.md` (gaps físicos/biológicos).
++2. **`docs/UBTN_AUDIT_REVIEW.md`** — auditoría crítica e independiente de la familia: 8 hallazgos (3 altos, 5 medios/bajos) con severidad, evidencia y estado de reconciliación.
++3. **Reconciliación de hallazgos:** renombrado `CollarDevice`→`BiologicalNode` en ARCHITECTURE/ROADMAP/BBB/ADR_INDEX; unificado QoS 1 + RETAIN del tópico `status` (BBB/EDGE_AI/DATA_CONTRACTS); estandarizado `ubtn/{node_id}/alert`; corregidas referencias de sección del ADR_INDEX (ADR-07/08/09/10/12 y puerto ADR-02); nota de variable MVP abierta (A-7) y dependencia de gaps para TinyML (A-5).
++4. **Índices y trazabilidad:** ADR_INDEX con ADR-01..20 + trazabilidad por documento ampliada; UBTN_INDEX v1.1 (árbol de 26 docs, trazabilidad R20-R30, 23 dimensiones de cobertura).
++
++##### Restricciones respetadas
++
++- Solo documentación/arquitectura. **Cero código.**
++- `src/backend`, `src/frontend`, `SensorReading`, `RobotTelemetry`, `EventBusPort`, `sensor_reading` y `wiring.py` intactos.
++- Sin migraciones, tablas, endpoints ni código de producción.
++- Rama `feature/ubtn-biological-telemetry`; `main` intacto.
++
++##### Próximos pasos (backlog, no iniciados)
++
++- Resolver el hallazgo A-7 (variable del MVP: NTC/T° vs HR del set actual) antes de comprar hardware del prototipo.
++- Aprobar gate U0 (ADR Propuesta → Aprobada) y cerrar Fases 7-8 del `PLAN_MAESTRO.md` antes de Fase U1.
++
++**Resultado**: ✅ Especificación técnica profunda completada (26 documentos UBTN, 0% código); auditoría con 3 hallazgos altos reconciliados o etiquetados como deuda abierta.
++
++---
++
++#### 📅 **14 de Septiembre 2026 | SIGCTiArural — Gate U0.5: Arquitectura de Refactorización Global**
++**Sesión**: Preservar la identidad del ecosistema (Conocimiento → Laboratorios → Hardware → Protocolos → Telemetría → IA → Proyectos Reales) mientras se diseña la refactorización de dashboard/navegación/hardware catalog — sin programar.
++**Responsable**: Bernardo Gómez + IA de desarrollo
++**Rama**: `feature/ubtn-biological-telemetry` (sin tocar `main`)
++
++##### Trabajo Realizado (entregables de la sesión)
++
++1. **8 documentos de diseño (familia `SIGCTIARURAL_*`):** `SIGCTIARURAL_VISION_ALIGNMENT.md` (identidad/no-negociables), `SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md` (mapa de labs + gaps GLC-01..07), `SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md` (qué se aprende por hardware + gaps GHL-01..05), `SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md` (IA canónica por 5 personas), `SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md` (hardware ≠ capacidad), `SIGCTIARURAL_REFACTORING_GUARDRAILS.md` (GR-01..12), `SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md` (spec visual, sin código) y `SIGCTIARURAL_REFACTORING_AUDIT.md` (auditoría crítica).
++2. **Auditoría brutal de las propias propuestas:** 5 contradicciones (C-01..05), 2 errores conceptuales (CE-01/02), 2 duplicidades (D-01/02), sobre-ingeniería y riesgos educativos (ER-01..03). Reconciliación aplicada en los documentos fuente.
++3. **Veredicto de la Misión Final:** se construye la **plataforma científica sostenible**, no una interfaz bonita; la prueba es la trazabilidad (cada dato → fuente real).
++4. **Registro en `SIGCT_RURAL_SYSTEM_BOOT.md`** (línea Refactorización Global, Fase 6, mapa de continuidad) y `PLAN_MAESTRO.md` (referencias).
++
++##### Restricciones respetadas
++
++- Solo documentación/diseño. **Cero código.** `src/backend`, `src/frontend` y `src/embedded` intactos.
++- Sin migraciones, endpoints ni código de producción.
++- Rama `feature/ubtn-biological-telemetry`; `main` intacto.
++
++##### Próximos pasos (backlog, no iniciados)
++
++- Gate de aprobación del diseño U0.5; conversión de guardarraíles GR-01..12 en checklist de implementación (Fase U1 de frontend, tras Fases 7-8 del PLAN_MAESTRO).
++
++**Resultado**: ✅ Identidad, hardware model, lab connectivity, knowledge model y navegación validados en diseño; refactorización protegida; 0% de código nuevo.
++
++---
++
+ ## Apéndice A: Enlaces y Referencias
+ 
+ ### A.1 Ruta de Continuidad Operativa
+@@ -1395,7 +1488,12 @@ Fuentes de verdad operativa y técnica:
+ - [`DEPLOYMENT.md`](DEPLOYMENT.md)
+ - [`PLAN_MAESTRO.md`](PLAN_MAESTRO.md) — roadmap de fases del proyecto, incluida la Fase 9 (expansión de dominio EIARC, planificada)
+ - [`ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md`](ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md) — guía de estudio ADSO con la bitácora consolidada de la refactorización hexagonal
+-- [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md), [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md) y [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — telemetría biológica UBTN (diseño, Fase U0 cerrada; sin implementación)
++- [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md), [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md), [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — telemetría biológica UBTN (diseño, Fase U0; sin implementación)
++- [`UBTN_INDEX.md`](UBTN_INDEX.md) — índice general de la familia documental UBTN (26 documentos con MISIÓN CRÍTICA), árbol documental y matriz de trazabilidad
++- [`UBTN_AUDIT_REVIEW.md`](UBTN_AUDIT_REVIEW.md) — auditoría crítica de la familia UBTN (hallazgos A-1..A-8 y reconciliación)
++- [`SIGCTIARURAL_VISION_ALIGNMENT.md`](SIGCTIARURAL_VISION_ALIGNMENT.md) — identidad y no-negociables de la Refactorización Global (Gate U0.5, entrada)
++- [`SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`](SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md) — spec visual del dashboard reimaginado (sin código)
++- [`SIGCTIARURAL_REFACTORING_AUDIT.md`](SIGCTIARURAL_REFACTORING_AUDIT.md) — auditoría crítica de la refactorización global
+ - *EIARC_Documento_Maestro_Modelo_Negocio.pdf* — **Documento no disponible en este repositorio** (documento de modelo de negocio y posicionamiento comercial de EIARC; fuera del alcance técnico de este MASTERDOC, referenciado aquí solo para trazabilidad)
+ 
+ ### A.2 Documentos Principales del Proyecto (Autoría y Repositorio)
+diff --git a/docs/PLAN_MAESTRO.md b/docs/PLAN_MAESTRO.md
+index 5d676b6..28cd969 100644
+--- a/docs/PLAN_MAESTRO.md
++++ b/docs/PLAN_MAESTRO.md
+@@ -285,12 +285,12 @@ gantt
+ 
+ #### 9.2 Monitoreo Biométrico Individual de Ganado (contexto `telemetry` + `ai_advisory`)
+ 
+-> **Actualización 2026-09-13:** esta tarea se formaliza como línea **UBTN — Universal Biological Telemetry Node** con diseño cerrado en [`docs/UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) (subdominio DDD `BiologicalTelemetry`), [`docs/UBTN_ROADMAP.md`](UBTN_ROADMAP.md) (Fases U0-U7) y [`docs/UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) (BBB-01 como gateway UBTN). El backlog inicial continúa:
++> **Actualización 2026-09-13:** esta tarea se formaliza como línea **UBTN — Universal Biological Telemetry Node**. La familia documental completa (26 documentos: arquitectura, ADRs 01-20, riesgos, dominio DDD, sensores, casos de uso, contratos, edge/IA, arquitectura profunda + auditoría) se encuentra en diseño cerrado y auditado; punto de entrada: [`docs/UBTN_INDEX.md`](UBTN_INDEX.md). Destacados: [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) (subdominio DDD `BiologicalTelemetry`), [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md) (Fases U0-U7), [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) (BBB-01 como gateway UBTN) y [`UBTN_AUDIT_REVIEW.md`](UBTN_AUDIT_REVIEW.md) (auditoría crítica). El backlog inicial continúa:
+ 
+ - [ ] Diseñar el contrato de datos del dispositivo sensórico portable (collar u otro formato según la especie): temperatura corporal, ritmo cardíaco, pH cuando aplique, y variables de movimiento/actividad
+ - [ ] Definir `AnimalReadingPort` (o extender `SensorReadingRepositoryPort` existente) para que la ingesta de telemetría distinga entre lectura de cultivo/laboratorio y lectura biométrica de un animal individual
+ 
+-> **Decisión de diseño (ADR-UBTN-01):** el diseño UBTN **no extiende** `SensorReadingRepositoryPort`; declara puertos propios del subdominio (`BiologicalReadingRepositoryPort`, `CollarDeviceRepositoryPort`, `BioAlertPort`) para no romper el Telemetry Context. `SensorReading` no se modifica.
++> **Decisión de diseño (ADR-UBTN-01):** el diseño UBTN **no extiende** `SensorReadingRepositoryPort`; declara puertos propios del subdominio (`BiologicalReadingRepositoryPort`, `BiologicalNodeRepositoryPort`, `BioAlertPort`) para no romper el Telemetry Context. `SensorReading` no se modifica.
+ 
+ - [ ] Investigar y documentar rangos fisiológicos normales por especie (vacas, cerdos, gallinas) como base para la detección de anomalías (fiebre, estrés térmico, taquicardia, hipoactividad)
+ - [ ] Aplicar ingeniería de características (feature engineering) sobre las series de tiempo de cada animal (medias móviles, variabilidad, tendencias) como insumo para los modelos
+@@ -366,9 +366,39 @@ gantt
+ |---|---|---|
+ | MASTERDOC.md | docs/MASTERDOC.md | Arquitectura completa |
+ | robotics_contracts.md | docs/architecture/robotics_contracts.md | Contratos JSON Robótica |
++| UBTN (familia documental) | docs/UBTN_INDEX.md | **Índice general, árbol y matriz de trazabilidad de la línea UBTN** (entrada recomendada) |
+ | UBTN_ARCHITECTURE.md | docs/UBTN_ARCHITECTURE.md | Telemetría biológica UBTN — arquitectura y DDD (diseño, Fase 9) |
+-| UBTN_ROADMAP.md | docs/UBTN_ROADMAP.md | UBTN — plan faseado U0-U7 (0% implementado) |
++| UBTN_ADR_INDEX.md | docs/UBTN_ADR_INDEX.md | UBTN — registro central de decisiones arquitectónicas (ADR 01-20) |
++| UBTN_DOMAIN_MODEL.md | docs/UBTN_DOMAIN_MODEL.md | UBTN — DDD táctico completo (entities, VOs, eventos, agregados) |
++| UBTN_USE_CASES.md | docs/UBTN_USE_CASES.md | UBTN — casos de uso por especie (8 líneas) |
++| UBTN_SENSOR_CATALOG.md | docs/UBTN_SENSOR_CATALOG.md | UBTN — comparativa de sensores y plataformas |
++| UBTN_DATA_CONTRACTS.md | docs/UBTN_DATA_CONTRACTS.md | UBTN — contratos JSON (diseño, NO implementar) |
++| UBTN_EDGE_AI_STRATEGY.md | docs/UBTN_EDGE_AI_STRATEGY.md | UBTN — edge-first, offline-first, TinyML e IA predictiva |
+ | UBTN_BBB_EDGE_GATEWAY.md | docs/UBTN_BBB_EDGE_GATEWAY.md | UBTN — BBB-01 como gateway edge |
++| UBTN_RISK_ANALYSIS.md | docs/UBTN_RISK_ANALYSIS.md | UBTN — registro de riesgos y controles |
++| UBTN_RESEARCH_BACKLOG.md | docs/UBTN_RESEARCH_BACKLOG.md | UBTN — backlog de investigación priorizado |
++| UBTN_ROADMAP.md | docs/UBTN_ROADMAP.md | UBTN — plan faseado U0-U7 (0% implementado) |
++| UBTN_CONTEXT_MAP.md | docs/UBTN_CONTEXT_MAP.md | UBTN — Context Map DDD y relaciones entre dominios |
++| UBTN_AGGREGATE_DESIGN.md | docs/UBTN_AGGREGATE_DESIGN.md | UBTN — agregados y límites de consistencia |
++| UBTN_EVENT_STORMING.md | docs/UBTN_EVENT_STORMING.md | UBTN — Event Storming y hot-spots |
++| UBTN_TELEMETRY_EVOLUTION_STRATEGY.md | docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md | UBTN — ADR-17: evolución dual-track sin migrar |
++| UBTN_MQTT_ARCHITECTURE.md | docs/UBTN_MQTT_ARCHITECTURE.md | UBTN — broker, tópicos, QoS/RETAIN y LWT |
++| UBTN_DATABASE_EVOLUTION.md | docs/UBTN_DATABASE_EVOLUTION.md | UBTN — ADR-18: persistencia y escalado |
++| UBTN_HARDWARE_ROADMAP.md | docs/UBTN_HARDWARE_ROADMAP.md | UBTN — variantes de hardware V1-V4 |
++| UBTN_FRONTEND_UX_STRATEGY.md | docs/UBTN_FRONTEND_UX_STRATEGY.md | UBTN — ADR-20: UX por perfil |
++| UBTN_SECURITY_MODEL.md | docs/UBTN_SECURITY_MODEL.md | UBTN — ADR-19: seguridad y privacidad |
++| UBTN_OPERATIONS_RUNBOOK.md | docs/UBTN_OPERATIONS_RUNBOOK.md | UBTN — runbooks de operación |
++| UBTN_FIELD_DEPLOYMENT_GUIDE.md | docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md | UBTN — despliegue en campo |
++| UBTN_RESEARCH_GAPS.md | docs/UBTN_RESEARCH_GAPS.md | UBTN — gaps de investigación pendientes |
++| UBTN_AUDIT_REVIEW.md | docs/UBTN_AUDIT_REVIEW.md | UBTN — auditoría crítica de la familia |
++| SIGCTIARURAL_VISION_ALIGNMENT.md | docs/SIGCTIARURAL_VISION_ALIGNMENT.md | Refactorización Global U0.5 — identidad y no-negociables (entrada) |
++| SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md | docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md | Refactorización U0.5 — mapa de laboratorios y gaps |
++| SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md | docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md | Refactorización U0.5 — aprendizaje por hardware |
++| SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md | docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md | Refactorización U0.5 — IA canónica por persona |
++| SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md | docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md | Refactorización U0.5 — hardware ≠ capacidad |
++| SIGCTIARURAL_REFACTORING_GUARDRAILS.md | docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md | Refactorización U0.5 — qué no se rompe (GR-01..12) |
++| SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md | docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md | Refactorización U0.5 — spec visual del dashboard (sin código) |
++| SIGCTIARURAL_REFACTORING_AUDIT.md | docs/SIGCTIARURAL_REFACTORING_AUDIT.md | Refactorización U0.5 — auditoría crítica + veredicto |
+ | README.md | Raíz del proyecto | Introducción y setup |
+ | API_REFERENCE.md | docs/API_REFERENCE.md | Documentación de APIs |
+ | DEPLOYMENT.md | docs/DEPLOYMENT.md | Guía de despliegue |
+@@ -378,7 +408,7 @@ gantt
+ 🌱 "El éxito es la suma de pequeños esfuerzos repetidos día tras día."
+ — Proyecto SIGC&T Rural / EIARC
+ 
+-Última actualización: 13 de Septiembre, 2026 (UBTN — línea de telemetría biológica diseñada en Fase 9)
++Última actualización: 14 de Septiembre, 2026 (Refactorización Global U0.5 — diseño de identidad/dashboard)
+ Próxima revisión: A definir según cierre de Fase 7-8
+-Versión: 8.1
++Versión: 8.3
+ </div>
+diff --git a/docs/UBTN_ARCHITECTURE.md b/docs/UBTN_ARCHITECTURE.md
+index d7795a2..9a5d2a3 100644
+--- a/docs/UBTN_ARCHITECTURE.md
++++ b/docs/UBTN_ARCHITECTURE.md
+@@ -154,9 +154,9 @@ flowchart LR
+ | **AnimalSubject** | Sujeto animal identificado (individuo) al que se le asigna un collar. |
+ | **BiologicalReading** | Lectura biométrica periódica registrada por el sistema. Entidad raíz de telemetría del subdominio. |
+ | **BiologicalMetric** | Valor biológico concreto con unidad y rango fisiológico (T° corporal, FC, FR, SpO₂, índice de rumia, actividad). |
+-| **CollarDevice** | Entidad que representa el hardware wearable (firmware, sensores embarcados, estado). |
+-| **SensorChannel** | Canal de adquisición de un sensor dentro del collar (ECG-1, PPG, IMU-X/Y/Z…). |
+-| **Encargo / Provisioning** | Acción de vincular un `CollarDevice` a un `AnimalSubject` (asociación collar-animal). |
++| **BiologicalNode** | Entidad que representa el hardware wearable (firmware, sensores embarcados, estado). *Antes `CollarDevice`, renombrada por ADR-UBTN-08.* |
++| **SensorChannel** | Canal de adquisición de un sensor dentro del nodo (ECG-1, PPG, IMU-X/Y/Z…). |
++| **Encargo / Provisioning** | Acción de vincular un `BiologicalNode` a un `AnimalSubject` (asociación nodo-animal). |
+ | **Alerta fisiológica** | Regla de dominio que dispara señal `physiological_alert` (fiebre, hipoactividad, taquicardia sostenida). |
+ | **Ráfaga (burst)** | Recolección de alta frecuencia (ej. ECG a 500 Hz) durante ventanas cortas, distinta del latido de telemetría periódica. |
+ 
+@@ -173,7 +173,7 @@ flowchart LR
+     subgraph BIO["BiologicalTelemetry (nuevo, diseñado)"]
+         BR[BiologicalReading]
+         AN[AnimalSubject]
+-        CD[CollarDevice]
++        BN[BiologicalNode]
+     end
+     subgraph AI["AI Context (existente)"]
+         PRED[IA Predictiva<br/>detección de anomalías]
+@@ -186,8 +186,8 @@ flowchart LR
+     BR ==>|"LabSignal: biological_reading<br/>(nuevo, no toca sensor_reading)"| PRED
+     BR -. "consulta/analítica" .-> PRED
+     PRED ==>|"alerta predictiva"| AN
+-    AN --> CD
+-    CD --> BR
++    AN --> BN
++    BN --> BR
+ 
+     style BIO fill:#042f2e,stroke:#34d399,stroke-width:3px
+     style PLC fill:#0f172a,stroke:#8b5cf6,stroke-width:2px
+@@ -259,7 +259,7 @@ src/backend/contexts/bio/                      # (diseño; NO se crea en esta ra
+ @dataclass
+ class BiologicalReading:
+     subject_id: AnimalSubjectId     # a quién pertenece
+-    device_id: CollarDeviceId       # qué collar capturó
++    device_id: BiologicalNodeId     # qué nodo capturó
+     timestamp: datetime             # instante de captura
+     metrics: Dict[SensorChannel, BiologicalMetric]  # al menos 1
+     burst_metadata: Optional[dict]  # frecuencia de muestreo / ventana
+@@ -268,7 +268,7 @@ class BiologicalReading:
+ 
+ - Cada `BiologicalMetric` es un VO inmutable con: `channel`, `value`, `unit`, `physiological_range`, `sample_rate_hz`.
+ - Se valida que `metrics` no sea vacío y que cada valor esté en rango fisiológico conocido (o se marque como `out_of_range` sin rechazo).
+-- **Invariante:** `device_id` debe estar asociado a `subject_id` (ver `CollarDevice`) — en un MVP puede relajarse a "subjet consta".
++- **Invariante:** `device_id` debe estar asociado a `subject_id` (ver `BiologicalNode`) — en un MVP puede relajarse a "aceptar el sujeto aún cuando la vinculación formal esté pendiente".
+ 
+ > El UBTN **no** reutiliza `Temperature` de telemetría ambiental: la temperatura corporal define su propio VO `BodyTemperature` con rangos por especie (ej. bovino 37.5–39.1 °C).
+ 
+@@ -289,29 +289,29 @@ class AnimalSubject:
+     active: bool = True
+ ```
+ 
+-#### 3.5.3 Aggregate Root: `CollarDevice`
++#### 3.5.3 Aggregate Root: `BiologicalNode` (antes `CollarDevice`)
+ 
+ ```python
+ @dataclass
+-class CollarDevice:
+-    device_id: CollarDeviceId
++class BiologicalNode:
++    device_id: BiologicalNodeId
+     model: str                    # ej. UBTN-ESP32-S03
+     firmware_version: str
+     sensor_channels: frozenset[SensorChannel]   # ECG1/ECG2, PPG, IMU_X/Y/Z…
+-    subject: Optional[AnimalSubjectId]          # vinculación actual
++    subject: Optional[AnimalSubjectId]          # vinculación actual (o facility en colmena/estanque)
+     battery_percent: Optional[float]
+     last_seen: Optional[datetime]
+-    status: str = "online"        # online / offline / provisioning
++    status: str = "online"        # online / offline / maintenance / provisioning / lost
+ ```
+ 
+-- La asociación collar→sujeto (`vincular_collar`) es el comando de aplicación que respeta la invariante de unicidad (un collar activo con un solo sujeto a la vez).
++- La asociación nodo→sujeto (`vincular_nodo`) es el comando de aplicación que respeta la invariante de unicidad (un nodo activo con un solo objetivo — sujeto o instalación — a la vez). Nombre histórico: `vincular_collar` (ADR-UBTN-08).
+ 
+ ### 3.6 Puertos (Ports) de salida
+ 
+ | Puerto | Tipo | Contrato de diseño |
+ |---|---|---|
+ | `BiologicalReadingRepositoryPort` | Persistencia | `save(reading)`, `get_all(limit)`, `get_by_id`, `get_by_subject(subject_id, window)` |
+-| `CollarDeviceRepositoryPort` | Persistencia | `save(device)`, `get_by_id`, `link_subject(device_id, subject_id)` |
++| `BiologicalNodeRepositoryPort` | Persistencia | `save(node)`, `get_by_id`, `link_subject(device_id, subject_id)` |
+ | `BioAlertPort` | Notificación | `emit_alert(sujeto, canal, gravedad, mensaje)` |
+ 
+ > De forma deliberada **no** se extiende `SensorReadingRepositoryPort`: el subdominio nuevo declara sus propios puertos, replicando el patrón del contexto hermano sin acoplarse a él.
+@@ -427,11 +427,13 @@ Rol propuesto: **BBB-01 asciende de "gateway de sensores ambientales" a "gateway
+ 
+ | Tópico | Dirección | Payload (ej.) |
+ |---|---|---|
+-| `ubtn/{device}/reading` | collar → broker | `{"t": "...", "hr": 55, "temp": 38.6, "spo2": 97, "acc": [0.1,-0.2,9.8]}` |
+-| `ubtn/{device}/burst` | collar → broker | ráfaga ECG/PPG con `sample_rate_hz` y ventana |
+-| `ubtn/{device}/status` | collar → broker | `{"batt": 84, "fw": "0.1.0", "state": "online"}` |
+-| `ubtn/{device}/cmd` | broker → collar | `{"cmd": "calibrate", ...}` (full-duplex futuro) |
+-| `ubtn/alert` | gateway → cloud | recordatorio/alerta pre-analizada en edge |
++| `ubtn/{node_id}/reading` | nodo → broker | `{"t": "...", "hr": 55, "temp": 38.6, "spo2": 97, "acc": [0.1,-0.2,9.8]}` |
++| `ubtn/{node_id}/burst` | nodo → broker | ráfaga ECG/PPG con `sample_rate_hz` y ventana |
++| `ubtn/{node_id}/status` | nodo → broker | `{"batt": 84, "fw": "0.1.0", "state": "online"}` (QoS 1 + RETAIN, ver `UBTN_MQTT_ARCHITECTURE.md`) |
++| `ubtn/cmd/{node_id}` | broker → nodo | `{"cmd": "calibrate", ...}` (full-duplex futuro) |
++| `ubtn/{node_id}/alert` | edge → cloud | mirror de alerta fisiológica (read-model por API es la fuente de verdad) |
++
++> Reconciliación A-2/A-4 (auditoría): el tópico de `status` pasa a QoS 1 + retained y el de `alert` se granulariza por nodo — `ubtn/alert` global queda deprecado por inconsistencia.
+ 
+ **Seguridad:** TLS/PSK obligatorio en el lazo collar↔broker y broker↔nube; identidad de dispositivo (CA local) en el provisioning.
+ 
+@@ -463,8 +465,8 @@ Ninguna tabla existente se modifica. Se crean tablas nuevas (prefijo `bio_`) gob
+ ```mermaid
+ erDiagram
+     AnimalSubject ||--o{ BiologicalReading : "registra"
+-    CollarDevice ||--o{ BiologicalReading : "captura"
+-    AnimalSubject ||--o{ CollarDevice : "se vincula (1 a muchos históricos)"
++    BiologicalNode ||--o{ BiologicalReading : "captura"
++    AnimalSubject ||--o{ BiologicalNode : "se vincula (1 a muchos históricos)"
+ 
+     AnimalSubject {
+         int id PK
+@@ -475,7 +477,7 @@ erDiagram
+         string sex
+         boolean active
+     }
+-    CollarDevice {
++    BiologicalNode {
+         string device_id PK
+         string model
+         string firmware_version
+@@ -531,17 +533,25 @@ Coherente con la persistencia JSONB del ecosistema (checklist §4 MASTERDOC): lo
+ | ADR-UBTN-02 | Puerto y repositorio propios | Reutilizar `SensorReadingRepositoryPort` | Acoplamiento indebido y rompería la vista V3 |
+ | ADR-UBTN-03 | Señal EventBus `biological_reading` nueva | Reutilizar `sensor_reading` | La señal original describe temperatura/humedad ambiental; los suscriptores actuales traducen ese payload y no deben conocer biometrías |
+ | ADR-UBTN-04 | BBB-01 como gateway UBTN (evolución) | BBB nuevo | Reutiliza broker, poder y rol de gateway ya asignado; softening del clúster existente |
+-| ADR-UBTN-05 | MVP de una sola variable vital end-to-end | Multivariable simultánea | Principio §9.2 de PLAN_MAESTRO: validar un variable primero (probablemente temperatura corporal) |
++| ADR-UBTN-05 | MVP de una sola variable vital end-to-end | Multivariable simultánea | Principio §9.2 de PLAN_MAESTRO: validar un variable primero. ⚠️ Variable en revisión (A-7): el set base no incluye sensor de T°; alternativa RT con MAX30102. |
++
++> **Nota auditoría (A-7):** la elección específica de la variable del MVP permanece abierta en la familia: [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md) U5/U7 y [`UBTN_RESEARCH_GAPS.md`](UBTN_RESEARCH_GAPS.md) B1. No bloquea el diseño, sí bloquea la compra de hardware del prototipo.
+ | ADR-UBTN-06 | Umbrales fisiológicos primero, ML después | ML directo sin reglas | Sin datos propios etiquetados; gobernanza de IA V2 |
+ 
+ ---
+ 
+ ## 8. Referencias Internas
+ 
++- [`UBTN_ADR_INDEX.md`](UBTN_ADR_INDEX.md) — registro central de decisiones arquitectónicas (ADRs 01-20).
++- [`UBTN_INDEX.md`](UBTN_INDEX.md) — índice general UBTN, árbol documental y matriz de trazabilidad.
++- [`UBTN_DOMAIN_MODEL.md`](UBTN_DOMAIN_MODEL.md) — modelado táctico DDD completo (entidades, VOs, eventos).
++- [`UBTN_RISK_ANALYSIS.md`](UBTN_RISK_ANALYSIS.md) — registro de riesgos y controles.
++- [`UBTN_AUDIT_REVIEW.md`](UBTN_AUDIT_REVIEW.md) — auditoría crítica de la familia (hallazgos A-1..A-8 y reconciliación).
+ - [`PLAN_MAESTRO.md`](PLAN_MAESTRO.md) — Fase 9.2 (monitoreo biométrico de ganado) y 9.3 (alertas tempranas).
+ - [`MASTERDOC.md`](MASTERDOC.md) — Sección 3.2 (telemetría veterinaria multiespecie) y bitácora.
+ - [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md) — plan faseado de implementación.
+ - [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) — detalle del gateway edge.
++- [`UBTN_SENSOR_CATALOG.md`](UBTN_SENSOR_CATALOG.md) — comparativa de sensores y plataformas.
+ - `src/backend/contexts/telemetry/` — patrón estructural de referencia.
+ - `src/backend/shared_kernel/event_bus/` — bus neutral reutilizado.
+ - `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` — guía de estudio/backlog hexagonal.
+diff --git a/docs/UBTN_BBB_EDGE_GATEWAY.md b/docs/UBTN_BBB_EDGE_GATEWAY.md
+index c949cb8..11fcb89 100644
+--- a/docs/UBTN_BBB_EDGE_GATEWAY.md
++++ b/docs/UBTN_BBB_EDGE_GATEWAY.md
+@@ -86,7 +86,7 @@ flowchart LR
+ | Ciclo | Suscripción persistente a `ubtn/#`; loop de drenaje del buffer cada N segundos |
+ | Reconexión | Reintento con backoff exponencial; no pierde mensajes del buffer |
+ | Seguridad | TLS 1.2+ con CA local para MQTT y HTTPS; secretos fuera del repo (env) |
+-| Identidad de dispositivo | El bridge firma o adjunta el `device_id`; el backend verifica contra el catálogo de `CollarDevice` |
++| Identidad de dispositivo | El bridge firma o adjunta el `device_id`; el backend verifica contra el catálogo de `BiologicalNode` |
+ 
+ ```
+ Topología de despliegue propuesta:
+@@ -105,13 +105,15 @@ src/embedded/ubtn/
+ 
+ ## 4. Contrato de Tópicos MQTT
+ 
+-| Tópico | QoS | Garantía | Payload |
++| Tópico | QoS | RETAIN | Payload |
+ |---|---|---|---|
+-| `ubtn/{device}/reading` | 1 | al menos una vez | telemetría periódica (HR, T°, SpO₂, actividad) |
+-| `ubtn/{device}/burst` | 1 | al menos una vez | ráfaga ECG/PPG de alta frecuencia |
+-| `ubtn/{device}/status` | 0 | no persistente | batería, firmware, estado |
+-| `ubtn/{device}/cmd` | 1 | al menos una vez | comando del gateway al collar (full-duplex futuro) |
+-| `ubtn/alert` | 1 | al menos una vez | alerta pre-analizada en edge (opcional, con IA edge) |
++| `ubtn/{node_id}/reading` | 1 | no | telemetría periódica (HR, T°, SpO₂, actividad) |
++| `ubtn/{node_id}/burst` | 1 | no | ráfaga ECG/PPG de alta frecuencia |
++| `ubtn/{node_id}/status` | 1 | **sí (retained)** | estado del nodo (online/offline/maintenance/lost), batería, firmware, LWT |
++| `ubtn/cmd/{node_id}` | 1 | no | comando del gateway al nodo (full-duplex futuro) |
++| `ubtn/{node_id}/alert` | 1 | no | mirror de alerta fisiológica (read-model por API, tópico opcional) |
++
++> Reconciliación A-2: `status` pasa a **QoS 1 + retained** para que el LWT del broker sea fuente de verdad del estado del nodo (antaño QoS 0 "no persistente" — inconsistente con la estrategia de estado). Ver `UBTN_MQTT_ARCHITECTURE.md` §3-4.
+ 
+ **Regla de diseño:** el *internal broker* permanece aislado de la inmensa mayoría de la red; la nube no se expone a tópicos internos — el bridge es el único punto de salida.
+ 
+@@ -143,7 +145,10 @@ src/embedded/ubtn/
+ ## 7. Referencias
+ 
+ - [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) §4 (hardware + protocolo MQTT) y §7 (ADR-UBTN-04).
++- [`UBTN_EDGE_AI_STRATEGY.md`](UBTN_EDGE_AI_STRATEGY.md) — estrategia edge completa (offline-first, TinyML).
++- [`UBTN_DATA_CONTRACTS.md`](UBTN_DATA_CONTRACTS.md) — contratos JSON del flujo edge→cloud.
+ - [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md) Fase U4.
++- [`UBTN_ADR_INDEX.md`](UBTN_ADR_INDEX.md) — registro central (ADR-04/10/15).
+ - `docs/edge/architecture_edge.mmd` — diagrama heredado del clúster (los scripts en `src/embedded/bbb_*/` están en 0 bytes; el diagrama documenta el objetivo, no la implementación).
+ - `README.md` §Edge Computing — arquitectura de referencia del clúster 3-BBB.
+ 
+diff --git a/docs/UBTN_ROADMAP.md b/docs/UBTN_ROADMAP.md
+index 2531087..72ed542 100644
+--- a/docs/UBTN_ROADMAP.md
++++ b/docs/UBTN_ROADMAP.md
+@@ -27,11 +27,18 @@
+ ### Fase U0 — Diseño y Gobernanza (ESTA RAMA) ✅ CERRADA EN DISEÑO
+ 
+ | Entregable | Estado |
+-|---|---|
++|---|---|---|
+ | Análisis arquitectónico del Telemetry Context | ✅ Hecho en [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) §2 |
+-| Propuesta DDD `BiologicalTelemetry` | ✅ Hecho en [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) §3 |
+-| Investigación hardware (ESP32/ADS1292R/MAX30102/MPU6050/BBB/MQTT) | ✅ Hecho en [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) §4 |
++| Propuesta DDD `BiologicalTelemetry` | ✅ Hecho en [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) §3 y [`UBTN_DOMAIN_MODEL.md`](UBTN_DOMAIN_MODEL.md) |
++| Investigación hardware (ESP32/ADS1292R/MAX30102/MPU6050/MAX86150/LoRa/BLE/BBB/MQTT) | ✅ Hecho en [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) §4 y [`UBTN_SENSOR_CATALOG.md`](UBTN_SENSOR_CATALOG.md) |
+ | Gateway edge BBB | ✅ Hecho en [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) |
++| Registro de riesgos | ✅ [`UBTN_RISK_ANALYSIS.md`](UBTN_RISK_ANALYSIS.md) |
++| Casos de uso por especie | ✅ [`UBTN_USE_CASES.md`](UBTN_USE_CASES.md) |
++| Contratos de datos JSON (diseño) | ✅ [`UBTN_DATA_CONTRACTS.md`](UBTN_DATA_CONTRACTS.md) |
++| Estrategia edge e IA predictiva | ✅ [`UBTN_EDGE_AI_STRATEGY.md`](UBTN_EDGE_AI_STRATEGY.md) |
++| Integración con el ecosistema (labs/STEM) | ✅ [`UBTN_LAB_INTEGRATION.md`](UBTN_LAB_INTEGRATION.md) |
++| Backlog de investigación | ✅ [`UBTN_RESEARCH_BACKLOG.md`](UBTN_RESEARCH_BACKLOG.md) |
++| Índice ADR + índice general + trazabilidad | ✅ [`UBTN_ADR_INDEX.md`](UBTN_ADR_INDEX.md), [`UBTN_INDEX.md`](UBTN_INDEX.md) |
+ | Roadmap | ✅ Este documento |
+ | Actualización README / MASTERDOC / PLAN_MAESTRO / onboarding IA | ✅ Rama actual |
+ 
+@@ -46,8 +53,8 @@
+ | Tarea | Criterio de aceptación |
+ |---|---|
+ | Crear árbol `contexts/bio/` (domain/application/ports/infrastructure) | Estructura espejo de `contexts/telemetry/` |
+-| Value objects: `AnimalSubjectId`, `SubjectSpecies`, `CollarDeviceId`, `SensorChannel`, `BodyTemperature`, `HeartRate`, `RespiratoryRate`, `SpO2`, `RuminationIndex`, `ActivityScore`, `AccelerometrySample` | `frozen=True`, rangos fisiológicos validados, excepciones de dominio |
+-| Entidades: `AnimalSubject`, `CollarDevice`, `BiologicalReading` | Invariantes en `__post_init__` |
++| Value objects: `AnimalSubjectId`, `SubjectSpecies`, `BiologicalNodeId`, `SensorChannel`, `BodyTemperature`, `HeartRate`, `RespiratoryRate`, `SpO2`, `RuminationIndex`, `ActivityScore`, `AccelerometrySample` | `frozen=True`, rangos fisiológicos validados, excepciones de dominio |
++| Entidades: `AnimalSubject`, `BiologicalNode`, `BiologicalReading` | Invariantes en `__post_init__` |
+ | `BioAlertPort` + `ConsoleBioAlertAdapter` | Espejo de `ConsoleNotificationAdapter` (labs) |
+ | `InMemoryBiologicalReadingRepository` | Igual estrategia que su homólogo de telemetría |
+ | Tests de dominio (`tests/contexts/bio/test_bio.py`) | Suite verde con pytest |
+@@ -64,11 +71,11 @@
+ 
+ | Tarea | Criterio de aceptación |
+ |---|---|
+-| Modelos Django nuevos: `AnimalSubject`, `CollarDevice`, `BiologicalReading` (metrics JSONB) | Migración `0001` nueva; **sin alterar** modelos existentes |
++| Modelos Django nuevos: `AnimalSubject`, `BiologicalNode`, `BiologicalReading` (metrics JSONB) | Migración `0001` nueva; **sin alterar** modelos existentes |
+ | `DjangoBiologicalReadingRepository` + mapper | Replica el patrón `DjangoSensorReadingRepository`/`SensorReadingMapper` |
+-| `BiologicalReadingRepositoryPort` + `CollarDeviceRepositoryPort` | Contratos abstractos en `ports/` |
++| `BiologicalReadingRepositoryPort` + `BiologicalNodeRepositoryPort` | Contratos abstractos en `ports/` |
+ | Comando `RegistrarLecturaBiologicaCommand` | Persiste + publica `LabSignal("biological_reading")` |
+-| Comando `VincularCollarCommand` | Asocia collar → sujeto con unicidad |
++| Comando `VincularNodoCommand` | Asocia nodo → sujeto con unicidad |
+ | Query `ListarLecturasPorSujetoQuery` | Serie ordenada por `(subject_id, timestamp)` |
+ | Endpoint contract: `GET/POST /api/v4/bio/readings/`, `GET /api/v4/bio/subjects/{id}/` | Envelope con `context`, `contract_version`, `source_mode`, `items` (mismo estilo que V3 telemetry) |
+ | Tests de integración | Suite pytest verde; smoke HTTP manual |
+@@ -124,7 +131,7 @@
+ | `src/embedded/ubtn/firmware/` (Arduino/ESP-IDF) | Lectura de ADS1292R (SPI), MAX30102 (I2C), MPU6050 (I2C) |
+ | Pipeline de baja potencia | Deep-sleep; telemetría periódica + ráfaga ECG/PPG a demanda |
+ | Payload MQTT JSON estable | Contrato de tópicos conforme a §4.4 de la arquitectura |
+-| Calibración de temperatura corporal | Comparación con referencia clínica; tabla de offset por ubicación del collar |
++| Calibración de la variable del MVP (T° corporal **si se decide incluir NTC/DS18B20**, o HR/RR según A-7) | Comparación con referencia clínica; tabla de offset por ubicación del nodo |
+ 
+ **Entregable de rama sugerido:** `feat(bio): firmware collar UBTN ESP32 (Fase U5)`.
+ 
+@@ -150,7 +157,9 @@
+ 
+ ### Fase U7 — MVP End-to-End y Escalado
+ 
+-**Objetivo:** validar la variable elegida (temperatura corporal recomendada) en un animal real: collar → BBB → cloud → persistencia → dashboard → alerta.
++**Objetivo:** validar la variable elegida en un animal real: nodo/collar → BBB → cloud → persistencia → dashboard → alerta.
++
++> ⚠️ **Nota de auditoría (A-7):** ADR-05 recomendó "temperatura corporal", pero el set base ADR-13 (ADS1292R+MAX30102+MPU6050) **no incluye** sensor de temperatura (NTC/DS18B20); `BODY_TEMP` solo aparece en el mapa de canal vía termistor dedicado. **Decisión abierta antes de U1:** (a) añadir NTC/DS18B20 al set del MVP, o (b) redirigir el MVP a HR/RR/ECG cubiertos por el set actual. Ver `UBTN_AUDIT_REVIEW.md` A-7.
+ 
+ | Tarea | Criterio de aceptación |
+ |---|---|

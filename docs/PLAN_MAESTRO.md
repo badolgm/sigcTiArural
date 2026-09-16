@@ -7,7 +7,7 @@ Roadmap Completo del Proyecto Productivo
 ## 📋 Información del Plan
 | Campo | Valor |
 |---|---|
-| Versión | 8.1 (Sincronizado Julio 2026 — incorpora evolución hacia EIARC) |
+| Versión | 8.6 (Sincronizado Septiembre 2026 — incorpora UBTN U0, Refactorización Global U0.5, Misión Crítica Preservación y Expansión, Transición a la Dashboard Ganadora y U1 — Bloqueantes Resueltos + Bootstrap) |
 | Estado | Fase 7 en Progreso + Fase 8 en Preparación + Fase 9 Planificada |
 | Fecha Inicio | 02-Nov-2025 |
 | Fecha Estimada Final | 31-Jul-2026 (continuidad y consolidación de Fases 7-8; Fase 9 sin fecha de cierre aún) |
@@ -285,12 +285,12 @@ gantt
 
 #### 9.2 Monitoreo Biométrico Individual de Ganado (contexto `telemetry` + `ai_advisory`)
 
-> **Actualización 2026-09-13:** esta tarea se formaliza como línea **UBTN — Universal Biological Telemetry Node** con diseño cerrado en [`docs/UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) (subdominio DDD `BiologicalTelemetry`), [`docs/UBTN_ROADMAP.md`](UBTN_ROADMAP.md) (Fases U0-U7) y [`docs/UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) (BBB-01 como gateway UBTN). El backlog inicial continúa:
+> **Actualización 2026-09-13:** esta tarea se formaliza como línea **UBTN — Universal Biological Telemetry Node**. La familia documental completa (26 documentos: arquitectura, ADRs 01-20, riesgos, dominio DDD, sensores, casos de uso, contratos, edge/IA, arquitectura profunda + auditoría) se encuentra en diseño cerrado y auditado; punto de entrada: [`docs/UBTN_INDEX.md`](UBTN_INDEX.md). Destacados: [`UBTN_ARCHITECTURE.md`](UBTN_ARCHITECTURE.md) (subdominio DDD `BiologicalTelemetry`), [`UBTN_ROADMAP.md`](UBTN_ROADMAP.md) (Fases U0-U7), [`UBTN_BBB_EDGE_GATEWAY.md`](UBTN_BBB_EDGE_GATEWAY.md) (BBB-01 como gateway UBTN) y [`UBTN_AUDIT_REVIEW.md`](UBTN_AUDIT_REVIEW.md) (auditoría crítica). El backlog inicial continúa:
 
 - [ ] Diseñar el contrato de datos del dispositivo sensórico portable (collar u otro formato según la especie): temperatura corporal, ritmo cardíaco, pH cuando aplique, y variables de movimiento/actividad
 - [ ] Definir `AnimalReadingPort` (o extender `SensorReadingRepositoryPort` existente) para que la ingesta de telemetría distinga entre lectura de cultivo/laboratorio y lectura biométrica de un animal individual
 
-> **Decisión de diseño (ADR-UBTN-01):** el diseño UBTN **no extiende** `SensorReadingRepositoryPort`; declara puertos propios del subdominio (`BiologicalReadingRepositoryPort`, `CollarDeviceRepositoryPort`, `BioAlertPort`) para no romper el Telemetry Context. `SensorReading` no se modifica.
+> **Decisión de diseño (ADR-UBTN-01):** el diseño UBTN **no extiende** `SensorReadingRepositoryPort`; declara puertos propios del subdominio (`BiologicalReadingRepositoryPort`, `BiologicalNodeRepositoryPort`, `BioAlertPort`) para no romper el Telemetry Context. `SensorReading` no se modifica.
 
 - [ ] Investigar y documentar rangos fisiológicos normales por especie (vacas, cerdos, gallinas) como base para la detección de anomalías (fiebre, estrés térmico, taquicardia, hipoactividad)
 - [ ] Aplicar ingeniería de características (feature engineering) sobre las series de tiempo de cada animal (medias móviles, variabilidad, tendencias) como insumo para los modelos
@@ -366,9 +366,56 @@ gantt
 |---|---|---|
 | MASTERDOC.md | docs/MASTERDOC.md | Arquitectura completa |
 | robotics_contracts.md | docs/architecture/robotics_contracts.md | Contratos JSON Robótica |
+| UBTN (familia documental) | docs/UBTN_INDEX.md | **Índice general, árbol y matriz de trazabilidad de la línea UBTN** (entrada recomendada) |
 | UBTN_ARCHITECTURE.md | docs/UBTN_ARCHITECTURE.md | Telemetría biológica UBTN — arquitectura y DDD (diseño, Fase 9) |
-| UBTN_ROADMAP.md | docs/UBTN_ROADMAP.md | UBTN — plan faseado U0-U7 (0% implementado) |
+| UBTN_ADR_INDEX.md | docs/UBTN_ADR_INDEX.md | UBTN — registro central de decisiones arquitectónicas (ADR 01-20) |
+| UBTN_DOMAIN_MODEL.md | docs/UBTN_DOMAIN_MODEL.md | UBTN — DDD táctico completo (entities, VOs, eventos, agregados) |
+| UBTN_USE_CASES.md | docs/UBTN_USE_CASES.md | UBTN — casos de uso por especie (8 líneas) |
+| UBTN_SENSOR_CATALOG.md | docs/UBTN_SENSOR_CATALOG.md | UBTN — comparativa de sensores y plataformas |
+| UBTN_DATA_CONTRACTS.md | docs/UBTN_DATA_CONTRACTS.md | UBTN — contratos JSON (diseño, NO implementar) |
+| UBTN_EDGE_AI_STRATEGY.md | docs/UBTN_EDGE_AI_STRATEGY.md | UBTN — edge-first, offline-first, TinyML e IA predictiva |
 | UBTN_BBB_EDGE_GATEWAY.md | docs/UBTN_BBB_EDGE_GATEWAY.md | UBTN — BBB-01 como gateway edge |
+| UBTN_RISK_ANALYSIS.md | docs/UBTN_RISK_ANALYSIS.md | UBTN — registro de riesgos y controles |
+| UBTN_RESEARCH_BACKLOG.md | docs/UBTN_RESEARCH_BACKLOG.md | UBTN — backlog de investigación priorizado |
+| UBTN_ROADMAP.md | docs/UBTN_ROADMAP.md | UBTN — plan faseado U0-U7 (0% implementado) |
+| UBTN_CONTEXT_MAP.md | docs/UBTN_CONTEXT_MAP.md | UBTN — Context Map DDD y relaciones entre dominios |
+| UBTN_AGGREGATE_DESIGN.md | docs/UBTN_AGGREGATE_DESIGN.md | UBTN — agregados y límites de consistencia |
+| UBTN_EVENT_STORMING.md | docs/UBTN_EVENT_STORMING.md | UBTN — Event Storming y hot-spots |
+| UBTN_TELEMETRY_EVOLUTION_STRATEGY.md | docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md | UBTN — ADR-17: evolución dual-track sin migrar |
+| UBTN_MQTT_ARCHITECTURE.md | docs/UBTN_MQTT_ARCHITECTURE.md | UBTN — broker, tópicos, QoS/RETAIN y LWT |
+| UBTN_DATABASE_EVOLUTION.md | docs/UBTN_DATABASE_EVOLUTION.md | UBTN — ADR-18: persistencia y escalado |
+| UBTN_HARDWARE_ROADMAP.md | docs/UBTN_HARDWARE_ROADMAP.md | UBTN — variantes de hardware V1-V4 |
+| UBTN_FRONTEND_UX_STRATEGY.md | docs/UBTN_FRONTEND_UX_STRATEGY.md | UBTN — ADR-20: UX por perfil |
+| UBTN_SECURITY_MODEL.md | docs/UBTN_SECURITY_MODEL.md | UBTN — ADR-19: seguridad y privacidad |
+| UBTN_OPERATIONS_RUNBOOK.md | docs/UBTN_OPERATIONS_RUNBOOK.md | UBTN — runbooks de operación |
+| UBTN_FIELD_DEPLOYMENT_GUIDE.md | docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md | UBTN — despliegue en campo |
+| UBTN_RESEARCH_GAPS.md | docs/UBTN_RESEARCH_GAPS.md | UBTN — gaps de investigación pendientes |
+| UBTN_AUDIT_REVIEW.md | docs/UBTN_AUDIT_REVIEW.md | UBTN — auditoría crítica de la familia |
+| SIGCTIARURAL_VISION_ALIGNMENT.md | docs/SIGCTIARURAL_VISION_ALIGNMENT.md | Refactorización Global U0.5 — identidad y no-negociables (entrada) |
+| SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md | docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md | Refactorización U0.5 — mapa de laboratorios y gaps |
+| SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md | docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md | Refactorización U0.5 — aprendizaje por hardware |
+| SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md | docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md | Refactorización U0.5 — IA canónica por persona |
+| SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md | docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md | Refactorización U0.5 — hardware ≠ capacidad |
+| SIGCTIARURAL_REFACTORING_GUARDRAILS.md | docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md | Refactorización U0.5 — qué no se rompe (GR-01..12) |
+| SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md | docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md | Refactorización U0.5 — spec visual del dashboard (sin código) |
+| SIGCTIARURAL_REFACTORING_AUDIT.md | docs/SIGCTIARURAL_REFACTORING_AUDIT.md | Refactorización U0.5 — auditoría crítica + veredicto |
+| SIGCTIARURAL_PRESERVATION_STRATEGY.md | docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md | Preservación — qué se preserva/protege (NADA DESAPARECE) |
+| SIGCTIARURAL_COMPONENT_MAP.md | docs/SIGCTIARURAL_COMPONENT_MAP.md | Preservación — inventario verificado del filesystem |
+| SIGCTIARURAL_EVOLUTION_MATRIX.md | docs/SIGCTIARURAL_EVOLUTION_MATRIX.md | Preservación — evolución por módulo (actual→futuro→compat→riesgo→prioridad) |
+| SIGCTIARURAL_NAVIGATION_EVOLUTION.md | docs/SIGCTIARURAL_NAVIGATION_EVOLUTION.md | Preservación — navegación aditiva sin romper hábitos |
+| SIGCTIARURAL_IMPLEMENTATION_READINESS.md | docs/SIGCTIARURAL_IMPLEMENTATION_READINESS.md | Preservación — qué está listo / qué no (checklist U1) |
+| SIGCTIARURAL_PRESERVATION_AUDIT.md | docs/SIGCTIARURAL_PRESERVATION_AUDIT.md | Preservación — auditoría crítica (PA-01..PA-12) |
+| SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md | docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md | Migración — transición a la Dashboard Ganadora (7 fases) |
+| SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md | docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md | Migración — clasificación PRESERVAR/AMPLIAR/MOVER/DEPRECAR/NO TOCAR |
+| SIGCTIARURAL_PAGE_MAPPING.md | docs/SIGCTIARURAL_PAGE_MAPPING.md | Migración — mapa página actual → página futura |
+| SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md | docs/SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md | Migración — Dashboard actual vs Ganadora (sin eliminar) |
+| SIGCTIARURAL_ROUTE_EVOLUTION.md | docs/SIGCTIARURAL_ROUTE_EVOLUTION.md | Migración — inventario de rutas aditivas y redirects |
+| SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md | docs/SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md | Migración — plan del Hardware Catalog (preserva BBB) |
+| SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md | docs/SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md | Migración — preservación por área (7): nada queda huérfano |
+| SIGCTIARURAL_MIGRATION_AUDIT.md | docs/SIGCTIARURAL_MIGRATION_AUDIT.md | Migración — auditoría mínima (riesgos R-01..12, decisiones bloqueantes) |
+| SIGCTIARURAL_U1_GO_NO_GO.md | docs/SIGCTIARURAL_U1_GO_NO_GO.md | U1 — auditoría final del gate (NO GO documentado) |
+| SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md | docs/SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md | U1 — resolución de los 6 bloqueantes D-A/D-B/D-C/D-D/D-A-7/R-13 (→ GO CON CONDICIONES) |
+| SIGCTIARURAL_U1_BOOTSTRAP.md | docs/SIGCTIARURAL_U1_BOOTSTRAP.md | U1 — plan de ejecución U1.1-U1.4 (primer archivo, snapshot, pruebas, rollback → GO) |
 | README.md | Raíz del proyecto | Introducción y setup |
 | API_REFERENCE.md | docs/API_REFERENCE.md | Documentación de APIs |
 | DEPLOYMENT.md | docs/DEPLOYMENT.md | Guía de despliegue |
@@ -378,7 +425,7 @@ gantt
 🌱 "El éxito es la suma de pequeños esfuerzos repetidos día tras día."
 — Proyecto SIGC&T Rural / EIARC
 
-Última actualización: 13 de Septiembre, 2026 (UBTN — línea de telemetría biológica diseñada en Fase 9)
+Última actualización: 14 de Septiembre, 2026 (Refactorización Global U0.5 + Misión Crítica Preservación y Expansión + Transición a la Dashboard Ganadora + U1: Bloqueantes Resueltos y Bootstrap)
 Próxima revisión: A definir según cierre de Fase 7-8
-Versión: 8.1
+Versión: 8.6
 </div>
