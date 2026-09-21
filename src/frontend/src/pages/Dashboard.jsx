@@ -129,12 +129,49 @@ const futureNodes = [
   },
 ];
 
+// UX-RC2-ACCORDIONS — panel colapsable reutilizable (cerrado por defecto; ▶ rota a ▼ al abrir; transición suave con grid-rows)
+const AccordionSection = ({ icon, title, badge, color, open, onToggle, children }) => (
+    <div className="mb-4 rounded-lg border bg-gray-900 bg-opacity-40 overflow-hidden" style={{ borderColor: `${color}40` }}>
+        <button
+            type="button"
+            onClick={onToggle}
+            aria-expanded={open}
+            className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left cursor-pointer transition-colors duration-300 hover:bg-gray-800/60"
+            style={{ background: open ? `${color}08` : 'transparent' }}>
+            <span className="flex items-center gap-2 min-w-0">
+                <span className="text-[10px] uppercase tracking-widest font-bold flex items-center gap-2" style={{ color }}>
+                    {icon} {title}
+                </span>
+                {badge !== undefined && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded border bg-gray-900 bg-opacity-80 whitespace-nowrap" style={{ borderColor: `${color}50`, color }}>
+                        {badge}
+                    </span>
+                )}
+            </span>
+            <span className={`text-[10px] font-mono transition-transform duration-300 ${open ? 'rotate-90' : ''}`} style={{ color }}>
+                ▶
+            </span>
+        </button>
+        <div className={`grid transition-all duration-500 ease-in-out ${open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+            <div className="overflow-hidden">
+                <div className="px-4 pb-4">
+                    {children}
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => { 
     const [loginOpen, setLoginOpen] = useState(false);
     const [telemetryEnvelope, setTelemetryEnvelope] = useState(null);
     const [telemetryLoading, setTelemetryLoading] = useState(true);
     const [telemetryError, setTelemetryError] = useState(null);
     const onRequireAuth = () => setLoginOpen(true);
+    // UX-RC2-ACCORDIONS — paneles colapsables (cerrados inicialmente; transición con grid-rows)
+    const [openMap, setOpenMap] = useState(false);
+    const [openHardware, setOpenHardware] = useState(false);
+    const [openRoadmap, setOpenRoadmap] = useState(false);
 
     useEffect(() => {
         let isMounted = true;
@@ -298,7 +335,7 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                     </p>
                 </div>
 
-                {/* 1b. MAPA DE DISPOSITIVOS (U2.4 — aditivo, primer nivel) */}
+                {/* 1b. MAPA DE DISPOSITIVOS (U2.4 + UX-RC2-ACCORDIONS — 3 paneles colapsables, cerrados inicialmente) */}
                 <div className="mb-8 p-6 rounded-xl border bg-gray-900 bg-opacity-70" style={{ borderColor: `${NEON_COLORS.primary}50`, boxShadow: `0 0 15px ${NEON_COLORS.primary}20` }}>
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: NEON_COLORS.primary, textShadow: `0 0 8px ${NEON_COLORS.primary}60` }}>
@@ -309,12 +346,12 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                         </span>
                     </div>
 
-                    {/* Grupo A: NODOS OPERATIVOS (BBB) — zona del clúster vivo */}
-                    <div className="mb-4 p-4 rounded-lg border bg-gray-900 bg-opacity-40" style={{ borderColor: '#39FF1450' }}>
+                    {/* Panel 1 — MAPA DE DISPOSITIVOS: NODOS OPERATIVOS (BBB) — zona del clúster vivo */}
+                    <AccordionSection icon="💠" title="Nodos Operativos" badge={`${nodes.length} nodos`} color="#39FF14" open={openMap} onToggle={() => setOpenMap(v => !v)}>
                         <div className="flex items-center justify-between mb-3">
-                            <h4 className="text-[10px] uppercase tracking-widest font-bold text-[#39FF14]">
-                                💠 Nodos Operativos <span className="text-gray-500">({nodes.length})</span>
-                            </h4>
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-[#39FF14]">
+                                Nodos Operativos <span className="text-gray-500">({nodes.length})</span>
+                            </span>
                             <Link to="/dashboard" className="text-[10px] text-gray-500 hover:text-[#39FF14] transition-colors">
                                 Ver operación →
                             </Link>
@@ -335,14 +372,14 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                                 );
                             })}
                         </div>
-                    </div>
+                    </AccordionSection>
 
-                    {/* Grupo B: HARDWARE DISPONIBLE — zona del catálogo (fichas) */}
-                    <div className="mb-4 p-4 rounded-lg border bg-gray-900 bg-opacity-40" style={{ borderColor: `${NEON_COLORS.primary}50` }}>
+                    {/* Panel 2 — HARDWARE DISPONIBLE — zona del catálogo (fichas) */}
+                    <AccordionSection icon="🛒" title="Hardware Disponible" badge={`${hardwareCatalogEntries.filter((e) => e.id !== 'BBB').length} fichas`} color={NEON_COLORS.primary} open={openHardware} onToggle={() => setOpenHardware(v => !v)}>
                         <div className="flex items-center justify-between mb-3">
-                            <h4 className="text-[10px] uppercase tracking-widest font-bold" style={{ color: NEON_COLORS.primary }}>
-                                🛒 Hardware Disponible <span className="text-gray-500">({hardwareCatalogEntries.filter((e) => e.id !== 'BBB').length})</span>
-                            </h4>
+                            <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: NEON_COLORS.primary }}>
+                                Hardware Disponible <span className="text-gray-500">({hardwareCatalogEntries.filter((e) => e.id !== 'BBB').length})</span>
+                            </span>
                             <Link to="/hardware-catalog" className="text-[10px] text-gray-500 hover:text-[#00FFFF] transition-colors">
                                 Ver catálogo →
                             </Link>
@@ -359,14 +396,14 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                                 </Link>
                             ))}
                         </div>
-                    </div>
+                    </AccordionSection>
 
-                    {/* Grupo C: ROADMAP TECNOLÓGICO — zona de futuras plataformas */}
-                    <div className="p-4 rounded-lg border bg-gray-900 bg-opacity-40" style={{ borderColor: '#94a3b850' }}>
+                    {/* Panel 3 — ROADMAP TECNOLÓGICO — zona de futuras plataformas */}
+                    <AccordionSection icon="🧭" title="Roadmap Tecnológico" badge={`${futureNodes.length} plataformas`} color="#94a3b8" open={openRoadmap} onToggle={() => setOpenRoadmap(v => !v)}>
                         <div className="flex items-center justify-between mb-3">
-                            <h4 className="text-[10px] uppercase tracking-widest font-bold text-gray-300">
-                                🧭 Roadmap Tecnológico <span className="text-gray-500">({futureNodes.length})</span>
-                            </h4>
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-gray-300">
+                                Roadmap Tecnológico <span className="text-gray-500">({futureNodes.length})</span>
+                            </span>
                             <span className="text-[10px] text-gray-600 uppercase tracking-wider">Planeado · no implementado</span>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
@@ -381,7 +418,7 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                                 </Link>
                             ))}
                         </div>
-                    </div>
+                    </AccordionSection>
                 </div>
 
                 {/* 1c. KPIs GANADORA (U3.3 — ejecutivos, 7 métricas) */}
@@ -419,62 +456,7 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                     ))}
                 </div>
 
-                {/* 1e. ACCESO RÁPIDO A LABORATORIOS (U2.2 — aditivo, primer nivel) */}
-                <div className="mb-8 p-4 rounded-xl border bg-gray-900 bg-opacity-70" style={{ borderColor: `${NEON_COLORS.primary}50`, boxShadow: `0 0 15px ${NEON_COLORS.primary}20` }}>
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: NEON_COLORS.primary, textShadow: `0 0 8px ${NEON_COLORS.primary}60` }}>
-                            🧬 Acceso Rápido a Laboratorios
-                        </h3>
-                        <Link to="/labs" className="text-xs text-gray-500 hover:text-[#00FFFF] transition-colors">Ver todos →</Link>
-                    </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
-                        {LAB_QUICK_ACCESS.map((lab) => (
-                            <Link
-                                key={lab.to}
-                                to={lab.to}
-                                className="p-3 rounded-lg border bg-gray-900 bg-opacity-60 text-center transition-all duration-300 hover:scale-[1.05]"
-                                style={{ borderColor: `${lab.accent}50`, boxShadow: `0 0 12px ${lab.accent}20` }}
-                            >
-                                <div className="text-2xl mb-1">{lab.icon}</div>
-                                <div className="text-[11px] font-bold uppercase tracking-wide" style={{ color: lab.accent }}>{lab.title}</div>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-
-                {/* 1f. ACTIVIDAD RECIENTE (U2 — aditiva, honesta) */}
-                <div className="mb-8 p-4 rounded-xl border bg-gray-900 bg-opacity-70" style={{ borderColor: '#334155' }}>
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3">🕓 Actividad reciente</h3>
-                    <ul className="space-y-2 text-xs">
-                        <li className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: onlineCount > 0 ? NEON_COLORS.secondary : '#374151' }}></span>
-                            <span className="text-gray-400">Cluster BBB:</span>
-                            <span className="text-gray-300">{onlineCount} operativos · {alertCount} alerta · {offlineCount} offline</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: sourceMode === 'live' ? NEON_COLORS.secondary : '#f59e0b' }}></span>
-                            <span className="text-gray-400">Telemetría:</span>
-                            <span className="text-gray-300">{sourceMode === 'live' ? 'Flujo en vivo conectado' : 'Datos de referencia / sin flujo activo'}</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: NEON_COLORS.primary }}></span>
-                            <span className="text-gray-400">Catálogo:</span>
-                            <span className="text-gray-300">{hardwareCount} plataformas documentadas</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: NEON_COLORS.primary }}></span>
-                            <span className="text-gray-400">Conocimiento:</span>
-                            <span className="text-gray-300">{docsCount} documentos indexados</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: NEON_COLORS.secondary }}></span>
-                            <span className="text-gray-400">Proyectos:</span>
-                            <span className="text-gray-300">{projectsCount} capacidades registradas</span>
-                        </li>
-                    </ul>
-                </div>
-
-                {/* 1g. PANEL ESTADO DEL SISTEMA (U3.3 — aditivo, solo datos existentes, sin métricas inventadas) */}
+                {/* 1e. PANEL ESTADO DEL SISTEMA (U3.3 — aditivo, solo datos existentes, sin métricas inventadas) */}
                 <div className="mb-8 p-6 rounded-xl border bg-gray-900 bg-opacity-70" style={{ borderColor: `${NEON_COLORS.secondary}50`, boxShadow: `0 0 15px ${NEON_COLORS.secondary}20` }}>
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: NEON_COLORS.secondary, textShadow: `0 0 8px ${NEON_COLORS.secondary}60` }}>
@@ -557,6 +539,50 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                     error={telemetryError}
                 />
 
+                {/* 2b. TELEMETRÍA GLOBAL AMPLIADA (UX-RC2-TELEMETRY-PRIORITY — subida tras Tiempo Real, full-width y sin compact; prepara el espacio para lecturas reales de BBB-01/02/03) */}
+                <div className="mb-8 rounded-xl border bg-gray-900 bg-opacity-70" style={{ borderColor: `${NEON_COLORS.secondary}40`, boxShadow: `0 0 15px ${NEON_COLORS.secondary}20` }}>
+                    <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+                        <span className="flex items-center gap-2 text-[#39FF14] text-base font-bold uppercase">
+                            📈 Telemetría Global
+                            <span className="text-[10px] font-mono text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">
+                                {telemetryItems.length} · {sourceMode === 'live' ? 'LIVE' : sourceMode === 'simulated' ? 'SIM' : 'REF'}
+                            </span>
+                            <span className="text-[10px] font-mono text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">BBB-01 · BBB-02 · BBB-03</span>
+                        </span>
+                        <span className="flex flex-wrap items-center gap-2">
+                            {(telemetryChartData.length > 0) && (
+                                <>
+                                    <span className="text-[10px] font-mono px-2 py-1 rounded border border-gray-700 text-gray-400">
+                                        🌡️ {telemetryChartData[telemetryChartData.length - 1]?.temp ?? '—'}°C
+                                    </span>
+                                    <span className="text-[10px] font-mono px-2 py-1 rounded border border-gray-700 text-gray-400">
+                                        💧 {telemetryChartData[telemetryChartData.length - 1]?.humidity ?? '—'}%
+                                    </span>
+                                </>
+                            )}
+                            <span className="text-[10px] text-gray-400 italic">preparada para lecturas reales</span>
+                        </span>
+                    </div>
+                    <div className="px-4 pb-4">
+                        <GlobalChart data={telemetryChartData} />
+                        {telemetryLoading && (
+                            <p className="mt-3 text-sm text-gray-400">
+                                Cargando telemetría oficial...
+                            </p>
+                        )}
+                        {!telemetryLoading && telemetryError && (
+                            <p className="mt-3 text-sm font-semibold text-[#FF3131]">
+                                La grafica se oculto porque la telemetria oficial no esta disponible.
+                            </p>
+                        )}
+                        {!telemetryLoading && !telemetryError && telemetryChartData.length === 0 && (
+                            <p className="mt-3 text-sm text-gray-400">
+                                No hay lecturas oficiales disponibles para graficar.
+                            </p>
+                        )}
+                    </div>
+                </div>
+
                 {/* 3. FRANJA HARDWARE CONECTADO (U3.7 — reemplaza el grid BBB antiguo por chips del ecosistema; la info BBB persiste en el Mapa Grupo A y en chips) */}
                 <details className="group mb-8 rounded-xl border bg-gray-900 bg-opacity-70" style={{ borderColor: `${NEON_COLORS.primary}40` }}>
                     <summary className="cursor-pointer list-none p-4 flex flex-wrap items-center justify-between gap-3 select-none">
@@ -615,51 +641,63 @@ const Dashboard = ({ nodes = initialNodes, chartData = defaultChartData }) => {
                     </div>
                 </details>
 
-                {/* 4-6. MÓDULOS EJECUTIVOS COMPACTOS (U3.8 — franja única de 3 módulos; mismo contenido que los acordeones 4/5/6, representación ejecutiva) */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-                    {/* MÓDULO 4: TELEMETRÍA GLOBAL */}
-                    <details className="group rounded-xl border bg-gray-900 bg-opacity-70 h-fit" style={{ borderColor: `${NEON_COLORS.secondary}40` }}>
-                        <summary className="cursor-pointer list-none p-3 flex flex-col gap-1 select-none">
-                            <span className="flex items-center gap-2 text-[#39FF14] text-sm font-bold uppercase">
-                                📈 Telemetría Global
-                                <span className="text-[10px] font-mono text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">
-                                    {telemetryItems.length} · {sourceMode === 'live' ? 'LIVE' : sourceMode === 'simulated' ? 'SIM' : 'REF'}
-                                </span>
-                            </span>
-                            <span className="flex flex-wrap items-center gap-2">
-                                {(telemetryChartData.length > 0) && (
-                                    <>
-                                        <span className="text-[10px] font-mono px-2 py-1 rounded border border-gray-700 text-gray-400">
-                                            🌡️ {telemetryChartData[telemetryChartData.length - 1]?.temp ?? '—'}°C
-                                        </span>
-                                        <span className="text-[10px] font-mono px-2 py-1 rounded border border-gray-700 text-gray-400">
-                                            💧 {telemetryChartData[telemetryChartData.length - 1]?.humidity ?? '—'}%
-                                        </span>
-                                    </>
-                                )}
-                                <span className="text-[10px] text-gray-400 italic">▸ gráfica</span>
-                            </span>
-                        </summary>
-                        <div className="px-3 pb-3">
-                            <GlobalChart data={telemetryChartData} compact />
-                            {telemetryLoading && (
-                                <p className="mt-3 text-sm text-gray-400">
-                                    Cargando telemetría oficial...
-                                </p>
-                            )}
-                            {!telemetryLoading && telemetryError && (
-                                <p className="mt-3 text-sm font-semibold text-[#FF3131]">
-                                    La grafica se oculto porque la telemetria oficial no esta disponible.
-                                </p>
-                            )}
-                            {!telemetryLoading && !telemetryError && telemetryChartData.length === 0 && (
-                                <p className="mt-3 text-sm text-gray-400">
-                                    No hay lecturas oficiales disponibles para graficar.
-                                </p>
-                            )}
-                        </div>
-                    </details>
+                {/* 1f. ACCESO RÁPIDO A LABORATORIOS (U2.2 — aditivo, primer nivel) — reubicado tras Hardware Conectado (UX-RC2-TELEMETRY-PRIORITY) */}
+                <div className="mb-8 p-4 rounded-xl border bg-gray-900 bg-opacity-70" style={{ borderColor: `${NEON_COLORS.primary}50`, boxShadow: `0 0 15px ${NEON_COLORS.primary}20` }}>
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: NEON_COLORS.primary, textShadow: `0 0 8px ${NEON_COLORS.primary}60` }}>
+                            🧬 Acceso Rápido a Laboratorios
+                        </h3>
+                        <Link to="/labs" className="text-xs text-gray-500 hover:text-[#00FFFF] transition-colors">Ver todos →</Link>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
+                        {LAB_QUICK_ACCESS.map((lab) => (
+                            <Link
+                                key={lab.to}
+                                to={lab.to}
+                                className="p-3 rounded-lg border bg-gray-900 bg-opacity-60 text-center transition-all duration-300 hover:scale-[1.05]"
+                                style={{ borderColor: `${lab.accent}50`, boxShadow: `0 0 12px ${lab.accent}20` }}
+                            >
+                                <div className="text-2xl mb-1">{lab.icon}</div>
+                                <div className="text-[11px] font-bold uppercase tracking-wide" style={{ color: lab.accent }}>{lab.title}</div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
 
+                {/* 1g. ACTIVIDAD RECIENTE (U2 — aditiva, honesta) — reubicada tras Laboratorios (UX-RC2-TELEMETRY-PRIORITY) */}
+                <div className="mb-8 p-4 rounded-xl border bg-gray-900 bg-opacity-70" style={{ borderColor: '#334155' }}>
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-3">🕓 Actividad reciente</h3>
+                    <ul className="space-y-2 text-xs">
+                        <li className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: onlineCount > 0 ? NEON_COLORS.secondary : '#374151' }}></span>
+                            <span className="text-gray-400">Cluster BBB:</span>
+                            <span className="text-gray-300">{onlineCount} operativos · {alertCount} alerta · {offlineCount} offline</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: sourceMode === 'live' ? NEON_COLORS.secondary : '#f59e0b' }}></span>
+                            <span className="text-gray-400">Telemetría:</span>
+                            <span className="text-gray-300">{sourceMode === 'live' ? 'Flujo en vivo conectado' : 'Datos de referencia / sin flujo activo'}</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: NEON_COLORS.primary }}></span>
+                            <span className="text-gray-400">Catálogo:</span>
+                            <span className="text-gray-300">{hardwareCount} plataformas documentadas</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: NEON_COLORS.primary }}></span>
+                            <span className="text-gray-400">Conocimiento:</span>
+                            <span className="text-gray-300">{docsCount} documentos indexados</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: NEON_COLORS.secondary }}></span>
+                            <span className="text-gray-400">Proyectos:</span>
+                            <span className="text-gray-300">{projectsCount} capacidades registradas</span>
+                        </li>
+                    </ul>
+                </div>
+
+                {/* 5-6. MÓDULOS EJECUTIVOS COMPACTOS (U3.8 — implementaciones de futuro y fuentes oficiales; Telemetría Global vive arriba, full-width) */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
                     {/* MÓDULO 5: INTEGRACIONES FUTURAS */}
                     <details className="group rounded-xl border bg-gray-900 bg-opacity-70 h-fit" style={{ borderColor: `${NEON_COLORS.primary}40` }}>
                         <summary className="cursor-pointer list-none p-3 flex flex-col gap-1 select-none">
