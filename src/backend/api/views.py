@@ -7,6 +7,8 @@ from .serializers import SensorReadingSerializer, RobotSerializer, RobotTelemetr
 from django.utils import timezone
 from datetime import datetime, timedelta
 import random
+import logging
+from rest_framework import exceptions as drf_exceptions
 
 # ==============================================================================
 # VIEWS LEGACY (MANTENIDAS PARA COMPATIBILIDAD
@@ -72,6 +74,16 @@ try:
         get_sensor_reading_repository,
         get_ai_service,
         get_notification_service,
+    )
+    from contexts.telemetry.application.commands.registrar_lectura_sensor_command import (
+        RegistrarLecturaSensorCommand,
+    )
+    from contexts.telemetry.domain.entities import SensorReading as TelemetrySensorReading
+    from contexts.telemetry.domain.value_objects import Temperature, Humidity, SensorId
+    from contexts.telemetry.domain.exceptions import DomainException
+    from contexts.telemetry.infrastructure.config.dependencies import (
+        get_sensor_reading_repository as get_context_sensor_reading_repository,
+        get_telemetry_event_bus,
     )
     HEXAGONAL_V3_AVAILABLE = True
 except ImportError:
@@ -185,6 +197,134 @@ if HEXAGONAL_V3_AVAILABLE:
                 "datos_analizados": datos,
                 "ia_feedback": sugerencia
             })
+
+    class TelemetryIngestV3View(APIView):
+        """
+        Adaptador HTTP de entrada para ingestar lecturas reales de sensores.
+
+        Fase F1 del plan docs/SIGCTIARURAL_F1_FIRST_REAL_SENSOR.md: recibe
+        una lectura por POST, la valida transformando a objetos de valor de
+        dominio, la persiste vía RegistrarLecturaSensorCommand y publica la
+        LabSignal 'sensor_reading'. Devuelve un sobre V3 con
+        source_mode='live' y, en errores de contrato, 400 con source_mode
+        'fallback' (honestidad de estado).
+        """
+
+        permission_classes = [AllowAny]
+
+        # Límite de transporte, defensivo contra lecturas que no caben en el
+        # modelo (api.models.SensorReading.sensor_id, max_length=50). El
+        # dominio valida no-vacío; este chequeo evita un DataError en BD.
+        MAX_SENSOR_ID_LENGTH = 50
+
+        def post(self, request):
+            if not isinstance(request.data, dict):
+                return self._invalid_payload(
+                    "El cuerpo debe ser un objeto JSON con sensor_id, temperature y humidity"
+                )
+
+            try:
+                sensor_id_raw = request.data["sensor_id"]
+                if not isinstance(sensor_id_raw, str):
+                    return self._invalid_payload("sensor_id debe ser una cadena de texto")
+                if len(sensor_id_raw.strip()) > self.MAX_SENSOR_ID_LENGTH:
+                    return self._invalid_payload(
+                        f"sensor_id no puede superar {self.MAX_SENSOR_ID_LENGTH} caracteres"
+                    )
+                temperature_raw = self._parse_number(request.data, "temperature")
+                humidity_raw = self._parse_number(request.data, "humidity")
+            except (KeyError, TypeError, ValueError) as exc:
+                return self._invalid_payload(str(exc))
+
+            try:
+                timestamp = self._parse_timestamp(request.data.get("timestamp"))
+                reading_kwargs = {
+                    "sensor_id": SensorId(sensor_id_raw),
+                    "temperature": Temperature(temperature_raw),
+                    "humidity": Humidity(humidity_raw),
+                }
+                if timestamp is not None:
+                    reading_kwargs["timestamp"] = timestamp
+                reading = TelemetrySensorReading(**reading_kwargs)
+            except (DomainException, ValueError) as exc:
+                return self._invalid_payload(str(exc))
+
+            try:
+                command = RegistrarLecturaSensorCommand(
+                    repository=get_context_sensor_reading_repository(),
+                    event_bus=get_telemetry_event_bus(),
+                )
+                guardada = command.ejecutar(reading)
+            except Exception as exc:
+                logger = logging.getLogger(__name__)
+                logger.exception("Falló la persistencia de la lectura de sensor")
+                return Response({
+                    "context": "telemetry",
+                    "contract_version": "v1",
+                    "operation": "register_reading",
+                    "source_mode": "fallback",
+                    "error": {
+                        "code": "storage_error",
+                        "message": "Lectura recibida pero no pudo persistirse.",
+                        "detail": str(exc),
+                    },
+                }, status=500)
+
+            return Response({
+                "context": "telemetry",
+                "contract_version": "v1",
+                "operation": "register_reading",
+                "source_mode": "live",
+                "item": {
+                    "reading_id": guardada.id,
+                    "sensor_id": str(guardada.sensor_id),
+                    "timestamp": guardada.timestamp.isoformat(),
+                    "temperature": guardada.temperature.value,
+                    "humidity": guardada.humidity.value,
+                },
+            }, status=201)
+
+        def handle_exception(self, exc):
+            if isinstance(exc, drf_exceptions.ParseError):
+                return self._invalid_payload("JSON inválido o malformado en el cuerpo del request")
+            return super().handle_exception(exc)
+
+        @staticmethod
+        def _parse_number(data, field):
+            """Convierte el campo a float rechazando bool y no numéricos de forma
+            explícita (bool es subclase de int en Python: True == 1.0 como float)."""
+            raw = data.get(field)
+            if raw is None:
+                raise ValueError(f"El campo '{field}' es obligatorio")
+            if isinstance(raw, bool):
+                raise ValueError(f"El campo '{field}' no puede ser booleano")
+            return float(raw)
+
+        @staticmethod
+        def _parse_timestamp(raw):
+            if raw is None or str(raw).strip() == "":
+                return timezone.now()
+            normalized = str(raw).strip().replace("Z", "+00:00")
+            parsed = datetime.fromisoformat(normalized)
+            if parsed.tzinfo is None:
+                # Timestamp sin zona horaria: se asume UTC para que Django
+                # (USE_TZ activo) lo persista sin rondas naive/aware.
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed
+
+        @staticmethod
+        def _invalid_payload(detail):
+            return Response({
+                "context": "telemetry",
+                "contract_version": "v1",
+                "operation": "register_reading",
+                "source_mode": "fallback",
+                "error": {
+                    "code": "invalid_payload",
+                    "message": "Lectura no registrada: datos fuera de contrato.",
+                    "detail": detail,
+                },
+            }, status=400)
 
 if AI_INFERENCE_V3_AVAILABLE:
     class AIInferenceV3View(APIView):

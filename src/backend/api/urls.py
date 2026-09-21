@@ -28,10 +28,11 @@ urlpatterns = [
 # V3 ENDPOINTS (HEXAGONAL COMPLETA)
 # ==============================================================================
 try:
-    from .views import TelemetryHistoryV3View, AICropAdviceV3View
+    from .views import TelemetryHistoryV3View, AICropAdviceV3View, TelemetryIngestV3View
     urlpatterns += [
         path('v3/telemetry/history/', TelemetryHistoryV3View.as_view(), name='telemetry-history-v3'),
         path('v3/ai/crop-advice/', AICropAdviceV3View.as_view(), name='ai-crop-advice-v3'),
+        path('v3/telemetry/readings/', TelemetryIngestV3View.as_view(), name='telemetry-ingest-v3'),
     ]
 except ImportError:
     pass
