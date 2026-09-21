@@ -1,9 +1,9 @@
 # SIGCTiArural — INVENTARIO DEL DATASET V2 (Estado Físico Real)
 
 **Documento:** SIGCTIARURAL_DATASET_V2_INVENTORY
-**Fecha:** 2026-09-15 · **Rama:** `feature/ubtn-biological-telemetry` (working tree limpio)
+**Fecha:** 2026-09-15 · **Rama:** `feature/ubtn-biological-telemetry` (trabajo commiteado hasta `0989ec9`; ver `AGENTS.md` para estado git vivo)
 **Tipo:** Inventario verificado y preparación (MISIÓN DATASET V2 INVENTORY).
-**Regla suprema:** NO IMPLEMENTAR · NO ENTRENAR · NO GENERAR CÓDIGO · NO CREAR PIPELINES · NO MODIFICAR DOCUMENTOS EXISTENTES. SOLO INVENTARIAR Y PREPARAR.
+**Regla suprema:** NO IMPLEMENTAR · NO ENTRENAR · NO GENERAR CÓDIGO · NO CREAR PIPELINES · NO MODIFICAR DOCUMENTOS EXISTENTES. SOLO INVENTARIAR Y PREPARAR. (*"working tree limpio" del original actualizado 2026-09-21: hoy `Dashboard.jsx` M + `dashboard_rc2_ui.patch` — asunto RC-2/UX, no afecta este inventario.*)
 
 **Naturaleza de la evidencia:** TODOS los estados de este documento fueron **verificados físicamente en disco** (2026-09-15) mediante recorridos de directorios, búsquedas de archivos, chequeo de manifests YAML y rastreo de rutas externas. No es diseño: es el inventario real.
 

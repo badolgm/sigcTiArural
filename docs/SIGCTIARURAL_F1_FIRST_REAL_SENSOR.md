@@ -1,9 +1,9 @@
 # SIGCTiArural — FASE F1 · Primer Dato Real de Sensor (Diseño)
 
-Estado: **DISEÑO / FASE F1** · Fecha: 2026-09-20 · Rama: `feature/ubtn-biological-telemetry`
+Estado: **REAL / IMPLEMENTADO Y COMMITEADO** · Fecha diseño: 2026-09-20 · Commit: `941a55d` (feat f1, 2026-09-21) · Rama: `feature/ubtn-biological-telemetry`
 Origen: `docs/SIGCTIARURAL_BBB_TELEMETRY_READINESS.md` (brecha F1: no existe endpoint de ingesta).
-Regla: **NO IMPLEMENTAR.** Este documento especifica el camino mínimo de diseño para el primer dato real.
-Alcance: **BBB-03 → HTTP POST → Telemetry V3 → Dashboard LIVE.** Sin MQTT, sin bridge, sin código BBB.
+Estado anterior: **DISEÑO / FASE F1** — este documento especificó el camino mínimo; fue implementado y commiteado sin alteración del contrato (F1.1: 60/60 tests). El diseño original se conserva íntegro abajo como referencia.
+Alcance: **BBB-03 → HTTP POST → Telemetry V3 → Dashboard LIVE.** Sin MQTT, sin bridge, sin código BBB (pendiente de ejecución física).
 
 ---
 

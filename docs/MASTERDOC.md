@@ -74,7 +74,7 @@ El proyecto atraviesa una migración activa hacia **Modular Monolith con límite
 |---|---|---|---|
 | **Legacy (V1)** | `api/views.py`, `api/models.py` | Activa, sin instrumentar | ViewSets acoplados directo al ORM. Endpoints: `/api/telemetry/history/`, `RobotViewSet`, etc. |
 | **V2 (Strangler Fig, mayo 2026)** | `api/logic/{domain,ports,adapters}/` | Activa, **en proceso de deprecación** | Strategy + Factory para los 4 laboratorios. Adaptador `DjangoRepository` instrumentado con decorador `@deprecated_legacy` (`obtener_por_id`, `guardar`, `listar_todos`) desde 2026-07-04 — dispara `DeprecationWarning` en cada invocación, verificado por test. |
-| **V3 (Hexagonal estricta, recuperada 2026-07-03)** | `core/domain/`, `core/ports/`, `infrastructure/`, `interfaces/` | Activa, expuesta en `/api/v3/*` | Dominio sin dependencias de Django. Inyección de dependencias vía `infrastructure/config/dependencies.py`. Endpoints `TelemetryHistoryV3View`, `AICropAdviceV3View` con fallback silencioso a V2 si el import de `core`/`infrastructure` falla (deuda técnica pendiente: el fallback oculta errores reales de configuración, no solo ausencia del módulo). |
+| **V3 (Hexagonal estricta, recuperada 2026-07-03)** | `core/domain/`, `core/ports/`, `infrastructure/`, `interfaces/` | Activa, expuesta en `/api/v3/*` | Dominio sin dependencias de Django. Inyección de dependencias vía `infrastructure/config/dependencies.py`. Endpoints `TelemetryHistoryV3View`, `AICropAdviceV3View`, y desde **F1 (2026-09-21, commit `941a55d`) `TelemetryIngestV3View` (`POST /api/v3/telemetry/readings/`) — primer endpoint de ingesta real de `SensorReading`** con `source_mode:"live"`. Los tres con fallback silencioso a V2 si el import de `core`/`infrastructure` falla (deuda técnica pendiente: el fallback oculta errores reales de configuración, no solo ausencia del módulo). |
 
 `urls.py` expone simultáneamente V1, V2 y V3. No hay fecha de remoción fijada para V1 y V2 — pendiente definir en el plan de migración (ver `HEXAGONAL_REFACTOR_PLAN.md`).
 
@@ -120,6 +120,8 @@ graph TD
 ### 🛡️ Red de seguridad (tests)
 
 **58 tests identificados** (`pytest tests/ -q --collect-only` desde `src/backend/`), cubriendo dominio (factories, services, strategies) e infraestructura (`test_persistence_infra.py`, `test_adapters_infra.py`). De estos, **56 verificados como pasando en entorno sin infraestructura adicional**; **2 dependen de una conexión activa a PostgreSQL** (`test_django_repository_guardar_y_obtener`, `test_django_repository_listar_todos` en `test_persistence_infra.py`) y no se ejecutan como test de dominio puro — son test de integración real, no mockeado. Ver `CONTINUITY_RUNBOOK.md` para variables de entorno de conexión.
+
+> **ACTUALIZACIÓN F1 (2026-09-21, STATE SYNCHRONIZATION):** la suite backend quedó verificada **60/60** tras F1 (17 tests nuevos de caracterización del adaptador `TelemetryIngestV3View` en `src/backend/tests/api/test_telemetry_ingest_v3_view.py`, sin roturas en `pytest tests/contexts/telemetry tests/api -q`). Detalle en `SIGCTIARURAL_F1_FIRST_REAL_SENSOR.md` y `SIGCTIARURAL_F1_PRECOMMIT_REVIEW.md`. Los conteos históricos de esta sección se conservan arriba como registro.
 
 ### 1.2 Arquitectura objetivo actual (Declaración de dirección técnica — 2026-07-04)
 

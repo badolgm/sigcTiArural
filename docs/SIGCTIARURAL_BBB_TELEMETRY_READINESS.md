@@ -4,6 +4,8 @@ Estado: **REAL / AUDITORÍA** · Fecha: 2026-09-20 · Rama: `feature/ubtn-biolog
 Método: revisión de código fuente, docker-compose, estado de contenedores y documentación Edge/UBTN (NO se modificó nada).
 Objetivo: determinar exactamente qué falta para que **BBB-01, BBB-02 y BBB-03** empiecen a alimentar la Dashboard con datos reales.
 
+> **BLOQUE DE ACTUALIZACIÓN — 2026-09-21 (STATE SYNCHRONIZATION).** La brecha **F1** reportada abajo (“no existe endpoint de ingesta”) quedó **cerrada e implementada** el 2026-09-21: `TelemetryIngestV3View` (`POST /api/v3/telemetry/readings/`) commiteado en `941a55d`, backend sirviendo en 8010, suite backend 60/60. El resto de brechas (F2/MQTT, F3 bridge, F4 brokers, F5 wire_all en arranque, F6/F7 nodos BBB) **siguen vigentes** tal como se auditan en este documento; la cadena BBB-01/02 queda pendiente, y BBB-03 depende de la ejecución del playbook (`SIGCTIARURAL_BBB03_EXECUTION_PLAYBOOK.md`).
+
 ---
 
 ## 1. Resumen ejecutivo

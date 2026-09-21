@@ -1,8 +1,10 @@
 # SIGCTiArural — Pre-Commit Review · F1 (Primer Sensor Real)
 
-Estado: **REFERENCIA / AUDITORÍA DOCUMENTAL** · Fecha: 2026-09-21 · Rama: `feature/ubtn-biological-telemetry`
+Estado: **REFERENCIA / AUDITORÍA DOCUMENTAL (pre-commit)** · Fecha: 2026-09-21 · Rama: `feature/ubtn-biological-telemetry`
 Alcance: auditoría **pre-commit** de la implementación de F1 sobre el working tree. **NO se modificó ningún archivo.**
 Método: lectura de diff `git diff HEAD` + lectura de dominio/aplicación/adaptadores/event bus + py_compile (sintaxis) de los 4 archivos backend. Resultados de runtime (F1.1, 60/60, probes, stress) ya registrados en `docs/SIGCTIARURAL_F1_FIRST_REAL_SENSOR.md`.
+
+> **BLOQUE DE ACTUALIZACIÓN — 2026-09-21 (STATE SYNCHRONIZATION, POST-COMMIT).** Veredicto de esta auditoría = **GO CON CONDICIONES**; el commit real quedó consolidado en `941a55d` (código F1 + 5 docs F1, **sin** `Dashboard.jsx`), cumpliendo la condición de que el diff RC-2/UX del frontend no se mezcle con F1. `Dashboard.jsx` y `dashboard_rc2_ui.patch` permanecen sin commitear, tal como este documento recomienda. DDD/Hexagonal: menciones de "pendiente de commit" en el texto abajo se conservan como registro pre-commit.
 
 ---
 

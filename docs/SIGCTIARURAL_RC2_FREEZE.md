@@ -1,8 +1,10 @@
 # SIGC&T Rural — FREEZE RC-2 (Punto de congelamiento)
 
-**Fecha:** 2026-09-15 · **Rama:** `feature/ubtn-biological-telemetry`
-**Estado:** CONGELADO — no se implementa más funcionalidad, no se modifica frontend/backend/Docker, no se crean páginas ni rutas hasta nuevo aviso.
+**Fecha original:** 2026-09-15 · **Rama:** `feature/ubtn-biological-telemetry`
+**Estado:** CONGELADO en 2026-09-15 — no se implementa más funcionalidad hasta nuevo aviso.
 **Propósito de este documento:** permitir retomar el proyecto en cualquier momento con cualquier IA sin pérdida de contexto.
+
+> **BLOQUE DE ACTUALIZACIÓN — 2026-09-21 (STATE SYNCHRONIZATION).** El congelamiento RC-2 sigue siendo la foto del frontend al 15-sep-2026, pero **fue superado puntual y explícitamente por la misión F1 (primer dato real de sensor)**: el backend de ingesta Telemetry V3 (`TelemetryIngestV3View`, `POST /api/v3/telemetry/readings/`) quedó **implementado, probado (60/60) y commiteado** en `941a55d feat(f1)` (código + 5 docs F1) dentro de `feature/ubtn-biological-telemetry`, seguido de `0989ec9 docs(ai)` (3 docs IA/ML). El frontend NO fue tocado por F1; sus archivos siguen como en este freeze (Dashboard.jsx conserva únicamente el diff RC-2/UX pendiente: accordions +157/−119, 0 símbolos V3). Estado git y runtime actualizados en `AGENTS.md`. Los apartados `§0`, `§7`, `§8` de este documento describen el estado AL 15-sep-2026 y se conservan como registro histórico.
 
 ---
 

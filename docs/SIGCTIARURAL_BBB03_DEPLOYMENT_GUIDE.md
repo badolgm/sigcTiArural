@@ -1,8 +1,9 @@
 # SIGCTiArural — BBB-03 READY · Guía de Despliegue (Operativa)
 
-Estado: **DISEÑO / GUÍA OPERATIVA** · Fecha: 2026-09-21 · Rama: `feature/ubtn-biological-telemetry`
+Estado: **OPERATIVO / GUIÁ LISTA PARA EJECUCIÓN** · Fecha: 2026-09-21 · Rama: `feature/ubtn-biological-telemetry`
 Origen: `docs/SIGCTIARURAL_F1_FIRST_REAL_SENSOR.md` (contrato de ingesta V3) + `docs/SIGCTIARURAL_BBB_TELEMETRY_READINESS.md` (brechas F1–F7).
-Regla: **NO IMPLEMENTAR.** Documento estrictamente operativo: guía paso a paso para llevar a BBB-03 de un Debian limpio a enviar lecturas reales al backend y verlas 📡 LIVE en la Dashboard. Nada de este documento crea o modifica código del repositorio.
+Estado anterior: **DISEÑO / GUÍA OPERATIVA** — actualizado 2026-09-21 (STATE SYNCHRONIZATION): el eslabón servidor (F1 + F1.1) quedó **commiteado en `941a55d`** y el backend opera en 8010; el lado del nodo BBB-03 queda a ejecutar por Bernardo.
+Regla: **NO IMPLEMENTAR en el repositorio.** Documento estrictamente operativo: guía paso a paso para llevar a BBB-03 de un Debian limpio a enviar lecturas reales al backend y verlas 📡 LIVE en la Dashboard. Nada de este documento crea o modifica código del repositorio.
 
 Alcance: **Debian limpio → Python → DHT22 → script → POST → prueba → Dashboard LIVE.**
 Fuera de alcance: MQTT, bridge, broker, `ubtn_bridge.py`, IA edge (BBB-02), Dataset V2, frontend.

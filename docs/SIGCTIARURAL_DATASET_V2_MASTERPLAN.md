@@ -1,9 +1,9 @@
 # SIGCTiArural — Masterplan de Materialización del DATASET V2
 
 **Documento:** SIGCTIARURAL_DATASET_V2_MASTERPLAN
-**Fecha:** 2026-09-15 · **Rama:** `feature/ubtn-biological-telemetry` (working tree limpio, commits `87fc001`, `3ae504d`)
+**Fecha:** 2026-09-15 · **Rama:** `feature/ubtn-biological-telemetry` (trabajo commiteado hasta `0989ec9`; ver `AGENTS.md` para estado git vivo)
 **Tipo:** Plan de investigación científica y de ingeniería de datos (MISIÓN PRE-SESIÓN IA/ML).
-**Regla suprema:** NO IMPLEMENTAR · NO MODIFICAR CÓDIGO · NO MODIFICAR DOCUMENTOS EXISTENTES · NO CREAR RUTAS/PÁGINAS · NO TOCAR FRONTEND. **Solo diseñar y documentar.**
+**Regla suprema:** NO IMPLEMENTAR · NO MODIFICAR CÓDIGO · NO MODIFICAR DOCUMENTOS EXISTENTES · NO CREAR RUTAS/PÁGINAS · NO TOCAR FRONTEND. **Solo diseñar y documentar.** (*La mención "working tree limpio" del original fue actualizada 2026-09-21 por STATE SYNCHRONIZATION: hoy el árbol tiene `Dashboard.jsx` M + `dashboard_rc2_ui.patch`, asunto RC-2/UX independiente de este plan.*)
 
 **Fundamento rector:** La auditoría `SIGCTIARURAL_AI_ML_STATE_OF_THE_ART.md` determinó que el cuello de botella científico es **la data**, no la arquitectura, ni el frontend, ni la IA, ni el ML, ni el hardware. Este plan diseña el camino para materializar **DATASET V2** como siguiente paso del ecosistema, en plena coherencia con el canónico (`research_v2`, UBTN, EIARC, gobernanza MLOps).
 

@@ -5,6 +5,8 @@
 **Principio supremo aplicado:** LA DOCUMENTACIÓN CANÓNICA ES LA FUENTE DE VERDAD. Toda contradicción observada se registra, no se corrige, no se modifica.
 **Naturaleza:** revisión académica (Ingeniería de Software / Arquitectura Empresarial), con trazabilidad documental verificada en el repositorio (2026-09-15).
 
+> **BLOQUE DE ACTUALIZACIÓN — 2026-09-21 (STATE SYNCHRONIZATION, POST-COMMIT).** Este documento audita el estado al **2026-09-15 (98 cambios sin commits)**. Desde entonces la rama se normalizó por misión explícita de Bernardo: RC-2 y backend fueron commiteados (`87fc001` → `3ae504d` → `3694e5d` → `941a55d` F1 → `0989ec9` docs IA/ML; HEAD `0989ec9`). El cuerpo histórico del veredicto (secciones abajo, incluida R6 y las condiciones de certeza) se conserva intacto como registro de auditoría; las contradicciones D1–D3 permanecen registradas sin corregir, conforme al principio supremo de este documento. Estado git vivo: `AGENTS.md`.
+
 ---
 
 ## 0. Alcance y método

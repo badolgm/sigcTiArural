@@ -53,9 +53,10 @@ Dos significados que deben leerse por separado (`README.md:348`):
 - (B) Expansión productiva futura: Fase 9 (Apicultura, Piscicultura, Ganadería/Avicultura, Invernaderos), **0% de avance, explícitamente posterior a Fases 7–8** (`README.md:361-369`).
 Con la inversión de identidad (20-jul-2026), EIARC es la demostración productiva del ecosistema, no su marco abstracto.
 
-### Estado actual (2026-09-15, RC-2 FREEZE)
-Fase 7 (Hexagonal) **45% en progreso** · Fase 8 (Observabilidad/Hardening) **15% en preparación** · Fase 9 **0% planificada** · UBTN **U0 cerrada en diseño**. Rama congelada: ~98 cambios sin commit (4 docs M, 4 código M, 5 código ?, ~88 docs untracked).
-Fuente: `docs/SIGCTIARURAL_RC2_FREEZE.md`.
+### Estado actual (ACTUALIZADO 2026-09-21 · STATE SYNCHRONIZATION)
+Fase 7 (Hexagonal) **45% en progreso** · Fase 8 (Observabilidad/Hardening) **15% en preparación** · Fase 9 **0% planificada** · UBTN **U0 cerrada en diseño**. La rama ya no está congelada con 98 cambios: se commiteó por misión explícita hasta **HEAD `0989ec9`** (backend F1 en `941a55d`; queda pendiente el diff RC-2/UX de `Dashboard.jsx` + `dashboard_rc2_ui.patch`). Estado git vivo: `AGENTS.md`.
+
+> El bloque de estado original AL 15-sep-2026 ("Rama congelada: ~98 cambios sin commit (4 docs M, 4 código M, 5 código ?, ~88 docs untracked)") se conservó en este mismo documento en el commit `3ae504d`; se sustituye aquí por el estado real. Fuente histórica: `docs/SIGCTIARURAL_RC2_FREEZE.md` §8.
 
 ---
 

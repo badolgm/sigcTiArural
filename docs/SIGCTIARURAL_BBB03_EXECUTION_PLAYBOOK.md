@@ -1,8 +1,9 @@
 # SIGCTiArural — BBB-03 · EXECUTION PLAYBOOK (Primer Sensor Físico Real)
 
-Estado: **DISEÑO / PLAYBOOK OPERATIVO EJECUTABLE** · Fecha: 2026-09-21 · Rama: `feature/ubtn-biological-telemetry`
+Estado: **OPERATIVO / PLAYBOOK EJECUTABLE (listo para Bernardo)** · Fecha: 2026-09-21 · Rama: `feature/ubtn-biological-telemetry`
 Origen: `docs/SIGCTIARURAL_BBB03_DEPLOYMENT_GUIDE.md` (guía) → playbook ejecutable · Contrato: `docs/SIGCTIARURAL_F1_FIRST_REAL_SENSOR.md` §1/§6.
-Regla: **NO IMPLEMENTAR.** Este documento NO toca código del repositorio: entrega comandos y scripts que **Bernardo ejecuta sobre la BeagleBone Black Rev C** (archivos locales del nodo; `src/embedded/**`, backend y frontend permanecen intactos).
+Estado anterior: **DISEÑO / PLAYBOOK OPERATIVO EJECUTABLE** — actualizado 2026-09-21 (STATE SYNCHRONIZATION): el lado servidor (F1) quedó **commiteado en `941a55d`** y verificado 60/60; el playbook despliega solo el nodo.
+Regla: **NO IMPLEMENTAR en el repositorio.** Este documento NO toca código del repositorio: entrega comandos y scripts que **Bernardo ejecuta sobre la BeagleBone Black Rev C** (archivos locales del nodo; `src/embedded/**`, backend y frontend permanecen intactos).
 Alcance: **Debian limpio → Python → DHT22 → script → POST → prueba → Dashboard 🟢 LIVE.** Sin MQTT/BBB-01/BBB-02/V2/IA.
 
 ---
