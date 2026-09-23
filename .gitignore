@@ -14,6 +14,12 @@ venv/
 env/
 .virtualenv/
 
+# ==========================
+# Benchmark V1 — salidas locales (pesos/checkpoints/runs)
+# ==========================
+benchmark/runs/
+benchmark/requirements.lock
+
 # Cache de Python
 __pycache__/
 *.pyc

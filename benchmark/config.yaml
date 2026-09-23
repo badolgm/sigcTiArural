@@ -1,0 +1,13 @@
+{
+  "batch_size": 64,
+  "num_workers": 4,
+  "epochs": 40,
+  "patience": 8,
+  "lr": 3e-4,
+  "weight_decay": 1e-4,
+  "fp16": true,
+  "image_size": 224,
+  "weighted_loss": true,
+  "class_balanced_sampling": true,
+  "minority_augmented_sampling": true
+}
