@@ -7,6 +7,12 @@
 
 **Naturaleza de la evidencia:** TODOS los estados de este documento fueron **verificados físicamente en disco** (2026-09-15) mediante recorridos de directorios, búsquedas de archivos, chequeo de manifests YAML y rastreo de rutas externas. No es diseño: es el inventario real.
 
+**Actualización 2026-09-23 (RECOVERY CONSOLIDATION):** los hallazgos de este documento quedaron **SUPERADOS EN PARTE** por la recuperación del origen. NADA DESAPARECE: el veredicto histórico se preserva debajo, y el estado vigente es el consolidado en `SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md`:
+- El dataset bootstrap **SÍ EXISTE** en esta máquina: `D:\RespaldoData\PlantVillage-Dataset` (repo oficial spMohanty).
+- `raw/color` = **54.305 archivos / 38 clases / ~0.79 GB** (54.303 .jpg + 1 .jpeg + 1 .png).
+- Subconjunto V2 = **22.488/16/3** (no 21.160): delta **+1.328 100% en `Tomato___Septoria_leaf_spot`** (1.771 vs 443); las otras 15 clases coinciden 1:1 con el inventario.
+- **4 minoritarias vigentes:** potato healthy=152 · mosaic=373 · corn gray=513 · leaf mold=952.
+
 ---
 
 ## 0. Verdictado ejecutivo
@@ -21,7 +27,12 @@ La infraestructura de gobernanza (5 manifests YAML verificados) está **100% lis
 
 ## 1. ¿Dónde está exactamente el dataset bootstrap?
 
-### Ruta declarada (canónica) — NO EXISTE
+### Ruta declarada (canónica) — RECUPERADA 2026-09-23 en máquina actual
+```
+D:\RespaldoData\PlantVillage-Dataset                      ← repo oficial spMohanty (recuperado)
+D:\RespaldoData\PlantVillage-Dataset\raw\color            ← origen del subset V2 (54.305/38 clasess)
+```
+Histórico (máquina anterior, ya inexistente):
 ```
 C:\Users\Devbadolgm\Development\workspace\DatosProyectos\PlantVillage-Dataset-master
 C:\Users\Devbadolgm\Development\workspace\DatosProyectos\PlantVillage-Dataset-master\raw\color
@@ -31,20 +42,24 @@ Fuente: `docs/ai/manifests/raw_source_manifest.agriculture_v2_dataset_v1.yaml` (
 ### Estado verificado de la ubicación
 | Ubicación | ¿Existe? | Detalle |
 |---|---|---|
-| `C:\Users\Devbadolgm\...\PlantVillage-Dataset-master` | ❌ NO | `C:\Users\Devbadolgm` NO existe en esta máquina (perfil del equipo anterior) |
+| `D:\RespaldoData\PlantVillage-Dataset` | ✅ **SÍ (2026-09-23)** | Repo oficial spMohanty; `raw/color` = 54.305 archivos / 38 clases / ~0.79 GB |
+| `C:\Users\Devbadolgm\...\PlantVillage-Dataset-master` | ❌ NO | `C:\Users\Devbadolgm` NO existe en esta máquina (perfil del equipo anterior) — superado por recuperación |
 | `C:\Users\Devbadolgm` (raíz) | ❌ NO | No existe el usuario |
 | `C:\Users\BagmDev\` (usuario actual) | ✅ Existe | Sin PlantVillage en ningún subdirectorio (recorrido ≤6 niveles) |
 | `C:\Users\BagmDev\Downloads` | ✅ Existe | NO hay PlantVillage; hay `ImagenesDx.csv` (7.62 MB — radiografías clínicas SISPRO, NO vegetal, NO relevante para Dataset V2) |
 | `C:\Users\BagmDev\Downloads\9.PROYECTOS\SensorCollarIA` | ✅ Existe | Solo `Datasheets` — sin imágenes vegetales |
 | `C:\Users\BagmDev\Downloads\5.Varios_Ejecutados\data` | ✅ Existe | Solo `lab-data.js` + `ADDING_LABS.md` (datos de labs frontend, no dataset) |
-| `C:\Users\BagmDev\.kaggle` | ❌ NO | Sin credenciales Kaggle configuradas |
-| `D:\`, discos adicionales | ❌ NO | Solo existe disco `C:` (21.8 GB libres) |
+| `C:\Users\BagmDev\.kaggle` | ❌ NO | Sin credenciales Kaggle configuradas (ya no necesarias: origen recuperado localmente) |
+| `D:\`, discos adicionales | ✅ **SÍ** | Disco de datos con `D:\RespaldoData\PlantVillage-Dataset` recuperado (C: 19.06 GB libres verificado) |
 | Repo `git` (tracked) | ❌ NO | `git ls-files` sin `.h5`/`.jpg`/`.csv` datasets; solo manifiestos YAML |
 
 ---
 
 ## 2. ¿Existe físicamente?
 
+**ACTUALIZADO 2026-09-23: SÍ.** El origen PlantVillage fue recuperado en `D:\RespaldoData\PlantVillage-Dataset` (repo oficial spMohanty). El subconjunto V2 de 16 clases existe físicamente y suma **22.488** imágenes en `raw/color`.
+
+**Verificado históricamente (2026-09-15, preservado):**
 **NO.** No existe ningún archivo de dataset (ni PlantVillage, ni `data/`, ni `data/datasets/`, ni subconjunto de las 16 clases V2) en la máquina actual (`BagmDev`) ni en el repositorio.
 
 **LO QUE SÍ EXISTE físicamente (verificado):**
@@ -64,13 +79,14 @@ Fuente: `docs/ai/manifests/raw_source_manifest.agriculture_v2_dataset_v1.yaml` (
 
 | Vía de acceso | ¿Accesible hoy? | Observación |
 |---|---|---|
-| Path canónico (máquina vieja) | ❌ NO | Usuario/equipo anterior desaparecido |
-| Kaggle (Kaggle API) | ❌ NO | Sin `.kaggle/kaggle.json` |
-| Backups locales | ❌ NO | Ninguno encontrado |
+| Local recuperado **`D:\RespaldoData\PlantVillage-Dataset`** | ✅ **SÍ** | Copia física del repo oficial (2026-09-23); verificado 54.305/38 en `raw/color` |
+| Path canónico (máquina vieja) | ❌ NO | Usuario/equipo anterior desaparecido — superado por recuperación local |
+| Kaggle (Kaggle API) | ⚠️ NO necesario | Sin `.kaggle/kaggle.json`; la descarga ya no hace falta |
+| Backups locales | ❌ NO | No aplica (ya hay copia física) |
 | Repo GitHub (LFS/objetos) | ❌ NO | No rastreado por git |
-| Descarga pública (Kaggle/rep) | ✅ POSIBLE | PlantVillage es dataset público; requiere conexión y credencial Kaggle (o mirrors) — **acción pendiente que destraba todo** |
+| Descarga pública (Kaggle/rep) | ✅ POSIBLE | Solo como fallback; el origen ya está local |
 
-**Conclusión:** la adquisición es factible (dataset público) pero **NO es automática**: requiere credencial Kaggle API o mirror, y un contrato de descarga ~1–2 GB estimado.
+**Conclusión:** la adquisición está **RESUELTA** (recuperación local 2026-09-23); la única acción pendiente es materializar la estructura `v1/` y actualizar `expected_images` del manifiesto a 22488 (decisión gobernada).
 
 ---
 
@@ -78,8 +94,8 @@ Fuente: `docs/ai/manifests/raw_source_manifest.agriculture_v2_dataset_v1.yaml` (
 
 | Métrica | Valor | Fuente |
 |---|---|---|
-| Imágenes del subconjunto V2 | 21.160 | raw_source_manifest (`expected_images: 21160`) |
-| Peso estimado `raw/color` (JPG originales) | **~1.0–2.5 GB** (estimación razonable: JPG 100–300 KB × 21.160; puede variar) | Estimación técnica, no auditar en el repo |
+| Imágenes del subconjunto V2 | **22.488** | Verificado físicamente (12 clases=1.481; delta +1.328 en Septoria=1.771) — pendiente actualización de `expected_images: 22488` en raw_source_manifest |
+| Peso estimado `raw/color` (JPG originales) | **~0.79 GB verificados** (54.305 archivos/38 clases en el origen recuperado) | Verificado en `D:\RespaldoData\PlantVillage-Dataset` |
 | Dataset PlantVillage completo (all subsets) | ~146.351 imágenes derivadas (52.977 color + 48.741 grayscale + 44.633 segmented en inventario) | `AI_DATASET_DISCOVERY_AND_AUDIT.md §2.3` |
 | Espacio libre en disco C: | **21.8 GB** | Verificado — suficiente (margen >10×) |
 | `.h5` del modelo | 9 MB | Verificado en disco |
@@ -88,8 +104,8 @@ Fuente: `docs/ai/manifests/raw_source_manifest.agriculture_v2_dataset_v1.yaml` (
 
 ## 5. ¿Cuántas imágenes contiene?
 
-**21.160 imágenes RGB** (subconjunto cerrado de `raw/color` de las 16 clases V2). 
-(Verificable contra `expected_images: 21160` del raw_source_manifest; las cifras fueron auditadas en `AGRICULTURE_AI_V2_DATASET_INVENTORY.md`.)
+**22.488 imágenes RGB** (subconjunto cerrado de `raw/color` de las 16 clases V2; consolidado 2026-09-23).
+(Verificable contra el origen recuperado `D:\RespaldoData\PlantVillage-Dataset\raw\color`; el delta vs `expected_images: 21160` del raw_source_manifest es +1.328, íntegro en Septoria — pendiente actualización gobernada.)
 
 ---
 
@@ -109,15 +125,16 @@ Fuente: `docs/ai/manifests/raw_source_manifest.agriculture_v2_dataset_v1.yaml` (
 
 ## 7. ¿Qué clases minoritarias existen?
 
-| Clase | Conteo inventariado | % del dataset | Severidad |
+| Clase | Conteo inventariado (21.160) | Conteo consolidado 2026-09-23 (22.488) | Severidad |
 |---|---|---|---|
-| `potato__healthy` | 152 | 0.72% | **Crítica** (la más pequeña) |
-| `tomato__mosaic_virus` | 373 | 1.76% | Alta |
-| `tomato__septoria_leaf_spot` | 443 | 2.09% | Alta |
-| `corn__cercospora_gray_leaf_spot` | 513 | 2.42% | Alta |
-| (mayoritaria) `tomato__yellow_leaf_curl_virus` | 5.357 | 25.32% | — |
+| `potato__healthy` | 152 | **152** (0.68%) | **Crítica** (la más pequeña) |
+| `tomato__mosaic_virus` | 373 | **373** (1.66%) | Alta |
+| `tomato__septoria_leaf_spot` | 443 | **1.771** (7.88%) — dejó de ser minoritaria | Normal (ya no crítico) |
+| `corn__cercospora_gray_leaf_spot` | 513 | **513** (2.28%) | Alta |
+| `tomato__leaf_mold` | 952 | **952** (4.23%) | Nueva 4ª minoritaria (desplaza a septoria) |
+| (mayoritaria) `tomato__yellow_leaf_curl_virus` | 5.357 | **5.357** (23.82%) | — |
 
-Ratio global de desbalance: **35.24×**. (Fuente: `AGRICULTURE_AI_V2_DATASET_INVENTORY.md §4.1`.) Estas 4 clases exigen doble revisión de etiquetas (`validation_source=double_reviewed`) y PR-curve obligatoria en evaluación.
+Ratio global de desbalance: **35.24×** (no cambió: max/min son las mismas clases). (Fuente: `AGRICULTURE_AI_V2_DATASET_INVENTORY.md §4.1`.) Las 4 clases minoritarias vigentes (potato healthy, mosaic, corn gray, leaf mold) exigen doble revisión de etiquetas (`validation_source=double_reviewed`) y PR-curve obligatoria en evaluación.
 
 ---
 
@@ -144,7 +161,7 @@ Ratio global de desbalance: **35.24×**. (Fuente: `AGRICULTURE_AI_V2_DATASET_INV
 | `model_metadata.json` (`{"classes":["enferma","sana"],"framework":"tensorflow_fixed"}`) | ✅ EXISTE | `src/ai_models/production_models/` |
 | Manifests YAML (5) | ✅ EXISTEN | `docs/ai/manifests/` |
 | Specs de diseño research_v2 (taxonomía, inventory, split spec, execution plan, baseline readiness, label schema) | ✅ EXISTEN | `docs/ai/research_v2/` (18 docs) |
-| `labels_v1.csv` | ❌ NO EXISTE | se genera (16 clases, 21.160 filas) |
+| `labels_v1.csv` | ❌ NO EXISTE | se genera (16 clases, 22.488 filas) |
 | `split_lists/{train,validation,test}.csv` | ❌ NO EXISTE | se genera |
 | `dataset_card.md` | ❌ NO EXISTE | se crea |
 | `CHECKSUMS.sha256` | ❌ NO EXISTE | se crea |
@@ -186,7 +203,7 @@ data/datasets/agriculture_images_tomato-potato-corn/v1/
 └── CHECKSUMS.sha256            [NO EXISTE]
 ```
 
-**Estado global de la estructura: 0 de 10 elementos EXISTE físicamente** (el directorio raíz `data/` tampoco existe aún). La infraestructura de diseño (manifests/specs) está completa al 100%.
+**Estado global de la estructura: 0 de 10 elementos EXISTE físicamente** (el directorio raíz `data/` tampoco existe aún) — pero el **origen del raw quedó RESUELTO** (2026-09-23). La infraestructura de diseño (manifests/specs) está completa al 100%.
 
 ---
 
@@ -194,7 +211,7 @@ data/datasets/agriculture_images_tomato-potato-corn/v1/
 
 | Aspecto | Qué existe | Qué falta | Quién valida | Cómo validar |
 |---|---|---|---|---|
-| Origen (imágenes) | Solo el contrato de scope en manifiesto | **El material físico en disco** | Bernardo (descarga) | Checksum + conteo por clase = expected (21.160/16) |
+| Origen (imágenes) | **Material físico RECUPERADO (2026-09-23) en `D:\RespaldoData\PlantVillage-Dataset`** + contrato de scope en manifiesto | Materializar `v1/RAW/` (copiar 16 clases) | Gobernanza + ejecución | Checksum + conteo por clase = expected (22.488/16) |
 | Etiquetas | Label schema_v1 (espec) | `labels_v1.csv` | Script + revisión minoritarias | Validación enum cerrado + doble revisión 4 clases críticas |
 | Particiones | split_manifest (reglas) | split_lists + curated | Script split_v1 + gate anti-fuga | Conteos por clase×partición, dedup/pHash reportado |
 | Modelo | `plant_disease_mbv2.h5` (heredado) | Benchmark 4 arquitecturas | Reporte benchmark | macro-F1 (primaria) + ECE (puerta) + curvas |
@@ -212,7 +229,7 @@ data/datasets/agriculture_images_tomato-potato-corn/v1/
 | **ResNet50** | ✅ diseño manifiesto | ⚠️ script no existe | ⚠️ — | 🟡 **NO ejecutable (falta data)** |
 | **ConvNeXt-Tiny** | ✅ diseño manifiesto | ⚠️ script no existe | ⚠️ — | 🟡 **NO ejecutable (falta data)** |
 
-**Conclusión benchmark:** el diseño está completo y correcto (manifiestos, metrics, edge policy), pero **ninguna arquitectura puede entrenar/evaluar sin el dataset**. El bloqueo no es de especificación sino de material adquisición.
+**Conclusión benchmark:** el diseño está completo y correcto (manifiestos, metrics, edge policy); el bloqueo de adquisición del origen quedó **RESUELTO** (2026-09-23), pero **ninguna arquitectura puede entrenar/evaluar hasta materializar `v1/RAW/`**. El bloqueo ya no es de suministro sino de materializar la estructura.
 
 ---
 
@@ -220,8 +237,8 @@ data/datasets/agriculture_images_tomato-potato-corn/v1/
 
 | Riesgo | Clase | Severidad | Mitigación |
 |---|---|---|---|
-| El raw de PlantVillage NO está en la máquina ni en backups | **CRÍTICO** | Bloquea TODO el plan | Descargar de Kaggle/mirror; verificar checksum; no subir por git |
-| Descarga sin credencial Kaggle | ALTO | Retrasa Fase 0 | Crear cuenta/credencial Kaggle API (o buscar mirror público) |
+| El raw de PlantVillage NO estaba en la máquina (RESUELTO 2026-09-23) | ~~CRÍTICO~~ → ✅ | Resuelto con recuperación en `D:\RespaldoData\PlantVillage-Dataset` | Copiar 16 clases a `v1/RAW/`; verificar checksum; no subir por git |
+| Descarga sin credencial Kaggle (ya no necesaria) | BAJO (resuelto) | Solo fallback | El origen está local; Kaggle queda como vía alternativa |
 | Disco C: 21.8 GB libres — espacio ajustado para pipelines | MEDIO | Riesgo de almacenamiento medio plazo | Dataset ~2 GB es viable; planificar limpieza/gestiones |
 | Confundir `ImagenesDx.csv` (clínico) con datos vegetales | BAJO | Error de fuentes | Nunca usar ese CSV; fuentes solo vía manifiesto |
 | Fuga por grayscale/segmented si se descarga el completo | ALTO | Invalida el benchmark | Usar SOLO `raw/color` (regla del manifiesto) |
@@ -234,13 +251,13 @@ data/datasets/agriculture_images_tomato-potato-corn/v1/
 
 ### ¿Podemos comenzar mañana la materialización del Dataset V2?
 
-**SI — pero solo la FASE 0 (preparación y adquisición). NO la fase de entrenamiento/benchmark.**
+**ACTUALIZADO 2026-09-23: SÍ — y el bloqueante de origen está RESUELTO.** Resta la FASE 0 de materialización (estructura + copia + checksums). NO la fase de entrenamiento/benchmark.
 
 Justificación técnica:
 1. **La gobernanza está 100% lista:** 5 manifests YAML verificados, specs de split/label/benchmark completos. No hay nada más que diseñar.
-2. **El bloqueante único es físico:** el raw PlantVillage (`raw/color`, 21.160/16/3) no existe en esta máquina ni en el repo. Todo lo demás (labels, split, curated, benchmark) depende de ese origen.
-3. **La adquisición es factible** (dataset público) pero requiere acción humana (credencial Kaggle o mirror) — por eso no es "arrancar y correr".
-4. **LO QUE SÍ se puede hacer mañana sin más evidencia:** (a) descargar/recuperar PlantVillage `raw/color`, (b) verificar conteos vs manifiesto (21.160/16, ratio 35.24×), (c) crear la estructura `v1/` y `CHECKSUMS.sha256`, (d) copiar manifests, (e) reservar holdout. Con ese material, el día siguiente libera labels → split → curated → benchmark de forma mecánica.
+2. **El bloqueante físico quedó RESUELTO:** el raw PlantVillage `raw/color` fue recuperado en `D:\RespaldoData\PlantVillage-Dataset` (22.488/16/3). Todo lo demás (labels, split, curated, benchmark) depende de materializar `data/datasets/.../v1/`.
+3. **La materialización es mecánica** (copiar 16 carpetas + verificaciones) — solo requiere orden de ejecución; no depende ya de credencial Kaggle ni descarga.
+4. **LO QUE SE puede hacer en la próxima misión:** (a) copiar las 16 clases a `v1/RAW/`, (b) verificar conteos vs baseline consolidado (22.488/16, ratio 35.24×), (c) crear la estructura `v1/` y `CHECKSUMS.sha256`, (d) copiar manifests, (e) reservar holdout, (f) decidir gobernanza de actualización de `expected_images` en `raw_source_manifest` (21160 → 22488). Con ese material, el día siguiente libera labels → split → curated → benchmark de forma mecánica.
 
 ---
 
@@ -248,18 +265,18 @@ Justificación técnica:
 
 | # | PASO | OBJETIVO | ENTRADA | SALIDA | RIESGO | CRITERIO DE ÉXITO |
 |---|---|---|---|---|---|---|
-| 1 | Confirmar credencial Kaggle/mirror | Acceso al origen | Cuenta Kaggle | `kaggle.json` válido | Alto | API responde 200 |
-| 2 | Descargar PlantVillage raw/color | Traer el material | URL Kaggle/mirror | `.zip` local | Alto | Archivo íntegro, tamaño >1 GB |
-| 3 | Descomprimir a `v1/RAW/` | Estructura base | zip | 16 carpetas de clase | Alto | 21.160 archivos JPG |
-| 4 | Conteo por carpeta clase | Verificar total | RAW/ | tabla conteo | Alto | Suma = 21.160 y 16 clases |
+| 1 | Verificar origen recuperado | Confirmar acceso al raw local | `D:\RespaldoData\PlantVillage-Dataset` | listado `raw/color` | Bajo | 54.305/38 archivos visibles |
+| 2 | Copiar 16 clases PlantVillage→canónicas a `v1/RAW/` | Traer el material al artefacto | origen recuperado | 16 carpetas rel clase en RAW | Alto | Suma = 22.488 archivos JPG |
+| 3 | Verificar extensiones y descomposición | Estructura base | RAW/ | extensiones validas | Alto | 22.488 archivos JPG/Jpeg/PNG |
+| 4 | Conteo por carpeta clase | Verificar total | RAW/ | tabla conteo | Alto | Suma = 22.488 y 16 clases |
 | 5 | Verificar clases = taxonomía cerrada | Cumplir scope | taxonomy_v1 | listado dif | Alto | Diferencia = vacío |
 | 6 | Verificar exclusiones ausentes | No mezclar variantes | RAW/ | check grayscale/segmented | Alto | 0 archivos excluidos |
 | 7 | Generar `CHECKSUMS.sha256` | Integridad | RAW/ | checksum file | Medio | Hash estable + documentado |
 | 8 | Copiar 5 manifests canónicos a `v1/manifests/` | Referencia operativa | docs/ai/manifests/ | 5 YAML copiados | Bajo | Hash YAML = canónico |
 | 9 | Crear árbol `v1/{curated,split_lists,labels,holdout}` | Estructura | — | directorios | Bajo | Árbol según plan |
 | 10 | Reservar `holdout/real_world_holdout_v1/` vacío | Aislamiento | — | carpeta intocable | Medio | Fuera de todo split |
-| 11 | Redactar `dataset_card.md` | Ficha científica | conteos + manifests | ficha | Medio | 21.160/16/3 + aviso "bootstrap ≠ campo" |
-| 12 | Generar `labels_v1.csv` | Etiquetas trazables | taxonomía + RAW | CSV 8 campos | Alto | 21.160 filas, enum cerrado |
+| 11 | Redactar `dataset_card.md` | Ficha científica | conteos + manifests | ficha | Medio | 22.488/16/3 + aviso "bootstrap ≠ campo" |
+| 12 | Generar `labels_v1.csv` | Etiquetas trazables | taxonomía + RAW | CSV 8 campos | Alto | 22.488 filas, enum cerrado |
 | 13 | Marcar 4 clases minoritarias `double_reviewed` | Calidad etiquetado | lista minoritaria | flag en labels | Medio | 4 clases marcadas |
 | 14 | Dedup exactos (hash) | Anti-fuga | RAW | informe n duplicados | Alto | 0 duplicados intra-partición |
 | 15 | pHash near-dup → grupos | Anti-fuga | RAW | informe grupos | Alto | Grupos en una sola partición |
@@ -279,7 +296,7 @@ Justificación técnica:
 | 29 | Publicar benchmark_report+calibration+error | Evidencia | todas las metrics | 3 reportes + model_cards + curvas | Bajo | MVP del checklist §11 |
 | 30 | Decidir baseline master+edge | Decisión | reportes | dictamen GO/NO-GO campo | Alto | Baseline con calibración ECE OK |
 
-**Umbral de ejecución:** los pasos 1–11 (Fase 0: adquisición y estructura) son los únicos que dependen de acción de Bernardo (credencial/descarga). Los pasos 12–30 son mecánicos una vez existe RAW.
+**Umbral de ejecución:** los pasos 1–11 (Fase 0: verificación + estructura + copia) son materialización mecánica; ya no dependen de credencial/descarga. Los pasos 12–30 son mecánicos una vez existe RAW.
 
 ---
 
