@@ -7,6 +7,8 @@
 
 **Coherencia:** todos los identificadores (IDs de dataset, taxonomy_v1, label_schema_v1, split_v1, experiment_id) están verificados contra los artefactos existentes: `docs/ai/manifests/` (5 YAML) y `docs/ai/research_v2/` (execution plan, split spec, label schema, benchmark readiness).
 
+**Actualización 2026-09-23 (RECOVERY CONSOLIDATION):** baseline ajustado al estado físico real = **22.488/16/3** (origen `D:\RespaldoData\PlantVillage-Dataset`); delta +1.328 íntegro en `Tomato___Septoria_leaf_spot` (1.771). Ver `SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md`.
+
 ---
 
 ## 1. ¿Cuál es exactamente el dataset bootstrap?
@@ -15,7 +17,7 @@
 (=`agriculture_images_tomato-potato-corn` versión `v1` — verificado en manifiestos y en `AI_DATASET_STRATEGY_V2.md §4.4`).
 
 **Contenido exacto (cerrado, sin reinterpretación):**
-- **21.160 imágenes RGB** (solo `raw/color`), tamaño original PlantVillage, sin escalar a 224 en el dataset (el resize es del pipeline).
+- **22.488 imágenes RGB** (solo `raw/color`), tamaño original PlantVillage, sin escalar a 224 en el dataset (el resize es del pipeline).
 - **16 clases** de la `agriculture_v2_taxonomy_v1`:
   - Tomato (9): healthy, early_blight, late_blight, leaf_mold, septoria_leaf_spot, bacterial_spot, target_spot, mosaic_virus, yellow_leaf_curl_virus.
   - Potato (3): healthy, early_blight, late_blight.
@@ -25,7 +27,7 @@
 
 **Exclusiones obligatorias:** `raw/grayscale`, `raw/segmented`, `generated_for_paper`, clase Spider-mite (`Tomato___Spider_mites Two-spotted_spider_mite`), y todo lo no listado en las 16 clases.
 
-**Origen físico:** subset del directorio auditado `PlantVillage-Dataset-master/raw/color` (máquina anterior `Devbadolgm`). **Atención operativa:** la ruta exacta NO existe en la máquina actual (`BagmDev`) — el plan asume recuperar el origen (copia local, Kaggle, o backup) y validarlo contra el `raw_source_manifest` antes de todo.
+**Origen físico:** subset del directorio auditado `PlantVillage-Dataset-master/raw/color` (máquina anterior `Devbadolgm`). **Actualizado 2026-09-23 (RECOVERY CONSOLIDATION):** el origen fue **recuperado en `D:\RespaldoData\PlantVillage-Dataset`** (repo oficial spMohanty, `raw/color` = 54.305 archivos / 38 clases, ~0.79 GB). El subconjunto V2 de 16 clases suma **22.488**; validar contra el `raw_source_manifest` antes de todo (el manifiesto canónico aún declara `expected_images: 21160` — pendiente de actualización gobernada).
 
 **Naturaleza:** bootstrap para benchmark de laboratorio controlado. NO declara validez de campo (invariante de honestidad).
 
@@ -94,7 +96,7 @@ data/
 |---|---|---|
 | `labels_v1.csv` | `sample_id`, `taxonomy_version`, `species`, `condition_group`, `condition_name`, `health_state`, `annotation_quality`, `validation_source` | Tabla maestra de etiquetas (ver §5) |
 | `split_lists/{train,validation,test}.csv` | `sample_id`, `partition`, `canonical_class_id` | Membresía por partición (output esperado del split) |
-| `dataset_card.md` | Resumen: identidad, 21.160/16/3, conteos por clase, ratio 35.24×, exclusiones, checksums | Ficha científica legible (tipo model card para datos) |
+| `dataset_card.md` | Resumen: identidad, 22.488/16/3, conteos por clase, ratio 35.24×, exclusiones, checksums | Ficha científica legible (tipo model card para datos) |
 | `CHECKSUMS.sha256` | Hash por archivo/carpeta v1 + hash de partículas curated | Trazabilidad de integridad |
 | `split_report.md` | Conteos por clase × partición, resultados de dedup (n duplicados exactos, n grupos pHash), verificación de anti-fuga | Transparencia del split |
 | `environment_manifest.yml` (si aplica en fase ejecución) | Versiones TF/Keras, seed, hardware, cuda | Reproducibilidad (diseñar; materializar solo si la ejecución lo requiere) |
@@ -107,14 +109,14 @@ data/
 
 Campos (8): `sample_id` (string único), `taxonomy_version` (=`agriculture_v2_taxonomy_v1`), `species` (enum: tomato/potato/corn), `condition_group` (enum: healthy/disease), `condition_name` (enum cerrado por taxonomía — las 16), `health_state` (healthy/warning), `annotation_quality` (por muestra), `validation_source` (por muestra).
 
-**Regla de ejecución:** el `labels_v1.csv` se deriva de la taxonomía + lista de archivos recuperados; las etiquetas fuente se toman tal cual del dataset auditado (annotation_quality y validation_source = `source_dataset_audited`), salvo las 4 clases minoritarias que requieren doble revisión (potato healthy, tomato mosaic, tomato septoria, corn gray leaf spot) → en esas, `validation_source=double_reviewed`.
+**Regla de ejecución:** el `labels_v1.csv` se deriva de la taxonomía + lista de archivos recuperados; las etiquetas fuente se toman tal cual del dataset auditado (annotation_quality y validation_source = `source_dataset_audited`), salvo las 4 clases minoritarias que requieren doble revisión (potato healthy, tomato mosaic, corn gray leaf spot, tomato leaf mold; septoria 1.771 ya no es minoritaria tras consolidación) → en esas, `validation_source=double_reviewed`.
 
 ---
 
 ## 6. ¿Cómo se realizará el split_v1?
 
 **Algoritmo sancionado por el `split_manifest.agriculture_v2_split_v1.yaml`:**
-1. **Input:** 21.160 samples con `canonical_class_id`, tras dedup.
+1. **Input:** 22.488 samples con `canonical_class_id`, tras dedup.
 2. **Dedup exactos** (eliminar hash idénticos) antes de particionar.
 3. **Near-duplicate (pHash):** detectar grupos near-dup; el grupo completo va a UNA partición (anti-fuga).
 4. **Estratificación primaria:** por `canonical_class_id` (preserva proporciones por clase).
@@ -162,7 +164,7 @@ Campos (8): `sample_id` (string único), `taxonomy_version` (=`agriculture_v2_ta
 **Contexto:** NO está en el benchmark oficial (es el heredado colapsado). Su papel en este plan es evaluativo de control:
 
 1. **Congelar el modelo actual** `plant_disease_mbv2.h5` (sin reentrenar).
-2. **Evaluarlo sobre el test set del split_v1** (21.160 auditada → test 15%) con las mismas métricas del benchmark.
+2. **Evaluarlo sobre el test set del split_v1** (22.488 auditada → test 15%) con las mismas métricas del benchmark.
 3. **Reporte de brecha:** comparar su macro-F1/ECE frente a las 4 arquitecturas — sustenta la decisión de retirar o conservar el binario.
 4. **Documentar su colapso** (class_1 inalcanzable, confianza degenerada) como baseline negativo histórico.
 5. **No tocar** path de inferencia ni archivo `.h5` (regla suprema: se documenta, no se corrige).
@@ -231,7 +233,7 @@ macro_f1 = mean( F1_clase over 16 clases )   # F1 = 2·precision·recall/(precis
 
 **Checklist de GO para ARRANCAR el benchmark (todas deben ser ✓):**
 - [ ] Dataset `v1/RAW/` recuperado y verificado contra raw_source_manifest + checksum.
-- [ ] `labels_v1.csv` completo (16 clases, 21.160 filas) y taxonomía cerrada.
+- [ ] `labels_v1.csv` completo (16 clases, 22.488 filas) y taxonomía cerrada.
 - [ ] `split_v1` materializado (train/validation/test.csv) con gates de calidad ✓ y `split_report.md`.
 - [ ] Dedup/pHash aplicado; cero fugas reportadas.
 - [ ] Entorno reproducible (TF/Keras, seed 42, hardware declarado).
@@ -244,7 +246,7 @@ macro_f1 = mean( F1_clase over 16 clases )   # F1 = 2·precision·recall/(precis
 ## 15. ¿Qué debe hacer Bernardo exactamente?
 
 **Orden mecánica (sin reinterpretación) — fase de ejecución futura:**
-1. **Recuperar el raw**: localizar PlantVillage — máquina vieja / Kaggle / backup; copiar SOLO `raw/color` a `v1/RAW/`.
+1. **Usar el raw recuperado**: el origen ya está localizado (`D:\RespaldoData\PlantVillage-Dataset\raw\color`, 2026-09-23); copiar SOLO las 16 clases del scope a `v1/RAW/`.
 2. **Verificar** con checksum contra `raw_source_manifest` (si falla → NO-GO y reportar).
 3. **Generar `labels_v1.csv`** desde taxonomía (script mecánico, 16 clases).
 4. **Correr dedup + pHash** y producir `split_lists/*.csv` (70/15/15, seed 42, stratified_group_split).
@@ -265,12 +267,12 @@ macro_f1 = mean( F1_clase over 16 clases )   # F1 = 2·precision·recall/(precis
 ```
 [ ] 1. Recuperar origen PlantVillage raw/color (máquina/Kaggle/backup) → data/datasets/agriculture_images_tomato-potato-corn/v1/RAW/
 [ ] 2. Verificar checksum/estructura contra raw_source_manifest.agriculture_v2_dataset_v1.yaml
-[ ] 3. Generar labels_v1.csv (21.160 filas, taxonomy_v1, agriculture_v2_label_schema_v1)
+[ ] 3. Generar labels_v1.csv (22.488 filas, taxonomy_v1, agriculture_v2_label_schema_v1)
 [ ] 4. Dedup exactos + pHash near-dup (anti-fuga) — reportar n duplicados
 [ ] 5. split_v1: 70/15/15, seed 42, stratified_group_split → split_lists/{train,validation,test}.csv
 [ ] 6. Gates split: clases presentes en 3 particiones, conteos por clase, cero fugas → split_report.md
 [ ] 7. Construir curated/{train,validation,test}/ según membresía
-[ ] 8. Crear dataset_card.md (21.160/16/3, ratio 35.24×, sin validez de campo) + CHECKSUMS.sha256
+[ ] 8. Crear dataset_card.md (22.488/16/3, ratio 35.24×, sin validez de campo) + CHECKSUMS.sha256
 [ ] 9. Reservar v1/holdout/real_world_holdout_v1/ (vacío, intocable)
 [ ] 10. Copiar manifiestos canónicos a v1/manifests/ y verificar hash = canónico
 [ ] 11. Entorno: TF/Keras pinned, seed 42, GPU/CPU declarado
@@ -289,7 +291,7 @@ macro_f1 = mean( F1_clase over 16 clases )   # F1 = 2·precision·recall/(precis
 
 ## RESULTADO FINAL
 
-- **Requisito mínimo de arranque:** recuperar el raw (único betting block). Todo lo demás está especificado al nivel de instrucción mecánica.
+- **Requisito mínimo de arranque:** copiar a `v1/RAW/` el origen ya recuperado (22.488/16/3) con checksum. Todo lo demás está especificado al nivel de instrucción mecánica.
 - **Salida tangible:** dataset v1 materializado (RAW + curated + split_lists + labels + checksums), benchmark de 4 arquitecturas + control MobileNetV2, reportes de evaluación (benchmark/calibration/error) y baseline master+edge decidido.
 - **Independencia:** quien ejecute este checklist NO necesita releer ningún otro documento salvo los manifiestos (son la autoridad operativa).
 - **Invariante preservado:** honestidad (bootstrap ≠ campo), trazabilidad (IDs versionados), inmutabilidad (RAW, split, holdout).

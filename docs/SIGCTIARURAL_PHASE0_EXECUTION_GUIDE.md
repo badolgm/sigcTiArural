@@ -7,6 +7,8 @@
 **Regla suprema:** La documentación canónica es la fuente de verdad. Honestidad de estado. NADA DESAPARECE · TODO SE PRESERVA · TODO SE CONECTA · TODO EVOLUCIONA.
 **Base de lectura:** MASTERPLAN · EXECUTION_PLAN · INVENTORY · READINESS_REPORT (todos leídos).
 
+**Actualización 2026-09-23 (RECOVERY CONSOLIDATION):** el origen del raw está **RECUPERADO** (`D:\RespaldoData\PlantVillage-Dataset\raw\color`, 54.305/38 clases, ~0.79 GB). Baseline oficial = **22.488/16/3** (delta +1.328 en `Tomato___Septoria_leaf_spot` = 1.771). La tabla de conteos de este documento ya refleja los valores consolidados. Ver `SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md`.
+
 ---
 
 ## 1. Contexto y objetivo de la Fase 0
@@ -17,7 +19,7 @@ La auditoría de readiness concluyó: diseño V2 **100% completo** (5 manifests,
 
 **Identidad de destino (bootstrap):**
 - `agriculture_images_tomato-potato-corn` · versión `v1` · máx `agriculture_v2_*`
-- **21.160 imágenes** RGB (extensión .jpg/.jpeg/.png) · **16 clases** · **3 especies**
+- **22.488 imágenes** RGB (extensión .jpg/.jpeg/.png) · **16 clases** · **3 especies**
 - Especies: Tomato (9), Potato (3), Corn/maize (4)
 - Clase excluida de Tomato: `Tomato___Spider_mites Two-spotted_spider_mite`
 - Subset análizado: **solo `raw/color`** (prohibido grayscale/segmented/generated)
@@ -59,7 +61,7 @@ data/
                 └── baseline_experiment_manifest.agriculture_v2_baseline_v1.yaml
 ```
 
-Nota sobre el mapeo de nombres: LOS nombres de carpeta de `RAW/` siguientes a la **nomenclatura canónica de la taxonomía `agriculture_v2_taxonomy_v1`** (species__condition), verificable contra `docs/ai/research_v2/AGRICULTURE_AI_V2_TAXONOMY.md` y el taxonomy_binding_manifest (que asigna `canonical_class_id → PlantVillage class name`). Los conteos entre paréntesis son los inventariados en `DATASET_V2_INVENTORY` y son **valores esperados de verificación**, NO se presumen: se comprueba que sumen 21.160.
+Nota sobre el mapeo de nombres: LOS nombres de carpeta de `RAW/` siguientes a la **nomenclatura canónica de la taxonomía `agriculture_v2_taxonomy_v1`** (species__condition), verificable contra `docs/ai/research_v2/AGRICULTURE_AI_V2_TAXONOMY.md` y el taxonomy_binding_manifest (que asigna `canonical_class_id → PlantVillage class name`). Los conteos entre paréntesis son los inventariados en `DATASET_V2_INVENTORY` y son **valores esperados de verificación**, NO se presumen: se comprueba que sumen 22.488.
 
 **Carpetas creadas pero VACÍAS en esta fase** (se materializan en F1–F3):
 `curated/`, `curated/train/`, `curated/validation/`, `curated/test/`, `split_lists/`, `labels/`, `holdout/`. Archivos de metadata (`dataset_card.md`, `split_report.md`, `CHECKSUMS.sha256`) se crean en F1 y F3 respectivamente.
@@ -92,7 +94,7 @@ Justificación:
 1. El `.gitignore` ya excluye `/data/` (no hay riesgo de commit accidental).
 2. La estructura coincide con el Execution Plan §2 (árbol canónico `v1/`).
 3. Mantiene coherencia entre código, manifiesto y datos: el pipeline F2–F4 leerá `data/datasets/.../v1/RAW/` sin rutas externas frágiles.
-4. `raw_source_manifest` declara `allow_external_path: true` E indica una `source_root` que **no existe** (`C:\Users\Devbadolgm\...`) — como final de la Fase 0 se **actualiza `source_root` en la copia local de `manifests/` del dataset** a la ruta real de ASUS (la copia canónica en `docs/ai/manifests/` se mantiene intacta; el manifiesto del dataset es el que describe el artefacto físico).
+4. `raw_source_manifest` declara `allow_external_path: true` E indica una `source_root` que **no existe** (`C:\Users\Devbadolgm\...`) — la copia real quedó **recuperada en `D:\RespaldoData\PlantVillage-Dataset\raw\color`** (2026-09-23). Como final de la Fase 0 se **actualiza `source_root` en la copia local de `manifests/` del dataset** a la ruta real de origen/ASUS (la copia canónica en `docs/ai/manifests/` se mantiene intacta; el manifiesto del dataset es el que describe el artefacto físico).
 
 Alternativa no elegida (documentada): rotar la ruta canónica original en ASUS (`C:\Users\<usuarioASUS>\Development\workspace\DatosProyectos\PlantVillage-Dataset-master`). Se rechaza por duplicar raíces y repetir el error de la ruta fija inexistente.
 
@@ -124,7 +126,7 @@ Alternativa no elegida (documentada): rotar la ruta canónica original en ASUS (
 | C0.1 | Por cada clase inclusión: mover/copiar `raw/color/<PlantVillage class name>/` → `v1/RAW/<canonical>/` renombrando según la taxonomía | Tabla de mapeo (taxonomy_binding_manifest) |
 | C0.2 | Excluir explícitamente `Tomato___Spider_mites Two-spotted_spider_mite` | No existir carpeta en `RAW/` |
 | C0.3 | Verificar extensiones: SOLO .jpg/.jpeg/.png (0 .png tf no permitidos) | `Get-ChildItem -Recurse | Group Extension` |
-| C0.4 | Conteo global = 21.160; por clase = conteos del INVENTORY (tabla §2) | Suma por carpeta == valor esperado |
+| C0.4 | Conteo global = 22.488; por clase = conteos del INVENTORY (tabla §2) | Suma por carpeta == valor esperado |
 | C0.5 | Generar `v1/CHECKSUMS.sha256` (hash de cada archivo) | `Get-FileHash -Algorithm SHA256` |
 | C0.6 | Marcar `RAW/` como **inmutable** (solo lectura) — el split (F2) NO debe reescribir `RAW/` | `attrib +R /S` o equivalente |
 | C0.7 | Actualizar `source_root` en `v1/manifests/raw_source_manifest.*.yaml` → ruta real ASUS de `RAW/` | Commit de anotación de ruta NO hace falta; queda como metadata local del dataset |
@@ -143,7 +145,7 @@ Alternativa no elegida (documentada): rotar la ruta canónica original en ASUS (
 | 5 | 16 carpetas de clase en `RAW/` | Cuenta = 16; nombres == canónicos |
 | 6 | Exclusiones ausentes | 0 carpetas grayscale/segmented/generated; 0 `Spider_mites` |
 | 7 | Extensiones válidas | 100% .jpg/.jpeg/.png |
-| 8 | Conteo global | **Suma exacta = 21.160** |
+| 8 | Conteo global | **Suma exacta = 22.488** |
 | 9 | Conteos por clase | Coinciden con INVENTORY (incl. mínimo 152 `potato__healthy`, máximo 5.357 `tomato__yellow_leaf_curl_virus`) |
 | 10 | Checksums | `CHECKSUMS.sha256` generado y redondeable |
 | 11 | Manifests locales | 5 YAML presentes en `v1/manifests/`, hash YAML == copia canónica (salvo `source_root` actualizado) |
@@ -162,7 +164,7 @@ Alternativa no elegida (documentada): rotar la ruta canónica original en ASUS (
 | Bytes del zip parciales por corte | Media | Datos corruptos | SHA vs referencia; `Expand-Archive` falla a la primera señal |
 | Extracción completa > 12 GB en disco ASUS | Media | Insuficiencia | Verificar ≥ 20 GB; borrar zip+árbol temporal tras C0.5 |
 | Error de mapeo de clase PlantVillage → canónico | Media | Contaminación taxonómica | Verificar contra taxonomy_binding_manifest; nunca inventar nombres |
-| Incluir accidentalmente Tomato__Spider_mites | Baja | Rompe conteo 21.160 | Filtro explícito; gate 6 |
+| Incluir accidentalmente Tomato__Spider_mites | Baja | Rompe conteo 22.488 | Filtro explícito; gate 6 |
 | Olvidar congelar RAW y que un pipeline reescriba | Baja | Invalida checksums | attrib +R S; gate 12 |
 | `data/` entrando a git | Baja | Repo corrupto | `.gitignore:62` ya excluye; gate 12 |
 | Fuente externa cambia el layout del dataset en el tiempo | Baja | Ruta rota | Inmutabilidad del dataset Kaggle; documentar versión descargada |
@@ -174,7 +176,7 @@ Alternativa no elegida (documentada): rotar la ruta canónica original en ASUS (
 
 **GO (paso a F1 — etiquetas):**
 1. Puertas 1–12 del checklist en 🟢.
-2. `RAW/` congelado con los 21.160 archivos y 16 carpetas canónicas.
+2. `RAW/` congelado con los 22.488 archivos y 16 carpetas canónicas.
 3. `v1/CHECKSUMS.sha256` legible y computable.
 4. `v1/manifests/` con 5 YAML (fuente canónica intacta; `source_root` local actualizado).
 5. `git status` limpio de `data/` (sigue siendo untracked por diseño).
@@ -190,7 +192,7 @@ Alternativa no elegida (documentada): rotar la ruta canónica original en ASUS (
 ## 9. Estado tras la Fase 0 (estado del mundo esperado)
 
 ```
-🟢 data/datasets/agriculture_images_tomato-potato-corn/v1/RAW/   → 21.160, 16 clases, checksums, inmutable
+🟢 data/datasets/agriculture_images_tomato-potato-corn/v1/RAW/   → 22.488, 16 clases, checksums, inmutable
 🟢 data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/ → 5 YAML (source_root local = ASUS)
 🟡 v1/curated/ · v1/split_lists/ · v1/labels/ · v1/holdout/      → creadas y vacías (destino F1–F3)
 🔴 Pipeline F1 (labels), F2 (split 70/15/15 seed 42), F3 (curated), F4 (benchmark) → pendientes de misión posterior

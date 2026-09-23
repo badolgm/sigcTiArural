@@ -7,6 +7,8 @@
 **Regla suprema:** La documentación canónica es la fuente de verdad. Honestidad de estado. NADA DESAPARECE · TODO SE PRESERVA · TODO SE CONECTA · TODO EVOLUCIONA.
 **Base de lectura:** READINESS_REPORT · EXECUTION_GUIDE · READYCHECK (verificados).
 
+**Actualización 2026-09-23 (RECOVERY CONSOLIDATION):** el origen del raw está **RECUPERADO** (`D:\RespaldoData\PlantVillage-Dataset\raw\color`, 54.305/38 clases, ~0.79 GB). Baseline oficial = **22.488/16/3** (delta +1.328 en `Tomato___Septoria_leaf_spot` = 1.771). Todos los conteos de este checklist usan ahora 22.488; ya no se requiere credencial Kaggle (Vía A/B quedan como fallback documental). Ver `SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md`.
+
 ---
 
 ## 1. Estado confirmado (punto de partida)
@@ -20,7 +22,7 @@
 | Bloqueante espacio ASUS | ⚠️ sin confirmar → GATE 1 |
 | Entorno dev verificado (Python 3.11.9 / pip 24.0 / git 2.55.0 / bsdtar 3.8.8) | ✅ |
 
-**Identidad objetivo:** `agriculture_images_tomato-potato-corn` v1 · 21.160 imágenes · 16 clases · 3 especies · solo `raw/color` (sin grayscale/segmented/generated; excluye `Tomato___Spider_mites`).
+**Identidad objetivo:** `agriculture_images_tomato-potato-corn` v1 · 22.488 imágenes · 16 clases · 3 especies · solo `raw/color` (sin grayscale/segmented/generated; excluye `Tomato___Spider_mites`).
 
 ---
 
@@ -111,14 +113,14 @@ Regla de avance: **no se pasa a una fase hasta que su gate esté en verde.** Si 
 ### GATE 9 · Conteos e integridad (ASUS)
 | # | Acción | Comando exacto | Criterio ✅ |
 |---|---|---|---|
-| 9.1 | recuento global | `(Get-ChildItem <v1>\RAW -Recurse -File).Count` | **21.160** |
+| 9.1 | recuento global | `(Get-ChildItem <v1>\RAW -Recurse -File).Count` | **22.488** |
 | 9.2 | recuento por clase | `Get-ChildItem <v1>\RAW -Directory | ForEach-Object { "$($_.Name)=$((Get-ChildItem $_.FullName -File).Count)" }` | coincide con INVENTORY (min 152 potato__healthy; max 5.357 tomato__yellow_leaf_curl_virus) |
 | 9.3 | el archivo types | 9.3 + extensión .png en clase corn__common_rust (origen usados en PlantVillage) | aceptado por arrastre de extensión |
 
 ### GATE 10 · Checksums y congelado (ASUS)
 | # | Acción | Comando exacto | Criterio ✅ |
 |---|---|---|---|
-| 10.1 | generar hashes | `Get-ChildItem <v1>\RAW -Recurse -File | Get-FileHash -Algorithm SHA256 | Export-Csv -Path <v1>\CHECKSUMS.csv -NoTypeInformation` | CSV con Línea = 21.160 |
+| 10.1 | generar hashes | `Get-ChildItem <v1>\RAW -Recurse -File | Get-FileHash -Algorithm SHA256 | Export-Csv -Path <v1>\CHECKSUMS.csv -NoTypeInformation` | CSV con Línea = 22.488 |
 | 10.2 | propia línea de referencia | guardar suma global de CSV (SHA del .csv) | referencia anotada |
 | 10.3 | inmutabilizar RAW | `Get-ChildItem <v1>\RAW -Recurse -File | ForEach-Object { $_.IsReadOnly = $true }` | RAW read-only |
 | 10.4 | limpiar temporal | `Remove-Item "<repo>\data\_tmp_phase0" -Recurse -Force` | liberado el espacio (~3.5+10 GB) |
@@ -170,7 +172,7 @@ Get-ChildItem "$tmp\PlantVillage-Dataset-master\raw\color"
 # ===== FASE D · CONSOLIDACIÓN Y CONGELADO =====
 # (por cada una de las 16 clases: copy + rename canónico)
 # verificar:
-(Get-ChildItem "$v1\RAW" -Recurse -File).Count                          # 21.160
+(Get-ChildItem "$v1\RAW" -Recurse -File).Count                          # 22.488
 Get-ChildItem "$v1\RAW" -Directory | ForEach-Object { "$($_.Name)=$((Get-ChildItem $_.FullName -File).Count)" }
 Get-ChildItem "$v1\RAW" -Recurse -File | Get-FileHash -Algorithm SHA256 | Export-Csv -Path "$v1\CHECKSUMS.csv" -NoTypeInformation
 Get-ChildItem "$v1\RAW" -Recurse -File | ForEach-Object { $_.IsReadOnly = $true }
@@ -193,7 +195,7 @@ Remove-Item $tmp -Recurse -Force
 | **Zip corrupto** | `Expand-Archive` error de CRC, hash no coincide | 🌐 Borrar zip (`Remove-Item $tmp\plantvillage.zip`) + re-descarga + re-hash. NO intentar reparar parcialmente |
 | **Espacio insuficiente durante extracción** | error de disco en Expand-Archive | 1. Cancelar extracción · 2. liberar/borrar `$tmp` · 3. mover destino a disco con espacio (cambiar `$v1` a D:) · 4. retomar consolidación desde GATE 5 |
 | **Falla de autenticación Kaggle (401)** | `kaggle datasets list` error | Z re-generar token en kaggle.com/settings/API, reemplazar `~/.kaggle/kaggle.json` y re-validar |
-| **Conteo ≠ 21.160** | GATE 9.1 rojo | 🛑 STOP: revisar clases mapeadas (15/16/sobra), carpetas duplicadas, extensión invisible; corregir en RAW ANTES de checksums; nunca "parchear" conteos |
+| **Conteo ≠ 22.488** | GATE 9.1 rojo | 🛑 STOP: revisar clases mapeadas (15/16/sobra), carpetas duplicadas, extensión invisible; corregir en RAW ANTES de checksums; nunca "parchear" conteos |
 | **Conteo por clase ≠ INVENTORY** | GATE 9.2 rojo | Idem: verificar exclusión Spider_mites y clases con error de mapeo |
 | **Antivirus elimina archivos durante extracción** | conteo menor tras GATE 9 | A agregar `data\` a exclusiones del AV + re-extracción limpia de ZIP |
 | **Kaggle requiere condición/torneo** | descarga rechazada | B Fallback Vía B (espejo GitHub spMohanty) con el mismo árbol |
@@ -208,12 +210,12 @@ La Fase 1 (curación/labels) queda **diseñada pero no ejecutada hoy**. Puente y
 
 | Entregable F1 | Depende de F0 | Entrada canónica |
 |---|---|---|
-| `labels_agriculture_v2_v1.csv` (21.160 filas) | GATES 8–10 verdes | `RAW/` + `taxonomy_v1` + `label_schema_v1` |
+| `labels_agriculture_v2_v1.csv` (22.488 filas) | GATES 8–10 verdes | `RAW/` + `taxonomy_v1` + `label_schema_v1` |
 | Campos por fila: `image_filename, canonical_class_id, label, species, split, reviewed, split_origin` | GATES 8–10 | `taxonomy_binding_manifest` |
 | `split_lists/{train,validation,test}.csv` (70/15/15, seed 42, stratified, anti-fuga) | GATES 8–10 | `split_manifest` |
 | `dataset_card.md` + `split_report.md` | GATES 8–10 | perfiles por clase del INVENTORY |
 
-Precondición operativa para abrir F1: `v1/RAW/` con 21.160 archivos, checksums firmados y read-only (GATE 10) + `source_root` local correcto (GATE 11).
+Precondición operativa para abrir F1: `v1/RAW/` con 22.488 archivos, checksums firmados y read-only (GATE 10) + `source_root` local correcto (GATE 11).
 
 ---
 

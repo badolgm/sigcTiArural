@@ -13,13 +13,16 @@ Fuente de verdad:
 - `AI_DATASET_DISCOVERY_AND_AUDIT.md`
 - Subconjunto aprobado: `21,160` imágenes RGB, `16` clases, especies `tomate/papa/maíz`
 
+**ACTUALIZACIÓN 2026-09-23 (RECOVERY CONSOLIDATION):** subconjunto verificado físicamente en el origen recuperado `D:\RespaldoData\PlantVillage-Dataset\raw\color` → **22.488** imágenes RGB / 16 clases / 3 especies. Delta +1.328 vs este inventario: **100% en `Tomato___Septoria_leaf_spot`** (1.771 en el origen, no 443); las otras 15 clases coinciden 1:1. Detalle completo en `SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md` (docs/). Este documento conserva el inventario histórico (NADA DESAPARECE); los valores vigentes son los consolidados.
+
 ---
 
 ## 1. Fuente física auditada
 
 Ruta auditada del dataset local:
 
-- `C:\Users\Devbadolgm\Development\workspace\DatosProyectos\PlantVillage-Dataset-master\raw\color`
+- `C:\Users\Devbadolgm\Development\workspace\DatosProyectos\PlantVillage-Dataset-master\raw\color` (histórica, inexistente en máquina actual)
+- **Origen recuperado (2026-09-23):** `D:\RespaldoData\PlantVillage-Dataset\raw\color` (54.305 archivos / 38 clases / ~0.79 GB)
 
 Exclusiones explícitas del baseline:
 
@@ -43,48 +46,50 @@ Total especies del baseline: `3`
 
 ## 3. Clases finales y conteo por clase
 
-Total imágenes: `21,160`
+Total imágenes: `21,160` (inventario histórico) → **`22,488` vigente** (consolidado 2026-09-23)
 
-| # | Clase (PlantVillage raw/color) | Conteo | % |
+| # | Clase (PlantVillage raw/color) | Conteo | Conteo consolidado (vigente) |
 |---:|---|---:|---:|
-| 1 | Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot | 513 | 2.43 |
-| 2 | Corn_(maize)___Common_rust_ | 1,192 | 5.63 |
-| 3 | Corn_(maize)___healthy | 1,162 | 5.49 |
-| 4 | Corn_(maize)___Northern_Leaf_Blight | 985 | 4.66 |
-| 5 | Potato___Early_blight | 1,000 | 4.73 |
-| 6 | Potato___healthy | 152 | 0.72 |
-| 7 | Potato___Late_blight | 1,000 | 4.73 |
-| 8 | Tomato___Bacterial_spot | 2,127 | 10.05 |
-| 9 | Tomato___Early_blight | 1,000 | 4.73 |
-| 10 | Tomato___healthy | 1,591 | 7.52 |
-| 11 | Tomato___Late_blight | 1,909 | 9.02 |
-| 12 | Tomato___Leaf_Mold | 952 | 4.50 |
-| 13 | Tomato___Septoria_leaf_spot | 443 | 2.09 |
-| 14 | Tomato___Target_Spot | 1,404 | 6.64 |
-| 15 | Tomato___Tomato_mosaic_virus | 373 | 1.76 |
-| 16 | Tomato___Tomato_Yellow_Leaf_Curl_Virus | 5,357 | 25.32 |
+| 1 | Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot | 513 | 513 |
+| 2 | Corn_(maize)___Common_rust_ | 1,192 | 1,192 |
+| 3 | Corn_(maize)___healthy | 1,162 | 1,162 |
+| 4 | Corn_(maize)___Northern_Leaf_Blight | 985 | 985 |
+| 5 | Potato___Early_blight | 1,000 | 1,000 |
+| 6 | Potato___healthy | 152 | 152 |
+| 7 | Potato___Late_blight | 1,000 | 1,000 |
+| 8 | Tomato___Bacterial_spot | 2,127 | 2,127 |
+| 9 | Tomato___Early_blight | 1,000 | 1,000 |
+| 10 | Tomato___healthy | 1,591 | 1,591 |
+| 11 | Tomato___Late_blight | 1,909 | 1,909 |
+| 12 | Tomato___Leaf_Mold | 952 | 952 |
+| 13 | Tomato___Septoria_leaf_spot | 443 | **1,771** (+1,328) |
+| 14 | Tomato___Target_Spot | 1,404 | 1,404 |
+| 15 | Tomato___Tomato_mosaic_virus | 373 | 373 |
+| 16 | Tomato___Tomato_Yellow_Leaf_Curl_Virus | 5,357 | 5,357 |
+
+**Nota (2026-09-23):** única divergencia = `Tomato___Septoria_leaf_spot` (443 → 1,771). Suma vigente = **22,488**.
 
 ---
 
 ## 4. Distribución y desbalance
 
-## 4.1 Indicadores del baseline
+## 4.1 Indicadores del baseline (vigentes desde 2026-09-23)
 
-- imágenes totales: `21,160`
+- imágenes totales: `22,488` (histórico: `21,160`)
 - clases: `16`
-- promedio por clase: `1,322.50`
-- clase mínima: `Potato___healthy` (`152`, `0.72%`)
-- clase máxima: `Tomato___Tomato_Yellow_Leaf_Curl_Virus` (`5,357`, `25.32%`)
-- ratio max/min (dentro del baseline): `35.24x`
+- promedio por clase: `1,405.50` (histórico: `1,322.50`)
+- clase mínima: `Potato___healthy` (`152`, `0.68%`)
+- clase máxima: `Tomato___Tomato_Yellow_Leaf_Curl_Virus` (`5,357`, `23.82%`)
+- ratio max/min (dentro del baseline): `35.24x` (sin cambio: min y max idénticos)
 
-## 4.2 Clases minoritarias críticas
+## 4.2 Clases minoritarias críticas (vigentes desde 2026-09-23)
 
 Estas clases requieren control explícito de desbalance en el benchmark:
 
 1. `Potato___healthy` (`152`)
 2. `Tomato___Tomato_mosaic_virus` (`373`)
-3. `Tomato___Septoria_leaf_spot` (`443`)
-4. `Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot` (`513`)
+3. `Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot` (`513`)
+4. `Tomato___Leaf_Mold` (`952`) — nueva 4ª minoritaria; `Tomato___Septoria_leaf_spot` (1,771) salió del grupo crítico
 
 ## 4.3 Clases dominantes críticas
 
@@ -123,7 +128,7 @@ Estas clases dominan el dataset y pueden sesgar métricas globales:
 
 El dataset `Agriculture AI V2` inicial queda formalmente inventariado como un subconjunto de PlantVillage:
 
-- `21,160` imágenes
+- `22,488` imágenes (vigente, consolidado 2026-09-23; histórico `21,160`)
 - `16` clases
 - `3` especies
 

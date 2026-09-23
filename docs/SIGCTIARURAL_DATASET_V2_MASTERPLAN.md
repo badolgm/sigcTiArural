@@ -5,13 +5,15 @@
 **Tipo:** Plan de investigación científica y de ingeniería de datos (MISIÓN PRE-SESIÓN IA/ML).
 **Regla suprema:** NO IMPLEMENTAR · NO MODIFICAR CÓDIGO · NO MODIFICAR DOCUMENTOS EXISTENTES · NO CREAR RUTAS/PÁGINAS · NO TOCAR FRONTEND. **Solo diseñar y documentar.** (*La mención "working tree limpio" del original fue actualizada 2026-09-21 por STATE SYNCHRONIZATION: hoy el árbol tiene `Dashboard.jsx` M + `dashboard_rc2_ui.patch`, asunto RC-2/UX independiente de este plan.*)
 
+**Actualización 2026-09-23 (RECOVERY CONSOLIDATION):** esta cadena documental fue actualizada al estado físico real. Baseline oficial del Dataset V2 = **22.488 imágenes / 16 clases / 3 especies**, origen recuperado en `D:\RespaldoData\PlantVillage-Dataset` (repo oficial spMohanty). Única divergencia vs el inventario anterior (21.160): `Tomato___Septoria_leaf_spot` = **1.771** (no 443); las otras 15 clases coinciden 1:1. Ver `SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md`.
+
 **Fundamento rector:** La auditoría `SIGCTIARURAL_AI_ML_STATE_OF_THE_ART.md` determinó que el cuello de botella científico es **la data**, no la arquitectura, ni el frontend, ni la IA, ni el ML, ni el hardware. Este plan diseña el camino para materializar **DATASET V2** como siguiente paso del ecosistema, en plena coherencia con el canónico (`research_v2`, UBTN, EIARC, gobernanza MLOps).
 
 ---
 
 ## 0. Tesis central del plan
 
-> Un dataset no es una colección de imágenes: es un **artefacto científico versionado** con taxonomía, esquema de etiquetas, particiones, métricas de calidad, procedencia y gobernanza. Dataset V2 debe nacer **bootstrap de laboratorio** (PlantVillage auditado, 21.160/16/3) y evolucionar hacia **datos propios de campo** — sin nunca presentar el bootstrap como validez de campo (invariante de honestidad canónico).
+> Un dataset no es una colección de imágenes: es un **artefacto científico versionado** con taxonomía, esquema de etiquetas, particiones, métricas de calidad, procedencia y gobernanza. Dataset V2 debe nacer **bootstrap de laboratorio** (PlantVillage auditado, 22.488/16/3) y evolucionar hacia **datos propios de campo** — sin nunca presentar el bootstrap como validez de campo (invariante de honestidad canónico).
 
 El objetivo de estos próximos 90 días es pasar de "dataset en diseño" (0 bytes físicos) a **"dataset v1 materializado + split v1 generado + primera evidencia de benchmark reproducible"**.
 
@@ -23,7 +25,7 @@ El objetivo de estos próximos 90 días es pasar de "dataset en diseño" (0 byte
 | Aspecto | Definición | Fuente |
 |---|---|---|
 | **Identidad** | `agriculture_images_tomato-potato-corn_taxonomy-v1_labels-v1_dataset-v1` | `AI_DATASET_STRATEGY_V2.md §4.4` |
-| Contenido | 21.160 imágenes RGB, 16 clases, 3 especies (tomate 9, papa 3, maíz 4) | Inventario V2 |
+| Contenido | 22.488 imágenes RGB, 16 clases, 3 especies (tomate 9, papa 3, maíz 4) | Inventario V2 (consolidado 2026-09-23) |
 | Origen | `PlantVillage-Dataset-master/raw/color` (subset auditado, sancionado como bootstrap) | Discovery audit §12.3 |
 | Exclusiones obligatorias | `raw/grayscale`, `raw/segmented`, `generated_for_paper`, clase Spider-mite | Execution Plan §scope |
 | Natura | **Bootstrap para benchmark controlado** — NO validez de campo | Inventario §5.3 |
@@ -74,7 +76,7 @@ El objetivo de estos próximos 90 días es pasar de "dataset en diseño" (0 byte
 ## 4. ¿Qué datos deben capturarse?
 
 ### Para el bootstrap v1 (ya especificado, resta materializar)
-- 21.160 RGB de `raw/color` (sin derivadas grayscale/segmented).
+- 22.488 RGB de `raw/color` (sin derivadas grayscale/segmented).
 - Manifiestos: `raw_source_manifest`, `curation_manifest`, `taxonomy_binding_manifest`, `split_manifest`, `baseline_experiment_manifest`.
 - Particiones: `train/validation/test` 70/15/15 estratificadas, anti-fuga (seed 42, `stratified_group_split`, pHash dedup).
 
@@ -99,7 +101,7 @@ El objetivo de estos próximos 90 días es pasar de "dataset en diseño" (0 byte
 4. **Datos simulados pasados como reales** — `source_mode=simulated` solo como demo separada (invariante de honestidad).
 5. **Series temporales sin limpiar en puerta C de la arquitectura** — `timeSeries door C` es deuda irreversible (ADR-18, ≥10M filas); diseñar, no abrir.
 6. **Datos biométricos sin consentimiento** — gobernanza RI-17 (retención, consentimiento multi-actor, seudonimización). Sin acuerdo → no capturar.
-7. **Rosetas de datos de otra máquina** — el dataset auditado vive en `C:\Users\Devbadolgm\...` (máquina anterior): **copiar a `data/datasets/` con manifiesto o no usarlo**.
+7. **Rosetas de datos de otra máquina** — el dataset auditado (máquina anterior) fue **recuperado en `D:\RespaldoData\PlantVillage-Dataset`** (2026-09-23); copiar a `data/datasets/` con manifiesto o no usarlo.
 8. **Datos de campo sin validación experta** declarados como validez — false overclaiming prohibido por RSK-REG-02.
 
 ---
@@ -111,7 +113,7 @@ El objetivo de estos próximos 90 días es pasar de "dataset en diseño" (0 byte
 
 ### Estrategia de etiquetado bootstrap
 - **Etiquetas de origen:** usadas tal cual (proceden del dataset auditado), registrando `annotation_quality` y `validation_source=source_dataset_audited`.
-- **Doble revisión:** muestras de riesgo (las 4 minoritarias: papa healthy=152, tomate mosaic=373, tomate septoria=443, maíz gray=513) con revisión de un segundo anotador.
+- **Doble revisión:** muestras de riesgo (las 4 minoritarias: papa healthy=152, tomate mosaic=373, maíz gray=513, tomate leaf_mold=952; septoria pasó a 1.771 tras la consolidación) con revisión de un segundo anotador.
 
 ### Estrategia de etiquetado propietario (diseño)
 - **Anotadores:** estudiantes ADSO supervisados por experto agrónomo (máx 2-3 por lote, definición de consenso).

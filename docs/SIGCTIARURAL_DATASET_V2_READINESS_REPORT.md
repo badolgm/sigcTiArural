@@ -6,22 +6,24 @@
 **Modo:** SOLO LECTURA + PLANIFICACIÓN. No se implementó, no se creó código, no se modificó ningún archivo salvo este reporte, no se commiteó.
 **Regla suprema:** La documentación canónica es la fuente de verdad. Honestidad de estado (real/referencia/simulación/diseño). NADA DESAPARECE · TODO SE PRESERVA · TODO SE CONECTA · TODO EVOLUCIONA.
 
+**Actualización 2026-09-23 (RECOVERY CONSOLIDATION):** el bloqueante de origen quedó **RESUELTO** — PlantVillage recuperado en `D:\RespaldoData\PlantVillage-Dataset` (54.305 archivos en `raw/color`, 38 clases, ~0.79 GB). Baseline oficial = **22.488/16/3** (delta +1.328 en `Tomato___Septoria_leaf_spot` = 1.771; 15/16 clases coinciden con el inventario). Ver `SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md`.
+
 ---
 
 ## 1. Estado actual real (verificado en disco, 2026-09-22)
 
 | Dominio | Estado | Evidencia física verificada |
 |---|---|---|
-| **Dataset PlantVillage** | ❌ **NO EXISTE en esta máquina** | Ruta canónica `C:\Users\Devbadolgm\...\PlantVillage-Dataset-master` → usuario inexistente; sin copia en `C:\Users\BagmDev` (recorrido), sin backups, sin `.kaggle/kaggle.json` |
+| **Dataset PlantVillage** | ✅ **RECUPERADO (2026-09-23)** | Copia física del repo oficial spMohanty en `D:\RespaldoData\PlantVillage-Dataset` → `raw/color` = 54.305 archivos / 38 clases / ~0.79 GB. La ruta canónica vieja (`C:\Users\Devbadolgm\...`) sigue inexistente y queda superada por la recuperación |
 | **Dataset V1** | ❌ NO EXISTE | No hay directorio raíz `data/` ni `data/datasets/` |
-| **Dataset V2 (bootstrap 21.160/16/3)** | ❌ NO EXISTE | 0 de 10 elementos de la estructura `v1/` está físicamente creado |
+| **Dataset V2 (bootstrap 22.488/16/3)** | 🟠 **Origen RECUPERADO; v1/ aún en 0%** | El subconjunto de 16 clases existe físicamente en el origen recuperado (suma 22.488); 0 de 10 elementos de la estructura `v1/` (data/datasets) están creados |
 | **Concepto/gobernanza V2** | ✅ 100% LISTO | 5 manifests YAML verificados en `docs/ai/manifests/` (raw_source 1.459 B, curation 2.360 B, taxonomy 5.175 B, split 1.415 B, baseline 1.758 B) |
 | **GO benchmark laboratorio** | ✅ GO (condicionado) | `AGRICULTURE_AI_V2_BENCHMARK_READINESS.md §5` = **GO** condicionado a materializar split + ejecutar benchmark |
 | **Modelo binario heredado** | ⚠️ EXISTE pero **colapsado** | `plant_disease_mbv2.h5` (9.431.432 B, mtime 2026-08-21); colapso monoclasse (class_1 inalcanzable, conf 0.99 incluso en no-planta) |
 | **Runtime Docker** | ⚠️ **Desktop apagado HOY** | `docker ps` falla: daemon no arrancado (en sesión previa: postgres Up, backend Up en 8010; hoy sin stack) |
 | **Disco C:** | ⚠️ 19.9 GB libres | Suficiente para dataset (~1–2 GB) y entrenamientos, pero estrecho para cachés TF/pipelines largos |
 
-**Lectura global:** el diseño (manifiestos + taxonomía + label schema + split spec + benchmark GO) está **completo al 100%**; la materialización física es **0%**. El único bloqueante real sigue siendo **el origen del raw**.
+**Lectura global:** el diseño (manifiestos + taxonomía + label schema + split spec + benchmark GO) está **completo al 100%**; la materialización física de `v1/` sigue en **0%**. El bloqueante de origen quedó **RESUELTO** (2026-09-23); el siguiente paso real es copiar las 16 clases a `v1/RAW/` con checksum.
 
 ---
 
@@ -57,10 +59,10 @@
 
 | # | Activo faltante | Impacto |
 |---|---|---|
-| 1 | **PlantVillage `raw/color` (21.160/16/3)** | 🔴 **BLOQUEANTE TOTAL** — sin él no hay V2 |
+| 1 | **PlantVillage `raw/color` (22.488/16/3)** | ✅ **RESUELTO (2026-09-23)** — origen recuperado en `D:\RespaldoData\PlantVillage-Dataset`; el subset de 16 clases suma 22.488. Pendiente: copia a `v1/RAW/` + checksum |
 | 2 | Credencial Kaggle/mirror para descargar (#1) | 🔴 Bloqueante para la vía más corta (dataset público) |
 | 3 | `data/datasets/` + árbol `v1/` (10 elementos) | 🔴 Sin estructura no hay materialización |
-| 4 | `labels_v1.csv` (21.160 filas, 8 campos) | 🔴 Sin etiquetas no hay split |
+| 4 | `labels_v1.csv` (22.488 filas, 8 campos) | 🔴 Sin etiquetas no hay split |
 | 5 | Dedup exactos + pHash (anti-fuga) | 🔴 Gate de calidad del split |
 | 6 | `split_lists/{train,validation,test}.csv` (70/15/15, seed 42) | 🔴 Sin split no hay benchmark comparable |
 | 7 | `curated/{train,validation,test}/` físico | 🟠 Entrada directa de entrenamiento |
@@ -78,7 +80,7 @@
 
 | Riesgo | Clase | Severidad | Mitigación |
 |---|---|---|---|
-| El raw PlantVillage no está en ninguna vía local/conocida | **CRÍTICO** | 🔴 Bloquea todo | Descarga Kaggle/mirror; verificar contra `raw_source_manifest` (21.160/16, exclusions) |
+| El raw PlantVillage no estaba en máquina conocida (RESUELTO 2026-09-23) | ~~CRÍTICO~~ → ✅ | ✅ Recuperado en `D:\RespaldoData\PlantVillage-Dataset` | Copiar 16 clases a `v1/RAW/`; verificar contra `raw_source_manifest` (22.488/16, exclusions) |
 | Sin `.kaggle/kaggle.json` → no hay descarga automática | ALTO | 🟠 Retrasa Fase 0 | Bernardo crea cuenta/API key (o mirror alternativo) |
 | **Docker Desktop apagado hoy** | ALTO | 🟠 No hay runtime para verificar nada | Re-arrancar Docker antes de ejecutar; registrar estado en AGENTS si se reactiva |
 | Disco C: 19.9 GB libres | MEDIO | 🟠 Ajustado para pipelines | Dataset ~1–2 GB viable; limpiar antes de entrenar (TF+datos+cachés) |
@@ -127,7 +129,7 @@ data/
 
 | Fase | Pasos | Requiere | Salida |
 |---|---|---|---|
-| **F0 Adquisición** | 1. Credencial Kaggle/mirror → 2. Descargar `raw/color` → 3. Descomprimir a `v1/RAW/` → 4. Conteo 21.160/16 → 5. Exclusiones ausentes → 6. `CHECKSUMS.sha256` | **Bernardo** (credencial) | `v1/RAW/` verificado |
+| **F0 Adquisición** | 1. Verificar origen recuperado (`D:\RespaldoData\PlantVillage-Dataset`) → 2. Copiar 16 clases a `v1/RAW/` → 3. Conteo 22.488/16 → 4. Exclusiones ausentes → 5. `CHECKSUMS.sha256` | Gobernanza (raw_source_manifest: `expected_images` 21160 → actualizar) | `v1/RAW/` verificado |
 | **F1 Curation** | 7. Copiar 5 manifests a `v1/manifests/` → 8. `labels_v1.csv` (16 clases, 8 campos) → 9. Marcar 4 clases minoritarias `double_reviewed` | F0 | Etiquetas trazables |
 | **F2 Split** | 10. Dedup exactos → 11. pHash near-dup → 12. `split_v1` 70/15/15 seed 42 → 13. Gates (clases en 3 particiones, 0 fugas) → 14. `split_report.md` | F1 | `split_lists/*.csv` |
 | **F3 Materialización** | 15. `curated/{train,val,test}/` → 16. `dataset_card.md` → 17. reservar `holdout/` | F2 | `curated/` listo |
@@ -142,11 +144,11 @@ data/
 
 ## 7. Respuestas a la misión
 
-1. **Estado actual real:** diseño V2 100% listo (manifiestos, GO), materialización física **0%** (ni `data/`), origen PlantVillage ausente en esta máquina, Docker apagado hoy. Único modelo = binario colapsado. Push documental completado (HEAD `86d545e`).
+1. **Estado actual real:** diseño V2 100% listo (manifiestos, GO), materialización física de `v1/` **0%**, **origen PlantVillage RECUPERADO el 2026-09-23** (`D:\RespaldoData\PlantVillage-Dataset`, 22.488/16/3), Docker apagado hoy. Único modelo = binario colapsado. Push documental completado (HEAD `86d545e`).
 2. **Activos reales encontrados:** 5 manifests YAML, 18 docs research_v2, `plant_disease_mbv2.h5` + metadata + `test_leaf.jpg`, 3 scripts de entrenamiento heredados, servicio FastAPI de inferencia. **Nada** de dataset, split, benchmark o checkpoints.
-3. **Activos faltantes:** plantVillage raw (bloqueante #1), credencial Kaggle, árbol `data/datasets/v1` completo, labels, split, curated, scripts de benchmark y métricas, entorno TF reproducible.
+3. **Activos faltantes (actualizado 2026-09-23):** el origen ya NO falta (recuperado); restan: árbol `data/datasets/v1` completo (RAW materializado), labels, split, curated, scripts de benchmark y métricas, entorno TF reproducible.
 4. **Riesgos:** bloqueante crítico del raw; sin credencial Kaggle; Docker apagado hoy; disco C. 19.9 GB; notebook VACÍO (0 B) que el inventory citó con 2.3 KB.
-5. **Siguiente tarea concreta:** **FASE 0 paso 1 — proveer credencial Kaggle (o mirror) y descargar PlantVillage `raw/color` → `data/datasets/agriculture_images_tomato-potato-corn/v1/RAW/`**, con verificación de conteo contra `raw_source_manifest` (21.160 imágenes / 16 clases / exclusions cero). Es la única tarea que no puede hacer una IA y destraba todo lo demás.
+5. **Siguiente tarea concreta (actualizada 2026-09-23):** **FASE 0 — usar el origen ya recuperado**: verificar `D:\RespaldoData\PlantVillage-Dataset\raw\color` (54.305/38) y **copiar las 16 clases del scope → `data/datasets/agriculture_images_tomato-potato-corn/v1/RAW/`** con conteo 22.488/16 y exclusions cero; **actualizar `expected_images` del `raw_source_manifest` a 22488** (decisión gobernada). Sin Kaggle ni descarga.
 6. **Camino mínimo:** F0 adquisición (Bernardo) → F1 curation → F2 split → F3 materialización → F4 benchmark 4 arquitecturas + control MobileNetV2 → F5 publicación `benchmark_report.md` (ruta completa en §6).
 
 ---

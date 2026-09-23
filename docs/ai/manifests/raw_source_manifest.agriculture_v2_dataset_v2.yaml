@@ -1,0 +1,55 @@
+schema_version: "1.0"
+manifest_type: "raw_source_manifest"
+manifest_generation: "v2"
+supersedes: "raw_source_manifest.agriculture_v2_dataset_v1.yaml"
+
+dataset_id: "agriculture_images_tomato-potato-corn"
+dataset_version: "v1"
+context: "agriculture"
+modality: "computer_vision"
+
+source:
+  name: "PlantVillage-Dataset (recuperado)"
+  source_root: "D:\\RespaldoData\\PlantVillage-Dataset"
+  subset_root: "D:\\RespaldoData\\PlantVillage-Dataset\\raw\\color"
+  subset_variant: "raw/color"
+
+audit:
+  inventory_document: "AGRICULTURE_AI_V2_DATASET_INVENTORY.md"
+  discovery_audit_document: "AI_DATASET_DISCOVERY_AND_AUDIT.md"
+  recovery_document: "SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md"
+  materialization_document: "SIGCTIARURAL_DATASET_V2_MATERIALIZATION_PLAN.md"
+  notes:
+    - "El baseline V2 inicial usa exclusivamente raw/color para evitar fuga por variantes derivadas."
+    - "Origen recuperado 2026-09-23: 54.305 archivos / 38 clases / 16 en scope / conteos consolidados."
+
+scope:
+  included_species:
+    - "Tomato"
+    - "Potato"
+    - "Corn_(maize)"
+  expected_classes: 16
+  expected_images: 22488
+
+exclusions:
+  excluded_subsets:
+    - "raw/grayscale"
+    - "raw/segmented"
+    - "generated_for_paper"
+  excluded_class_patterns:
+    - "All classes not in tomato/potato/corn scope"
+  excluded_specific_classes:
+    - "Tomato___Spider_mites Two-spotted_spider_mite"
+
+integrity:
+  allow_external_path: true
+  expected_image_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+  checksums_artifact: "v1/CHECKSUMS.sha256"
+  checksums_verified: 22488
+
+known_limitations:
+  - "Dataset de laboratorio: sesgo de fondos limpios y condiciones controladas."
+  - "Desbalance fuerte en clases minoritarias (ej. Potato___healthy)."
