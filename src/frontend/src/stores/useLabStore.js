@@ -1,4 +1,10 @@
 import { create } from 'zustand';
+import {
+  SIGNAL_CATALOG,
+  LIVE_SIGNAL_IDS,
+  SANE_ENTRIES,
+  HUERFANO_ENTRY
+} from '../pages/cmsc/signalCatalog.js';
 
 /**
  * useLabStore
@@ -106,6 +112,18 @@ export const useLabStore = create((set) => ({
   setBridgeStatus: (status) => set((state) => ({
     bridgeStatus: { ...state.bridgeStatus, ...status }
   })),
+
+  // RAMA DECLARATIVA signalRegistry (F3B §11 · F3C §6) — modo lectura.
+  // Se puebla a partir del SIGNAL_MAP; no toca claves existentes.
+  // bridgeStatus se congela y se etiqueta HUERFANO en el registry, sin borrarse.
+  signalRegistry: {
+    revision: 1,
+    generated_from: 'CMSC_SIGNAL_MAP_v1',
+    catalog: SIGNAL_CATALOG,
+    liveIds: LIVE_SIGNAL_IDS,
+    sane: SANE_ENTRIES,
+    huerfano: HUERFANO_ENTRY
+  },
 
   reset: () => set({ electronicsData: { active: false, signals: {}, params: {}, lastUpdate: null } })
 }));
