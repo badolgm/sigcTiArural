@@ -1,0 +1,93 @@
+# ==============================================================================
+# .gitattributes — Normalización de fin de línea y binarios
+# sigcTiArural · 2026-09-29
+# ------------------------------------------------------------------------------
+# MOTIVACIÓN: el repositorio crecía sin política de fin de línea explícita.
+# Con core.autocrlf=true (Windows) Git normalizaba a LF, pero con
+# autocrlf=false (Linux/macOS) el comportamiento divergía, generando el
+# falso positivo "modified" observado en los 6 docs de Benchmark_M1_MobileNetV2.
+# Esta archivo hace el comportamiento explícito e independiente de la plataforma.
+#
+# REGLA: el índice SIEMPRE almacena LF. El working copy usa el EOL nativo.
+# Así el contenido versionado es idéntico para todos los colaboradores.
+# ==============================================================================
+
+
+# --- Regla general: detección automática de texto/binario ---------------------
+# Git detecta binarios por contenido; no los convierte.
+* text=auto
+
+
+# --- Documentación y código: LF en el índice ---------------------------------
+*.md          text eol=lf
+*.txt         text eol=lf
+*.py          text eol=lf
+*.js          text eol=lf
+*.jsx         text eol=lf
+*.mjs         text eol=lf
+*.css         text eol=lf
+*.html        text eol=lf
+*.json        text eol=lf
+*.svg         text eol=lf
+*.mmd         text eol=lf
+*.yml         text eol=lf
+*.yaml        text eol=lf
+*.xml         text eol=lf
+*.example     text eol=lf
+.ipynb        text eol=lf
+
+
+# --- Scripts que exigen LF estricto (ejecutados por /bin/sh) -----------------
+*.sh          text eol=lf
+
+
+# --- Scripts de Windows: CRLF en el working copy ------------------------------
+*.ps1         text eol=crlf
+*.bat         text eol=crlf
+*.cmd         text eol=crlf
+
+
+# --- Binarios declarados explícitamente (nunca convertir) --------------------
+# Modelos y datos científicos
+*.h5          binary
+*.keras       binary
+*.pt          binary
+*.pth         binary
+*.onnx        binary
+*.pkl         binary
+
+# Imágenes y multimedia
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.gif         binary
+*.ico         binary
+*.svgz        binary
+*.mp3         binary
+*.mp4         binary
+*.wav         binary
+*.webm        binary
+
+# Fuentes incrustadas (vendor Falstad / circuitjs)
+*.woff        binary
+*.woff2       binary
+*.ttf         binary
+*.eot         binary
+
+# Documentos ofimáticos y model's workbench
+*.docx        binary
+*.xlsx        binary
+*.pptx        binary
+*.mwb         binary
+*.pdf         binary
+
+# Comprimidos
+*.zip         binary
+*.gz          binary
+
+
+# --- Excepciones explícitas: vendor de terceros se preserva byte a byte ------
+# 392 archivos .txt de circuitos Falstad bajo circuitjs1. Se fuerza CRLF en el
+# working copy porque el runtime de Falstad los parsea y algunos navegadores
+# los tratan como literales; no se renormaliza su contenido histórico.
+src/frontend/public/vendor/** -text
