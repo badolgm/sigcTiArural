@@ -1068,7 +1068,7 @@ const SchematicEditor = ({ onRunSimulation, labSignalParams, timeDiv, voltsDiv, 
     // Probes automáticos (nodo -> net de salida relevante), usados como fallback
     // en el Osciloscopio local cuando el usuario no agregó ningún Probe manual.
     // No participan en el netlist ni en lo que ElectronicsLab recibe/reenvía a
-    // "Análisis de Señal Real" (Dr. Binary) — ese camino sigue leyendo el
+    // "Análisis de Señal Real" (Motor de Modelado Científico) — ese camino sigue leyendo el
     // history/analysis crudo sin filtrar, sin cambios.
     const autoProbes = [];
 

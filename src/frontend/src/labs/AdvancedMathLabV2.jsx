@@ -31,6 +31,16 @@ const AdvancedMathLabV2 = () => {
         .particle { position:absolute; width:2px; height:2px; background:#00ffff; border-radius:50%; animation: float 6s ease-in-out infinite; opacity:0.7; }
         @keyframes float { 0%,100%{ transform: translateY(0px) translateX(0px);} 25%{ transform: translateY(-20px) translateX(10px);} 50%{ transform: translateY(-40px) translateX(-10px);} 75%{ transform: translateY(-20px) translateX(5px);} }
         .game-container { max-width: 1200px; margin:0 auto; padding:20px; position:relative; z-index:10; }
+        .mmc-brief { max-width:980px; margin:0 auto 18px; text-align:center; }
+        .mmc-chain { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px; margin-top:10px; }
+        .mmc-node { font-size:11px; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:999px; border:1px solid rgba(0,255,255,.35); background:rgba(0,255,255,.07); color:#cfefff; }
+        .mmc-arrow { color:#5b6b7a; font-size:12px; }
+        .mmc-note { font-size:12px; color:#9aa4b0; margin-top:10px; }
+        .mmc-tag { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0 10px; font-size:11px; }
+        .mmc-tag b { font-weight:600; color:#7d8894; text-transform:uppercase; letter-spacing:.06em; font-size:10px; }
+        .mmc-chip { padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:#b6c2cf; }
+        .mmc-chip-live { border-color:rgba(57,255,211,.45); background:rgba(57,255,211,.10); color:#8ef0d6; }
+        .mmc-chip-sim { border-color:rgba(255,179,0,.35); background:rgba(255,179,0,.08); color:#e0b64f; }
         .quantum-header { text-align:center; margin-bottom:30px; position:relative; }
         .quantum-title { font-family:'Orbitron', monospace; font-size:2.6rem; font-weight:900; background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-shadow:0 0 30px rgba(0,255,255,0.5); margin-bottom:15px; animation:titleGlow 3s ease-in-out infinite; }
         @keyframes titleGlow { 0%,100%{ filter:brightness(1) hue-rotate(0deg);} 50%{ filter:brightness(1.2) hue-rotate(30deg);} }
@@ -62,8 +72,28 @@ const AdvancedMathLabV2 = () => {
       <div className="game-container">
         <div className="quantum-header">
           <div className="doctor-avatar"><span className="fa-solid fa-brain" aria-hidden="true"></span></div>
-          <h1 className="quantum-title">Laboratorio Cuántico del Dr. Binary</h1>
-          <p style={{ color: '#cccccc' }}>Explora visualizaciones y experimentos interactivos de matemáticas avanzadas.</p>
+          <h1 className="quantum-title">Motor de Modelado Científico</h1>
+          <p style={{ color: '#cccccc' }}>Centro de modelado, simulación, optimización y análisis matemático del ecosistema SIGCTIARURAL.</p>
+          <p style={{ color: '#cccccc' }}>Las matemáticas generan modelos. Los modelos producen señales. Las señales generan conocimiento.</p>
+
+          <div className="mmc-brief">
+            <p style={{ color: '#cfefff', fontSize: 13 }}>
+              Esta no es una colección de ejercicios matemáticos: es una <b>planta generadora de modelos y señales</b>.
+              Aquí se formula la teoría, se simula su comportamiento, se comparan ambos resultados y se contrastan
+              con la medición real de los circuitos del ecosistema.
+            </p>
+            <div className="mmc-chain">
+              {['Teoría', 'Simulación', 'Implementación', 'Medición real', 'Conocimiento'].map((c, i) => (
+                <React.Fragment key={c}>
+                  {i > 0 && <span className="mmc-arrow">→</span>}
+                  <span className="mmc-node">{c}</span>
+                </React.Fragment>
+              ))}
+            </div>
+            <p className="mmc-note">
+              La teoría no siempre coincide con el comportamiento físico real. <b style={{ color: '#7dffd4' }}>Por eso el MMC existe.</b>
+            </p>
+          </div>
         </div>
 
         <div className="stats-grid">
@@ -97,18 +127,18 @@ const AdvancedMathLabV2 = () => {
         <div className="lab-modes">
           <div className="mode-card">
             <div className="mode-icon">∂</div>
-            <h3 style={{ marginBottom: 8 }}>Ecuaciones Diferenciales</h3>
-            <p style={{ color: '#cccccc' }}>Resolver `dy/dx + y = e^x` y visualizar soluciones.</p>
+            <h3 style={{ marginBottom: 8 }}>Simulaciones numéricas</h3>
+            <p style={{ color: '#cccccc' }}>Resuelve EDO y replica la dinámica de sistemas reales: crecimiento, oscilación y estabilidad.</p>
           </div>
           <div className="mode-card">
             <div className="mode-icon">R(θ)</div>
-            <h3 style={{ marginBottom: 8 }}>Geometría y Álgebra</h3>
-            <p style={{ color: '#cccccc' }}>Matrices de rotación y transformaciones lineales en 2D/3D.</p>
+            <h3 style={{ marginBottom: 8 }}>Modelos lineales</h3>
+            <p style={{ color: '#cccccc' }}>Eigenvalores y transformaciones que describen cómo un sistema amplifica o atenúa una entrada.</p>
           </div>
           <div className="mode-card">
             <div className="mode-icon">ℱ</div>
-            <h3 style={{ marginBottom: 8 }}>Señales y Transformadas</h3>
-            <p style={{ color: '#cccccc' }}>Series de Fourier y transformadas de Laplace y Wavelets.</p>
+            <h3 style={{ marginBottom: 8 }}>Señales sintéticas y de prueba</h3>
+            <p style={{ color: '#cccccc' }}>Genera series de Fourier, señales moduladas en AM y sus espectros para alimentar otros laboratorios.</p>
           </div>
         </div>
 
@@ -185,6 +215,21 @@ export default AdvancedMathLabV2;
 export { IntegralsInteractive, EigenvaluesInteractive, DiffEqInteractive, GeometryInteractive, SignalsInteractive, ComplexInteractive };
 
 // --- Componentes Dinámicos ---
+
+// Etiqueta de salida y destino de cada instrumento. Solo presentación: no altera ningún cálculo.
+const MmcTag = ({ produce, hacia, live }) => (
+  <div className="mmc-tag">
+    <b>Produce</b>
+    {produce.map((p) => (
+      <span key={p} className="mmc-chip mmc-chip-sim">{p}</span>
+    ))}
+    <b style={{ marginLeft: 6 }}>Va hacia</b>
+    {hacia.map((h) => (
+      <span key={h} className={`mmc-chip ${live ? 'mmc-chip-live' : ''}`}>{h}</span>
+    ))}
+  </div>
+);
+
 const DynamicSections = ({ electronicsData }) => {
   return (
     <div>
@@ -222,8 +267,14 @@ const RealSignalAnalysis = ({ electronicsData }) => {
       <div className="interactive-section" id="section-real-signal">
         <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>🔬 Análisis de Señal Real</h3>
         <div className="p-4 border border-dashed border-gray-600 rounded text-center text-gray-400">
-          <p>No hay datos de simulación activos.</p>
-          <p className="text-sm mt-2">Ve al <strong>Laboratorio de Electrónica</strong>, diseña un circuito y ejecútalo.</p>
+          <p>Este es el único enlace de medición real del MMC: aún no hay datos de circuito activos.</p>
+          <p className="text-sm mt-2">
+            Activa un circuito en el <strong>Laboratorio de Electrónica</strong> y el MMC recibirá su señal
+            para medirla en tiempo y frecuencia, comparar teoría contra comportamiento físico y exportar el resultado.
+          </p>
+          <p className="text-sm mt-2 text-gray-500">
+            Sin esa medición, todo lo que este laboratorio produce sigue siendo simulación.
+          </p>
         </div>
       </div>
     );
@@ -340,6 +391,12 @@ const RealSignalAnalysis = ({ electronicsData }) => {
             <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>🔬 Análisis de Señal Real</h3>
             <span className="text-xs px-2 py-1 bg-green-900 text-green-300 rounded border border-green-700">Live Data</span>
         </div>
+
+        <MmcTag
+          live
+          produce={['V(t) medida', 'espectro FFT', 'H(s) · Bode', 'fase V-dV/dt', 'CSV']}
+          hacia={['Electrónica', 'Telecomunicaciones', 'IA Predictiva', 'Knowledge Hub']}
+        />
         
         <div className="flex gap-4">
             <div className="flex flex-col">
@@ -592,6 +649,10 @@ const IntegralsInteractive = () => {
   return (
     <div className="interactive-section" id="section-integrals">
       <h3 className="text-xl font-bold" style={{ color:'#00ffff' }}>Análisis Matemático: Derivadas e Integrales</h3>
+      <MmcTag
+        produce={['curva de referencia', 'área acumulada', 'TFC verificada']}
+        hacia={['validación teórica', 'Electrónica · filtrado', 'Knowledge Hub']}
+      />
       <div className="controls">
         <div className="ctrl"><label>Función</label>
           <select value={fn} onChange={(e)=>setFn(e.target.value)}>
@@ -679,6 +740,10 @@ const EigenvaluesInteractive = () => {
   return (
     <div className="interactive-section" id="section-eigen">
       <h3 className="text-xl font-bold" style={{ color:'#00ffff' }}>Eigenvalores y Eigenvectores (2×2)</h3>
+      <MmcTag
+        produce={['espectro propio', 'direcciones invariantes', 'criterio de estabilidad']}
+        hacia={['resonancia', 'Electrónica · respuesta en frecuencia', 'Knowledge Hub']}
+      />
       <div className="controls">
         <div className="ctrl"><label>a</label><input type="number" value={a} onChange={(e)=>setA(parseFloat(e.target.value))} /></div>
         <div className="ctrl"><label>b</label><input type="number" value={b} onChange={(e)=>setB(parseFloat(e.target.value))} /></div>
@@ -716,6 +781,10 @@ const DiffEqInteractive = () => {
   return (
     <div className="interactive-section">
       <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>Ecuación Diferencial: dy/dx + y = e^x</h3>
+      <MmcTag
+        produce={['solución exacta', 'trayectoria numérica', 'ciclo límite']}
+        hacia={['simulación de dinámica', 'escenarios experimentales', 'IA Predictiva']}
+      />
       <div className="controls">
         <div className="ctrl">
           <label>Condición inicial y(0)</label>
@@ -765,6 +834,10 @@ const GeometryInteractive = () => {
   return (
     <div className="interactive-section">
       <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>Geometría: Rotación 2D</h3>
+      <MmcTag
+        produce={['transformación lineal', 'rotación de trayectoria']}
+        hacia={['Álgebra y geometría', 'Knowledge Hub']}
+      />
       <div className="controls">
         <div className="ctrl">
           <label>Ángulo θ (grados)</label>
@@ -835,6 +908,10 @@ const SignalsInteractive = () => {
   return (
     <div className="interactive-section" id="section-signals">
       <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>Señales: Serie de Fourier simple</h3>
+      <MmcTag
+        produce={['señal de prueba', 'espectro discreto', 'señal AM', 'envolvente demodulada']}
+        hacia={['Análisis espectral', 'Telecomunicaciones', 'Electrónica · filtrado', 'Hardware BBB', 'IA Predictiva']}
+      />
       <div className="controls">
         <div className="ctrl"><label>f1</label><input type="range" min="1" max="6" value={f1} onChange={(e)=>setF1(parseInt(e.target.value))} /><span style={{color:'#ccc'}}>f1={f1}</span></div>
         <div className="ctrl"><label>a1</label><input type="range" min="0" max="2" step="0.1" value={a1} onChange={(e)=>setA1(parseFloat(e.target.value))} /><span style={{color:'#ccc'}}>a1={a1.toFixed(1)}</span></div>
@@ -885,6 +962,10 @@ const SignalsInteractive = () => {
         </svg>
       </div>
       <h4 className="text-lg font-bold" style={{color:'#ffd32a', marginTop:12}}>Ejemplo EM: Modulación AM y Demodulación</h4>
+      <MmcTag
+        produce={['portadora s(t)', 'bandas laterales f_c ± f_m', 'envolvente recuperada']}
+        hacia={['Telecomunicaciones', 'Electrónica · demodulador', 'Análisis espectral', 'Knowledge Hub']}
+      />
       <div className="controls">
         <div className="ctrl"><label>f<sub>c</sub> (portadora)</label><input type="range" min="5" max="30" value={em.fc} onChange={(e)=>setEm({...em, fc: parseInt(e.target.value)})} /><span style={{color:'#ccc'}}>fc={em.fc}</span></div>
         <div className="ctrl"><label>f<sub>m</sub> (mensaje)</label><input type="range" min="0" max="10" step="1" value={em.fm} onChange={(e)=>setEm({...em, fm: parseInt(e.target.value)})} /><span style={{color:'#ccc'}}>fm={em.fm}</span></div>
@@ -930,6 +1011,10 @@ const ComplexInteractive = () => {
   return (
     <div className="interactive-section" id="section-complex">
       <h3 className="text-xl font-bold" style={{ color:'#00ffff' }}>Variable Compleja: f(z)=z²</h3>
+      <MmcTag
+        produce={['mapeo conforme', 'plano complejo']}
+        hacia={['transformaciones analíticas', 'Knowledge Hub']}
+      />
       <div className="controls"><div className="ctrl"><label>Escala</label><input type="range" min="0.5" max="2" step="0.1" value={scale} onChange={(e)=>setScale(parseFloat(e.target.value))} /><span style={{color:'#ccc'}}>×{scale.toFixed(1)}</span></div></div>
       <div className="svg-wrap">
         <svg width="500" height="200" role="img" aria-label="Mapa complejo">
@@ -956,6 +1041,10 @@ const FormulasPanel = () => {
   return (
     <div className="interactive-section">
       <h3 className="text-xl font-bold" style={{ color:'#00ffff' }}>📐 Fórmulas y Explicaciones</h3>
+      <MmcTag
+        produce={['referencia verificable', 'vínculo académico externo']}
+        hacia={['Knowledge Hub', 'Análisis espectral', 'validación teórica']}
+      />
       <div className="controls">
         {formulas.map((f,i)=> (
           <div className="ctrl" key={i}>

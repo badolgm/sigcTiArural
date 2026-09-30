@@ -91,18 +91,18 @@ export const labCategories = [
     isExpanded: false,
     sections: [
       {
-        title: 'Laboratorio Cuántico - Nivel Fácil',
+        title: 'Recursos de Computación Cuántica - Nivel Fácil',
         accent: '#ff6b9d',
         links: [
           { label: '🧮 Lab Matemáticas Interactivo', to: 'advanced-math', internal: true },
-          { label: '🧮 Dr. Binary (V2)', to: 'advanced-math-v2', internal: true },
+          { label: '🧮 Motor de Modelado Científico (MMC)', to: 'advanced-math-v2', internal: true },
           { label: 'Qiskit Textbook', href: 'https://qiskit.org/textbook/' },
           { label: 'Quantum Computing Playground', href: 'http://www.quantumplayground.net/' },
           { label: 'IBM Quantum Experience', href: 'https://quantum-computing.ibm.com/' },
         ],
       },
       {
-        title: 'Laboratorio Cuántico - Nivel Moderado',
+        title: 'Recursos de Computación Cuántica - Nivel Moderado',
         accent: '#c44569',
         links: [
           { label: 'Cirq (Google Quantum)', href: 'https://quantumai.google/cirq' },
@@ -112,7 +112,7 @@ export const labCategories = [
         ],
       },
       {
-        title: 'Laboratorio Cuántico - Nivel Difícil',
+        title: 'Recursos de Computación Cuántica - Nivel Difícil',
         accent: '#8b0000',
         links: [
           { label: 'Quantum Fourier Transform', href: 'https://qiskit.org/textbook/ch-algorithms/quantum-fourier-transform.html' },

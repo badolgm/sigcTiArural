@@ -10,7 +10,7 @@ import {
 
 const DOORS = [
   { to: '/lab-telecom', label: 'Telecom · FFT', signalId: 'S30', port: 'P-LAB-02', adapter: 'readMicSpectrumStatus' },
-  { to: '/advanced-math-v2', label: 'Matemáticas v2 · Dr. Binary', signalId: 'S35', port: null, adapter: null },
+  { to: '/advanced-math-v2', label: 'Motor de Modelado Científico', signalId: 'S35', port: null, adapter: null },
   { to: '/lab-electronics', label: 'Electrónica · Falstad + solver', signalId: 'S32', port: 'P-LAB-01', adapter: null },
   { to: '/labs/robotics', label: 'Robótica', signalId: 'S50', port: 'P-LAB-03', adapter: 'readRobotStatus' },
   { to: '/lab-embedded', label: 'Sistemas Embebidos', signalId: 'S39', port: null, adapter: null },

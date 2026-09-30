@@ -3,7 +3,7 @@
  * Laboratorio de Electrónica (el editor de esquemas legado -- SchematicEditor
  * en cuarentena --, Falstad auto-hospedado, o cualquier reemplazo futuro).
  *
- * El Laboratorio de Matemáticas (Dr. Binary, AdvancedMathLabV2.jsx) y
+ * El Motor de Modelado Científico (MMC, AdvancedMathLabV2.jsx) y
  * cualquier otro consumidor futuro dependen SOLO de este contrato -- nunca
  * de si la señal viene de SchematicEditor o de Falstad. Ver el mapa de
  * conexiones real (docs/local, sesión Día 18 - migración Falstad) para la

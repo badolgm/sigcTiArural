@@ -5,7 +5,7 @@ import { NEON } from './honesty.js';
 
 const NAV_ITEMS = [
   { label: 'Centro CMSC', route: null, action: 'overview', estado: 'REAL', note: 'escena científica' },
-  { label: 'Matemáticas', route: '/advanced-math-v2', estado: 'SIM', note: 'Dr. Binary' },
+  { label: 'Matemáticas', route: '/advanced-math-v2', estado: 'SIM', note: 'MMC · motor' },
   { label: 'Señales', route: null, action: 'catalog', estado: 'REAL', note: 'catálogo S01..S80' },
   { label: 'Electrónica', route: '/lab-electronics', estado: 'SIM', note: 'Falstad + solver' },
   { label: 'Física', route: null, estado: 'DISENO', note: 'sin ruta aún' },
