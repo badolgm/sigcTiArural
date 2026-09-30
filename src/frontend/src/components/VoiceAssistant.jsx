@@ -124,3 +124,64 @@ const VoiceAssistant = () => {
 };
 
 export default VoiceAssistant;
+// Reutilización aditiva para CMSC_V7_LOWER_HALF_ACTIVATION · mismo /assist real (S62).
+// Sin cambios sobre el componente flotante: solo un hook compartido para la celda ACP.
+export function useAiVoiceAssist() {
+  const [isListening, setIsListening] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const mediaRecorder = useRef(null);
+  const audioChunks = useRef([]);
+
+  const start = async () => {
+    audioChunks.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let selectedMimeType = 'audio/webm';
+      for (const t of ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']) {
+        if (MediaRecorder.isTypeSupported(t)) { selectedMimeType = t; break; }
+      }
+      mediaRecorder.current = new MediaRecorder(stream, { mimeType: selectedMimeType });
+      mediaRecorder.current.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) audioChunks.current.push(event.data);
+      };
+      mediaRecorder.current.start(500);
+      setIsListening(true);
+    } catch (err) {
+      console.error('ACP voz · error al abrir micrófono:', err);
+      setIsListening(false);
+    }
+  };
+
+  const stop = () => {
+    if (!mediaRecorder.current || !isListening) return;
+    mediaRecorder.current.onstop = async () => {
+      setIsProcessing(true);
+      if (audioChunks.current.length === 0) { setIsProcessing(false); return; }
+      const mimeType = mediaRecorder.current?.mimeType || 'audio/webm';
+      const audioBlob = new Blob(audioChunks.current, { type: mimeType });
+      const extension = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+      const formData = new FormData();
+      formData.append('audio', audioBlob, `grabacion.${extension}`);
+      try {
+        const response = await fetch(`${API_BASE}/assist`, { method: 'POST', body: formData });
+        if (response.ok) {
+          const resAudioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(resAudioBlob);
+          await new Audio(audioUrl).play();
+        } else {
+          console.error('ACP voz · error en la IA:', response.statusText);
+        }
+      } catch (error) {
+        console.error('ACP voz · fallo de conexión:', error);
+      } finally {
+        setIsProcessing(false);
+        audioChunks.current = [];
+      }
+    };
+    mediaRecorder.current.stop();
+    setIsListening(false);
+    mediaRecorder.current.stream.getTracks().forEach((track) => track.stop());
+  };
+
+  return { isListening, isProcessing, toggle: () => (isListening ? stop() : start()) };
+}

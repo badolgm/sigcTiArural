@@ -19,6 +19,7 @@ import DataScienceLab from './pages/DataScienceLab.jsx';
 import HardwareCatalogPage from './pages/HardwareCatalogPage.jsx';
 import HardwareDetailPage from './pages/HardwareDetailPage.jsx';
 import ProjectsPage from './pages/ProjectsPage.jsx';
+import CmscDashboard from './pages/CmscDashboard.jsx';
 import VoiceAssistant from './components/VoiceAssistant.jsx'; // Tu Asistente
 
 // Servicios
@@ -131,6 +132,9 @@ const AppContent = () => {
           {/* --- KNOWLEDGE HUB (MVP — FASE 8D, entrada principal — FASE 9A) --- */}
           <Route path="/knowledge" element={<KnowledgeHubLayout />} />
           <Route path="/knowledge/doc/:docId" element={<KnowledgeHubLayout />} />
+
+          {/* --- CMSC DASHBOARD CIENTÍFICO (F3C v1 · envoltura aditiva) --- */}
+          <Route path="/dashboard-cmsc" element={<CmscDashboard embedded onNavigate={handleNavigation} />} />
 
           {/* --- ERROR 404 --- */}
           <Route path="*" element={

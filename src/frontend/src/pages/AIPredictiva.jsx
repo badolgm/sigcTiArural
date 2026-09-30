@@ -581,3 +581,5 @@ const AIPredictiva = () => {
 };
 
 export default AIPredictiva;
+// Reutilización aditiva para CMSC_V7_LOWER_HALF_ACTIVATION · sin cambios de lógica.
+export { AI_INFERENCE_URL, buildInfoFromOfficialResponse, getStatusPresentation, getModePresentation, getClassificationLabel };

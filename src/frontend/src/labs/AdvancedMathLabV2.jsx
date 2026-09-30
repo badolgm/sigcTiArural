@@ -181,6 +181,9 @@ const PhasePortraitPlot = ({ time, signal, width, height }) => {
 
 export default AdvancedMathLabV2;
 
+// Instrumentos del laboratorio reutilizables por el CMSC (export aditivo, lógica intacta).
+export { IntegralsInteractive, EigenvaluesInteractive, DiffEqInteractive, GeometryInteractive, SignalsInteractive, ComplexInteractive };
+
 // --- Componentes Dinámicos ---
 const DynamicSections = ({ electronicsData }) => {
   return (

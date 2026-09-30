@@ -23,6 +23,7 @@ const TopNav = ({ clusterNodes }) => {
   // Definición de enlaces con Rutas Reales
   const navItems = [
     { name: 'Dashboard', path: '/dashboard' },
+    { name: 'CMSC Científico', path: '/dashboard-cmsc' },
     { name: 'Laboratorios', path: '/labs' },
     { name: 'Hardware', path: '/hardware-catalog' },
     { name: 'IA Predictiva', path: '/ai-predictive' },
@@ -127,7 +128,7 @@ const TopNav = ({ clusterNodes }) => {
               <summary className="list-none cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded border border-gray-800 hover:border-gray-600 transition-colors text-gray-300">
                 <span className="text-base">👤</span>
                 <span className="text-xs font-semibold">Invitado</span>
-                <span className="text-[9px] text-gray-500">▾</span>
+                <span className="text-[10px] text-gray-500">▾</span>
               </summary>
               <div className="absolute right-0 mt-2 w-56 rounded-xl border bg-gray-900 border-gray-700 p-3 shadow-xl">
                 <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2">Sesión</div>
