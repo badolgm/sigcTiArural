@@ -29,7 +29,7 @@ const CmscSideNav = ({ view, onNav }) => {
           const inner = (
             <>
               <span className="flex items-center gap-2 min-w-0">
-                <span className="text-[11px] text-gray-200 truncate">{item.label}</span>
+                <span className="text-[11px] text-gray-200 leading-tight break-words">{item.label}</span>
                 <span className="ml-auto shrink-0">
                   <HonestyBadge estado={item.estado} confidence={null} showConfidence={false} />
                 </span>

@@ -65,7 +65,7 @@ const ModelPredictCell = () => {
   const presentation = info ? getStatusPresentation(info.status) : null;
 
   return (
-    <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-3 flex flex-col gap-2">
+    <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-2.5 flex flex-col gap-2 min-h-0 overflow-hidden">
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-bold text-gray-200">Modelos y predicciones</h3>
@@ -74,7 +74,7 @@ const ModelPredictCell = () => {
         {S61 && <HonestyBadge estado={S61.estado} confidence={S61.confianza} showConfidence={false} />}
       </div>
 
-      <div className="flex flex-col gap-2 flex-1">
+      <div className="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto pr-0.5">
         <div className="rounded-lg border border-gray-800 bg-gray-900/50 px-2.5 py-2">
         <div className="flex items-center gap-2">
           <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Inferencia oficial</span>
@@ -83,13 +83,13 @@ const ModelPredictCell = () => {
         <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" id="cmsc-predict-file" />
         <label
           htmlFor="cmsc-predict-file"
-          className="mt-2 flex items-center justify-center gap-2 w-full py-4 rounded-lg border border-dashed border-gray-700 hover:border-cyan-500 hover:bg-cyan-900/10 transition-colors cursor-pointer"
+          className="mt-1.5 flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-dashed border-gray-700 hover:border-cyan-500 hover:bg-cyan-900/10 transition-colors cursor-pointer"
         >
           <span className="text-lg">{preview ? '🖼️' : '📥'}</span>
           <span className="text-[11px] text-gray-300">{fileName || 'Cargar imagen de hoja (multipart)'}</span>
         </label>
         {preview && (
-          <div className="mt-2 h-24 rounded-lg overflow-hidden border border-gray-800 bg-black flex items-center justify-center">
+          <div className="mt-1.5 h-16 rounded-lg overflow-hidden border border-gray-800 bg-black flex items-center justify-center">
             <img src={preview} alt="muestra" className="h-full object-contain" />
           </div>
         )}
@@ -97,11 +97,11 @@ const ModelPredictCell = () => {
           type="button"
           onClick={run}
           disabled={!fileName || loading}
-          className="mt-2 w-full py-2.5 rounded-md text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{
-            backgroundColor: loading ? NEON.alert : NEON.primary,
-            color: '#000'
-          }}
+          className={
+            'mt-1.5 w-full py-2 rounded-md text-xs font-bold uppercase tracking-widest border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ' +
+            (loading ? 'text-white' : 'border-gray-700 text-gray-200 hover:border-cyan-600 hover:text-white')
+          }
+          style={loading ? { backgroundColor: NEON.alert, borderColor: NEON.alert } : undefined}
         >
           {loading ? 'PROCESANDO...' : 'EJECUTAR ANÁLISIS'}
         </button>

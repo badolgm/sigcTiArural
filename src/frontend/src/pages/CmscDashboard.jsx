@@ -1,27 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import ErrorBoundary from '../components/ErrorBoundary.jsx';
 import TopNav from '../components/TopNav.jsx';
 import VoiceAssistant from '../components/VoiceAssistant.jsx';
 import SignalRiver from './cmsc/SignalRiver.jsx';
-import HonestyThermometer from './cmsc/HonestyThermometer.jsx';
 import HonestyBadge from './cmsc/HonestyBadge.jsx';
 import SignalCatalogView from './cmsc/SignalCatalogView.jsx';
 import SignalCard from './cmsc/SignalCard.jsx';
-import EvidencePanel from './cmsc/EvidencePanel.jsx';
 import RiverSummary from './cmsc/RiverSummary.jsx';
-import LatestEvidence from './cmsc/LatestEvidence.jsx';
 import LabDoors from './cmsc/LabDoors.jsx';
-import ScientificStatus from './cmsc/ScientificStatus.jsx';
 import SpectralAnalysisInstrument from './cmsc/SpectralAnalysisInstrument.jsx';
 import CmscSideNav from './cmsc/CmscSideNav.jsx';
-import SignalExplorerCell from './cmsc/SignalExplorerCell.jsx';
-import MathModelingCell from './cmsc/MathModelingCell.jsx';
+import MmcHero from './cmsc/MmcHero.jsx';
+import SignalExplorerAccordion from './cmsc/SignalExplorerAccordion.jsx';
 import ModelPredictCell from './cmsc/ModelPredictCell.jsx';
 import BenchmarkCell from './cmsc/BenchmarkCell.jsx';
 import AcpCell from './cmsc/AcpCell.jsx';
-import { NEON, HONESTY_STATES } from './cmsc/honesty.js';
+import { NEON, HONESTY_STATES, honestyMeta } from './cmsc/honesty.js';
 import { readLiveSignals } from '../services/cmscAdapters.js';
-import { docsBySignal, categorySummary, totalDocs } from '../services/docsBySignal.js';
+import { docsBySignal, totalDocs } from '../services/docsBySignal.js';
 import { useLabStore } from '../stores/useLabStore.js';
 
 const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
@@ -46,15 +43,6 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
       mounted = false;
     };
   }, []);
-
-  const catalogCounts = useMemo(() => {
-    const counts = {};
-    HONESTY_STATES.forEach((s) => (counts[s] = 0));
-    catalog.forEach((signal) => {
-      if (counts[signal.estado] !== undefined) counts[signal.estado] += 1;
-    });
-    return counts;
-  }, [catalog]);
 
   const selected = useMemo(
     () => (selectedSignalId ? catalog.find((s) => s.signal_id === selectedSignalId) : null),
@@ -106,11 +94,16 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
     if (action === 'catalog') setView('catalog');
   };
 
+  const handleHonestyFilter = (value) => {
+    setFilter(value || null);
+    if (value) setView('catalog');
+  };
+
   return (
     <ErrorBoundary>
       {!embedded && <TopNav clusterNodes={clusterNodes} />}
-      <div className="pt-20 px-4 sm:px-6 lg:px-8 pb-16 min-h-screen" style={{ backgroundColor: NEON.darkBackground }}>
-        <div className="max-w-7xl mx-auto space-y-4">
+      <div className="pt-20 px-4 sm:px-6 lg:px-8 2xl:px-6 pb-16 min-h-screen" style={{ backgroundColor: NEON.darkBackground }}>
+        <div className="max-w-[1800px] 2xl:max-w-[1920px] mx-auto space-y-3">
           <header className="flex items-baseline justify-between">
             <div>
               <h1 className="text-2xl font-extrabold tracking-widest" style={{ color: NEON.primary }}>
@@ -132,25 +125,34 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
               </div>
             </aside>
 
-            <main className="lg:col-span-8 min-w-0 space-y-4">
+            <main className="lg:col-span-10 min-w-0 space-y-4 relative before:content-[''] before:absolute before:left-[-8px] before:top-0 before:bottom-0 before:w-px before:bg-gray-800/60 before:hidden lg:before:block">
               {view === 'overview' ? (
                 <>
+                  <MmcHero />
+
+                  {/* FFT · instrumento (sin plegar todavía · compactación pendiente P3) */}
+                  <div className="min-w-0 [&_h3]:text-xs [&_h3]:text-gray-400">
+                    <SpectralAnalysisInstrument />
+                  </div>
+
+                  <SignalExplorerAccordion
+                    liveEntries={liveEntries}
+                    loading={loading}
+                    onOpenCatalog={() => setView('catalog')}
+                    onSelectSignal={handleSelect}
+                  />
+
+                  {/* Zona común de orquestación · ACP + Río */}
                   <section className="space-y-2">
                     <div className="flex items-baseline justify-between border-b border-gray-800 pb-1">
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                        Trío · Explorar · Modelar · Analizar
+                      <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                        Zona · Orquestación científica
                       </h2>
-                      <span className="text-[10px] text-gray-500">escena científica</span>
+                      <span className="text-[10px] text-gray-600">ACP + flujo del río</span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      <SignalExplorerCell
-                        liveEntries={liveEntries}
-                        loading={loading}
-                        onOpenCatalog={() => setView('catalog')}
-                        onSelectSignal={handleSelect}
-                      />
-                      <MathModelingCell />
-                      <SpectralAnalysisInstrument />
+                    <div className="space-y-2">
+                      <RiverSummary signals={catalog} onSelectSignal={handleRiverSelect} />
+                      <AcpCell />
                     </div>
                   </section>
 
@@ -161,32 +163,44 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
                       </h2>
                       <span className="text-[10px] text-gray-600">modelos y labs</span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:h-[214px]">
                       <ModelPredictCell />
                       <LabDoors />
                       <BenchmarkCell />
                     </div>
                   </section>
 
-                  <div className="border-t border-gray-800/50" />
-                  <AcpCell />
-                  <div className="border-t border-gray-800/50" />
-
-                  <section className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <HonestyThermometer
-                      liveEntries={liveEntries}
-                      catalogCounts={catalogCounts}
-                      activeFilter={view === 'catalog' ? filter : null}
-                      onFilter={view === 'catalog' ? setFilter : null}
-                    />
-                    <RiverSummary signals={catalog} onSelectSignal={handleRiverSelect} />
+                  <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <Link
+                      to="/knowledge"
+                      className="flex items-center gap-2 rounded-xl border border-gray-800 bg-gray-900/40 px-3 py-2.5 hover:border-gray-600 transition-colors"
+                    >
+                      <span className="text-base leading-none">📚</span>
+                      <span className="text-xs font-semibold text-gray-200">Knowledge Hub</span>
+                      <span className="ml-auto text-[10px] text-gray-500">{totalDocs()} docs</span>
+                    </Link>
+                    <div className="flex items-center gap-2 rounded-xl border border-gray-800 bg-gray-900/40 px-3 py-2.5">
+                      <span className="text-base leading-none">🗺️</span>
+                      <span className="text-xs font-semibold text-gray-200">Roadmap Científico</span>
+                    </div>
+                    <div className="flex items-center gap-2 rounded-xl border border-gray-800 bg-gray-900/40 px-3 py-2.5">
+                      <span className="text-base leading-none">⚖️</span>
+                      <label htmlFor="cmsc-honesty-filter" className="text-xs font-semibold text-gray-200">Gobernanza</label>
+                      <select
+                        id="cmsc-honesty-filter"
+                        value={filter || ''}
+                        onChange={(e) => handleHonestyFilter(e.target.value)}
+                        title="Filtrar el catálogo por estado honesto"
+                        className="ml-auto bg-gray-950 border border-gray-700 rounded-md text-[10px] text-gray-300 px-1.5 py-1 focus:outline-none focus:border-gray-500"
+                      >
+                        <option value="">Todos</option>
+                        {HONESTY_STATES.map((s) => (
+                          <option key={s} value={s}>{honestyMeta(s).label}</option>
+                        ))}
+                      </select>
+                    </div>
                   </section>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <LatestEvidence />
-                    <ScientificStatus />
-                  </div>
-                </>
+                </> 
               ) : (
                 <>
                   {selected ? (
@@ -215,17 +229,6 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
                 </>
               )}
             </main>
-
-            <aside className="lg:col-span-2 min-w-0">
-              <div className="lg:sticky lg:top-20">
-                <EvidencePanel
-                  stats={{ total: totalDocs() }}
-                  byCategory={categorySummary()}
-                  signal={selected}
-                  docs={selectedDocs}
-                />
-              </div>
-            </aside>
           </div>
         </div>
       </div>

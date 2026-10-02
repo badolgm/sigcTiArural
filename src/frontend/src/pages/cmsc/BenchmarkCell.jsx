@@ -43,7 +43,7 @@ const BenchmarkCell = () => {
   const focusedDocs = focus === 'M1' ? docsM1 : focus === 'M2' ? docsM2 : [];
 
   return (
-    <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-3 flex flex-col gap-2">
+    <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-2.5 flex flex-col gap-2 min-h-0 overflow-hidden">
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-bold text-gray-200">Estado del benchmark</h3>
@@ -52,6 +52,7 @@ const BenchmarkCell = () => {
         <HonestyBadge estado="REF" confidence={null} showConfidence={false} />
       </div>
 
+      <div className="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto pr-0.5">
       <div className="flex items-center gap-1.5">
         {['M1', 'M2'].map((k) => (
           <button
@@ -76,7 +77,7 @@ const BenchmarkCell = () => {
         {ROWS.map((r) => {
           const max = Math.max(...r.values);
           return (
-            <div key={r.label} className="px-1 py-1">
+            <div key={r.label} className="py-0.5">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span className="text-[10px] uppercase tracking-widest text-gray-500">{r.label}</span>
                 {r.winner !== '=' && (
@@ -89,7 +90,7 @@ const BenchmarkCell = () => {
                 {['M1', 'M2'].map((k, i) => (
                   <div key={k} className="flex items-center gap-2">
                     <span className="w-6 text-[10px] font-mono font-bold" style={{ color: METRICAS[k].accent }}>{k}</span>
-                    <div className="h-1.5 flex-1 rounded-full bg-gray-800 overflow-hidden">
+                    <div className="h-1 flex-1 rounded-full bg-gray-800 overflow-hidden">
                       <div
                         className="h-full transition-all duration-500"
                         style={{
@@ -111,7 +112,7 @@ const BenchmarkCell = () => {
       </div>
 
       {focused && (
-        <div className="rounded-lg border border-gray-700 bg-gray-900/60 px-2.5 py-2">
+        <div className="rounded-lg border border-gray-700 bg-gray-900/60 px-2 py-1.5">
           <div className="flex items-center justify-between gap-2 mb-1">
             <span className="text-xs font-mono font-bold" style={{ color: focused.accent }}>
               {focused.sig.signal_id} · {focused.sig.name}
@@ -154,6 +155,7 @@ const BenchmarkCell = () => {
         <div className="text-[10px] text-gray-500 mt-1">
           M1 aprobado y congelado · M2 ejecutado oficialmente · F3E antes del gate
         </div>
+      </div>
       </div>
     </section>
   );

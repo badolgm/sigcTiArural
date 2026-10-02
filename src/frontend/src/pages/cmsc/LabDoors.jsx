@@ -71,7 +71,7 @@ const LabDoors = () => {
   const probed = Object.keys(live).length;
 
   return (
-    <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-3 flex flex-col gap-2">
+    <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-2.5 flex flex-col gap-2 min-h-0 overflow-hidden">
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-bold text-gray-200">Laboratorios vinculados</h3>
@@ -93,7 +93,7 @@ const LabDoors = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 flex-1 min-h-0 overflow-y-auto pr-0.5">
         {DOORS.map((d) => {
           const sig = signalOf(d.signalId);
           const liveProbe = live[d.label] || null;
@@ -122,14 +122,14 @@ const LabDoors = () => {
             <Link
               key={d.label}
               to={d.to}
-              className="block px-2 py-1 rounded transition-colors hover:bg-gray-800/60"
+              className="block px-1.5 py-0.5 rounded transition-colors hover:bg-gray-800/60"
             >
               {inner}
             </Link>
           ) : (
             <div
               key={d.label}
-              className="block px-2 py-1 rounded opacity-70"
+              className="block px-1.5 py-0.5 rounded opacity-70"
             >
               {inner}
             </div>

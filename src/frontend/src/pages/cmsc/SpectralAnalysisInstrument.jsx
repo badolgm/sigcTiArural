@@ -241,11 +241,13 @@ const SpectralAnalysisInstrument = () => {
           <button
             type="button"
             onClick={handleToggle}
-            className="px-3 py-1.5 rounded-md text-xs font-semibold transition-colors"
-            style={{
-              backgroundColor: status === 'running' ? NEON.alert : NEON.primary,
-              color: '#0a0a0a'
-            }}
+            className={
+              'px-3 py-1.5 rounded-md text-xs font-semibold border transition-colors ' +
+              (status === 'running'
+                ? 'text-white'
+                : 'border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white')
+            }
+            style={status === 'running' ? { backgroundColor: NEON.alert, borderColor: NEON.alert } : undefined}
           >
             {status === 'running' ? 'Detener' : 'Iniciar adquisición'}
           </button>

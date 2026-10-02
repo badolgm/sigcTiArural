@@ -28,25 +28,29 @@ const RiverSummary = ({ signals, onSelectSignal }) => {
   });
 
   return (
-    <div className="rounded-xl border border-gray-800/70 bg-gray-900/20 p-3">
-      <div className="flex items-center justify-between mb-2">
+    <div className="rounded-xl border border-gray-800/70 bg-gray-900/20 p-1.5">
+      <div className="flex items-center justify-between mb-1">
         <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Resumen del río</span>
-        <span className="text-[10px] text-gray-500">catálogo → eslabón</span>
+        <span className="text-[10px] text-gray-500">flujo Sensor → Usuario · catálogo → eslabón</span>
       </div>
-      <div className="space-y-1">
-        {stages.map((s) => (
-          <button
-            key={s.label}
-            type="button"
-            onClick={() => onSelectSignal && onSelectSignal(s.label)}
-            className="w-full flex items-center justify-between gap-2 px-2 py-1 rounded text-left transition-colors hover:bg-gray-800/60"
-          >
-            <span className="text-[11px] text-gray-200">{s.label}</span>
-            <span className="flex items-center gap-2">
+      <div className="flex items-stretch gap-1 overflow-x-auto">
+        {stages.map((s, i) => (
+          <React.Fragment key={s.label}>
+            <button
+              type="button"
+              onClick={() => onSelectSignal && onSelectSignal(s.label)}
+              className="flex-1 min-w-[92px] flex flex-col items-center justify-center gap-1 rounded-md border border-gray-800 bg-gray-900/40 px-1.5 py-1 text-center transition-colors hover:border-gray-600"
+            >
+              <span className="w-full flex items-center justify-between gap-1">
+                <span className="truncate text-[10px] text-gray-200">{s.label}</span>
+                <span className="font-mono text-[10px] text-gray-400 tabular-nums">{s.count}</span>
+              </span>
               <HonestyBadge estado={s.estado} showConfidence={false} />
-              <span className="font-mono text-[11px] text-gray-300 tabular-nums">{s.count}</span>
-            </span>
-          </button>
+            </button>
+            {i < stages.length - 1 && (
+              <span aria-hidden="true" className="self-center text-[10px] text-gray-600">→</span>
+            )}
+          </React.Fragment>
         ))}
       </div>
     </div>
