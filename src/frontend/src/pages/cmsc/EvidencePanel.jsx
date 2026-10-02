@@ -31,7 +31,7 @@ const EvidencePanel = ({ stats, byCategory, signal, docs }) => {
     <div className="rounded-xl border border-gray-800 bg-gray-900/40 p-3 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Dossier de investigación</span>
-        <span className="text-[10px] text-gray-400">{totals.docs} docs · {totals.conEvidencia}/{totals.senales} señales</span>
+        <span className="text-[10px] text-gray-400 tabular-nums">{totals.docs} docs · {totals.conEvidencia}/{totals.senales} señales</span>
       </div>
 
       {signal && signalSustain && (
@@ -78,7 +78,7 @@ const EvidencePanel = ({ stats, byCategory, signal, docs }) => {
         <div className="mt-1 space-y-1">
           {domainStats.slice(0, 6).map((d, idx) => (
             <div key={d.dominio} className="flex items-center justify-between text-[11px]">
-              <span className="text-gray-400 w-24 truncate">{d.dominio}</span>
+              <span className="text-gray-400 w-24 shrink-0 leading-tight">{d.dominio}</span>
               <div className="flex items-center gap-1 flex-1 mx-2">
                 <div className="h-1.5 rounded-full bg-gray-800 flex-1 overflow-hidden">
                   <div
@@ -92,7 +92,7 @@ const EvidencePanel = ({ stats, byCategory, signal, docs }) => {
                   />
                 </div>
               </div>
-              <span className="font-mono text-gray-200">{d.soporteDocs} docs · {d.conSustento}/{d.senales}</span>
+              <span className="font-mono text-gray-200 tabular-nums shrink-0 whitespace-nowrap">{d.soporteDocs} docs · {d.conSustento}/{d.senales}</span>
             </div>
           ))}
           {domainStats.length > 6 && (

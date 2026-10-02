@@ -50,7 +50,7 @@ const HonestyThermometer = ({ liveEntries, catalogCounts, activeFilter, onFilter
     <div className="rounded-xl border border-gray-800/70 bg-gray-900/20 p-3">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Termómetro de honestidad</span>
-        <span className="text-[10px] text-gray-500">vivas {realTotal} · v1.1</span>
+        <span className="text-[10px] text-gray-500 tabular-nums">vivas {realTotal} · v1.1</span>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
         {HONESTY_STATES.map((estado) => renderRow(estado))}

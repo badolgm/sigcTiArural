@@ -1,3 +1,5 @@
+import containerQueries from '@tailwindcss/container-queries';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
@@ -27,5 +29,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  // Container queries: los instrumentos del CMSC reaccionan al ancho de su
+  // celda, no al del viewport. En Tailwind v3 no son core (solo en v4).
+  plugins: [containerQueries],
 };
