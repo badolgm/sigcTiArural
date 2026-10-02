@@ -9,6 +9,19 @@
     <!-- Fuentes para Laboratorio Dr. Binary V2 -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!--
+      Motor visual del Laboratorio Matematico. Se carga aqui, y no bajo demanda,
+      por dos razones verificadas en navegador:
+        1. El grafo ESM del paquete (`import('jsxgraph')`) NUNCA resuelve bajo
+           Vite: la promesa queda pendiente para siempre, sin resolver ni
+           rechazar.
+        2. Inyectado desde JS, el bundle de 969 KB compite con el resto del
+           arranque y el tablero puede no existir cuando React ya montó.
+      Cargado aqui, `window.JXG` esta disponible antes de que arranque React y
+      el laboratorio abre con su motor ya operativo. Es el mismo bundle UMD
+      auto-hospedado del patron `public/vendor/` que usa el adaptador Falstad.
+    -->
+    <script src="/vendor/jsxgraph/jsxgraphcore.js"></script>
   </head>
   <body class="bg-bg text-text bg-grid-dark [background-size:20px_20px]">
     <div id="root"></div>

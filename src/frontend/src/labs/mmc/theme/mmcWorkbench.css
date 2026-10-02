@@ -1,0 +1,702 @@
+/*
+ * MMC · Scientific Workbench — tema visual.
+ *
+ * IDENTIDAD: esto NO es un dashboard. Un dashboard reparte el espacio en
+ * tarjetas iguales y decora cada una con borde, radio, sombra y padding; el
+ * contenido compite con el marco. Un workbench hace lo contrario: el marco
+ * desaparece y el contenido científico se come la pantalla.
+ *
+ * POR QUÉ CASI NO HAY NADA AQUÍ:
+ *   · El gráfico es el producto. Si lleva borde, radio y sombra, el usuario
+ *     lee un objeto decorativo en vez de una curva. Se queda sin marco.
+ *   · Las métricas no son tarjetas. Son columnas tipográficas separadas por
+ *     espacio en blanco, no por cajas.
+ *   · La única borde que sobrevive es el del estado ROTO, porque ahí el borde
+ *     comunica información, y el anillo de foco, porque es accesibilidad.
+ *
+ * SOBRE LA REJILLA DE FONDO QUE HABÍA ANTES: era `background-image` con dos
+ * `linear-gradient` de 28 px. Se eliminó por dos razones. Decorativa, y peor:
+ * estaba en píxeles de pantalla, no en unidades del eje, así que sugería una
+ * retícula de datos que no existía. La retícula real la dibuja JSXGraph
+ * alineada con los ticks, que es la única que significa algo.
+ *
+ * SOBRE EL CSS DE JSXGRAPH: el fichero vendorizado declara `.jxgbox` con fondo
+ * blanco y borde azul. Ese fichero NO se edita (queda literal y auditable);
+ * aquí solo se le anula el fondo, porque un plot blanco sobre fondo oscuro
+ * inutiliza el instrumento. Ni borde ni sombra ni radio: el plot no se
+ *.dpinta, se usa.
+ *
+ * REGLA DE ALCANCE: todo lo declarado aquí vive bajo `.mmc-workbench`, así
+ * que este tema no puede alcanzar a Electrónica, CMSC ni a los instrumentos
+ * heredados, que traen su propio CSS en línea.
+ */
+
+.mmc-workbench {
+  /* Paleta. Espejo de MMC_PALETTE en el adapter. */
+  --mmc-bg: #05070d;
+  --mmc-ink: #e2e8f0;
+  --mmc-text: #cbd5e1;
+  --mmc-dim: #8494a8;
+  --mmc-faint: #5b6b80;
+  --mmc-line: #1b2740;
+  --mmc-cyan: #00ffff;
+  --mmc-cyan-dim: #0e7490;
+  --mmc-pink: #ff3cc7;
+  --mmc-green: #39ff14;
+  --mmc-amber: #ffb300;
+  --mmc-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  background: var(--mmc-bg);
+  color: var(--mmc-text);
+  font-family: 'Rajdhani', ui-sans-serif, system-ui, sans-serif;
+  /* Sin borde ni radio: este bloque no es una tarjeta. */
+  overflow: hidden;
+}
+
+/* ---------- Estado del motor: una línea de texto, nada más ---------- */
+
+.mmc-wb-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 2px 0 6px;
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  letter-spacing: .02em;
+  color: var(--mmc-faint);
+}
+
+.mmc-wb-status-id {
+  color: var(--mmc-ink);
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/*
+ * Chips sin píldora ni borde: un cuadrado de color más texto. La forma no
+ * aporta información; el color sí.
+ */
+.mmc-wb-chip {
+  color: var(--mmc-faint);
+  white-space: nowrap;
+}
+
+.mmc-wb-chip::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  background: currentColor;
+  vertical-align: baseline;
+}
+
+.mmc-wb-chip-ok { color: #4ade80; }
+.mmc-wb-chip-sim { color: var(--mmc-amber); }
+.mmc-wb-chip-load { color: var(--mmc-cyan); }
+
+/* ---------- Cuerpo: 25% control, 75% gráfica ---------- */
+
+/*
+ * El reparto que pedía la misión: en escritorio, una columna estrecha para
+ * instrumentar y una ancha para el plot. El grafo manda porque recibe tres
+ * veces el ancho del raíl, no porque el raíl se encoja.
+ *
+ * El raíl colapsa a una columna por debajo de 980 px porque por debajo de eso
+ * un 24% son menos de 240 px y los sliders dejan de poder usarse. Ese mismo
+ * umbral protege la celda del CMSC, que anda por los 406 px.
+ */
+.mmc-wb-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 22px;
+  align-items: start;
+}
+
+@media (min-width: 980px) {
+  .mmc-wb-body { grid-template-columns: minmax(230px, 24%) minmax(0, 1fr); }
+}
+
+.mmc-wb-rail { min-width: 0; padding-right: 22px; border-right: 1px solid var(--mmc-line); }
+
+@media (max-width: 979px) {
+  .mmc-wb-rail { padding-right: 0; border-right: 0; }
+}
+
+.mmc-wb-stage { min-width: 0; }
+
+/* ---------- Ecuación: el segundo elemento de la pantalla ---------- */
+
+.mmc-wb-equation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  padding-bottom: 10px;
+}
+
+/*
+ * Entrada sin caja. Solo una línea de base: el usuario escribe una expresión,
+ * no rellena un formulario. El foco ilumina la línea, no dibuja un halo.
+ */
+.mmc-wb-input {
+  flex: 1 1 320px;
+  min-width: 0;
+  padding: 4px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--mmc-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--mmc-cyan);
+  font-family: var(--mmc-mono);
+  font-size: 14px;
+  outline: none;
+  transition: border-color .12s;
+}
+
+.mmc-wb-input:focus { border-bottom-color: var(--mmc-cyan); }
+
+.mmc-wb-input-bad { border-bottom-color: #ef4444; color: #fca5a5; }
+
+.mmc-eq-render {
+  display: inline-block;
+  color: var(--mmc-ink);
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
+/* La ecuación se lee de lejos: es una de las dos cosas que el usuario vino a ver. */
+.mmc-eq-render .katex { font-size: 1.5em; }
+
+.mmc-eq-fallback {
+  font-family: var(--mmc-mono);
+  font-size: 13px;
+  color: var(--mmc-amber);
+}
+
+/* ---------- Tablero: el protagonista, sin marco ---------- */
+
+.mmc-wb-plot { position: relative; width: 100%; }
+
+/*
+ * El plot es el producto, así que se lleva la altura.
+ *
+ * Antes ocupaba 300 px fijos y media pantalla. Ahora sube a 52vh con un mínimo
+ * de 340 y un techo de 760: en un 1080 alto son ~560 px de curva, que es lo
+ * que permite leer la forma sin ampliar.
+ *
+ * `!important` porque el componente del tablero escribe la altura en línea
+ * para dimensionar su host antes de aplicar CSS.
+ */
+.mmc-wb-plot .mmc-board,
+.mmc-wb-plot .mmc-board-fail {
+  height: clamp(340px, 52vh, 760px) !important;
+}
+
+/*
+ * Alto del plot. Clamp en lugar de un número fijo: en un monitor grande ocupa
+ * más, en la celda compacta del CMSC se recorta por CSS más abajo, y nunca
+ * mide menos de 300px ni más de 620px para que no se convierta en un cartel.
+ */
+.mmc-board {
+  position: relative;
+  width: 100%;
+  background: var(--mmc-bg);
+}
+
+.mmc-board-host { position: relative; }
+
+/*
+ * Anula el `.jxgbox` vendorizado (fondo blanco, borde azul, sombra).
+ * Solo el fondo: es la única propiedad que estropea la lectura. Todo lo demás
+ * se deja limpio a propósito.
+ */
+.mmc-board-host .jxgbox,
+.mmc-board-host div.jxgbox {
+  background-color: var(--mmc-bg) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.mmc-board-host .jxgbox svg { display: block; }
+
+/* Controles de zoom de JSXGraph: visibles sobre fondo oscuro. */
+.mmc-board-host .JXG_navigation_button { color: var(--mmc-faint) !important; }
+.mmc-board-host .JXG_navigation_button:hover { background: rgba(0, 255, 255, .12) !important; }
+
+.mmc-board-host .JXGtext { color: var(--mmc-dim) !important; }
+
+/* ---------- Controles: una fila densa, bajo el plot ---------- */
+
+.mmc-wb-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 6px 16px;
+  padding: 10px 0;
+}
+
+.mmc-wb-ctrl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 2px 8px;
+  min-width: 0;
+}
+
+/* Etiqueta y valor en la misma línea: ahorra una fila por control. */
+.mmc-wb-ctrl label {
+  grid-column: 1;
+  font-family: var(--mmc-mono);
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--mmc-faint);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mmc-wb-ctrl-val {
+  grid-column: 1;
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  color: var(--mmc-cyan);
+  white-space: nowrap;
+}
+
+.mmc-wb-ctrl input[type='range'] {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 100%;
+  accent-color: var(--mmc-cyan);
+}
+
+.mmc-wb-ctrl input[type='number'],
+.mmc-wb-ctrl select {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 100%;
+  padding: 2px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--mmc-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--mmc-text);
+  font-family: var(--mmc-mono);
+  font-size: 11px;
+  outline: none;
+}
+
+.mmc-wb-ctrl input[type='number']:focus { border-bottom-color: var(--mmc-cyan); }
+
+/* ---------- Acciones: texto plano ---------- */
+
+.mmc-wb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  padding: 6px 0;
+}
+
+.mmc-wb-btn {
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--mmc-dim);
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: color .12s, border-color .12s;
+}
+
+.mmc-wb-btn:hover:not(:disabled) { color: var(--mmc-cyan); border-bottom-color: var(--mmc-cyan-dim); }
+.mmc-wb-btn:disabled { color: var(--mmc-faint); cursor: default; }
+
+/* El anillo de foco no es decoración: es la única forma de navegar con teclado. */
+.mmc-wb-btn:focus-visible { outline: 1px solid var(--mmc-cyan); outline-offset: 3px; }
+
+/* ---------- Rótulos de sección: discretos, sin peso tipográfico ---------- */
+
+.mmc-wb-pane-h {
+  font-family: var(--mmc-mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mmc-faint);
+  padding-top: 10px;
+}
+
+/* ---------- Paneles colapsables: workspace y muestreo ---------- */
+
+/*
+ * Antes estos paneles usaban botones de toggle + estado React. Ahora son
+ * <details> nativos: colapsados por defecto, sin JS extra, accesibles por
+ * teclado, y no ocupan espacio cuando están cerrados.
+ */
+.mmc-wb-details { margin-top: 10px; }
+.mmc-wb-details summary {
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mmc-dim);
+  padding: 4px 0;
+  list-style: none;
+}
+.mmc-wb-details summary::-webkit-details-marker { display: none; }
+.mmc-wb-details summary::before {
+  content: '+';
+  margin-right: 6px;
+  color: var(--mmc-dim);
+}
+.mmc-wb-details[open] summary::before { content: '−'; }
+.mmc-wb-details summary:hover { color: var(--mmc-text); }
+
+/* ---------- Estado del motor: texto plano, sin chips ---------- */
+
+.mmc-wb-status-ok { color: var(--mmc-green); font-size: 11px; }
+.mmc-wb-status-load { color: var(--mmc-amber); font-size: 11px; }
+.mmc-wb-status-roto { color: #fca5a5; font-size: 11px; }
+.mmc-wb-status-sim { color: var(--mmc-amber); font-size: 11px; }
+.mmc-wb-status-meta { color: var(--mmc-dim); font-size: 11px; }
+.mmc-wb-status-count { color: var(--mmc-dim); font-size: 11px; margin-left: auto; }
+
+/* ---------- Capacidades: texto plano ---------- */
+
+.mmc-wb-cap { font-size: 11px; color: var(--mmc-dim); padding: 2px 0; }
+.mmc-wb-cap[title] { cursor: help; }
+
+/* ---------- Métricas: columnas de texto, no tarjetas ---------- */
+
+/*
+ * Sin borde, sin radio, sin fondo por métrica. La separación la hace el hueco
+ * en blanco entre columnas, que es lo que separa en un workbench.
+ */
+.mmc-wb-series {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(86px, max-content));
+  gap: 2px 26px;
+  padding: 8px 0;
+}
+
+.mmc-wb-metric { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+
+.mmc-wb-metric-k {
+  font-family: var(--mmc-mono);
+  font-size: 8px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mmc-faint);
+}
+
+.mmc-wb-metric-v {
+  font-family: var(--mmc-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mmc-cyan);
+}
+
+.mmc-wb-metric-dim { color: var(--mmc-dim); font-size: 10px; }
+
+/*
+ * Lecturas de arrays y del envelope. Fondo plano y sin borde: es un volcado de
+ * datos, no un panel. El fondo tenue sí ayuda, porque separa texto alineado
+ * en columnas del resto sin necesidad de una caja.
+ */
+.mmc-wb-peek {
+  max-height: 128px;
+  overflow: auto;
+  background: #070b14;
+  padding: 6px 9px;
+  font-family: var(--mmc-mono);
+  font-size: 9px;
+  line-height: 1.45;
+  color: var(--mmc-dim);
+  white-space: pre;
+  margin: 4px 0 0;
+}
+
+/* ---------- Mensajes: aquí el borde sí comunica estado ---------- */
+
+.mmc-wb-msg {
+  padding: 5px 9px;
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.mmc-wb-msg-bad { background: rgba(127, 29, 29, .22); border-left: 2px solid #ef4444; color: #fca5a5; }
+.mmc-wb-msg-ok { background: rgba(21, 128, 61, .16); border-left: 2px solid var(--mmc-green); color: #86efac; }
+.mmc-wb-msg-info { background: rgba(14, 116, 144, .18); border-left: 2px solid var(--mmc-cyan); color: #67e8f9; }
+
+/* ---------- Fallo del motor: el borde comunica ROTO ---------- */
+
+.mmc-board-fail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid rgba(255, 107, 107, .45);
+  background: rgba(127, 29, 29, .1);
+  text-align: center;
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  color: #fca5a5;
+}
+
+.mmc-board-fail strong { color: #ef4444; letter-spacing: .12em; font-size: 11px; }
+
+/* ---------- Honestidad: una línea al pie, sin caja ---------- */
+
+.mmc-wb-honest {
+  padding: 8px 0 0;
+  font-size: 9px;
+  line-height: 1.55;
+  color: var(--mmc-faint);
+}
+
+.mmc-wb-honest b { color: var(--mmc-amber); font-weight: 600; }
+
+/* ---------- Adaptación a la celda compacta del CMSC ---------- */
+
+/*
+ * MathModelingCell mete el workbench en una celda de altura acotada junto a
+ * otras pestañas, así que el plot no puede usar el clamp de arriba. Solo se
+ * ajustan tamaños de texto: la densidad es lo que hay que bajar, no el plot.
+ */
+.cmsc-mathlab .mmc-eq-render .katex { font-size: 1.15em; }
+.cmsc-mathlab .mmc-wb-input { font-size: 11px; }
+.cmsc-mathlab .mmc-wb-ctrl label,
+.cmsc-mathlab .mmc-wb-metric-k { font-size: 8px; }
+.cmsc-mathlab .mmc-wb-metric-v { font-size: 11px; }
+.cmsc-mathlab .mmc-wb-controls { gap: 4px 12px; }
+
+/* La celda del CMSC comparte alto con otras pestañas: el plot se recorta. */
+.cmsc-mathlab .mmc-wb-plot .mmc-board,
+.cmsc-mathlab .mmc-wb-plot .mmc-board-fail {
+  height: 260px !important;
+}
+
+/* ==========================================================================
+   DOCK DE HERRAMIENTAS MATEMÁTICAS (V6)
+   Regla: el Dock NO compite visualmente con el Stage.
+   El color cyan primario (#00ffff) queda EXCLUSIVO de la curva del plot.
+   ========================================================================== */
+
+.mmc-dock {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--mmc-line);
+}
+
+.mmc-dock-h {
+  font-family: var(--mmc-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mmc-faint);
+  padding: 0 0 6px;
+}
+
+.mmc-dock-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.mmc-dock-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 7px;
+  border: 1px solid var(--mmc-line);
+  background: transparent;
+  color: var(--mmc-dim);
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+  letter-spacing: 0.02em;
+}
+
+.mmc-dock-tab:hover {
+  border-color: var(--mmc-cyan-dim);
+  color: var(--mmc-cyan);
+}
+
+.mmc-dock-tab-active {
+  border-color: var(--mmc-cyan-dim);
+  color: var(--mmc-cyan);
+  background: rgba(14, 116, 144, 0.1);
+}
+
+.mmc-dock-tab-icon {
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.mmc-dock-tab-label {
+  font-size: 10px;
+}
+
+/* ========== Paneles de contenido del Dock ========== */
+
+.mmc-dock-panel {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(7, 11, 20, 0.55);
+  border: 1px solid var(--mmc-line);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--mmc-text);
+  line-height: 1.45;
+  /* Altura máxima razonable; el rail ya tiene 500 px libres; si crece más hay scroll */
+  max-height: 52vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.mmc-dock-panel::-webkit-scrollbar { width: 6px; }
+.mmc-dock-panel::-webkit-scrollbar-thumb { background: var(--mmc-line); border-radius: 3px; }
+
+.mmc-dock-ph {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mmc-ink);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--mmc-line);
+}
+
+.mmc-dock-banner {
+  font-size: 10px;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  border-left: 2px solid var(--mmc-cyan-dim);
+  background: rgba(14, 116, 144, 0.08);
+  color: var(--mmc-dim);
+  line-height: 1.45;
+}
+.mmc-dock-banner b { color: var(--mmc-cyan); font-weight: 600; }
+.mmc-dock-banner code { color: var(--mmc-cyan); font-size: 10px; }
+
+.mmc-dock-banner-warn {
+  border-left-color: #b45309;
+  background: rgba(120, 53, 15, 0.12);
+  color: var(--mmc-amber);
+}
+
+.mmc-dock-banner-ok {
+  border-left-color: var(--mmc-cyan-dim);
+}
+
+.mmc-dock-banner-info {
+  border-left-color: #166534;
+  background: rgba(20, 83, 45, 0.1);
+  color: var(--mmc-green);
+}
+
+.mmc-dock-section-h {
+  font-family: var(--mmc-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mmc-faint);
+  padding: 10px 0 4px;
+  border-bottom: 1px dashed var(--mmc-line);
+  margin-bottom: 6px;
+}
+.mmc-dock-section-h:first-child { padding-top: 0; }
+
+.mmc-dock-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px dashed rgba(27, 39, 64, 0.55);
+}
+
+.mmc-dock-row:last-child { border-bottom: 0; }
+
+.mmc-dock-k {
+  font-family: var(--mmc-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mmc-faint);
+  flex: 0 0 auto;
+}
+
+.mmc-dock-v {
+  font-size: 10px;
+  color: var(--mmc-text);
+  text-align: right;
+  min-width: 0;
+  word-break: break-word;
+}
+.mmc-dock-v-mono {
+  font-family: var(--mmc-mono);
+  color: var(--mmc-cyan);
+}
+.mmc-dock-mono-dim {
+  font-family: var(--mmc-mono);
+  color: var(--mmc-dim);
+  font-size: 10px;
+}
+
+/* Chips de estado. Color por canon; no usar cyan para no competir con la curva. */
+.mmc-dock-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  font-family: var(--mmc-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--mmc-line);
+  color: var(--mmc-faint);
+  background: transparent;
+}
+.mmc-dock-chip-sim   { color: var(--mmc-amber);   border-color: rgba(255, 179, 0, 0.45);  }
+.mmc-dock-chip-real  { color: #4ade80;            border-color: rgba(74, 222, 128, 0.45); }
+.mmc-dock-chip-diseno{ color: #c084fc;            border-color: rgba(192, 132, 252, 0.45);}
+.mmc-dock-chip-prep  { color: var(--mmc-cyan);    border-color: var(--mmc-cyan-dim);     }
+
+.mmc-dock-anchors { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+
+.mmc-dock-anchor {
+  display: inline-block;
+  padding: 3px 0;
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  color: var(--mmc-cyan-dim);
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+}
+.mmc-dock-anchor:hover { color: var(--mmc-cyan); border-bottom-color: var(--mmc-cyan-dim); }
+
+.mmc-dock-nodata {
+  padding: 6px 8px;
+  font-family: var(--mmc-mono);
+  font-size: 10px;
+  color: var(--mmc-faint);
+  border-left: 2px solid var(--mmc-line);
+  background: rgba(15, 23, 42, 0.45);
+}

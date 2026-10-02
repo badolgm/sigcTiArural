@@ -1,148 +1,140 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useLabStore } from '../stores/useLabStore';
+import MmcMathematicsCore from './mmc/components/MmcMathematicsCore.jsx';
+import MmcJsxGraphBoard from './mmc/components/MmcJsxGraphBoard.jsx';
+import MmcEquation from './mmc/components/MmcEquation.jsx';
+import { plotDataCurve } from './mmc/adapters/jsxgraphAdapter.js';
 
 const AdvancedMathLabV2 = () => {
   const electronicsData = useLabStore((state) => state.electronicsData);
 
-  useEffect(() => {
-    // Generamos partículas simples de fondo
-    const container = document.querySelector('.particles');
-    if (!container) return;
-    const count = 60;
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.style.left = Math.random() * 100 + '%';
-      p.style.top = Math.random() * 100 + '%';
-      p.style.animationDelay = (Math.random() * 5).toFixed(2) + 's';
-      container.appendChild(p);
-    }
-    return () => {
-      if (container) container.innerHTML = '';
-    };
-  }, []);
-
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b69 100%)', color: 'white' }}>
+    <div className="min-h-screen" style={{ background: '#070b11', color: 'white' }}>
       <style>{`
         * { box-sizing: border-box; }
         body { font-family: 'Rajdhani', sans-serif; }
-        .particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; }
-        .particle { position:absolute; width:2px; height:2px; background:#00ffff; border-radius:50%; animation: float 6s ease-in-out infinite; opacity:0.7; }
-        @keyframes float { 0%,100%{ transform: translateY(0px) translateX(0px);} 25%{ transform: translateY(-20px) translateX(10px);} 50%{ transform: translateY(-40px) translateX(-10px);} 75%{ transform: translateY(-20px) translateX(5px);} }
-        .game-container { max-width: 1200px; margin:0 auto; padding:20px; position:relative; z-index:10; }
-        .mmc-brief { max-width:980px; margin:0 auto 18px; text-align:center; }
-        .mmc-chain { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px; margin-top:10px; }
-        .mmc-node { font-size:11px; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:999px; border:1px solid rgba(0,255,255,.35); background:rgba(0,255,255,.07); color:#cfefff; }
-        .mmc-arrow { color:#5b6b7a; font-size:12px; }
-        .mmc-note { font-size:12px; color:#9aa4b0; margin-top:10px; }
-        .mmc-tag { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0 10px; font-size:11px; }
-        .mmc-tag b { font-weight:600; color:#7d8894; text-transform:uppercase; letter-spacing:.06em; font-size:10px; }
-        .mmc-chip { padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:#b6c2cf; }
-        .mmc-chip-live { border-color:rgba(57,255,211,.45); background:rgba(57,255,211,.10); color:#8ef0d6; }
-        .mmc-chip-sim { border-color:rgba(255,179,0,.35); background:rgba(255,179,0,.08); color:#e0b64f; }
-        .quantum-header { text-align:center; margin-bottom:30px; position:relative; }
-        .quantum-title { font-family:'Orbitron', monospace; font-size:2.6rem; font-weight:900; background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-shadow:0 0 30px rgba(0,255,255,0.5); margin-bottom:15px; animation:titleGlow 3s ease-in-out infinite; }
-        @keyframes titleGlow { 0%,100%{ filter:brightness(1) hue-rotate(0deg);} 50%{ filter:brightness(1.2) hue-rotate(30deg);} }
-        .doctor-avatar { width:100px; height:100px; background: radial-gradient(circle, #00ffff, #0080ff); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:3rem; margin:0 auto 20px; border:3px solid #00ffff; box-shadow:0 0 30px rgba(0,255,255,0.6); animation: avatarPulse 2s ease-in-out infinite; }
-        @keyframes avatarPulse { 0%,100%{ transform:scale(1); box-shadow:0 0 30px rgba(0,255,255,0.6);} 50%{ transform:scale(1.05); box-shadow:0 0 50px rgba(0,255,255,0.8);} }
-        .stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:20px; margin-bottom:30px; }
-        .stat-panel { background: linear-gradient(145deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1)); border:2px solid #00ffff; border-radius:15px; padding:20px; text-align:center; position:relative; overflow:hidden; }
-        .stat-panel::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background: linear-gradient(45deg, transparent, rgba(0,255,255,0.1), transparent); animation: scanLine 3s linear infinite; }
-        @keyframes scanLine { 0%{ transform: translateX(-100%) translateY(-100%) rotate(45deg);} 100%{ transform: translateX(100%) translateY(100%) rotate(45deg);} }
-        .stat-value { font-family:'Orbitron', monospace; font-size:2rem; font-weight:700; color:#00ffff; margin-bottom:5px; }
-        .stat-label { font-size:0.9rem; color:#cccccc; text-transform:uppercase; letter-spacing:1px; }
-        .lab-modes { display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px; margin-bottom:30px; }
-        .mode-card { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,255,255,0.05)); border:2px solid transparent; border-radius:20px; padding:25px; cursor:pointer; transition: all 0.3s ease; position:relative; overflow:hidden; text-align:center; }
-        .mode-card:hover { transform: translateY(-10px); border-color:#00ffff; box-shadow:0 20px 40px rgba(0,255,255,0.3); }
-        .mode-card.active { border-color:#ff00ff; background: linear-gradient(145deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1)); }
-        .mode-icon { font-size:3rem; margin-bottom:15px; background: linear-gradient(45deg, #00ffff, #ff00ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        /*
+         * ANCHO. No hay max-width. Un contenedor restrictivo es la causa
+         * directa de tener que bajar el zoom: a 1920 px se usaba 1200 px y se
+         * desperdiciaban 720. Se ocupa el 94% del viewport en pantallas anchas
+         * y el 100% en las estrechas, donde cada píxel cuenta. Ninguna columna
+         * central delgada: el contenido es lo que define el ancho.
+         */
+        .game-container { width:94%; max-width:none; margin:0 auto; padding:0; position:relative; }
+        @media (max-width: 1100px) { .game-container { width:100%; padding:0 12px; } }
+        @media (min-width: 2200px) { .game-container { width:95%; } }
 
-        .interactive-section { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,255,255,0.05)); border:2px solid #00ffff55; border-radius:16px; padding:16px; margin-bottom:24px; }
-        .controls { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:12px; margin-top:8px; margin-bottom:12px; }
-        .ctrl { display:flex; flex-direction:column; gap:6px; }
-        .ctrl label { font-size:0.85rem; color:#b0b8c0; }
-        .ctrl input { width:100%; }
-        .matrix { display:grid; grid-template-columns: repeat(2, 100px); gap:8px; margin-top:8px; }
-        .matrix div { background:#0d0d1f; border:1px solid #00ffff55; padding:6px; text-align:center; border-radius:8px; }
-        .svg-wrap { background:#0d0d1f; border:1px solid #00ffff33; border-radius:12px; padding:8px; overflow:hidden; }
+        /*
+         * GRÁFICAS FLUIDAS. Los SVG heredados llevaban width/height fijos, así
+         * que se veían pequeños en una pantalla grande. Con viewBox ya
+         * definido, quitar el ancho fijo y dejar que CSS imponga la proporción
+         * hace que ocupen todo el ancho disponible sin deformarse.
+         */
+        .mmc-plot { display:block; width:100%; height:auto; }
+
+        /*
+         * Grid de gráficas: en escritorio van 2 columnas, en móvil 1.
+         * Antes las 4 gráficas de SignalsInteractive se apilaban verticalmente
+         * (200+160+200+200 = 760px de scroll). Con 2 columnas se reduce a
+         * ~380px y cada gráfica gana ancho.
+         */
+        .mmc-plot-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        @media (min-width: 980px) {
+          .mmc-plot-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /*
+         * ESTO ES UN WORKBENCH, NO UN DASHBOARD.
+         *
+         * La diferencia no es de gusto, es de función: un dashboard reparte el
+         * espacio en cajas iguales y decora cada una para que se lean como
+         * módulos intercambiables. Aquí cada instrumento es una sección de un
+         * documento continuo, y lo que separa un instrumento del siguiente es
+         * una línea y aire, no una caja. El gráfico manda; el marco estorba.
+         *
+         * Se conserva a propósito: el anillo de foco (accesibilidad con
+         * teclado) y el borde del estado ROTO (comunica información).
+         */
+
+        .mmc-tag { display:flex; flex-wrap:wrap; gap:4px 16px; align-items:baseline; margin:2px 0 8px; font-size:11px; color:#aab2ba; }
+        .mmc-tag b { font-weight:600; color:#e2e8f0; text-transform:uppercase; letter-spacing:.06em; font-size:10px; }
+
+        .quantum-header { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px; padding-bottom:8px; border-bottom:1px solid #1f2937; }
+        .quantum-title { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:1.15rem; font-weight:700; letter-spacing:.02em; color:#e2e8f0; margin:0; }
+        .lab-status { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+
+        /* Índice: enlaces de texto, no botones-engordo. */
+        .lab-index { display:flex; flex-wrap:wrap; gap:4px 16px; padding:8px 0; }
+        .lab-index a, .lab-index button { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; letter-spacing:.05em; text-transform:uppercase; padding:0; border:0; border-bottom:1px solid transparent; background:none; color:#94a3b8; cursor:pointer; }
+        .lab-index a:hover, .lab-index button:hover { border-bottom-color:#155e75; color:#67e8f9; }
+        .lab-index button:focus-visible, .lab-readout:focus-visible { outline:1px solid #155e75; outline-offset:3px; }
+
+        .mmc-note { font-size:11px; color:#6b7280; margin:0 0 10px; }
+
+        /* Lectura: una línea con filete inferior. Sin caja. */
+        .lab-readout { display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; padding:6px 0; margin-bottom:12px; border:0; border-bottom:1px solid #1f2937; background:none; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; cursor:pointer; text-align:left; }
+        .lab-readout:hover { border-bottom-color:#155e75; }
+        .lab-readout-k { color:#475569; text-transform:uppercase; letter-spacing:.08em; font-size:9px; }
+        .lab-readout-v { color:#22d3ee; }
+        .lab-readout-dim { color:#64748b; }
+
+        /*
+         * Instrumento: separación por filete + aire. Sin fondo, sin borde, sin
+         * radio, sin padding. El nombre de la clase se conserva porque
+         * MathModelingCell lo usa como ancla para ocultar el h3.
+         */
+        .interactive-section { padding:0 0 14px; margin-bottom:14px; border-bottom:1px solid #16202e; }
+        .interactive-section:last-child { border-bottom:0; }
+
+        /* Controles: fila densa. Se conservan las clases .controls, .ctrl y el
+           elemento label porque el MutationObserver de MathModelingCell los lee. */
+        .controls { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap:6px 18px; margin:8px 0; }
+        .ctrl { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:2px 8px; min-width:0; }
+        .ctrl label { grid-column:1; font-family:ui-monospace,Menlo,monospace; font-size:10px; color:#8494a8; white-space:nowrap; cursor:pointer; }
+        .ctrl input[type='number'], .ctrl select { grid-column:2; grid-row:1; width:100%; padding:2px 4px; border:0; border-bottom:1px solid #1f2937; border-radius:0; background:transparent; color:#cbd5e1; font-family:ui-monospace,Menlo,monospace; }
+        .ctrl input[type='range'] { grid-column:2; grid-row:1; width:100%; }
+
+        /* Matriz: cuatro números en monoespaciada, no cuatro mini-tarjetas. */
+        .matrix { display:grid; grid-template-columns: repeat(2, minmax(64px, 96px)); gap:2px 20px; margin:8px 0; }
+        .matrix div { font-family:ui-monospace,Menlo,monospace; font-size:14px; text-align:right; color:#00ffff; }
+
+        /* El gráfico es el contenido: sin marco y sin padding alrededor.
+           Se usa overflow auto en vez de hidden a propósito: los SVG heredados
+           son de ancho fijo y en la celda del CMSC no caben. Recortarlos
+           escondería datos, dejarlos visibles desbordarían el layout. La barra
+           de scroll los mantiene enteros. */
+        .svg-wrap { background:none; border:0; border-radius:0; padding:0; overflow-x:auto; overflow-y:hidden; }
+
+        /* Acordeones: compactos, colapsados por defecto */
+        .wb-accordion { border-bottom:1px solid #16202e; }
+        .wb-accordion summary {
+          cursor:pointer; padding:6px 0; font-family:ui-monospace,Menlo,monospace;
+          font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:#64748b;
+          list-style:none; display:flex; align-items:center; gap:6px;
+        }
+        .wb-accordion summary::-webkit-details-marker { display:none; }
+        .wb-accordion summary::before { content:'▸'; font-size:9px; color:#374151; }
+        .wb-accordion[open] summary::before { content:'▾'; }
+        .wb-accordion summary:hover { color:#94a3b8; }
+        .wb-accordion > div { padding:0 0 8px; }
+
+        /* Núcleo dominante: 65-70% del viewport */
+        .mmc-wb-plot .mmc-board,
+        .mmc-wb-plot .mmc-board-fail {
+          height: clamp(450px, 68vh, 950px) !important;
+        }
+
+        /* Rail 30% / Stage 70% */
+        @media (min-width: 980px) {
+          .mmc-wb-body { grid-template-columns: minmax(280px, 30%) minmax(0, 1fr); }
+        }
       `}</style>
 
-      <div className="particles" aria-hidden="true"></div>
       <div className="game-container">
-        <div className="quantum-header">
-          <div className="doctor-avatar"><span className="fa-solid fa-brain" aria-hidden="true"></span></div>
-          <h1 className="quantum-title">Motor de Modelado Científico</h1>
-          <p style={{ color: '#cccccc' }}>Centro de modelado, simulación, optimización y análisis matemático del ecosistema SIGCTIARURAL.</p>
-          <p style={{ color: '#cccccc' }}>Las matemáticas generan modelos. Los modelos producen señales. Las señales generan conocimiento.</p>
-
-          <div className="mmc-brief">
-            <p style={{ color: '#cfefff', fontSize: 13 }}>
-              Esta no es una colección de ejercicios matemáticos: es una <b>planta generadora de modelos y señales</b>.
-              Aquí se formula la teoría, se simula su comportamiento, se comparan ambos resultados y se contrastan
-              con la medición real de los circuitos del ecosistema.
-            </p>
-            <div className="mmc-chain">
-              {['Teoría', 'Simulación', 'Implementación', 'Medición real', 'Conocimiento'].map((c, i) => (
-                <React.Fragment key={c}>
-                  {i > 0 && <span className="mmc-arrow">→</span>}
-                  <span className="mmc-node">{c}</span>
-                </React.Fragment>
-              ))}
-            </div>
-            <p className="mmc-note">
-              La teoría no siempre coincide con el comportamiento físico real. <b style={{ color: '#7dffd4' }}>Por eso el MMC existe.</b>
-            </p>
-          </div>
-        </div>
-
-        <div className="stats-grid">
-          <div className="stat-panel" style={{ borderColor: electronicsData?.active ? '#39FF14' : '#555', background: electronicsData?.active ? 'rgba(57,255,20,0.1)' : 'rgba(255,255,255,0.05)' }} onClick={() => document.getElementById('section-real-signal')?.scrollIntoView({behavior:'smooth'})} role="button">
-            <div className="stat-value" style={{ color: electronicsData?.active ? '#39FF14' : '#777' }}>⚡</div>
-            <div className="stat-label">{electronicsData?.active ? 'Señal Entrante' : 'Sin Señal'}</div>
-            <div className="text-xs mt-2" style={{ color: electronicsData?.active ? '#86efac' : '#777', whiteSpace: 'pre-line' }}>
-              {electronicsData?.active 
-                ? `${electronicsData.signals.description || 'Datos de Electrónica'}\nFreq: ${electronicsData.params.vinFreq} Hz | Amp: ${electronicsData.params.vinAmp} V`
-                : 'Activa el circuito en\nLaboratorio de Electrónica'}
-            </div>
-          </div>
-          <div className="stat-panel" onClick={() => document.getElementById('section-integrals')?.scrollIntoView({behavior:'smooth'})} role="button" aria-label="Ir a Integrales">
-            <div className="stat-value">∫</div>
-            <div className="stat-label">Integrales</div>
-          </div>
-          <div className="stat-panel" onClick={() => document.getElementById('section-eigen')?.scrollIntoView({behavior:'smooth'})} role="button" aria-label="Ir a Eigenvalores">
-            <div className="stat-value">λ</div>
-            <div className="stat-label">Eigenvalores</div>
-          </div>
-          <div className="stat-panel" onClick={() => document.getElementById('section-signals')?.scrollIntoView({behavior:'smooth'})} role="button" aria-label="Ir a Transformadas">
-            <div className="stat-value">ℱ</div>
-            <div className="stat-label">Transformadas</div>
-          </div>
-          <div className="stat-panel" onClick={() => document.getElementById('section-complex')?.scrollIntoView({behavior:'smooth'})} role="button" aria-label="Ir a Complejo">
-            <div className="stat-value">ℂ</div>
-            <div className="stat-label">Complejo</div>
-          </div>
-        </div>
-
-        <div className="lab-modes">
-          <div className="mode-card">
-            <div className="mode-icon">∂</div>
-            <h3 style={{ marginBottom: 8 }}>Simulaciones numéricas</h3>
-            <p style={{ color: '#cccccc' }}>Resuelve EDO y replica la dinámica de sistemas reales: crecimiento, oscilación y estabilidad.</p>
-          </div>
-          <div className="mode-card">
-            <div className="mode-icon">R(θ)</div>
-            <h3 style={{ marginBottom: 8 }}>Modelos lineales</h3>
-            <p style={{ color: '#cccccc' }}>Eigenvalores y transformaciones que describen cómo un sistema amplifica o atenúa una entrada.</p>
-          </div>
-          <div className="mode-card">
-            <div className="mode-icon">ℱ</div>
-            <h3 style={{ marginBottom: 8 }}>Señales sintéticas y de prueba</h3>
-            <p style={{ color: '#cccccc' }}>Genera series de Fourier, señales moduladas en AM y sus espectros para alimentar otros laboratorios.</p>
-          </div>
-        </div>
-
-        {/* Interactividad real */}
         <DynamicSections electronicsData={electronicsData} />
       </div>
     </div>
@@ -196,7 +188,7 @@ const PhasePortraitPlot = ({ time, signal, width, height }) => {
   }).join(' ');
 
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+    <svg className="mmc-plot" viewBox={`0 0 ${width} ${height}`}>
        <rect x="0" y="0" width={width} height={height} fill="#000" />
        {/* Axis */}
        <line x1={padding} y1={height/2} x2={width-padding} y2={height/2} stroke="#333" />
@@ -219,28 +211,54 @@ export { IntegralsInteractive, EigenvaluesInteractive, DiffEqInteractive, Geomet
 // Etiqueta de salida y destino de cada instrumento. Solo presentación: no altera ningún cálculo.
 const MmcTag = ({ produce, hacia, live }) => (
   <div className="mmc-tag">
-    <b>Produce</b>
-    {produce.map((p) => (
-      <span key={p} className="mmc-chip mmc-chip-sim">{p}</span>
-    ))}
-    <b style={{ marginLeft: 6 }}>Va hacia</b>
-    {hacia.map((h) => (
-      <span key={h} className={`mmc-chip ${live ? 'mmc-chip-live' : ''}`}>{h}</span>
-    ))}
+    <span><b>Produce:</b> {produce.join(' · ')}</span>
+    <span><b>Va hacia:</b> {hacia.join(' · ')}</span>
   </div>
 );
 
 const DynamicSections = ({ electronicsData }) => {
   return (
     <div>
-      <RealSignalAnalysis electronicsData={electronicsData} />
-      <IntegralsInteractive />
-      <EigenvaluesInteractive />
-      <DiffEqInteractive />
-      <GeometryInteractive />
-      <SignalsInteractive />
-      <ComplexInteractive />
-      <FormulasPanel />
+      {/* Núcleo Matemático: siempre visible, es el laboratorio principal */}
+      <div id="section-mmc-core">
+        <MmcMathematicsCore />
+      </div>
+
+      {/* Todo lo demás: acordeones colapsados por defecto */}
+      <details className="wb-accordion">
+        <summary>Señal Real</summary>
+        <div><RealSignalAnalysis electronicsData={electronicsData} /></div>
+      </details>
+
+      <details className="wb-accordion">
+        <summary>Fourier</summary>
+        <div><SignalsInteractive /></div>
+      </details>
+
+      <details className="wb-accordion">
+        <summary>Integrales</summary>
+        <div><IntegralsInteractive /></div>
+      </details>
+
+      <details className="wb-accordion">
+        <summary>Eigenvalores</summary>
+        <div><EigenvaluesInteractive /></div>
+      </details>
+
+      <details className="wb-accordion">
+        <summary>Geometría</summary>
+        <div><GeometryInteractive /></div>
+      </details>
+
+      <details className="wb-accordion">
+        <summary>Complejos</summary>
+        <div><ComplexInteractive /></div>
+      </details>
+
+      <details className="wb-accordion">
+        <summary>Fórmulas</summary>
+        <div><FormulasPanel /></div>
+      </details>
     </div>
   );
 };
@@ -432,7 +450,7 @@ const RealSignalAnalysis = ({ electronicsData }) => {
               <span className="text-xs text-cyan-400">T_max: {timeData[timeData.length-1].toFixed(3)}s</span>
           </h4>
           <div className="svg-wrap relative">
-            <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+            <svg className="mmc-plot" viewBox={`0 0 ${width} ${height}`}>
               <rect x="0" y="0" width={width} height={height} fill="#0b0b1a" />
               {/* Grid */}
               <line x1={padding} y1={height/2} x2={width-padding} y2={height/2} stroke="#222" />
@@ -461,7 +479,7 @@ const RealSignalAnalysis = ({ electronicsData }) => {
           </h4>
           <div className="svg-wrap">
              {spectrumData.length > 0 ? (
-               <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+               <svg className="mmc-plot" viewBox={`0 0 ${width} ${height}`}>
                  <rect x="0" y="0" width={width} height={height} fill="#0b0b1a" />
                  {(() => {
                     const visibleSpectrum = spectrumData.slice(0, harmonicsCount * 2); // Show a bit more range
@@ -680,7 +698,7 @@ const IntegralsInteractive = () => {
       </div>
 
       <div className="svg-wrap" onMouseMove={handleMove} onMouseLeave={handleLeave}>
-        <svg width="500" height="200" role="img" aria-label="Gráfica de f(x) con área bajo la curva">
+        <svg className="mmc-plot" viewBox="0 0 500 200" role="img" aria-label="Gráfica de f(x) con área bajo la curva">
           <rect x="0" y="0" width="500" height="200" fill="#0b0b1a" />
           <path d={fillPath} fill="#00ffff22" stroke="none" />
           <path d={path} fill="none" stroke="#00ffff" strokeWidth="2" />
@@ -798,7 +816,7 @@ const DiffEqInteractive = () => {
         </div>
       </div>
       <div className="svg-wrap">
-        <svg width="500" height="200" role="img" aria-label="Gráfica solución exacta">
+        <svg className="mmc-plot" viewBox="0 0 500 200" role="img" aria-label="Gráfica solución exacta">
           <defs>
             <linearGradient id="gradLine" x1="0" x2="1" y1="0" y2="0">
               <stop offset="0%" stopColor="#00ffff" />
@@ -814,25 +832,73 @@ const DiffEqInteractive = () => {
   );
 };
 
+// Geometría: rotación 2D sobre geometría dinámica real (JSXGraph).
+// Mejora respecto a la versión anterior, que dibujaba un polígono con rutas SVG
+// calculadas a mano: ahora el cuadrado es un objeto geométrico de verdad, con
+// punto arrastrable, zoom, encuadre y ejes reales. El deslizador θ y la matriz R
+// se conservan idénticos, incluido el cálculo.
 const GeometryInteractive = () => {
   const [theta, setTheta] = useState(30);
   const rad = useMemo(() => (theta * Math.PI) / 180, [theta]);
   const R = useMemo(() => ({
     a: Math.cos(rad), b: -Math.sin(rad), c: Math.sin(rad), d: Math.cos(rad)
   }), [rad]);
-  const base = useMemo(() => ([
-    { x: -40, y: -40 }, { x: 40, y: -40 }, { x: 40, y: 40 }, { x: -40, y: 40 }, { x: -40, y: -40 }
-  ]), []);
-  const rot = useMemo(() => base.map(p => ({
-    x: R.a * p.x + R.b * p.y, y: R.c * p.x + R.d * p.y
-  })), [base, R]);
 
-  const map = (p) => ({ x: 250 + p.x, y: 100 + p.y });
-  const pathBase = base.map((p, i) => `${i === 0 ? 'M' : 'L'} ${map(p).x} ${map(p).y}`).join(' ');
-  const pathRot = rot.map((p, i) => `${i === 0 ? 'M' : 'L'} ${map(p).x} ${map(p).y}`).join(' ');
+  const BASE = useMemo(() => ([
+    [ -1.5, -1.5 ], [ 1.5, -1.5 ], [ 1.5,  1.5 ], [ -1.5,  1.5 ], [ -1.5, -1.5 ]
+  ]), []);
+
+  const buildGeometry = useCallback((board, ctx) => {
+    const { theme } = ctx;
+    // `polygon` recibe una lista PLANA de pares [x, y]. Verificado en
+    // src/utils/type.js `providePoints`: itera `parents` y crea un punto por
+    // entrada, así que anidar la lista en un array extra
+    // (`[BASE.map(...)]`) haría `create('point', [p0,p1,p2,...])`, que es
+    // inválido y deja el cuadrado sin dibujar.
+    const flat = (pts) => pts.map(([x, y]) => [x, y]);
+
+    // Cuadrado base: referencia, siempre el mismo.
+    board.create('polygon', flat(BASE), {
+      strokeColor: theme.axis,
+      strokeWidth: 1.5,
+      dash: 2,
+      fillOpacity: 0.04,
+      vertices: { visible: false },
+      fixed: true,
+      highlight: false
+    });
+
+    // Cuadrado rotado: se recalcula con el deslizador θ.
+    const rot = BASE.map(([x, y]) => [R.a * x + R.b * y, R.c * x + R.d * y]);
+    board.create('polygon', flat(rot), {
+      strokeColor: theme.cyan,
+      strokeWidth: 2,
+      fillColor: theme.cyan,
+      fillOpacity: 0.1,
+      vertices: { visible: false },
+      fixed: true,
+      highlight: false
+    });
+
+    // Punto arrastrable: demuestra geometría dinámica y alimenta la caja de
+    // información del propio tablero. NO acopla con θ a propósito: si el punto
+    // moviera el estado, cada cambio reconstruiría el tablero y el arrastre se
+    // cortaría a mitad de gesto.
+    board.create('point', [2.6, 1.2], {
+      name: 'P',
+      strokeColor: theme.amber,
+      fillColor: theme.amber,
+      size: 3,
+      label: { strokeColor: theme.amber, fontSize: 12 }
+    });
+
+    // Ejes y rejilla sobre la geometría.
+    board.create('line', [[0, 0], [4.5, 0]], { strokeColor: theme.axis, dash: 1, fixed: true, highlight: false });
+    board.create('line', [[0, 0], [0, 4.5]], { strokeColor: theme.axis, dash: 1, fixed: true, highlight: false });
+  }, [BASE, R]);
 
   return (
-    <div className="interactive-section">
+    <div className="interactive-section" id="section-geometry">
       <h3 className="text-xl font-bold" style={{ color: '#00ffff' }}>Geometría: Rotación 2D</h3>
       <MmcTag
         produce={['transformación lineal', 'rotación de trayectoria']}
@@ -842,22 +908,23 @@ const GeometryInteractive = () => {
         <div className="ctrl">
           <label>Ángulo θ (grados)</label>
           <input type="range" min="0" max="180" step="1" value={theta} onChange={(e) => setTheta(parseInt(e.target.value))} />
-          <span style={{ color:'#ccc' }}>θ = {theta}°</span>
+          <span style={{ color: '#ccc' }}>θ = {theta}°</span>
         </div>
       </div>
       <div className="matrix">
-        <div>{R.a.toFixed(3)}</div>
-        <div>{R.b.toFixed(3)}</div>
-        <div>{R.c.toFixed(3)}</div>
-        <div>{R.d.toFixed(3)}</div>
+        <div>{R.a.toFixed(3)}</div><div>{R.b.toFixed(3)}</div>
+        <div>{R.c.toFixed(3)}</div><div>{R.d.toFixed(3)}</div>
       </div>
-      <div className="svg-wrap">
-        <svg width="500" height="200" role="img" aria-label="Cuadrado base y rotado">
-          <rect x="0" y="0" width="500" height="200" fill="#0b0b1a" />
-          <path d={pathBase} fill="none" stroke="#555" strokeDasharray="4 4" strokeWidth="2" />
-          <path d={pathRot} fill="none" stroke="#00ffff" strokeWidth="2" />
-        </svg>
-      </div>
+      <MmcJsxGraphBoard
+        build={buildGeometry}
+        rebuildKey={`${theta}`}
+        boundingbox={[-5, 5, 5, -5]}
+        height={320}
+        ariaLabel="Rotación de un cuadrado en el plano, con punto arrastrable"
+      />
+      <p style={{ color: '#aab2ba' }}>
+        Arrastrá el punto rojo P sobre el tablero. La matriz R rota el cuadrado base (gris discontinuo) en sentido antihorario.
+      </p>
     </div>
   );
 };
@@ -899,11 +966,48 @@ const SignalsInteractive = () => {
     return [pts, smooth.map((y,i)=>({t:i*dt, y}))];
   },[em]);
 
-  const mapX = (t) => 20 + (t / (2 * Math.PI)) * 460;
-  const maxY = Math.max(...wave.map((p) => p.y));
-  const minY = Math.min(...wave.map((p) => p.y));
-  const mapY = (y) => 180 - ((y - minY) / (maxY - minY + 1e-9)) * 160;
-  const path = wave.map((p, i) => `${i === 0 ? 'M' : 'L'} ${mapX(p.t)} ${mapY(p.y)}`).join(' ');
+  // Los cuatro gráficos pasan a tableros JSXGraph con eje FIJO.
+  // Mejora científica real, no cosmética: antes `mapY` renormalizaba cada
+  // señal para llenar el marco, así que a1=0.1 se veía idéntico a a1=2 y el
+  // deslizador de amplitud no enseñaba nada. Y el espectro dibujaba las barras
+  // en posiciones fijas de pantalla (40 + i*60) sin relación con f1/f3, así que
+  // tampoco respondía a los controles.
+  const buildWave = useCallback((board, ctx) => {
+    board.create('curve', plotDataCurve(wave), {
+      strokeColor: ctx.theme.green, strokeWidth: 2, fixed: true, highlight: false
+    });
+  }, [wave]);
+
+  const buildSpec = useCallback((board, ctx) => {
+    // Barras como polígonos: `bar` no está verificado en esta versión.
+    spec.forEach(({ k, amp }) => {
+      // Lista plana de [x, y], igual que en la geometría: ver `providePoints`.
+      board.create('polygon', [
+        [k - 0.28, 0], [k - 0.28, amp], [k + 0.28, amp], [k + 0.28, 0]
+      ], {
+        fillColor: ctx.theme.pink, fillOpacity: 0.75, strokeColor: ctx.theme.pink,
+        vertices: { visible: false }, fixed: true, highlight: false
+      });
+      board.create('point', [k, amp], {
+        size: 2.5, strokeColor: ctx.theme.pink, fillColor: ctx.theme.pink, fixed: true, highlight: false
+      });
+    });
+    board.create('line', [[0, 0], [10, 0]], { strokeColor: ctx.theme.axis, dash: 1, fixed: true, highlight: false });
+    board.create('text', [5, -0.42, 'k (armónico)'], { cssStyle: 'font-size:10px;color:#8892a0', fixed: true });
+    board.create('text', [-0.35, 1.05, '|a_k|'], { cssStyle: 'font-size:10px;color:#8892a0', fixed: true });
+  }, [spec]);
+
+  const buildAm = useCallback((board, ctx) => {
+    board.create('curve', plotDataCurve(emWave), {
+      strokeColor: ctx.theme.cyan, strokeWidth: 1.2, fixed: true, highlight: false
+    });
+  }, [emWave]);
+
+  const buildDemod = useCallback((board, ctx) => {
+    board.create('curve', plotDataCurve(emDemod), {
+      strokeColor: ctx.theme.amber, strokeWidth: 2, fixed: true, highlight: false
+    });
+  }, [emDemod]);
 
   return (
     <div className="interactive-section" id="section-signals">
@@ -912,17 +1016,37 @@ const SignalsInteractive = () => {
         produce={['señal de prueba', 'espectro discreto', 'señal AM', 'envolvente demodulada']}
         hacia={['Análisis espectral', 'Telecomunicaciones', 'Electrónica · filtrado', 'Hardware BBB', 'IA Predictiva']}
       />
+      {/* Honestidad de estado: estas señales se generan en el navegador a partir
+          de los controles. No son mediciones. Reutiliza las clases de estado ya
+          existentes en este archivo en lugar de inventar otro sistema. */}
+      <p className="lab-status" style={{ color: '#e0b64f', margin: '6px 0 0' }}>
+        ● sim · señales sintéticas calculadas en el navegador · ningún sensor las produce
+      </p>
       <div className="controls">
         <div className="ctrl"><label>f1</label><input type="range" min="1" max="6" value={f1} onChange={(e)=>setF1(parseInt(e.target.value))} /><span style={{color:'#ccc'}}>f1={f1}</span></div>
         <div className="ctrl"><label>a1</label><input type="range" min="0" max="2" step="0.1" value={a1} onChange={(e)=>setA1(parseFloat(e.target.value))} /><span style={{color:'#ccc'}}>a1={a1.toFixed(1)}</span></div>
         <div className="ctrl"><label>f3</label><input type="range" min="1" max="9" value={f3} onChange={(e)=>setF3(parseInt(e.target.value))} /><span style={{color:'#ccc'}}>f3={f3}</span></div>
         <div className="ctrl"><label>a3</label><input type="range" min="0" max="2" step="0.1" value={a3} onChange={(e)=>setA3(parseFloat(e.target.value))} /><span style={{color:'#ccc'}}>a3={a3.toFixed(1)}</span></div>
       </div>
+      <div className="mmc-plot-grid">
       <div className="svg-wrap" style={{ marginBottom: 12 }}>
-        <svg width="500" height="200" role="img" aria-label="Señal en el tiempo">
-          <rect x="0" y="0" width="500" height="200" fill="#0b0b1a" />
-          <path d={path} fill="none" stroke="#39ff14" strokeWidth="2" />
-        </svg>
+        <MmcJsxGraphBoard
+          build={buildWave}
+          rebuildKey={`${f1}-${f3}-${a1}-${a3}`}
+          boundingbox={[-0.35, 2 * Math.PI + 0.35, 4.5, -4.5]}
+          height={200}
+          ariaLabel="Suma de armónicos en el tiempo, eje fijo"
+        />
+      </div>
+      <div className="svg-wrap">
+        <MmcJsxGraphBoard
+          build={buildSpec}
+          rebuildKey={`${f1}-${f3}-${a1}-${a3}`}
+          boundingbox={[-0.7, 10.3, 2.4, -0.7]}
+          height={160}
+          ariaLabel="Espectro discreto de armónicos, posiciones ligadas a f1 y f3"
+        />
+      </div>
       </div>
       {/* Panel de derivación y referencias académicas para AM */}
       <div className="interactive-section" style={{ marginTop: 8 }}>
@@ -953,14 +1077,6 @@ const SignalsInteractive = () => {
           <a href="https://ocw.mit.edu/courses/18-03-differential-equations-spring-2010/resources/fourier-series/" target="_blank" rel="noreferrer" style={{ color:'#ff3cc7' }}>MIT OCW – Fourier/Laplace</a>
         </div>
       </div>
-      <div className="svg-wrap">
-        <svg width="500" height="160" role="img" aria-label="Espectro discreto">
-          <rect x="0" y="0" width="500" height="160" fill="#0b0b1a" />
-          {spec.map((s, i) => (
-            <rect key={i} x={40 + i * 60} y={140 - s.amp * 60} width="40" height={s.amp * 60} fill="#ff3cc7" />
-          ))}
-        </svg>
-      </div>
       <h4 className="text-lg font-bold" style={{color:'#ffd32a', marginTop:12}}>Ejemplo EM: Modulación AM y Demodulación</h4>
       <MmcTag
         produce={['portadora s(t)', 'bandas laterales f_c ± f_m', 'envolvente recuperada']}
@@ -971,29 +1087,25 @@ const SignalsInteractive = () => {
         <div className="ctrl"><label>f<sub>m</sub> (mensaje)</label><input type="range" min="0" max="10" step="1" value={em.fm} onChange={(e)=>setEm({...em, fm: parseInt(e.target.value)})} /><span style={{color:'#ccc'}}>fm={em.fm}</span></div>
         <div className="ctrl"><label>Profundidad</label><input type="range" min="0" max="1" step="0.05" value={em.depth} onChange={(e)=>setEm({...em, depth: parseFloat(e.target.value)})} /><span style={{color:'#ccc'}}>m={em.depth.toFixed(2)}</span></div>
       </div>
+      <div className="mmc-plot-grid">
       <div className="svg-wrap" style={{ marginBottom: 12 }}>
-        <svg width="500" height="200" role="img" aria-label="Señal AM">
-          <rect x="0" y="0" width="500" height="200" fill="#0b0b1a" />
-          {(() => {
-            const mapX=(t)=>20+(t/(emWave[emWave.length-1]?.t||1))*460;
-            const maxY=Math.max(...emWave.map(p=>p.y)); const minY=Math.min(...emWave.map(p=>p.y));
-            const mapY=(y)=>180-((y-minY)/(maxY-minY+1e-9))*160;
-            const d=emWave.map((p,i)=>`${i===0?'M':'L'} ${mapX(p.t)} ${mapY(p.y)}`).join(' ');
-            return <path d={d} fill="none" stroke="#00ffff" strokeWidth="2" />
-          })()}
-        </svg>
+        <MmcJsxGraphBoard
+          build={buildAm}
+          rebuildKey={`${em.fc}-${em.fm}-${em.depth}`}
+          boundingbox={[-0.25, 4.25, 2.4, -2.4]}
+          height={200}
+          ariaLabel="Señal AM modulada"
+        />
       </div>
       <div className="svg-wrap">
-        <svg width="500" height="200" role="img" aria-label="Demodulación (envolvente)">
-          <rect x="0" y="0" width="500" height="200" fill="#0b0b1a" />
-          {(() => {
-            const mapX=(t)=>20+(t/(emDemod[emDemod.length-1]?.t||1))*460;
-            const maxY=Math.max(...emDemod.map(p=>p.y)); const minY=Math.min(...emDemod.map(p=>p.y));
-            const mapY=(y)=>180-((y-minY)/(maxY-minY+1e-9))*160;
-            const d=emDemod.map((p,i)=>`${i===0?'M':'L'} ${mapX(p.t)} ${mapY(p.y)}`).join(' ');
-            return <path d={d} fill="none" stroke="#ffd32a" strokeWidth="2" />
-          })()}
-        </svg>
+        <MmcJsxGraphBoard
+          build={buildDemod}
+          rebuildKey={`${em.fc}-${em.fm}-${em.depth}`}
+          boundingbox={[-0.25, 4.25, 2.4, -2.4]}
+          height={200}
+          ariaLabel="Envolvente demodulada por rectificación y filtro"
+        />
+      </div>
       </div>
     </div>
   );
@@ -1017,7 +1129,7 @@ const ComplexInteractive = () => {
       />
       <div className="controls"><div className="ctrl"><label>Escala</label><input type="range" min="0.5" max="2" step="0.1" value={scale} onChange={(e)=>setScale(parseFloat(e.target.value))} /><span style={{color:'#ccc'}}>×{scale.toFixed(1)}</span></div></div>
       <div className="svg-wrap">
-        <svg width="500" height="200" role="img" aria-label="Mapa complejo">
+        <svg className="mmc-plot" viewBox="0 0 500 200" role="img" aria-label="Mapa complejo">
           <rect x="0" y="0" width="500" height="200" fill="#0b0b1a" />
           {grid.map((p,i)=>{ const m=map({x:p.x,y:p.y}); return <circle key={i} cx={m.x} cy={m.y} r="1.5" fill="#555" />; })}
           {mapped.map((p,i)=>{ const m=map(p); return <circle key={'m'+i} cx={m.x} cy={m.y} r="2" fill="#ff3cc7" />; })}
@@ -1029,13 +1141,18 @@ const ComplexInteractive = () => {
 
 // Panel de fórmulas con explicaciones rápidas y enlaces académicos reales
 const FormulasPanel = () => {
+  // `expr` es la cadena legible y accesible (title del botón, texto plano).
+  // `tex` es la representación tipográfica que KaTeX sabe maquetar. El texto
+  // original mezclaba notación Unicode suelta con notación ASCII
+  // (`L\{f\}(s)`, `Σ`, `∫₀^∞`) que no se lee como fórmula matemática: el
+  // subíndice y el exponente de la Laplace quedaban mal. Se conservan ambas.
   const formulas=[
-    {name:'Transformada de Fourier', expr:'F(ω)=∫ f(t) e^{-iωt} dt', desc:'Series/transformada para análisis espectral de señales.', link:'https://ocw.mit.edu/courses/18-03-differential-equations-spring-2010/resources/fourier-series/'},
-    {name:'Transformada de Laplace', expr:'L\{f\}(s)=∫₀^∞ f(t)e^{-st} dt', desc:'Sistemas LTI y estabilidad por polos/ceros.', link:'https://ocw.mit.edu/courses/18-03-differential-equations-spring-2010/'},
-    {name:'Transformada Z (discreta)', expr:'X(z)=Σ x[n] z^{-n}', desc:'DSP y análisis en el plano-z.', link:'https://www.sp4comm.org/webversion.html'},
-    {name:'Modulación AM', expr:'s(t)=(1+m cos(2π f_m t)) cos(2π f_c t)', desc:'Portadora y bandas laterales en f_c ± f_m.', link:'https://www.fceia.unr.edu.ar/lsd/'},
-    {name:'Álgebra Lineal (Curso UNAL)', expr:'det(A-λI)=0', desc:'Eigenvalores/eigenvectores en cursos reales.', link:'https://ciencias.medellin.unal.edu.co/cursos/algebra-lineal/'},
-    {name:'Variable Compleja (IMA UMN)', expr:'f(z)=u+iv', desc:'Funciones analíticas y mapeos conformes.', link:'https://www.ima.umn.edu/~arnold/complex.html'},
+    {name:'Transformada de Fourier', expr:'F(ω) = ∫ f(t) e^(-iωt) dt', tex:'F(\\omega)=\\int_{-\\infty}^{\\infty} f(t)\\,e^{-i\\omega t}\\,\\mathrm{d}t', desc:'Series/transformada para análisis espectral de señales.', link:'https://ocw.mit.edu/courses/18-03-differential-equations-spring-2010/resources/fourier-series/'},
+    {name:'Transformada de Laplace', expr:'L{f}(s) = ∫₀^∞ f(t)e^(-st) dt', tex:'\\mathcal{L}\\{f\\}(s)=\\int_{0}^{\\infty} f(t)e^{-st}\\,\\mathrm{d}t', desc:'Sistemas LTI y estabilidad por polos/ceros.', link:'https://ocw.mit.edu/courses/18-03-differential-equations-spring-2010/'},
+    {name:'Transformada Z (discreta)', expr:'X(z) = Σ x[n] z^(-n)', tex:'X(z)=\\sum_{n=-\\infty}^{\\infty} x[n]\,z^{-n}', desc:'DSP y análisis en el plano-z.', link:'https://www.sp4comm.org/webversion.html'},
+    {name:'Modulación AM', expr:'s(t) = (1 + m·cos(2π f_m t))·cos(2π f_c t)', tex:'s(t)=\\bigl(1+m\\cos(2\\pi f_m t)\\bigr)\\cos(2\\pi f_c t)', desc:'Portadora y bandas laterales en f_c ± f_m.', link:'https://www.fceia.unr.edu.ar/lsd/'},
+    {name:'Álgebra Lineal (Curso UNAL)', expr:'det(A - λI) = 0', tex:'\\det(A-\\lambda I)=0', desc:'Eigenvalores/eigenvectores en cursos reales.', link:'https://ciencias.medellin.unal.edu.co/cursos/algebra-lineal/'},
+    {name:'Variable Compleja (IMA UMN)', expr:'f(z) = u + iv', tex:'f(z)=u+iv', desc:'Funciones analíticas y mapeos conformes.', link:'https://www.ima.umn.edu/~arnold/complex.html'},
   ];
   const [open,setOpen]=useState(null);
   return (
@@ -1048,25 +1165,20 @@ const FormulasPanel = () => {
       <div className="controls">
         {formulas.map((f,i)=> (
           <div className="ctrl" key={i}>
-            <button title={f.desc} onClick={()=>setOpen(i)} style={{border:'1px solid #00ffff55', borderRadius:8, padding:8, color:'#e6edf3', background:'#0d0d1f'}}> {f.name}: <span className="font-mono">{f.expr}</span></button>
+            <button title={`${f.name}: ${f.desc}`} onClick={()=>setOpen(i)} style={{border:'1px solid #00ffff55', borderRadius:8, padding:8, color:'#e6edf3', background:'#0d0d1f', display:'flex', flexDirection:'column', gap:6, alignItems:'flex-start'}}>
+              <span style={{fontSize:'0.85rem', color:'#b0b8c0'}}>{f.name}</span>
+              <MmcEquation tex={f.tex} ariaLabel={`Fórmula: ${f.name}`} />
+            </button>
           </div>
         ))}
       </div>
       {open!==null && (
         <div style={{background:'#0d0d1f', border:'1px solid #00ffff55', borderRadius:12, padding:12}}>
           <p style={{color:'#aab2ba'}}>{formulas[open].desc}</p>
+          <p style={{marginTop:8}}><MmcEquation tex={formulas[open].tex} ariaLabel={`Fórmula: ${formulas[open].name}`} /></p>
           <p style={{marginTop:8}}>
             <a href={formulas[open].link} target="_blank" rel="noreferrer" style={{ color:'#00ffff' }}>Referencia avanzada</a>
           </p>
-          {/* Banners académicos: NASA y CERN */}
-          <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap:12, marginTop:12}}>
-            <a href="https://www.nasa.gov/" target="_blank" rel="noreferrer" style={{display:'block', padding:12, border:'1px solid #00ffff55', borderRadius:12, background:'linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,255,255,0.05))', color:'#00ffff', textAlign:'center'}}>
-              🚀 NASA — Laboratorios y Ciencia
-            </a>
-            <a href="https://home.cern/" target="_blank" rel="noreferrer" style={{display:'block', padding:12, border:'1px solid #00ffff55', borderRadius:12, background:'linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,0,255,0.05))', color:'#ff3cc7', textAlign:'center'}}>
-              ⚛️ CERN — Organización Europea para la Investigación Nuclear
-            </a>
-          </div>
         </div>
       )}
     </div>
