@@ -110,13 +110,13 @@ const SpectralAnalysisInstrument = () => {
 
       setStatus('running');
 
-      const waveCtx = waveRef.current?.getContext('2d');
-      const specCtx = specRef.current?.getContext('2d');
-      const sgramCtx = sgramRef.current?.getContext('2d');
       const history = sgramRef2.current;
       history.fill(0);
 
       const loop = () => {
+        const waveCtx = waveRef.current?.getContext('2d');
+        const specCtx = specRef.current?.getContext('2d');
+        const sgramCtx = sgramRef.current?.getContext('2d');
         analyser.getByteTimeDomainData(timeData);
         for (let i = 0; i < timeData.length; i++) {
           floatWindow[i] = (timeData[i] - 128) / 128;
