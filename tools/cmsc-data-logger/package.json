@@ -1,0 +1,24 @@
+{
+  "name": "cmsc-data-logger",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CMSC_DATA_LOGGER_V1 — captura e ingesta de dataset acustico SIGCT-Rural. Cero dependencias de runtime.",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "cmsc-logger": "./src/cli.js"
+  },
+  "scripts": {
+    "doctor": "node src/cli.js doctor",
+    "selftest": "node src/cli.js selftest",
+    "validate": "node src/cli.js validate",
+    "status": "node src/cli.js status",
+    "checksums": "node src/cli.js checksums",
+    "features": "node src/cli.js features",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

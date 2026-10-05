@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CMSC · Logger Acústico v1</title>
+<style>
+  :root { color-scheme: dark; --bg:#0b0f14; --panel:#121821; --line:#1e2733; --fg:#e6edf3;
+          --muted:#8b98a5; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#58a6ff; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:24px; background:var(--bg); color:var(--fg);
+         font:14px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  h1 { font-size:18px; margin:0 0 2px; letter-spacing:.4px; }
+  .sub { color:var(--muted); margin:0 0 20px; font-size:12px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; max-width:1180px; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px; }
+  .panel h2 { font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted);
+              margin:0 0 10px; font-weight:600; }
+  label { display:block; font-size:11px; color:var(--muted); margin:8px 0 3px; }
+  input, select, textarea { width:100%; padding:7px 8px; background:#0a0e13; color:var(--fg);
+    border:1px solid var(--line); border-radius:5px; font:inherit; font-size:13px; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--acc); }
+  button { padding:9px 14px; background:var(--acc); color:#04121f; border:0; border-radius:5px;
+           font:inherit; font-weight:700; cursor:pointer; margin:6px 6px 0 0; }
+  button.ghost { background:transparent; color:var(--fg); border:1px solid var(--line); font-weight:400; }
+  button.rec { background:var(--bad); color:#fff; }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .mono { font-variant-numeric:tabular-nums; }
+  .big { font-size:30px; font-weight:700; line-height:1.1; }
+  .st { padding:6px 9px; border-radius:5px; font-size:12px; border:1px solid var(--line); }
+  .st.ok { color:var(--ok); border-color:#1c4c26; }
+  .st.warn { color:var(--warn); border-color:#4c3c14; }
+  .st.bad { color:var(--bad); border-color:#5c1f1c; }
+  .st.idle { color:var(--muted); }
+  canvas { width:100%; height:88px; background:#080b0f; border:1px solid var(--line); border-radius:5px; display:block; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th,td { text-align:left; padding:4px 6px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; }
+  .note { color:var(--muted); font-size:11px; margin-top:8px; }
+  .log { max-height:190px; overflow:auto; font-size:11.5px; }
+  .log div { padding:2px 0; border-bottom:1px solid #131a23; }
+  a { color:var(--acc); }
+</style>
+</head>
+<body>
+<h1>CMSC · Logger Acústico <span class="sub" id="ver">v?</span></h1>
+<p class="sub">
+  S30 → WAV PCM16 → <code>features/acoustic_features_v1.csv</code> · 44 dims (<code>acoustic.feat.window.v1</code>).
+  Esta página captura; no entrena, no clasifica y no inventa datos.
+</p>
+
+<div class="grid">
+
+  <!-- 1. IDENTIDAD ------------------------------------------------- -->
+  <div class="panel">
+    <h2>1 · Identidad de la muestra (obligatorio)</h2>
+    <div class="row">
+      <div style="flex:1"><label>clase (9)</label><select id="class"></select></div>
+      <div style="flex:1"><label>entorno</label><select id="env">
+        <option>campo</option><option>invernadero</option><option>lab</option><option>interior</option>
+      </select></div>
+    </div>
+    <div class="row">
+      <div style="flex:1"><label>session_id *</label><input id="session" placeholder="pilot_2026_10_04_a" /></div>
+      <div style="flex:1"><label>place_id *</label><input id="place" placeholder="colmena_01" /></div>
+    </div>
+    <div class="row">
+      <div style="flex:1"><label>operator_id *</label><input id="operator" placeholder="nombre_o_codigo" /></div>
+      <div style="flex:1"><label>device_id *</label><input id="device" placeholder="mic_s30_laptop01" /></div>
+    </div>
+    <div class="row">
+      <div style="flex:1"><label>hora local (0-23)</label><input id="hour" type="number" min="0" max="23" /></div>
+      <div style="flex:1"><label>clima / nota</label><input id="weather" placeholder="despejado, viento leve" /></div>
+    </div>
+    <label>notas</label>
+    <textarea id="notes" rows="2" placeholder="estado del sitio, ruido de fondo, avisos"></textarea>
+    <div class="note">* Sin estos tres campos el paquete se marca incompleto y la ingesta lo rechaza.</div>
+  </div>
+
+  <!-- 2. CAPTURA -------------------------------------------------- -->
+  <div class="panel">
+    <h2>2 · Captura en vivo (S30)</h2>
+    <div class="row">
+      <div style="flex:1"><label>dispositivo de entrada</label><select id="input"><option value="">— requesting…</option></select></div>
+      <div style="flex:1"><label>duración del clip (s)</label><input id="dur" type="number" value="3.0" readonly /></div>
+    </div>
+    <div class="row">
+      <button id="btnStart" class="ghost">Pedir micrófono</button>
+      <button id="btnRec" class="rec" disabled>● Grabar</button>
+      <button id="btnStop" disabled>■ Detener</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="st idle" id="stMic">mic: inactivo</span>
+      <span class="st idle" id="stRec">grabación: inactiva</span>
+    </div>
+    <div style="margin-top:10px"><canvas id="scope" width="900" height="88"></canvas></div>
+    <div class="row" style="margin-top:8px">
+      <span class="mono" id="rate">— Hz</span>
+      <span class="mono" id="count">0 / 0</span>
+      <span class="mono" id="peak">pico 0.00</span>
+      <span class="mono" id="timer">0.0 s</span>
+    </div>
+    <div class="note">
+      La captura usa la tasa nativa del micrófono y el remuestreo a 44 100 Hz ocurre en la
+      ingesta, declarando <code>capture_source_rate</code> y <code>resample_method</code>.
+    </div>
+  </div>
+
+  <!-- 3. PAQUETE -------------------------------------------------- -->
+  <div class="panel">
+    <h2>3 · Paquete para la ingesta</h2>
+    <label>carpeta de salida (descargas del navegador)</label>
+    <div class="row"><button id="btnSave" class="ghost" disabled>Guardar WAV + JSON</button></div>
+    <table style="margin-top:10px">
+      <tr><th>campo</th><th>valor</th></tr>
+      <tr><td>clase</td><td class="mono" id="oClass">—</td></tr>
+      <tr><td>sample_rate nativo</td><td class="mono" id="oRate">—</td></tr>
+      <tr><td>canales</td><td class="mono" id="oCh">—</td></tr>
+      <tr><td>duration_s</td><td class="mono" id="oDur">—</td></tr>
+      <tr><td>take_index</td><td class="mono" id="oTake">—</td></tr>
+      <tr><td>timestamp</td><td class="mono" id="oTs">—</td></tr>
+    </table>
+    <div class="note">
+      El navegador no puede escribir en el dataset. Descarga los dos archivos y ejecuta:<br />
+      <code>node src/cli.js ingest &lt;wav&gt; --class … --session … --place … --operator …</code>
+    </div>
+  </div>
+
+  <!-- 4. COLA ----------------------------------------------------- -->
+  <div class="panel">
+    <h2>4 · Cola de la sesión (solo en memoria)</h2>
+    <table>
+      <tr><th>#</th><th>clase</th><th>s</th><th>estado</th></tr>
+      <tbody id="queue"><tr><td colspan="4" class="note">Sin capturas.</td></tr></tbody>
+    </table>
+    <div class="note">Se pierde al recargar. El WAV es el dato; esta tabla es solo ayuda.</div>
+    <button id="btnClear" class="ghost">Limpiar cola</button>
+  </div>
+
+  <!-- 5. LOG ------------------------------------------------------ -->
+  <div class="panel" style="grid-column:1/-1">
+    <h2>5 · Bitácora</h2>
+    <div class="log" id="log"></div>
+  </div>
+
+</div>
+
+<script type="module">
+import { CAPTURE_DURATION_S, captureChunk, missingCaptureFields, targetCaptureSamples } from './captureContract.js';
+
+const LOG = (msg, kind = '') => {
+  const el = document.getElementById('log');
+  const d = document.createElement('div');
+  if (kind) d.style.color = kind === 'bad' ? '#f85149' : kind === 'warn' ? '#d29922' : kind === 'ok' ? '#3fb950' : '#8b98a5';
+  d.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  el.prepend(d);
+};
+const $ = (id) => document.getElementById(id);
+const setSt = (el, txt, cls) => { el.textContent = txt; el.className = `st ${cls}`; };
+
+$('ver').textContent = 'v1 · CONTRACT 44.1 kHz / mono / 16 bit / 3,0 s';
+$('hour').value = String(new Date().getHours()).padStart(2, '0');
+
+/* ---- clases: espejo de ALL_CLASSES de src/constants.js (9, sin PII) ---- */
+const CLASSES = [
+  ['silencio', 'SILENCIO'], ['viento', 'VIENTO'], ['lluvia', 'LLUVIA'],
+  ['agua', 'AGUA'], ['insectos', 'INSECTOS'], ['ave', 'AVE'], ['voz', 'VOZ'],
+  ['motor', 'MOTOR'], ['ruido_desconocido', 'RUIDO DESCONOCIDO (OOD)']
+];
+for (const [id, label] of CLASSES) {
+  const o = document.createElement('option');
+  o.value = id; o.textContent = label;
+  $('class').appendChild(o);
+}
+$('class').value = 'silencio';
+
+/* ---- estado ---- */
+let ctx = null, stream = null, srcNode = null, proc = null, sink = null;
+let recording = false, chunks = [], chunkLen = 0, targetSamples = 0, t0 = 0, rafId = 0;
+let ring = new Float32Array(4096), ringPos = 0;
+let take = 0;
+const queue = [];
+
+/* ---- dibujado ---- */
+function drawScope(buf) {
+  const c = $('scope'), g = c.getContext('2d');
+  g.clearRect(0, 0, c.width, c.height);
+  g.strokeStyle = '#1e2733'; g.lineWidth = 1;
+  for (let i = 1; i < 4; i++) { g.beginPath(); g.moveTo((c.width / 4) * i, 0); g.lineTo((c.width / 4) * i, c.height); g.stroke(); }
+  if (buf.length < 2) return;
+  g.strokeStyle = '#58a6ff'; g.lineWidth = 1.4; g.beginPath();
+  const n = buf.length, mid = c.height / 2;
+  for (let i = 0; i < n; i++) {
+    const x = (i / (n - 1)) * c.width;
+    const y = mid - buf[i] * (mid - 3);
+    i ? g.lineTo(x, y) : g.moveTo(x, y);
+  }
+  g.stroke();
+}
+
+function readRing() {
+  const out = new Float32Array(ring.length);
+  for (let i = 0; i < ring.length; i++) out[i] = ring[(ringPos + i) % ring.length];
+  return out;
+}
+
+/* ---- micrófono ---- */
+async function startMic() {
+  if (ctx) return;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: { channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+    });
+  } catch (e) {
+    setSt($('stMic'), `mic: PERDENDA (${e.name})`, 'bad');
+    LOG(`getUserMedia falló: ${e.name} — ${e.message}`, 'bad');
+    LOG('El micrófono exige contexto seguro: sirve la carpeta por http://localhost, no file://.', 'warn');
+    return;
+  }
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  await ctx.resume();
+  $('rate').textContent = `${ctx.sampleRate} Hz (nativo)`;
+  srcNode = ctx.createMediaStreamSource(stream);
+
+  // ScriptProcessor:BufferSize es obsoleto pero es el camino más fiable y sin dependencias
+  // para un prototipo de captura. Si el navegador lo marca deprecated, se avisa en bitácora.
+  proc = ctx.createScriptProcessor(4096, 1, 1);
+  sink = ctx.createGain();
+  sink.gain.value = 0;
+  proc.onaudioprocess = (e) => {
+    const input = e.inputBuffer.getChannelData(0);
+    for (let i = 0; i < input.length; i++) ring[(ringPos + i) % ring.length] = input[i];
+    ringPos = (ringPos + input.length) % ring.length;
+    if (recording) {
+      const chunk = captureChunk(input, chunkLen, targetSamples);
+      if (chunk.length) chunks.push(chunk);
+      chunkLen += chunk.length;
+      updateProgress();
+      if (chunkLen === targetSamples) stopRec();
+    }
+  };
+  srcNode.connect(proc);
+  proc.connect(sink);
+  sink.connect(ctx.destination);
+
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const inputs = devices.filter((d) => d.kind === 'audioinput');
+    for (const d of inputs) {
+      const o = document.createElement('option');
+      o.value = d.deviceId;
+      o.textContent = d.label || `input ${d.deviceId.slice(0, 6)}`;
+      $('input').appendChild(o);
+    }
+    LOG(`${inputs.length} dispositivo(s) de entrada: ${inputs.map((d) => d.label || d.deviceId.slice(0, 6)).join(' | ') || 'sin etiqueta (permiso pendiente)'}`);
+  } catch (e) { LOG(`enumerateDevices: ${e.message}`, 'warn'); }
+
+  setSt($('stMic'), `mic: ACTIVO ${ctx.sampleRate} Hz`, 'ok');
+  $('btnRec').disabled = false;
+  $('input').disabled = false;
+  LOG('Micrófono listo. No se aplica ningún procesado: se guarda la señal tal cual.');
+}
+
+/* ---- grabación ---- */
+function startRec() {
+  if (!ctx || recording) return;
+  const missing = missingCaptureFields(['session', 'place', 'operator', 'device'], (id) => $(id).value);
+  if (missing.length) {
+    LOG(`Faltan campos obligatorios: ${missing.join(', ')}`, 'bad');
+    for (const id of missing) $(id).style.borderColor = '#f85149';
+    return;
+  }
+  chunks = []; chunkLen = 0; targetSamples = targetCaptureSamples(ctx.sampleRate); recording = true; take += 1; t0 = performance.now();
+  setSt($('stRec'), 'grabación: ACTIVA', 'bad');
+  $('btnRec').disabled = true; $('btnStop').disabled = false;
+  LOG(`● take ${take} · ${$('class').value} · ${$('dur').value}s`);
+  rafId = requestAnimationFrame(loop);
+}
+
+function stopRec() {
+  if (!recording) return;
+  recording = false;
+  cancelAnimationFrame(rafId);
+  setSt($('stRec'), 'grabación: inactiva', 'idle');
+  $('btnRec').disabled = false; $('btnStop').disabled = true;
+
+  const total = chunks.reduce((a, c) => a + c.length, 0);
+  const samples = new Float32Array(total);
+  let o = 0;
+  for (const c of chunks) { samples.set(c, o); o += c.length; }
+
+  let peak = 0, sum = 0;
+  for (const v of samples) { const a = Math.abs(v); if (a > peak) peak = a; sum += v * v; }
+  const rms = Math.sqrt(sum / (samples.length || 1));
+
+  const durationS = samples.length / ctx.sampleRate;
+  const want = CAPTURE_DURATION_S;
+
+  const packet = {
+    schema: 'cmsc.acoustic.capture.v1',
+    class_id: $('class').value,
+    environment: $('env').value,
+    session_id: $('session').value.trim(),
+    place_id: $('place').value.trim(),
+    operator_id: $('operator').value.trim(),
+    annotator_id: $('operator').value.trim(),
+    device_id: $('device').value.trim(),
+    hour_local: $('hour').value.trim() || String(new Date().getHours()),
+    weather_note: $('weather').value.trim(),
+    notes: $('notes').value.trim(),
+    take_index: take,
+    timestamp: new Date().toISOString(),
+    capture_source_rate: ctx.sampleRate,
+    channels: 1,
+    duration_s: Number(durationS.toFixed(6)),
+    peak: Number(peak.toFixed(6)),
+    rms: Number(rms.toFixed(6)),
+    expected_duration_s: want,
+    declared: 'capturado en navegador, 待 ingesta CLI'
+  };
+
+  queue.push({ samples, packet });
+  LOG(`■ take ${take} listo · ${durationS.toFixed(2)}s · pico ${peak.toFixed(3)} · rms ${rms.toFixed(4)}`, peak > 0.98 ? 'warn' : '');
+  if (peak > 0.98) LOG('Pico >0.98: el AC-6 lo marcará para revisión (saturación).', 'warn');
+  if (Math.abs(durationS - want) > 0.1) LOG(`Duración ${durationS.toFixed(2)}s ≠ ${want}s: la ingesta lo anotará.`, 'warn');
+
+  renderQueue();
+  $('btnSave').disabled = false;
+  $('oClass').textContent = packet.class_id;
+  $('oRate').textContent = `${packet.capture_source_rate} Hz`;
+  $('oCh').textContent = packet.channels;
+  $('oDur').textContent = `${packet.duration_s} s`;
+  $('oTake').textContent = packet.take_index;
+  $('oTs').textContent = packet.timestamp;
+}
+
+function loop() {
+  drawScope(readRing());
+  updateProgress();
+  rafId = requestAnimationFrame(loop);
+}
+
+function updateProgress() {
+  const dur = parseFloat($('dur').value) || 3.0;
+  const wantS = targetSamples;
+  const secs = chunkLen / ctx.sampleRate;
+  $('count').textContent = `${chunkLen} / ${wantS}`;
+  $('timer').textContent = `${secs.toFixed(1)} s`;
+  const view = readRing();
+  let peak = 0;
+  for (const v of view) peak = Math.max(peak, Math.abs(v));
+  $('peak').textContent = `pico ${peak.toFixed(2)}`;
+}
+
+/* ---- guardado ---- */
+async function saveAll() {
+  if (!queue.length) return;
+  const dir = `cmsc_capture_${new Date().toISOString().replace(/[:.]/g, '-')}`;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([new TextEncoder().encode(JSON.stringify({ schema: 'cmsc.acoustic.batch.v1', dataset: dir, clips: queue.map((q) => q.packet) }, null, 2))], { type: 'application/json' }));
+  a.download = `${dir}_manifest.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  // WAV PCM16 mono
+  for (const q of queue) {
+    const buf = encodeWavPcm16(q.samples, q.packet.capture_source_rate);
+    const b = new Blob([buf], { type: 'audio/wav' });
+    const url = URL.createObjectURL(b);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${q.packet.class_id}_${q.packet.session_id}_${String(q.packet.take_index).padStart(2, '0')}.wav`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+  LOG(`Guardados ${queue.length} WAV + manifest en tus descargas.`, 'ok');
+  LOG('Ahora: node src/cli.js ingest <wav…> --class … --session … --place … --operator …');
+}
+
+function encodeWavPcm16(samples, sampleRate) {
+  const n = samples.length;
+  const buf = new ArrayBuffer(44 + n * 2);
+  const v = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE');
+  w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true);
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, 'data'); v.setUint32(40, n * 2, true);
+  let o = 44;
+  for (let i = 0; i < n; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+    o += 2;
+  }
+  return buf;
+}
+
+/* ---- cola ---- */
+function renderQueue() {
+  const tb = $('queue');
+  if (!queue.length) { tb.innerHTML = '<tr><td colspan="4" class="note">Sin capturas.</td></tr>'; return; }
+  tb.innerHTML = queue.map((q, i) =>
+    `<tr><td>${i + 1}</td><td>${q.packet.class_id}</td><td class="mono">${q.packet.duration_s}s</td><td class="st ok">listo</td></tr>`).join('');
+}
+
+/* ---- eventos ---- */
+$('btnStart').onclick = startMic;
+$('btnRec').onclick = startRec;
+$('btnStop').onclick = stopRec;
+$('btnSave').onclick = saveAll;
+$('btnClear').onclick = () => { queue.length = 0; renderQueue(); $('btnSave').disabled = true; LOG('Cola limpiada (los WAV ya descargados no se borran).', 'warn'); };
+window.addEventListener('beforeunload', (e) => { if (queue.length || recording) { e.preventDefault(); e.returnValue = ''; } });
+LOG('Página lista. Sirve por http://localhost para que el navegador permita el micrófono.');
+</script>
+</body>
+</html>
