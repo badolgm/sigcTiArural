@@ -7,7 +7,6 @@ import SignalRiver from './cmsc/SignalRiver.jsx';
 import HonestyBadge from './cmsc/HonestyBadge.jsx';
 import SignalCatalogView from './cmsc/SignalCatalogView.jsx';
 import SignalCard from './cmsc/SignalCard.jsx';
-import RiverSummary from './cmsc/RiverSummary.jsx';
 import LabDoors from './cmsc/LabDoors.jsx';
 import SpectralAnalysisInstrument from './cmsc/SpectralAnalysisInstrument.jsx';
 import CmscSideNav from './cmsc/CmscSideNav.jsx';
@@ -15,7 +14,7 @@ import MmcHero from './cmsc/MmcHero.jsx';
 import SignalExplorerAccordion from './cmsc/SignalExplorerAccordion.jsx';
 import ModelPredictCell from './cmsc/ModelPredictCell.jsx';
 import BenchmarkCell from './cmsc/BenchmarkCell.jsx';
-import AcpCell from './cmsc/AcpCell.jsx';
+import OrchestrationZoneV2 from './cmsc/orchestration/OrchestrationZoneV2.jsx';
 import { NEON, HONESTY_STATES, honestyMeta } from './cmsc/honesty.js';
 import { readLiveSignals } from '../services/cmscAdapters.js';
 import { docsBySignal, totalDocs } from '../services/docsBySignal.js';
@@ -142,19 +141,9 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
                     onSelectSignal={handleSelect}
                   />
 
-                  {/* Zona común de orquestación · ACP + Río */}
-                  <section className="space-y-2">
-                    <div className="flex items-baseline justify-between border-b border-gray-800 pb-1">
-                      <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                        Zona · Orquestación científica
-                      </h2>
-                      <span className="text-[10px] text-gray-600">ACP + flujo del río</span>
-                    </div>
-                    <div className="space-y-2">
-                      <RiverSummary signals={catalog} onSelectSignal={handleRiverSelect} />
-                      <AcpCell />
-                    </div>
-                  </section>
+                  {/* Zona de Orquestación Científica V2 · freeze §12 (APROBADO 2026-10-04).
+                      Envuelve y conecta; conserva Hero, S30, ACP, trío agrícola y KH sin cambios. */}
+                  <OrchestrationZoneV2 />
 
                   <section className="space-y-2">
                     <div className="flex items-baseline justify-between border-b border-gray-800 pb-1">
