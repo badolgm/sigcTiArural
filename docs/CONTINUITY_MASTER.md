@@ -392,3 +392,177 @@ Estos documentos ya existen como archivos dentro del proyecto. No hace falta peg
 - Este archivo consolida: el reporte de estado de fecha 19-jul-2026 (secciones 1, 3), el "Documento 1" y "Documento 2" que ya habías redactado como prompts de continuidad (secciones 1 y 2), y un índice de los documentos de apoyo subidos (sección 4).
 - No se alteró ninguna regla, cifra, ruta de archivo, nombre de fase ni contenido técnico de lo que ya habías escrito — solo se reorganizó el formato (se limpiaron los artefactos de copiado tipo "Plain Text" / "Mostrar más líneas" del export original) y se fusionaron los dos prompts que tenías sueltos en una secuencia clara de uso: PROMPT 1 primero, PROMPT 2 si hace falta profundidad técnica.
 - Pendiente explícito, sin resolver por este documento: decidir si guardas este archivo dentro del repositorio (requiere tu autorización de escritura) y si pegas el contenido completo de los 4 documentos de visión (V10, 2030, Blueprint, Visual System) en una próxima sesión.
+
+---
+
+## 6. Continuidad CMSC / MMC / IA Acústica — corte 2026-10-02
+
+> **Nota de vigencia:** las secciones 1–5 de este documento tienen corte **19-jul-2026** y están desactualizadas respecto al frente CMSC/MMC. Esta sección se **anexa** (no reescribe) para restaurar la continuidad. Estado detallado en `Documentacion/Arquitectura/CMSC_SESSION_CLOSEOUT_2026_10_02.md`.
+
+### 6.1 Contexto
+- **Rama:** `feature/cmsc-f3c-v1-implementation` · **HEAD:** `83b6089` · 5 commits sin push · working tree 0 tracked modificados · 9 untracked (8 docs IA Acústica + 1 notebook). `stash@{0}` `PRE_MULTI_AGENT_2026_09_29` intacto.
+- **Runtime:** frontend en evolución 5174 / preview prod 4180 (`/dashboard-cmsc`); legacy Docker 5173 (referencia).
+
+### 6.2 Qué se hizo (2026-10-02)
+- CMSC Hero (`MmcHero.jsx`, 309 px) + rebalance del dashboard + dominancia (Hero 309 / Zona 271 / ratio 1.14 / ACP 152 / Río 83 / scroll 403).
+- MMC Scientific Workbench V6 con JSXGraph vendorizado + parser + contrato de workspace + tema.
+- Doc canónico `MMC_WORKBENCH_V1.md` (758 líneas).
+- Fix de `SpectralAnalysisInstrument` (canvas desde FFT en vivo: 0 → 86.400/86.400/259.200 px opacos).
+- Saneo de Git + 5 commits atómicos (36 archivos, +5535/−537).
+- Diseño completo IA Acústica (8 docs + notebook), **sin ejecutar**.
+
+### 6.3 Qué NO repetir
+- No rehacer Hero/layout/dominancia (fijados y validados).
+- No re-vendorizar JSXGraph (ya en `public/vendor/jsxgraph/` y `src/vendor/jsxgraph/`).
+- No reescribir `MMC_WORKBENCH_V1.md` (canónico; evolución vía adenda).
+- No re-investigar datasets acústicos (revisión FASE 1 hecha: TOP 3 FSD50K/ESC-50/Xeno-canto).
+- No re-tocar el fix espectral (cerrado, commit `83b6089`).
+
+### 6.4 Resuelto
+- Canvas espectrales vacíos (causa raíz: contextos 2D `null` pre-montaje).
+- Ruido de tracking Git; `.local_backups/` en `.git/info/exclude`.
+- Workbench sin documento canónico (ahora existe).
+- Rebalance del dashboard sin romper `App.jsx` (15 rutas intactas).
+
+### 6.5 Pendiente (diseñado, sin ejecutar)
+- P1 `CMSC_DATA_LOGGER_V1` · P2 `SIGCT_RURAL_ACOUSTIC_DATASET_V1` · P3 S81 (`DISENO`) · P4 S82 (`DISENO`).
+- Decisión benchmark M1 vs M2 (PENDIENTE por diseño).
+- Canonizar el diseño V2 del workbench (GeoGebra/Pyodide), hoy solo en el chat.
+
+### 6.6 Bloqueado (decisión de Bernardo)
+- Licencia GeoGebra (producto/web services solo no comercial); la arquitectura no depende de él.
+- Etiqueta `real-signal` (`SIM` vs `REAL`) — cambio de canon → gobernanza aparte.
+- Commit/push de los 9 untracked acústicos.
+
+### 6.7 No tocar (frontera dura)
+`MmcHero.jsx` · Workbench V6 (`MmcMathematicsCore`, `MmcJsxGraphBoard`, `theme/mmcWorkbench.css`, `AdvancedMathLabV2.jsx`, `index.html:24`, vendor JSXGraph) · Explorador · Gobernanza (`cmsc-honesty-filter`) · Footer · parser · contrato de workspace · `useLabStore.js` · `signalCatalog.js` · backend · Docker · Knowledge Hub/registry · `App.jsx`.
+
+### 6.8 Próxima misión recomendada
+**`CMSC_DATA_LOGGER_V1`** (aditiva, local-only, sin tocar backend/KH): primer slice de la IA Acústica y prerrequisito de P2/P3/P4. Requiere orden explícita de Bernardo + permiso de escritura de código.
+
+---
+
+## 7. Continuidad — `CMSC_DATASET_GOVERNANCE_AND_STRUCTURE_V1` (corte 2026-10-04 · 04:02)
+
+> Documento canónico: `docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` (510 líneas).
+> Estructura real: `data/datasets/sigct_rural_acoustic/v1/` (**fuera de git**).
+
+### 7.1 Qué cambió
+
+El dataset acústico pasó de **diseño** a **preparación real**: sin capturar audio, sin descargar, sin entrenar, sin push y sin commits.
+
+| Antes | Ahora |
+|---|---|
+| estructura descrita en prosa | **46 directorios · 20 archivos** creados y verificados |
+| 21 columnas en tabla de prosa | `schema.json` v1.2.0 con **42 columnas** tipadas (**30 obligatorias** = 25 + 5, · 9 opcionales · 3 derivadas) |
+| sin estado legible por máquina | **`dataset_state`** con 5 estados, declarado en los 10 artefactos de control |
+| gates de 1 línea | **G-DS-1..6** con criterio verificable, verificador y evidencia |
+| sin checks de ingesta | **AC-1..AC-10** + **SG-1..SG-5** |
+| agregación de features sin decidir | `window_schema` como columna obligatoria, **APROBADO 2026-10-04** y revisado a `window.v2` el 2026-10-05 (D-1 cerrada) |
+
+### 7.2 Estado
+
+- **`sigct_rural_acoustic/v1` = `PREPARADO_VACIO`. 0 muestras.** Todavía no es un activo científico.
+- **Gates: 0/6 cerrados** (G-DS-1 `FAIL` por 7 mids `UNVERIFIED`; G-DS-2..6 `PENDING`).
+- **S81 = `DISENO`** (bloqueada por G-DS-1 y G-DS-2) · **S82 = `DISENO`** · **S30 = `REAL-LOCAL`** (sin cambios).
+- **Auditoría del diseño: 14 observaciones** (5 🔴 · 6 🟠 · 3 🟡/🟢): 8 resueltas · 1 resuelta documentando el binding · **4 pendientes de Bernardo**.
+- **Esquema de features vigente: `acoustic.feat.v2` / `acoustic.feat.window.v2`** (revisión del 2026-10-05). v1 queda CONGELADO. Detalle en §7.4.
+
+### 7.3 Decisiones pendientes de Bernardo (bloqueantes)
+
+| ID | Decisión | Efecto si no se decide |
+|---|---|---|
+| ~~**D-1**~~ | ~~`window_schema`: 44 dims (mean+std) vs voto por frame vs `none`~~ **CERRADA 2026-10-04**: 44 dims mean+std. Revisada 2026-10-05 a `window.v2`. | Resuelto. La dimensión de entrada de S81 son 44 dims. |
+| **D-2** | Umbral near-duplicate (propuesta 0.98, sin calibrar) | G-DS-3 no es verificable |
+| **D-3** | Unificar `class_id` (`ruido_desconocido`) y carpeta (`desconocido/`) | Higiene de prefijos; el binding ya está documentado |
+| **D-4** | Publicar erratas en `AI_ACOUSTIC_DATASET_V1_DESIGN.md` | Quedan dos documentos con estructuras distintas |
+
+### 7.4 Revisión `acoustic.feat.v2` (2026-10-05) — qué cambió y qué no
+
+**Decisión ejecutada.** `acoustic.feat.v1` / `window.v1` quedan **CONGELADOS**; `acoustic.feat.v2` / `window.v2`
+son los vigentes. `schema.json` sube a **1.2.0**.
+
+**El defecto.** `profileEntropy` (feature 21) usaba `db[i]²` —el cuadrado de un valor en dBFS, que no es
+potencia— y repartía 96 bandas de 21 bins fijos sobre 2048 bins, descartando los 32 bins de
+21,71–22,05 kHz. Medido: silencio 1,0000 y ruido blanco 0,9979, **indistinguibles**.
+
+**La corrección y su alcance.** v2 usa `magnitudes[i]²` y bandas con bordes fraccionarios que cubren los
+2048 bins. Silencio 0,0000 · tono 1 kHz 0,0000 · blanco 0,9901 · rosa 0,5143. De las 44 dims cambian
+**solo 2** (índices 21 y 43); las otras 42 y los 22 nombres son idénticos. `analyzeFrame` intacto y paridad
+con S30 preservada.
+
+**Lo que NO cambió.** Dataset `PREPARADO_VACIO`, 0 muestras. G-DS-1 sigue `FAIL` por los 7 mids. S81/S82
+siguen `DISENO`. Sin commit, sin push, sin frontend. La raíz del dataset se queda en `v1` **porque hay 0
+filas**: no existe artefacto v1 que versionar; pasará a `v2` en la primera captura.
+
+**Bugs de logger corregidos en la misma auditoría.** BUG B (`meanAbs` → `meanPower`, el nombre mentía),
+BUG C (`features` ya regenera la cache de envelopes de AC-9), BUG D (G-DS-1 bloquea con `labels.csv`
+ausente: antes daba falso verde). Cobertura **76/76** + selftest **21/21**.
+
+Detalle: `docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` §7.1 · `docs/AI_ACOUSTIC_FEATURE_MAP.md` §5.
+
+### 7.5 Qué NO repetir
+
+- No re-crear la estructura: ya existe y está verificada.
+- No fijar `window_schema` "por defecto" al implementar: es un contrato de S81.
+- No escribir features, splits, checksums ni reportes antes de ≥1 WAV aceptado.
+- No simular `lluvia` con aspersor: es dato falso. Se reprograma la captura.
+
+### 7.6 Próxima misión
+
+**`CMSC_DATA_LOGGER_V1`** — implementar el logger (Variante A web + Variante B CLI), escribir `raw/<clase>/` + filas en `metadata.csv`, y ejecutar el **piloto de 100 muestras** (12/12/12/13/13/13/13/12 sobre las 8 clases vivas, 152 vacantes, 16 sesiones, ≥3 `place_id`, 100 % doble revisión).
+
+**El piloto NO cumple G-DS-2** (100 ≠ 150/clase). Su único objetivo es validar logger + QC + split + anotación antes de capturar en masa.
+
+**Restricciones vigentes:** sin `Hero` · sin `Dashboard` · sin `Workbench V6` · sin `SpectralAnalysisInstrument` · sin backend · sin push · commits solo con orden explícita.
+
+## 8. Continuidad — `CMSC_ORCHESTRATION_V2_CANONICAL_DESIGN` (corte 2026-10-04)
+
+> Corte posterior y prevalente para la arquitectura del Logger. No reescribe §§1–7 ni habilita implementación.
+
+- **Documento canónico:** `Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md`.
+- **Ubicación aprobada:** etapa Logger dentro de la Zona de Orquestación Científica existente en `/dashboard-cmsc`; no página, ruta, app, dashboard o laboratorio independiente.
+- **8765:** entorno temporal exitoso de validación, descartado como destino final.
+- **Flujo:** S30 → Logger → Dataset → Validación → S81 → S82 → Knowledge Hub. Mantener río global; la zona añade un subflujo acústico, no un segundo río ecosistémico.
+- **Preservar:** captura de 3 s, metadata de sesión/clip, micrófono, cola, WAV+JSON, QC, hashes, features, estados aceptado/cuarentena/rechazado y diagnósticos. El handoff actual es exportación + CLI; ingesta pendiente no significa Dataset actualizado.
+- **Estados verificados:** S30 `REAL-LOCAL`; Dataset `PREPARADO_VACIO`, 0 muestras; D-1 `window_schema` aprobado, 44 dims; G-DS-1 `FAIL` (7 mids AudioSet `UNVERIFIED`); G-DS-2..6 `PENDING`; S81/S82 `DISENO`; Ledger acústico no implementado.
+- **Remediación técnica previa:** B1–B6 corregidos en el logger; suite 47/47 y selftest 20/20. G-DS-6 queda sin κ calculable hasta disponer de etiquetas individuales comparables por anotador; no inferir PASS.
+- **Bloqueo de integración:** diseñar y aprobar un contrato PCM de solo lectura desde S30; hoy S30 y la página prototipo tienen adquisición separada. No tocar S30 ni frontend en esta misión de diseño.
+- **Runtime:** la estrategia canónica distingue 5173 (legacy) y 5174 (fuente Vite). En la inspección visual 5173 sirvió `/dashboard-cmsc`, pero 5174 estaba apagado; confirmar build/puerto de aceptación antes de cualquier futura implementación.
+- **Próximos pasos:** revisar/aprobar el canon; después, bajo misión explícita, congelar contrato S30–Logger–CLI, integrar la superficie colapsable en Zona V2, probar captura/handoff, conectar gates reales y solo luego evaluar S81/S82/KH. Sin commit ni push.
+
+## 9. Continuidad — `CMSC_ORCHESTRATION_V2_VISUAL_FREEZE` (2026-10-04 · 21:51:22 UTC-05:00)
+
+> **VISUAL FREEZE APPROVED · NO IMPLEMENTAR.** La distribución definitiva está en `Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md` §12; esta entrada preserva el historial previo y añade la decisión visual posterior.
+
+- Orden en `/dashboard-cmsc`: cabecera/río global → Hero → S30 → Explorer plegado → Zona de Orquestación V2 → sección existente de inferencia agrícola/LabDoors/Benchmark → accesos globales Knowledge Hub/Roadmap/Gobernanza.
+- Zona congelada en cuatro franjas: (A) cabecera + pipeline acústico compacto; (B) Logger 7/12 + Dataset/validación 5/12 en escritorio; (C) S81/S82/Knowledge Hub resumidos; (D) ACP compacto visible y expandible.
+- `ModelPredictCell`, `LabDoors` y `BenchmarkCell` permanecen fuera de la zona en su sección actual; M1/M2 es benchmark agrícola, no acústico. Knowledge Hub conserva su acceso global; la Zona muestra estado/link de evidencia, no otra copia del Hub.
+- Detalle QC/features/manifiesto plegable; Logger expandido durante preparación, captura o revisión y resumido en reposo. Móvil/campo es modo responsive dentro de la misma zona y ruta, nunca aplicación o ruta aparte.
+- Estados al freeze: S30 `REAL-LOCAL`; Dataset `PREPARADO_VACIO`, 0 muestras; G-DS-1 `FAIL` (7 mids sin verificar), G-DS-2..6 `PENDING`; S81/S82 `DISENO`; sin evidencia acústica promovida. No mostrar progreso ficticio.
+- Gate previo a desarrollo: contrato PCM de solo lectura S30→Logger y handoff verificable CLI→Dataset. No implica autorización para tocar S30 ni frontend.
+- Próximos pasos: revisión de Bernardo del freeze; solo después, misión explícita para contratos, integración de la superficie, handoff Dataset y consumidores por gates. Sin commit ni push.
+
+## 10. Roadmap técnico — `CMSC_ORCHESTRATION_V2_IMPLEMENTATION_PLAN` (corte 2026-10-04 · 21:58:24 UTC-05:00)
+
+> **PLAN DOCUMENTAL · NO IMPLEMENTADO.** Detalle canónico: `Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md` §13.
+
+1. **Fase 1 · Integración visual mínima:** zona existente, freeze V2, estados reales y regresión cero; no nueva ruta.
+2. **Fase 2 · Logger conectado:** contrato PCM S30 read-only, sin segundo permiso; captura exacta, metadata/manifiesto concordantes y handoff CLI verificable.
+3. **Fase 3 · Dataset operativo:** ingesta/QC, metadata maestra, derivados, curación, split agrupado, holdout, checksums y estado solo por evidencia.
+4. **Fase 4 · Gates:** G-DS/SG/G-M medidos. G-DS-6 queda `PENDING` hasta disponer de etiquetas individuales y Cohen κ real por clase.
+5. **Fase 5 · S81:** entrenamiento acústico propio, artefactos, calibración, OOD y generalización; no reutilizar modelos/benchmark agrícolas.
+6. **Fase 6 · S82:** baseline, thresholds, FPR y cold-start silencioso; evidencia al KH solo tras gobernanza.
+
+No avanzar fase si falta su gate. Cada implementación requiere autorización explícita; sin código, commit o push en esta misión.
+
+## 11. Hito oficial — `CMSC_ORCHESTRATION_V2` (2026-10-04 · 22:06:34 UTC-05:00)
+
+> **APROBADO.** Cierre de la fase de diseño y punto de transición a implementación; la Fase 1 aún no ha comenzado.
+
+- Visual Freeze, arquitectura y Logger: **APROBADOS**. Ubicación: Zona de Orquestación Científica. Ruta: `/dashboard-cmsc`.
+- `127.0.0.1:8765`: **VALIDACIÓN TEMPORAL**, descartado como producto/ruta/arquitectura final.
+- Flujo oficial: **S30 → Logger → Dataset → Validación → S81 → S82 → Knowledge Hub**.
+- Estado: S30 `REAL-LOCAL`; Logger `VALIDADO` en prototipo/pruebas; Dataset `PREPARADO_VACIO`; S81 y S82 `DISEÑO`; Knowledge Hub operativo como Hub documental; Zona V2 congelada.
+- Próximo paso aprobado: misión `CMSC_ORCHESTRATION_V2_PHASE_1_IMPLEMENTATION`, integración visual dentro de la zona existente. Mantener intactos Hero, S30, Workbench, Benchmark, ACP y Knowledge Hub. Esta entrada no ejecuta ni autoriza esa implementación.
+- Referencias prevalentes: `Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md` §§12–14; roadmap técnico §13.
