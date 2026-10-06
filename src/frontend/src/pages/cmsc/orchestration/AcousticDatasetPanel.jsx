@@ -87,14 +87,14 @@ const AcousticDatasetPanel = () => {
           {clasesAbiertas ? '▾' : '▸'} Conteo por clase (9 clases · 0 en todas)
         </button>
         {clasesAbiertas && (
-          <ul className="mt-1.5 grid grid-cols-2 gap-x-2 gap-y-0.5 rounded-lg border border-gray-800 bg-gray-950/40 px-2.5 py-2">
+          <div className="mt-1.5 flex items-center gap-1 rounded-lg border border-gray-800 bg-gray-950/40 px-2 py-1.5">
             {CLASES.map((c) => (
-              <li key={c} className="flex items-center justify-between gap-2 text-[10px]">
-                <span className="truncate text-gray-400">{c}</span>
-                <span className="font-mono text-gray-600 tabular-nums">0</span>
-              </li>
+              <span key={c} className="flex items-center gap-1 text-[10px]">
+                <span className="text-gray-400">{c}</span>
+                <span className="font-mono text-gray-600">0</span>
+              </span>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 

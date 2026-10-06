@@ -39,14 +39,15 @@ const AcousticConsumersStrip = () => (
     {CONSUMIDORES.map((c) => (
       <div
         key={c.id}
-        className="rounded-lg border border-gray-800/70 bg-gray-900/25 px-2.5 py-2 flex flex-col gap-1 min-w-0"
+        className="rounded-lg border border-gray-800/70 bg-gray-900/25 px-2.5 py-1.5 flex flex-col gap-0.5 min-w-0"
       >
         <div className="flex items-center justify-between gap-2 min-w-0">
           <span className="text-[10px] font-bold text-gray-300 truncate">{c.nombre}</span>
           <HonestyBadge estado={c.estado} showConfidence={false} className="shrink-0" />
         </div>
-        <span className="text-[9px] text-gray-500 leading-snug">bloqueada: {c.motivo}</span>
-        <span className="text-[9px] text-gray-600 leading-snug">{c.detalle}</span>
+        <span className="text-[9px] text-gray-500 leading-snug" title={c.detalle}>
+          bloqueada: {c.motivo}
+        </span>
       </div>
     ))}
   </div>

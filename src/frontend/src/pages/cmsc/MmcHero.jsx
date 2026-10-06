@@ -144,41 +144,6 @@ const MmcHero = () => {
             {S35 && <HonestyBadge estado={S35.estado} confidence={S35.confianza} showConfidence={false} />}
           </div>
           <div className="font-mono text-lg text-cyan-300 leading-tight">{ACTIVE_SIGNAL.expr}</div>
-          <div className="mt-1 flex-1 min-h-0">
-            <svg
-              viewBox={`0 0 ${SPARK.w} ${SPARK.h}`}
-              preserveAspectRatio="none"
-              className="w-full h-20 pointer-events-none select-none"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <defs>
-                <linearGradient id="mmcSparkFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={NEON.primary} stopOpacity="0.22" />
-                  <stop offset="100%" stopColor={NEON.primary} stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <line
-                x1="0"
-                y1={SPARK.mid}
-                x2={SPARK.w}
-                y2={SPARK.mid}
-                stroke="#1f2937"
-                strokeWidth="1"
-                strokeDasharray="3 4"
-              />
-              <polygon points={SPARK.area} fill="url(#mmcSparkFill)" />
-              <polyline
-                points={SPARK.line}
-                fill="none"
-                stroke={NEON.primary}
-                strokeWidth="2"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-          </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] font-mono text-gray-400">
             <span>fs {ACTIVE_SIGNAL.fs} Hz</span>
             <span>N {ACTIVE_SIGNAL.N}</span>
@@ -186,47 +151,44 @@ const MmcHero = () => {
             <span>dominio {ACTIVE_SIGNAL.dominio}</span>
           </div>
           <div className="text-[9px] text-gray-600 mt-0.5">
-            representación decorativa · escenario SIM por defecto (no vivo)
+            escenario SIM por defecto (no vivo)
           </div>
         </div>
 
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div className="rounded-lg border border-gray-800 bg-gray-950/40 px-3 py-2.5">
-            <div className="text-[10px] font-bold tracking-[.14em] uppercase text-gray-400 mb-2">
-              Estado del motor
+          <div className="rounded-lg border border-gray-800 bg-gray-950/40 px-3 py-2">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-bold tracking-[.14em] uppercase text-gray-400">
+                Estado del motor
+              </span>
+              <span className="text-[10px] font-mono text-gray-500">
+                jsxgraph {version} · {license}
+              </span>
             </div>
-            <div className="space-y-1.5">
+            <div className="flex items-center gap-3">
               {ENGINE_STATES.map((s) => {
                 const active = engine === s;
                 const color = engineColor(s);
                 return (
-                  <div key={s} className="flex items-center gap-1.5 text-[12px] font-mono">
+                  <span key={s} className="flex items-center gap-1 text-[11px] font-mono">
                     <span style={{ color: active ? color : '#374151' }}>{active ? '●' : '○'}</span>
                     <span style={{ color: active ? color : '#4b5563' }}>{s}</span>
-                  </div>
+                  </span>
                 );
               })}
             </div>
-            <div className="mt-2.5 pt-2 border-t border-gray-800 text-[10px] font-mono text-gray-500">
-              jsxgraph {version} · {license}
-            </div>
           </div>
 
-          <div className="rounded-lg border border-gray-800 bg-gray-950/40 px-3 py-2.5">
-            <div className="text-[10px] font-bold tracking-[.14em] uppercase text-gray-400 mb-2">
+          <div className="rounded-lg border border-gray-800 bg-gray-950/40 px-3 py-2">
+            <div className="text-[10px] font-bold tracking-[.14em] uppercase text-gray-400 mb-1">
               Workspace
             </div>
-            <div className="space-y-1.5">
+            <div className="flex items-center gap-3">
               {WORKSPACE_ROWS.map((r) => (
-                <div key={r} className="flex items-center justify-between gap-2 text-[12px]">
+                <span key={r} className="flex items-center gap-1 text-[11px]">
                   <span className="font-mono text-gray-400">{r}</span>
                   <span className="font-mono text-[9px] text-amber-400">PREPARADO</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-2.5 pt-2 border-t border-gray-800 flex flex-wrap gap-x-2.5 gap-y-0.5">
-              {WORKSPACE_STATES.slice(1).map((s) => (
-                <span key={s} className="text-[9px] font-mono text-gray-600">○ {s}</span>
+                </span>
               ))}
             </div>
           </div>

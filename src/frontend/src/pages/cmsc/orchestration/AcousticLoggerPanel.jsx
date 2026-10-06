@@ -249,7 +249,7 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
       )}
 
       {s30Active && (
-        <div className="rounded-lg border border-gray-800 bg-gray-950/50 px-3 py-2.5 space-y-2">
+        <div className="rounded-lg border border-gray-800 bg-gray-950/50 px-3 py-2 space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-[9px] uppercase tracking-widest text-gray-500">Clase</label>
@@ -371,18 +371,25 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
       )}
 
       {queue.length > 0 && (
-        <div className="rounded-lg border border-gray-800 bg-gray-950/40 px-2.5 py-2">
-          <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1">
-            Progreso del piloto
-          </p>
-          <div className="space-y-1">
+        <div className="rounded-lg border border-gray-800 bg-gray-950/40 px-2.5 py-1.5">
+          <div className="flex items-center justify-between text-[10px] mb-1">
+            <span className="uppercase tracking-widest text-gray-500">Progreso del piloto</span>
+            <span className="font-mono text-gray-500">{queue.length}/{PILOT_TARGET}</span>
+          </div>
+          <div className="flex items-center gap-1">
             {PILOT_CLASSES.map((c) => {
               const count = queue.filter((q) => q.packet.class_id === c.id).length;
               const pct = Math.min(100, Math.round((count / c.target) * 100));
               return (
-                <div key={c.id} className="flex items-center justify-between text-[10px]">
-                  <span className="text-gray-400">{c.id}</span>
-                  <span className="font-mono text-gray-500">{count}/{c.target}</span>
+                <div
+                  key={c.id}
+                  className="flex-1 h-1.5 rounded-full bg-gray-800 overflow-hidden"
+                  title={`${c.id}: ${count}/${c.target}`}
+                >
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{ width: `${pct}%`, backgroundColor: pct >= 100 ? '#39FF14' : '#00FFFF' }}
+                  />
                 </div>
               );
             })}

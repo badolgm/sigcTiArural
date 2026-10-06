@@ -153,7 +153,7 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
                       </h2>
                       <span className="text-[10px] text-gray-600">modelos y labs</span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:h-[214px]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       <ModelPredictCell />
                       <LabDoors />
                       <BenchmarkCell />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import HonestyBadge from './HonestyBadge.jsx';
 import { NEON } from './honesty.js';
@@ -12,46 +12,26 @@ const FUENTES = ['Registry', 'Ledger', 'Knowledge Hub'];
 
 const AcpCell = () => {
   const voice = useAiVoiceAssist();
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-3 flex flex-col gap-2.5">
+    <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-2.5 flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
-        <div>
-          <h3 className="text-sm font-bold text-gray-200">Agente Científico Principal · ACP</h3>
-          <p className="text-[10px] text-gray-500">orquestador del ecosistema · arquitectura F4 aprobada en diseño</p>
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-bold text-gray-200">ACP</h3>
+          <HonestyBadge estado="DISENO" confidence={null} showConfidence={false} />
+          <span className="text-[10px] text-gray-500">orquestador de lectura</span>
         </div>
-        <HonestyBadge estado="DISENO" confidence={null} showConfidence={false} />
-      </div>
-
-      <p className="text-[11px] text-gray-300 leading-snug">
-        Orquestador científico de <span className="text-gray-100">lectura</span>: consulta fuentes de verdad y{' '}
-        <span className="text-gray-100">jamás</span> ejecuta laboratorios ni fabrica evidencia.
-      </p>
-
-      <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-[10px] uppercase tracking-widest text-gray-500">Fuentes de verdad</span>
-        {FUENTES.map((f) => (
-          <span key={f} className="text-[10px] px-1.5 py-0.5 rounded border border-gray-800 bg-gray-900/40 text-gray-400">
-            {f}
-          </span>
-        ))}
-        <span className="ml-auto text-[10px] text-gray-500">
-          intérprete: <span className="text-gray-300">fallback determinista (sin LLM)</span>
-        </span>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-1.5">
-        {SUB_AGENTES.map((a) => (
-          <span
-            key={a}
-            className="text-[10px] px-1.5 py-0.5 rounded border border-gray-700 bg-gray-900/60 text-gray-400 uppercase tracking-widest"
-          >
-            {a}
-          </span>
-        ))}
-        <span className="ml-auto flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5">
           <span className="text-[10px] font-mono font-bold" style={{ color: NEON.secondary }}>S62</span>
           {S62 && <HonestyBadge estado={S62.estado} confidence={S62.confianza} showConfidence={false} />}
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
+          >
+            {expanded ? '▾' : '▸'}
+          </button>
           <button
             type="button"
             onClick={voice.toggle}
@@ -66,13 +46,46 @@ const AcpCell = () => {
             }
           >
             <span>{voice.isProcessing ? '⏳' : voice.isListening ? '⏹' : '🎤'}</span>
-            {voice.isListening ? 'ESCUCHANDO' : voice.isProcessing ? 'PROCESANDO' : 'Canal de voz'}
+            {voice.isListening ? 'ESCUCHANDO' : voice.isProcessing ? 'PROCESANDO' : 'Voz'}
           </button>
           <Link to="/ai-predictive" className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors">
             ampliar →
           </Link>
-        </span>
+        </div>
       </div>
+
+      {expanded && (
+        <>
+          <p className="text-[11px] text-gray-300 leading-snug">
+            Orquestador científico de <span className="text-gray-100">lectura</span>: consulta fuentes de verdad y{' '}
+            <span className="text-gray-100">jamás</span> ejecuta laboratorios ni fabrica evidencia.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] uppercase tracking-widest text-gray-500">Fuentes</span>
+            {FUENTES.map((f) => (
+              <span key={f} className="text-[10px] px-1.5 py-0.5 rounded border border-gray-800 bg-gray-900/40 text-gray-400">
+                {f}
+              </span>
+            ))}
+            <span className="ml-auto text-[10px] text-gray-500">
+              intérprete: <span className="text-gray-300">fallback determinista</span>
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] uppercase tracking-widest text-gray-500">Sub-agentes</span>
+            {SUB_AGENTES.map((a) => (
+              <span
+                key={a}
+                className="text-[10px] px-1.5 py-0.5 rounded border border-gray-700 bg-gray-900/60 text-gray-400 uppercase tracking-widest"
+              >
+                {a}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 };
