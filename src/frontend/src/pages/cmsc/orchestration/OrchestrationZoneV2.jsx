@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import AcousticFlowStepper from './AcousticFlowStepper.jsx';
 import AcousticLoggerPanel from './AcousticLoggerPanel.jsx';
 import AcousticDatasetPanel from './AcousticDatasetPanel.jsx';
@@ -7,6 +7,10 @@ import AcpCell from '../AcpCell.jsx';
 
 // Zona de Orquestación Científica V2 · freeze APROBADO 2026-10-04 21:51:22 (America/Bogota)
 // en CMSC_ORCHESTRATION_V2_DESIGN.md §12. Esta es su ÚNICA implementación.
+//
+// Fase 2A: S30 PCM TAP → Logger (contrato APROBADO 2026-10-05).
+//   pcmTapRef conecta S30 (SpectralAnalysisInstrument) con el Logger (AcousticLoggerPanel).
+//   El tap es de solo lectura: no modifica el stream de S30 ni abre segundo getUserMedia.
 //
 // Regla de este archivo: ENVOLVER Y CONECTAR. No sustituye ninguna pieza existente del shell.
 //
@@ -27,42 +31,46 @@ import AcpCell from '../AcpCell.jsx';
 //   MmcHero · SpectralAnalysisInstrument (S30) · SignalExplorerAccordion ·
 //   ModelPredictCell · LabDoors · BenchmarkCell · accesos a KH / Roadmap / Gobernanza
 
-const OrchestrationZoneV2 = () => (
-  <section className="space-y-2" aria-label="Zona de Orquestación Científica V2">
-    <div className="flex items-baseline justify-between border-b border-gray-800 pb-1 gap-2">
-      <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-        Zona de Orquestación Científica V2 · acústica
-      </h2>
-      <span className="text-[10px] text-gray-600">Logger en reposo · Dataset PREPARADO_VACIO · 0 muestras</span>
-    </div>
+const OrchestrationZoneV2 = () => {
+  const pcmTapRef = useRef(null);
 
-    {/* Franja A · siempre visible */}
-    <AcousticFlowStepper />
-
-    {/* Franja B · dos columnas. min-w-0 en ambos lados para que flex-1 no reviente el grid de 12 */}
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-      <div className="lg:col-span-7 min-w-0">
-        <AcousticLoggerPanel />
+  return (
+    <section className="space-y-2" aria-label="Zona de Orquestación Científica V2">
+      <div className="flex items-baseline justify-between border-b border-gray-800 pb-1 gap-2">
+        <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+          Zona de Orquestación Científica V2 · acústica
+        </h2>
+        <span className="text-[10px] text-gray-600">Logger en reposo · Dataset PREPARADO_VACIO · 0 muestras</span>
       </div>
-      <div className="lg:col-span-5 min-w-0">
-        <AcousticDatasetPanel />
+
+      {/* Franja A · siempre visible */}
+      <AcousticFlowStepper />
+
+      {/* Franja B · dos columnas. min-w-0 en ambos lados para que flex-1 no reviente el grid de 12 */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+        <div className="lg:col-span-7 min-w-0">
+          <AcousticLoggerPanel pcmTapRef={pcmTapRef} />
+        </div>
+        <div className="lg:col-span-5 min-w-0">
+          <AcousticDatasetPanel />
+        </div>
       </div>
-    </div>
 
-    {/* Franja C · consumidores, siempre resumidos */}
-    <div className="space-y-1">
-      <span className="text-[10px] uppercase tracking-widest text-gray-500">Consumidores acústicos</span>
-      <AcousticConsumersStrip />
-    </div>
+      {/* Franja C · consumidores, siempre resumidos */}
+      <div className="space-y-1">
+        <span className="text-[10px] uppercase tracking-widest text-gray-500">Consumidores acústicos</span>
+        <AcousticConsumersStrip />
+      </div>
 
-    {/* Franja D · ACP en su lugar conceptual actual. Se reutiliza entero; no se mueve ni se reescribe. */}
-    <div className="space-y-1">
-      <span className="text-[10px] uppercase tracking-widest text-gray-500">
-        Supervisión · ACP (no controla la captura)
-      </span>
-      <AcpCell />
-    </div>
-  </section>
-);
+      {/* Franja D · ACP en su lugar conceptual actual. Se reutiliza entero; no se mueve ni se reescribe. */}
+      <div className="space-y-1">
+        <span className="text-[10px] uppercase tracking-widest text-gray-500">
+          Supervisión · ACP (no controla la captura)
+        </span>
+        <AcpCell />
+      </div>
+    </section>
+  );
+};
 
 export default OrchestrationZoneV2;
