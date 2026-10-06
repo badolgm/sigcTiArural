@@ -101,9 +101,11 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
   const rafRef = useRef(0);
 
   useEffect(() => {
-    if (!pcmTapRef?.current) return;
-    const tap = pcmTapRef.current;
-    const checkActive = () => setS30Active(tap.active);
+    const checkActive = () => {
+      if (pcmTapRef?.current) {
+        setS30Active(pcmTapRef.current.active);
+      }
+    };
     checkActive();
     const interval = setInterval(checkActive, 500);
     return () => clearInterval(interval);
