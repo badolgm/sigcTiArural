@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import AcousticFlowStepper from './AcousticFlowStepper.jsx';
 import AcousticLoggerPanel from './AcousticLoggerPanel.jsx';
 import AcousticDatasetPanel from './AcousticDatasetPanel.jsx';
@@ -31,8 +31,7 @@ import AcpCell from '../AcpCell.jsx';
 //   MmcHero · SpectralAnalysisInstrument (S30) · SignalExplorerAccordion ·
 //   ModelPredictCell · LabDoors · BenchmarkCell · accesos a KH / Roadmap / Gobernanza
 
-const OrchestrationZoneV2 = () => {
-  const pcmTapRef = useRef(null);
+const OrchestrationZoneV2 = ({ pcmTapRef }) => {
 
   return (
     <section className="space-y-2" aria-label="Zona de Orquestación Científica V2">

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ErrorBoundary from '../components/ErrorBoundary.jsx';
 import TopNav from '../components/TopNav.jsx';
@@ -21,6 +21,7 @@ import { docsBySignal, totalDocs } from '../services/docsBySignal.js';
 import { useLabStore } from '../stores/useLabStore.js';
 
 const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
+  const pcmTapRef = useRef(null);
   const [live, setLive] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSignalId, setSelectedSignalId] = useState(null);
@@ -131,7 +132,7 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
 
                   {/* FFT · instrumento (sin plegar todavía · compactación pendiente P3) */}
                   <div className="min-w-0 [&_h3]:text-xs [&_h3]:text-gray-400">
-                    <SpectralAnalysisInstrument />
+                    <SpectralAnalysisInstrument pcmTapRef={pcmTapRef} />
                   </div>
 
                   <SignalExplorerAccordion
@@ -143,7 +144,7 @@ const CmscDashboard = ({ embedded = true, clusterNodes = [], onNavigate }) => {
 
                   {/* Zona de Orquestación Científica V2 · freeze §12 (APROBADO 2026-10-04).
                       Envuelve y conecta; conserva Hero, S30, ACP, trío agrícola y KH sin cambios. */}
-                  <OrchestrationZoneV2 />
+                  <OrchestrationZoneV2 pcmTapRef={pcmTapRef} />
 
                   <section className="space-y-2">
                     <div className="flex items-baseline justify-between border-b border-gray-800 pb-1">

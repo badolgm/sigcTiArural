@@ -61,7 +61,7 @@ const SpectralAnalysisInstrument = ({ pcmTapRef }) => {
   const rafRef = useRef(0);
   const sgramRef2 = useRef(new Float32Array(SPECTROGRAM_ROWS * SPECTRUM_BUCKETS));
   const lastStatsTick = useRef(0);
-  const pcmTapCallbacksRef = useRef(new Set());
+  const pcmTapCallbacksRef = useRef(null);
 
   const docs = useMemo(() => docsBySignal('S30'), []);
   const signal = useMemo(() => S30 || null, []);
@@ -92,12 +92,13 @@ const SpectralAnalysisInstrument = ({ pcmTapRef }) => {
       get active() { return status === 'running'; },
       get sampleRate() { return ctxRef.current?.sampleRate || DEFAULT_SAMPLE_RATE; },
       get channels() { return 1; },
-      onPcmChunk: null,
+      set onPcmChunk(cb) { pcmTapCallbacksRef.current = cb; },
+      get onPcmChunk() { return pcmTapCallbacksRef.current; },
       start() {},
       stop() {}
     };
     pcmTapRef.current = tap;
-    return () => { pcmTapRef.current = null; };
+    return () => { pcmTapRef.current = null; pcmTapCallbacksRef.current = null; };
   }, [pcmTapRef, status]);
 
   const start = useCallback(async () => {
@@ -139,11 +140,9 @@ const SpectralAnalysisInstrument = ({ pcmTapRef }) => {
         const frame = analyzeFrame(floatWindow, sampleRate);
         const level = frameLevelDb(floatWindow);
 
-        if (pcmTapCallbacksRef.current.size > 0) {
+        if (pcmTapCallbacksRef.current) {
           const pcmChunk = new Float32Array(floatWindow);
-          pcmTapCallbacksRef.current.forEach((cb) => {
-            try { cb(pcmChunk, sampleRate); } catch (_) {}
-          });
+          try { pcmTapCallbacksRef.current(pcmChunk, sampleRate); } catch (_) {}
         }
 
         if (waveCtx && waveRef.current) {
