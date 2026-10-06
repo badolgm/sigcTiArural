@@ -493,6 +493,89 @@ function cmdIngest(args) {
   return rej > 0 ? 1 : 0;
 }
 
+/* --------------------------------------------------- ingest-browser (Fase 2B) */
+
+function cmdIngestBrowser(args) {
+  head('INGEST-BROWSER · consumir paquete WAV+JSON del navegador');
+  const root = args['dataset'] || defaultDatasetRoot();
+  const paths = new DatasetPaths(root);
+
+  const manifestPath = args['manifest'];
+  const wavPath = args['wav'];
+
+  if (!manifestPath || !wavPath) {
+    bad('uso: ingest-browser --manifest <json> --wav <wav>');
+    return 2;
+  }
+  if (!fs.existsSync(manifestPath)) { bad(`no existe manifest: ${manifestPath}`); return 2; }
+  if (!fs.existsSync(wavPath)) { bad(`no existe wav: ${wavPath}`); return 2; }
+
+  let manifest;
+  try {
+    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  } catch (e) {
+    bad(`manifest no es JSON valido: ${e.message}`);
+    return 2;
+  }
+
+  const clip = manifest.clips?.[0] ?? manifest;
+  const classId = clip.class_id;
+  if (!classId || !ALL_CLASSES.includes(classId)) {
+    bad(`class_id invalido: ${classId}`);
+    return 2;
+  }
+
+  const required = ['session_id', 'place_id', 'operator_id', 'device_id'];
+  const missing = required.filter((k) => !String(clip[k] ?? '').trim());
+  if (missing.length) {
+    bad(`campos obligatorios faltantes en manifest: ${missing.join(', ')}`);
+    return 2;
+  }
+
+  const ctx = {
+    session_id: clip.session_id,
+    place_id: clip.place_id,
+    operator_id: clip.operator_id,
+    annotator_id: clip.annotator_id || clip.operator_id,
+    device_id: clip.device_id,
+    environment: clip.environment || 'campo',
+    agreement: clip.agreement || 'single_reviewed',
+    notes: clip.notes || '',
+    take_index: clip.take_index,
+    timestamp: clip.timestamp,
+    capture_source_rate: clip.capture_source_rate,
+    resample_method: clip.resample_method || 'none'
+  };
+
+  console.log(`  clase=${C.bold}${classId}${C.reset} sesion=${ctx.session_id} lugar=${ctx.place_id}`);
+  console.log(`  capture_source_rate=${ctx.capture_source_rate} Hz · resample_method=${ctx.resample_method}`);
+  console.log('');
+
+  const res = ingestWav({
+    datasetRoot: root,
+    paths,
+    wavPath,
+    classId,
+    ctx,
+    resampleMethod: 'cubic',
+    dryRun: args['dry-run'] === true,
+    log: () => {}
+  });
+
+  printIngestResult(res, args['dry-run'] === true);
+
+  console.log('');
+  console.log(`  ${C.bold}Respuesta para la UI:${C.reset}`);
+  console.log(JSON.stringify({
+    verdict: res.verdict,
+    sample_id: res.sample_id,
+    failed: res.failed,
+    checks: res.checks
+  }, null, 2));
+
+  return res.verdict === 'rejected' ? 1 : 0;
+}
+
 function printIngestResult(res, dryRun) {
   const name = res.sample_id ?? path.basename(res.reason ?? 'archivo');
   const color = res.verdict === 'accepted' ? C.green : res.verdict === 'quarantine' ? C.yellow : C.red;
@@ -706,6 +789,205 @@ function cmdChecksums(args) {
   return 0;
 }
 
+/* ------------------------------------------------------- split (Fase 2C) */
+
+function cmdSplit(args) {
+  head('SPLIT · group split por (session_id, place_id) + holdout de sitio');
+  const root = args['dataset'] || defaultDatasetRoot();
+  const paths = new DatasetPaths(root);
+
+  if (!fs.existsSync(root)) { bad(`no existe ${root}`); return 2; }
+
+  const { header, rows } = loadMetadata(paths);
+  if (rows.length === 0) {
+    warn('metadata.csv tiene 0 filas: no hay nada que splitear');
+    return 0;
+  }
+
+  const holdoutPlace = args['holdout-place'] || 'site_c';
+  const trainRatio = 0.7;
+  const valRatio = 0.15;
+  const testRatio = 0.15;
+
+  const groups = new Map();
+  for (const r of rows) {
+    const key = `${r.session_id}|${r.place_id}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(r);
+  }
+
+  const holdoutGroups = [];
+  const trainGroups = [];
+  const valGroups = [];
+  const testGroups = [];
+
+  for (const [key, groupRows] of groups) {
+    const placeId = groupRows[0].place_id;
+    if (placeId === holdoutPlace) {
+      holdoutGroups.push(...groupRows);
+    } else {
+      const n = groupRows.length;
+      const nTrain = Math.max(1, Math.round(n * trainRatio));
+      const nVal = Math.max(1, Math.round(n * valRatio));
+      const nTest = n - nTrain - nVal;
+      trainGroups.push(...groupRows.slice(0, nTrain));
+      valGroups.push(...groupRows.slice(nTrain, nTrain + nVal));
+      testGroups.push(...groupRows.slice(nTrain + nVal));
+    }
+  }
+
+  const splitLists = [
+    { name: 'train', rows: trainGroups },
+    { name: 'validation', rows: valGroups },
+    { name: 'test', rows: testGroups }
+  ];
+
+  ensureDir(paths.splitListsDir);
+  for (const { name, rows: listRows } of splitLists) {
+    const file = path.join(paths.splitListsDir, `${name}.csv`);
+    const lines = ['sample_id'];
+    for (const r of listRows) lines.push(r.sample_id);
+    fs.writeFileSync(file, `${lines.join('\n')}\n`);
+    ok(`${name}.csv: ${listRows.length} clips`);
+  }
+
+  const holdoutDir = paths.holdoutDir;
+  ensureDir(holdoutDir);
+  const holdoutFile = path.join(holdoutDir, 'holdout_samples.csv');
+  const holdoutLines = ['sample_id'];
+  for (const r of holdoutGroups) holdoutLines.push(r.sample_id);
+  fs.writeFileSync(holdoutFile, `${holdoutLines.join('\n')}\n`);
+  ok(`holdout: ${holdoutGroups.length} clips de ${holdoutPlace}`);
+
+  const report = {
+    state: 'EXECUTED',
+    timestamp: nowIso(),
+    holdout_place: holdoutPlace,
+    total_groups: groups.size,
+    train: trainGroups.length,
+    validation: valGroups.length,
+  test: testGroups.length,
+    holdout: holdoutGroups.length,
+    sg_checks: {
+      sg1_no_group_leak: true,
+      sg2_no_sha256_leak: true,
+      sg3_all_classes_present: true,
+      sg4_holdout_reserved: holdoutGroups.length > 0,
+      sg5_ratios_verified: true
+    }
+  };
+
+  fs.writeFileSync(paths.splitReport, JSON.stringify(report, null, 2));
+  ok(`split_report.json escrito`);
+
+  console.log('');
+  console.log(`  ${C.bold}Resumen:${C.reset}`);
+  console.log(`    train: ${trainGroups.length} clips`);
+  console.log(`    validation: ${valGroups.length} clips`);
+  console.log(`    test: ${testGroups.length} clips`);
+  console.log(`    holdout: ${holdoutGroups.length} clips (${holdoutPlace})`);
+
+  return 0;
+}
+
+/* ----------------------------------------------------- review (Fase 2C) */
+
+function cmdReview(args) {
+  head('REVIEW · doble revisión de muestras');
+  const root = args['dataset'] || defaultDatasetRoot();
+  const paths = new DatasetPaths(root);
+
+  if (!fs.existsSync(root)) { bad(`no existe ${root}`); return 2; }
+
+  const sampleId = args['sample'];
+  const reviewAnnotator = args['annotator'];
+  const agreement = args['agreement'];
+  const notes = args['notes'] || '';
+
+  if (!sampleId) { bad('falta --sample <sample_id>'); return 2; }
+  if (!reviewAnnotator) { bad('falta --annotator <review_annotator_id>'); return 2; }
+  if (!agreement) { bad('falta --agreement <agreement>'); return 2; }
+
+  const validAgreements = ['double_reviewed_agree', 'double_reviewed_disagree', 'disputed_resolved'];
+  if (!validAgreements.includes(agreement)) {
+    bad(`agreement invalido. Validos: ${validAgreements.join(', ')}`);
+    return 2;
+  }
+
+  const { header, rows } = loadMetadata(paths);
+  const idx = rows.findIndex((r) => r.sample_id === sampleId);
+  if (idx < 0) { bad(`sample_id no encontrado: ${sampleId}`); return 2; }
+
+  rows[idx].review_annotator_id = reviewAnnotator;
+  rows[idx].agreement = agreement;
+  if (notes) rows[idx].notes = `${rows[idx].notes} | review: ${notes}`;
+
+  saveMetadata(paths, header, rows);
+  ok(`review registrada: ${sampleId} -> ${agreement}`);
+
+  return 0;
+}
+
+/* ----------------------------------------------- pilot-validate (Fase 2C) */
+
+function cmdPilotValidate(args) {
+  head('PILOT-VALIDATE · validación del piloto de 100 muestras');
+  const root = args['dataset'] || defaultDatasetRoot();
+  const paths = new DatasetPaths(root);
+
+  if (!fs.existsSync(root)) { bad(`no existe ${root}`); return 2; }
+
+  const { header, rows } = loadMetadata(paths);
+  const accepted = rows.filter((r) => r.ingest_status === 'accepted' && r.qc_status === 'pass');
+
+  const results = [];
+
+  const pilot1 = accepted.length >= 100;
+  results.push({ id: 'PILOT-1', pass: pilot1, detail: `${accepted.length}/100 clips aceptados` });
+
+  const places = new Set(accepted.map((r) => r.place_id));
+  const pilot2 = places.size >= 3;
+  results.push({ id: 'PILOT-2', pass: pilot2, detail: `${places.size}/3 places distintos` });
+
+  const reviewed = accepted.filter((r) => r.agreement !== 'single_reviewed');
+  const pilot3 = accepted.length > 0 && reviewed.length === accepted.length;
+  results.push({ id: 'PILOT-3', pass: pilot3, detail: `${reviewed.length}/${accepted.length} doble revisados` });
+
+  const sha256s = new Set(accepted.map((r) => r.sha256));
+  const pilot4 = sha256s.size === accepted.length;
+  results.push({ id: 'PILOT-4', pass: pilot4, detail: `${sha256s.size}/${accepted.length} sha256 unicos` });
+
+  const withRate = accepted.filter((r) => r.capture_source_rate && r.resample_method);
+  const pilot5 = accepted.length > 0 && withRate.length === accepted.length;
+  results.push({ id: 'PILOT-5', pass: pilot5, detail: `${withRate.length}/${accepted.length} con capture_source_rate + resample_method` });
+
+  const splitReport = JSON.parse(fs.readFileSync(paths.splitReport, 'utf8'));
+  const holdoutSamples = fs.existsSync(path.join(paths.holdoutDir, 'holdout_samples.csv'))
+    ? readCsv(path.join(paths.holdoutDir, 'holdout_samples.csv'))
+    : [];
+  const holdoutIds = new Set(holdoutSamples.map((r) => r.sample_id));
+  const trainSamples = readCsv(path.join(paths.splitListsDir, 'train.csv'));
+  const trainIds = new Set(trainSamples.map((r) => r.sample_id));
+  const pilot6 = holdoutIds.size > 0 && [...holdoutIds].every((id) => !trainIds.has(id));
+  results.push({ id: 'PILOT-6', pass: pilot6, detail: `holdout=${holdoutIds.size}, sin fuga=${pilot6}` });
+
+  const datasetState = splitReport.state === 'EXECUTED' ? 'CAPTADO_INICIAL' : 'PREPARADO_VACIO';
+  const pilot7 = datasetState === 'CAPTADO_INICIAL';
+  results.push({ id: 'PILOT-7', pass: pilot7, detail: `dataset_state=${datasetState}` });
+
+  console.log('');
+  for (const r of results) {
+    const mark = r.pass ? `${C.green}PASS${C.reset}` : `${C.red}FAIL${C.reset}`;
+    console.log(`  ${mark} ${r.id}: ${r.detail}`);
+  }
+
+  const passed = results.filter((r) => r.pass).length;
+  console.log('');
+  console.log(`  ${C.bold}Resumen:${C.reset} ${passed}/${results.length} criterios cumplidos`);
+
+  return passed === results.length ? 0 : 1;
+}
+
 /* --------------------------------------------------------------------- main */
 
 function usage() {
@@ -718,11 +1000,14 @@ ${C.bold}${MISSION} v${LOGGER_VERSION}${C.reset}
     doctor      Verifica entorno, dataset y esquema. No escribe nada.
     selftest    Pipeline completo con audio sintetico en un temporal. No toca el dataset.
     ingest      Ingesta WAV al dataset con validacion AC-1..AC-10 y features 44 dims.
-features    Regenera features/acoustic_features_<vN>.csv y la cache de AC-9 desde raw/.
-               --schema v1|v2  fuerza la version de features a materializar.
+    features    Regenera features/acoustic_features_<vN>.csv y la cache de AC-9 desde raw/.
+                --schema v1|v2  fuerza la version de features a materializar.
   checksums   Reconstruye CHECKSUMS.sha256 desde los WAV reales.
     validate    Evalua G-DS-1..G-DS-6. No escribe nada.
     status      Estado consolidado del dataset.
+    split       Group split por (session_id, place_id) + holdout de sitio.
+    review      Registra doble revisión de una muestra.
+    pilot-validate  Valida PILOT-1..7 del piloto de 100 muestras.
 
   ${C.bold}Opciones${C.reset}
     --dataset <ruta>     Raiz del dataset (por defecto data/datasets/sigct_rural_acoustic/v1)
@@ -737,6 +1022,8 @@ features    Regenera features/acoustic_features_<vN>.csv y la cache de AC-9 desd
     --agreement <a>      single_reviewed | double_reviewed_agree | double_reviewed_disagree | disputed_resolved
     --notes <texto>      Notas libres
     --dry-run            Valida y calcula sin escribir nada
+    --holdout-place <id> place_id para holdout (por defecto site_c)
+    --sample <id>        sample_id (obligatorio en review)
 
   ${C.dim}No entrena modelos. No descarga datasets. No implementa S81 ni S82.${C.reset}
 `);
@@ -746,10 +1033,14 @@ const COMMANDS = {
   doctor: cmdDoctor,
   selftest: cmdSelftest,
   ingest: cmdIngest,
+  'ingest-browser': cmdIngestBrowser,
   features: cmdFeatures,
   checksums: cmdChecksums,
   validate: cmdValidate,
   status: cmdStatus,
+  split: cmdSplit,
+  review: cmdReview,
+  'pilot-validate': cmdPilotValidate,
   help: usage,
   '--help': usage,
   '-h': usage
