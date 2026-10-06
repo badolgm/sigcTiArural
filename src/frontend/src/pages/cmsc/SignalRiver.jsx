@@ -6,14 +6,14 @@ import HonestyBadge from './HonestyBadge.jsx';
 // Regla F3C-4: un eslabón sin señal viva se muestra DISENO o como enlace pendiente,
 // jamás como vivo.
 const RIVER_LINKS = [
-  { label: 'Sensores', path: null, live: true, note: 'señal real o diseño', estado: 'REAL' },
-  { label: 'Telemetría', path: null, live: true, note: 'bus de evidencia', estado: 'REAL' },
+  { label: 'Sensores', path: '/dashboard-cmsc', live: true, note: 'S30 · micrófono local', estado: 'REAL-LOCAL' },
+  { label: 'Telemetría', path: '/dashboard-cmsc', live: true, note: 'bus de evidencia', estado: 'REAL' },
   { label: 'Matemáticas', path: '/advanced-math-v2', live: true, note: 'modelado', estado: 'SIM' },
   { label: 'Señales', path: '/lab-telecom', live: true, note: 'features espectrales', estado: 'REAL-LOCAL' },
   { label: 'IA', path: '/ai-predictive', live: false, note: 'interpretación con confianza', estado: 'SIM' },
   { label: 'Knowledge Hub', path: '/knowledge', live: true, note: 'evidencia registrada', estado: 'REAL' },
-  { label: 'Agentes', path: null, live: false, note: 'ACP, diseño', estado: 'DISENO' },
-  { label: 'Usuario', path: null, live: true, note: 'texto, voz, API', estado: 'REAL' }
+  { label: 'Agentes', path: '/ai-predictive', live: false, note: 'ACP, diseño', estado: 'DISENO' },
+  { label: 'Usuario', path: '/knowledge', live: true, note: 'texto, voz, API', estado: 'REAL' }
 ];
 
 const SignalRiver = ({ onSelectSignal }) => {

@@ -52,14 +52,4 @@ const AcousticConsumersStrip = () => (
   </div>
 );
 
-// Enlace separado: el Hub global ya existe en el shell. Este no lo duplica, lo referencia.
-export const AcousticKnowledgeLink = () => (
-  <Link
-    to="/knowledge"
-    className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
-  >
-    Knowledge Hub →
-  </Link>
-);
-
 export default AcousticConsumersStrip;
