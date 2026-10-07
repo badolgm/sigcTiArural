@@ -245,10 +245,22 @@ test('extraer con v1 sigue siendo posible: reproducibilidad del congelado', () =
 });
 
 test('el repo no escribe WAV ni features al importar este modulo', () => {
-  // Comprobacion de aislamiento: este test no debe crear nada en data/.
+  // Comprobacion de aislamiento: este test no debe crear nada nuevo en data/.
   const real = path.resolve(process.cwd(), '..', '..', 'data', 'datasets', 'sigct_rural_acoustic', 'v1');
   if (!fs.existsSync(real)) return; // el repo puede no tener data/ enotro entorno
   const wavs = fs.readdirSync(path.join(real, 'raw'), { withFileTypes: true, recursive: true })
     .filter((d) => d.isFile() && d.name.endsWith('.wav'));
-  assert.equal(wavs.length, 0, 'las pruebas no deben dejar WAV en el dataset real');
+  // Expectativa del estado real (no "dataset vacio"): tras la mision E1 el dataset esta en
+  // CAPTADO_INICIAL con UN unico WAV legitimo (ancla real ac_20261006_215109_000, silencio).
+  // Importar este modulo no debe SUMAR WAV; si el dataset gana muestras, actualizar EXPECT.
+  const EXPECT_REAL_WAVS = ['ac_20261006_215109_000_f6fe2a1e010e17f068cc01fcba052d66cb3d446be5e2f4e36236f8dbc5784ae7.wav'];
+  const present = wavs.map((d) => d.name);
+  assert.equal(
+    present.length,
+    EXPECT_REAL_WAVS.length,
+    `el dataset real debe tener exactamente ${EXPECT_REAL_WAVS.length} WAV legitimos (E1), encontrados: ${present.join(', ')}`
+  );
+  for (const name of EXPECT_REAL_WAVS) {
+    assert.ok(present.includes(name), `falta el WAV legitimo ${name}`);
+  }
 });

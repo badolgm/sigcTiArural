@@ -99,6 +99,7 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
   const capturedRef = useRef(0);
   const targetRef = useRef(0);
   const rafRef = useRef(0);
+  const capturingRef = useRef(false);
 
   useEffect(() => {
     const checkActive = () => {
@@ -127,9 +128,10 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
     chunksRef.current = [];
     setProgress({ captured: 0, target });
     setCapturing(true);
+    capturingRef.current = true;
 
     const onPcm = (chunk, sampleRate) => {
-      if (!capturing) return;
+      if (!capturingRef.current) return;
       const remaining = targetRef.current - capturedRef.current;
       if (remaining <= 0) return;
       const take = chunk.slice(0, Math.min(chunk.length, remaining));
@@ -142,10 +144,11 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
     };
 
     tap.onPcmChunk = onPcm;
-  }, [pcmTapRef, capturing, missingFields]);
+  }, [pcmTapRef, missingFields]);
 
   const stopCapture = useCallback(() => {
     setCapturing(false);
+    capturingRef.current = false;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
 

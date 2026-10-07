@@ -8,10 +8,10 @@ import HonestyBadge from '../HonestyBadge.jsx';
 // Fase 1 no autoriza backend. Toda lectura real llega en Fase 3 (roadmap §13), vía CLI.
 //
 // Fuente de cada valor:
-//   dataset_state = PREPARADO_VACIO  -> metadata/schema.json 1.2.0
-//   0 WAV / 0 filas / 0 features    -> verificado en disco 2026-10-05
+//   dataset_state = CAPTADO_INICIAL -> metadata/schema.json 1.2.0 (E1: 1 muestra real, 2026-10-06)
+//   1 WAV / 1 fila / 1 vector      -> verificado en disco 2026-10-06
 //   G-DS-1 FAIL (7 mids UNVERIFIED) -> taxonomy_binding_manifest + labels.csv (audi_set_status)
-//   G-DS-2..6 PENDING              -> ausencia de muestras; NUNCA PASS por ausencia
+//   G-DS-2..6 PENDING              -> insuficiencia de muestras; NUNCA PASS por ausencia
 
 // Orden de taxonomía de labels.csv (9 clases). Se listan aunque no tengan muestras:
 // una clase con 0 es información; una clase ausente es ignorancia.
@@ -29,7 +29,7 @@ const CLASES = [
 
 const GATES = [
   { id: 'G-DS-1', nombre: 'Taxonomía y esquema', resultado: 'FAIL', motivo: '7 mids AudioSet sin verificar (UNVERIFIED)' },
-  { id: 'G-DS-2', nombre: '≥150 clips/clase', resultado: 'PENDING', motivo: '0 muestras · el piloto de 100 no cumple el mínimo' },
+  { id: 'G-DS-2', nombre: '≥150 clips/clase', resultado: 'PENDING', motivo: '1 muestra · el piloto de 100 no cumple el mínimo' },
   { id: 'G-DS-3', nombre: 'Split sin fuga + holdout', resultado: 'PENDING', motivo: 'NO_EJECUTADO · leakage sin medir' },
   { id: 'G-DS-4', nombre: 'Gobernanza verificable', resultado: 'PENDING', motivo: 'Faltan artefactos de liberación y checksums reales' },
   { id: 'G-DS-5', nombre: 'Licencias verificadas', resultado: 'PENDING', motivo: 'Sin clips que licenciar' },
@@ -51,22 +51,23 @@ const AcousticDatasetPanel = () => {
           <h3 className="text-sm font-bold text-gray-200">Dataset acústico</h3>
           <p className="text-[10px] text-gray-500 font-mono">sigct_rural_acoustic / v1</p>
         </div>
-        <HonestyBadge estado="DISENO" showConfidence={false} />
+        <HonestyBadge estado="SIM" showConfidence={false} />
       </div>
 
       <div className="rounded-lg border border-gray-800 bg-gray-950/50 px-3 py-2.5">
-        <p className="text-[11px] font-semibold text-gray-300">PREPARADO_VACIO</p>
+        <p className="text-[11px] font-semibold text-gray-300">CAPTADO_INICIAL</p>
         <p className="text-[10px] text-gray-500 leading-snug mt-0.5">
-          Estructura y gobernanza preparadas. El dataset aún no existe como activo científico.
+          Primera muestra real ingestada (E1). El corpus aún no es un activo científico: faltan
+          curado, split y validación.
         </p>
       </div>
 
       {/* Conteos con UNIDAD explícita. Nunca porcentajes: no hay denominador que los sostenga. */}
       <dl className="grid grid-cols-3 gap-1.5">
         {[
-          { k: 'WAV', v: 0, u: 'clips' },
-          { k: 'metadata.csv', v: 0, u: 'filas' },
-          { k: 'features', v: 0, u: 'vectores' }
+          { k: 'WAV', v: 1, u: 'clips' },
+          { k: 'metadata.csv', v: 1, u: 'filas' },
+          { k: 'features', v: 1, u: 'vectores' }
         ].map((m) => (
           <div key={m.k} className="rounded-md border border-gray-800 bg-gray-900/40 px-2 py-1.5">
             <dt className="text-[9px] uppercase tracking-widest text-gray-500 truncate">{m.k}</dt>
@@ -84,14 +85,14 @@ const AcousticDatasetPanel = () => {
           aria-expanded={clasesAbiertas}
           className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
         >
-          {clasesAbiertas ? '▾' : '▸'} Conteo por clase (9 clases · 0 en todas)
+          {clasesAbiertas ? '▾' : '▸'} Conteo por clase (9 clases · 1 en silencio)
         </button>
         {clasesAbiertas && (
           <div className="mt-1.5 flex items-center gap-1 rounded-lg border border-gray-800 bg-gray-950/40 px-2 py-1.5">
             {CLASES.map((c) => (
               <span key={c} className="flex items-center gap-1 text-[10px]">
                 <span className="text-gray-400">{c}</span>
-                <span className="font-mono text-gray-600">0</span>
+                <span className="font-mono text-gray-600">{c === 'silencio' ? 1 : 0}</span>
               </span>
             ))}
           </div>

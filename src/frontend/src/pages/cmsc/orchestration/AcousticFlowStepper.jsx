@@ -16,7 +16,7 @@ import HonestyBadge from '../HonestyBadge.jsx';
 const STEPS = [
   { id: 'S30', label: 'S30', detail: 'Micrófono local', estado: 'REAL-LOCAL', nota: 'Productor único de la señal acústica' },
   { id: 'LOGGER', label: 'Logger', detail: 'CMSC_DATA_LOGGER_V1', estado: 'DISENO', nota: 'Captura no habilitada en Fase 1 · integración S30 prevista en Fase 2' },
-  { id: 'DATASET', label: 'Dataset', detail: 'sigct_rural_acoustic/v1', estado: 'DISENO', nota: 'PREPARADO_VACIO · 0 muestras' },
+  { id: 'DATASET', label: 'Dataset', detail: 'sigct_rural_acoustic/v1', estado: 'DISENO', nota: 'CAPTADO_INICIAL · 1 muestra (E1) · integración en Fase 3' },
   { id: 'VALIDACION', label: 'Validación', detail: 'G-DS-1..6', estado: 'DISENO', nota: 'G-DS-1 FAIL · G-DS-2..6 PENDING' },
   { id: 'S81', label: 'S81', detail: 'Acoustic Intelligence', estado: 'DISENO', nota: 'Bloqueada: Dataset + modelo + validación' },
   { id: 'S82', label: 'S82', detail: 'Anomaly Detector', estado: 'DISENO', nota: 'Bloqueada: baseline + thresholds + validación' },
