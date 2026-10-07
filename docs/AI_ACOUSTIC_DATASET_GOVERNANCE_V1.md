@@ -21,7 +21,7 @@ La misión cambió el dataset acústico de **diseño** a **preparación real**, 
 | Dimensión | Antes (diseño) | Ahora (preparación) |
 |---|---|---|
 | Árbol en disco | descrito en prosa (A.7) | **creado y verificado**: 46 directorios, 20 archivos |
-| Contrato de datos | 21 columnas en tabla de prosa | **`schema.json` 1.2.0** con 42 columnas tipadas y gobernadas |
+| Contrato de datos | 21 columnas en tabla de prosa | **`schema.json` 1.3.0** con 42 columnas tipadas y gobernadas |
 | Tabla maestra | `labels/acoustic_labels_v1.csv` (nombre) | **`metadata/metadata.csv`** + 5 columnas obligatorias nuevas |
 | Taxonomía | 9 clases en tabla | **`labels.csv`** con binding `class_id ↔ dir_name` y estado AudioSet |
 | Manifiestos | 5 YAML bosquejados | **5 YAML completos** con checks de aceptación AC-1..AC-9 |
@@ -48,16 +48,16 @@ Cada observación lleva: evidencia verificable en el código o el documento, sev
 |---|---|---|---|---|
 | **OBS-01** | **Conflicto de estructura** entre el diseño (A.7: `RAW/`, `curated/`, `labels/`) y la estructura de misión (`raw/`, `train|validation|test/`, `metadata/`). | `AI_ACOUSTIC_DATASET_V1_DESIGN.md:133-160` vs misión FASE 2 | 🟠 | **Resuelto.** La estructura de misión es canónica. `curated/` queda **supersedido**; `labels/acoustic_labels_v1.csv` pasa a `metadata/metadata.csv`. **Cero migración** (0 archivos). Se registra errata; el diseño no se reescribe (§7 D-4). |
 | **OBS-02** | **La estructura de misión omite 3 artefactos que los gates necesitan**: `split_lists/`, `holdout/` y `CHECKSUMS.sha256`. Omitirlos habría debilitado G-DS-3 y G-DS-4 en silencio. | A.8 (group split + holdout) · A.11 G-DS-4 | 🔴 | **Resuelto.** Los tres se crearon igual. Un gate sin artefacto verificable no es un gate. |
-| **OBS-03** | **Carpeta `desconocido/` ≠ `class_id` `ruido_desconocido`.** Doble vocabulario para la misma clase. | Misión FASE 2 vs diseño A.4 | 🟡 | **Resuelto por binding explícito** en `labels.csv` (`dir_name`) y `schema.json` (`class_directories.map`). **PENDIENTE** decidir si se unifican en v2 (D-3). |
+| **OBS-03** | **Carpeta `desconocido/` ≠ `class_id` `ruido_desconocido`.** Doble vocabulario para la misma clase. | Misión FASE 2 vs diseño A.4 | 🟡 | **Resuelto por binding explícito** en `labels.csv` (`dir_name`) y `schema.json` (`class_directories.map`). **D-3 CERRADA 2026-10-06:** binding **ratificado permanente** (opción a, Bernardo); la uniformación se decidió NO hacer. |
 | **OBS-04** | **Aritmética de frames incorrecta.** El diseño dice "~65 frames por clip"; con 3,0 s = 132.300 muestras, N_FFT 4096 y hop 2048: `floor((132300-4096)/2048)+1` = **63** (64 con relleno de cola). | `spectralEngine.js:1` (`N_FFT = 4096`) + cálculo propio | 🟡 | **Resuelto.** `schema.json` declara `frames_count: 63` y documenta el caso con relleno. |
 | **OBS-05** | **Typo de dominio: `cmcs_logger`** (en A.6 y A.10) en lugar de `cmsc_logger`. Se escribiría literalmente en los metadatos. | `AI_ACOUSTIC_DATASET_V1_DESIGN.md:129,210` | 🟡 | **Resuelto.** Valor canónico `cmsc_logger` en esquema, labels y manifiestos. El typo queda documentado como errata. |
 | **OBS-06** | **Remuestreo no declarado — riesgo de dishonestidad de estado.** El diseño fija 44.100 Hz, pero los navegadores entregan habitualmente 48.000 Hz. Sin columnas de procedencia, el dataset declararía una tasa que no tiene. | A.2 (`sample_rate` 44.100 fijo) vs `getUserMedia` en `FEATURE_MAP §1` | 🔴 | **Resuelto.** 2 columnas obligatorias nuevas: `capture_source_rate` y `resample_method` (con valor `none` explícito). `resample_method` es obligatoria **aunque valga `none`**: negar el remuestreo es un dato. |
 | **OBS-07** | **El `hop` se presenta como si fuera una constante del motor.** `spectralEngine.js` no define hop: corre por `requestAnimationFrame` con `N_FFT = 4096`, `DEFAULT_SAMPLE_RATE = 44100` y 3 `FREQ_BANDS`. | `spectralEngine.js:1-12` · A.2 ("Hop entre frames 2048") | 🟠 | **Resuelto por corrección de categoría.** El hop es un parámetro **offline del dataset** (extracción por frames), no una constante del instrumento en vivo. `schema.json` lo ubica en `clip_contract`. |
 | **OBS-08** | **Doble fuente de verdad de la ubicación:** columna `file` + carpeta de clase + nombre de archivo. Tres representations que pueden divergir. | A.6 (`file`) + A.7 (`RAW/<class_id>/`) | 🟡 | **Resuelto.** `file` es autoritativo; la carpeta de clase + nombre son **reconstruibles**. La curación valida `file` ↔ `class_id` ↔ carpeta (AC-10). |
 | **OBS-09** | **`acoustic.feat.window.v1` sigue `PROPUESTO (a aprobar por Bernardo)`**, pero es la **dimensión de entrada de S81**. Sin decidirlo no se puede construir el corpus de forma compatible con el clasificador. | A.3 · `ARCHITECTURE_V1 §4` (probabilidades por clase ⇒ asume vector fijo) | 🔴 | **PENDIENTE BERNARDO (D-1).** Es la decisión más urgente de esta misión. 3 opciones en §7. |
-| **OBS-10** | **`features/` previsto como `.csv`;** con 5.400 clips × ~50 columnas el CSV es frágil de tipar para consumo en Python y `onnxruntime-web`. | A.7/B.6 (`acoustic_features_v1.csv`) | 🟢 | **Resuelto.** Se conserva el nombre base y se adopta `.parquet`. Decidir con 0 muestras es gratis; con 5.400 es una migración. |
+| **OBS-10** | **`features/` previsto como `.csv`;** con 5.400 clips × ~50 columnas el CSV es frágil de tipar para consumo en Python y `onnxruntime-web`. | A.7/B.6 (`acoustic_features_v1.csv`) | 🟢 | **Resuelto.** *(Corregido 2026-10-06 con D-4: esta fila decía "se adopta `.parquet`" — **errata propia de la gobernanza**.)* La decisión construida y verificable es **CSV**: `schema.json → feature_storage.path = features/acoustic_features_v2.csv`, un CSV por versión. Se conserva el nombre base. |
 | **OBS-11** | **G-DS-6 exige acuerdo de anotación, pero el esquema no tiene segundo anotador ni valor de acuerdo.** `confidence_annotator` (0..1) **no** es acuerdo inter-anotador: es confianza subjetiva. Gate imposible de verificar. | A.6 (`confidence_annotator`, `annotation_round`) vs A.11 G-DS-6 | 🔴 | **Resuelto.** Columnas nuevas `review_annotator_id` (opcional, vacía en ronda 1) y `agreement` (obligatoria, enum de 4 valores). `confidence_annotator` queda como opcional y **declarado que no es acuerdo**. |
-| **OBS-12** | **Umbral de near-duplicate sin definir.** "correlación de niveles de energía por frame" no es un criterio verificable sin número. | A.8 (anti-leakage) · A.11 G-DS-3 | 🟠 | **Resuelto parcialmente.** Umbral **0.98 propuesto y declarado SIN CALIBRAR**; AC-9 bloquea al primer conflicto real. Calibrar con material real antes de cerrar G-DS-3 (D-2). |
+| **OBS-12** | **Umbral de near-duplicate sin definir.** "correlación de niveles de energía por frame" no es un criterio verificable sin número. | A.8 (anti-leakage) · A.11 G-DS-3 | 🟠 | **Cerrado con D-2 (2026-10-06).** Umbral **0.98 aprobado COMO PROVISIONAL** (opción b, Bernardo) + protocolo de calibración (200 clips, FPR ≤1%, ≥95% detección) incorporado al criterio (e) de G-DS-3. AC-9 sigue declarando "PROPUESTO sin calibrar" en su detalle hasta que la calibración se ejecute. |
 | **OBS-13** | **Los `mid` de AudioSet nunca se verificaron.** El diseño los llama "orientativos" y delega la verificación a una "FASE 1b" que no existe como artefacto. | A.5 (nota de verificación) · A.11 G-DS-1 | 🟠 | **Resuelto por honestidad.** `labels.csv` y `taxonomy_binding_manifest` marcan cada `mid` como `UNVERIFIED`. Verificar es parte explícita de G-DS-1. **No se afirma enlace verificado que no se verificó.** |
 | **OBS-14** | **El dataset no tenía estado legible por máquina.** "0 muestras" estaba escrito en prosa; ninguna herramienta podía leerlo. Riesgo directo: un reporte futuro podría afirmar avance sin evidencia. | A.1 (`estado: DISENO`) | 🟠 | **Resuelto.** `dataset_state` declarado en los **10 artefactos de control** (`schema.json` + 5 manifiestos YAML + `split_report.json` + `dataset_card.md` + 2 README) y máquina de 5 estados (§3.5). Por diseño **no** va en los CSV de datos ni en `CHECKSUMS.sha256`: son datos, no estado. |
 
@@ -163,7 +163,7 @@ data/datasets/sigct_rural_acoustic/v1/          ← 46 directorios · 20 archivo
 
 ## 3.2 Columnas de `metadata.csv` (42 = 30 obligatorias + 9 opcionales + 3 derivadas)
 
-Verificado por máquina contra `schema.json` **v1.2.0** y la cabecera de `metadata.csv` (idénticas, **42/42**).
+Verificado por máquina contra `schema.json` **v1.3.0** y la cabecera de `metadata.csv` (idénticas, **42/42**).
 
 **30 obligatorias** — 25 de dominio (`OBLIGATORIA`):
 
@@ -280,11 +280,11 @@ Cada gate declara: criterio **verificable**, **cómo se verifica**, **evidencia*
 ## G-DS-3 — Split sin fuga + holdout reservado
 | | |
 |---|---|
-| **Criterio** | (a) `∅ = ⋂ split_group_key(train, validation, test)`; (b) `⋂ sha256(train, validation, test) = ∅`; (c) ninguna clase ausente en ninguna partición; (d) `holdout/real_world_holdout_v1/` con ≥1 `place_id` ausente de train/validation/test; (e) umbral near-dup **calibrado** con material real (OBS-12). |
+| **Criterio** | (a) `∅ = ⋂ split_group_key(train, validation, test)`; (b) `⋂ sha256(train, validation, test) = ∅`; (c) ninguna clase ausente en ninguna partición; (d) `holdout/real_world_holdout_v1/` con ≥1 `place_id` ausente de train/validation/test; (e) umbral near-dup: **0.98 APROBADO COMO PROVISIONAL (D-2 cerrada 2026-10-06)** sobre correlación del envelope de energía (AC-9). **Protocolo de calibración obligatorio antes de PASS definitivo:** con los primeros **200 clips reales**, medir correlaciones máximas en (i) re-tomas del mismo evento y (ii) tomas distintas de misma clase+sitio; umbral final = valor con **FPR ≤1% sobre distintos** y **≥95% de detección sobre iguales**; resultado registrado en `constants.js` + §7. Hasta entonces G-DS-3 puede dar PASS **solo con cláusula de recalibración explícita**, nunca PASS cerrado. |
 | **Verificador** | `split_report.json` con SG-1..SG-5 en verde y `verdict: PASS`. |
 | **Evidencia** | `split_lists/*.csv` · `split_lists/split_report.json` · `holdout/real_world_holdout_v1/` |
 | **Bloquea** | evaluación creíble (cualquier macro-F1 sobre un split con fuga no significa nada). |
-| **Estado** | 🔴 **NO CUMPLIDO** (sin datos). (e) requiere además una misión de calibración. |
+| **Estado** | 🔴 **NO CUMPLIDO** (sin datos). (e) tiene número y protocolo aprobados; la calibración con material real sigue siendo una misión aparte. |
 
 ## G-DS-4 — Gobernanza completa y verificable
 | | |
@@ -443,9 +443,9 @@ la captura masiva.**
 | ID | Decisión | Urgencia | Por qué bloquea |
 |---|---|---|---|
 | **D-1** | ~~**`window_schema`**~~ **RESUELTA 2026-10-04 y REVISADA 2026-10-05: opción (a) `acoustic.feat.window.v2`, mean+std → 44 dims.** Ver §7.1. | ✅ Cerrada | Era la dimensión de entrada de S81. La agregación no cambió en la revisión: cambió la feature 21 que se promedia. |
-| **D-2** | **Umbral near-duplicate** (propuesta 0.98, sin calibrar). | 🟠 | G-DS-3 no es verificable sin número. Se calibra con los primeros 200 clips reales. |
-| **D-3** | **Unificar `class_id` y `dir_name`** (hoy `ruido_desconocido` ≠ `desconocido`). | 🟡 | Higiene de prefijos. Recomiendo `desconocido` como carpeta y `ruido_desconocido` como `class_id` **permanente**, porque el binding está explícito y documentado y `class_id` debe coincidir con la etiqueta de S81. Uniformarlos es opcional. |
-| **D-4** | **Publicar erratas en `AI_ACOUSTIC_DATASET_V1_DESIGN.md`** (OBS-01, -04, -05, -07, -10). | 🟡 | Hoy existe un documento canónico y otro vigente con estructuras distintas. Ambos son verdad parcial: el diseño describe la intención original, la gobernanza describe lo construido. Se resuelve con un §14 "Reconciliation" en el diseño. |
+| **D-2** | ~~**Umbral near-duplicate**~~ **CERRADA 2026-10-06 — opción (b) aprobada por Bernardo: umbral 0.98 APROBADO COMO PROVISIONAL + protocolo de calibración obligatorio (200 clips, FPR ≤1%, ≥95% detección). Protocolo incorporado a G-DS-3 §4.** | ✅ Cerrada | G-DS-3 ahora tiene número verificable con cláusula de recalibración; el PASS definitivo exige la calibración con material real. |
+| **D-3** | ~~**Unificar `class_id` y `dir_name`**~~ **CERRADA 2026-10-06 — opción (a) aprobada por Bernardo: binding permanente RATIFICADO. `dir_name = desconocido` (carpeta), `class_id = ruido_desconocido` (etiqueta S81, `is_ood_bucket=true`). Uniformación NO realizada por decisión.** | ✅ Cerrada | Higiene de prefijos: el binding explícito (`labels.csv` + `schema.json` + AC-10) es la fuente única; cero cambios de código o estructura. |
+| **D-4** | ~~**Publicar erratas en `AI_ACOUSTIC_DATASET_V1_DESIGN.md`** (OBS-01, -04, -05, -07, -10)~~ **CERRADA 2026-10-06 — opción (a) aprobada por Bernardo: §14 "RECONCILIACIÓN Y ERRATAS" publicado en el diseño + fila OBS-10 de ESTA gobernanza corregida (`.parquet` → CSV).** | ✅ Cerrada | Dos documentos ya no son verdad parcial: el diseño registra la intención original, la gobernanza es canon de lo construido, y el §14 es el puente declarado. |
 
 ## 7.1 `acoustic.feat.v2` — revisión de la feature 21 (2026-10-05)
 
@@ -548,7 +548,7 @@ usa `getUserMedia` por su cuenta).
 | DG8 | Sesgo a un solo sitio/device | 🟠 | 3 sitios desde el piloto; `device_id` + `place_id` obligatorios |
 | DG9 | Captura oportunista de `lluvia` se sustituye por audio simulado | 🔴 | Prohibido simular; se reprograma |
 | DG10 | Coste de 2 rondas × 1.350 muestras | 🟠 | Piloto con 100 % doble revisión antes de escalar |
-| DG11 | Deriva entre documentos de dataset | 🟡 | Este documento es canónico; D-4 pendiente |
+| DG11 | Deriva entre documentos de dataset | 🟡 | Este documento es canónico; **D-4 cerrada 2026-10-06** (§14 de reconciliación publicado en el diseño + OBS-10 corregida) |
 | DG12 | Coste de almacenamiento (≈357 MB mínimo) | 🟢 | Local, viable; sin límite |
 
 ---
@@ -600,13 +600,13 @@ Lo que se versiona en este documento es **la dirección y la huella** del contra
 | **Datos** | `raw/` `train/` `validation/` `test/` `holdout/` | ❌ no | ≈357 MB de WAV |
 | **Derivados** | `features/` `split_lists/` `manifest.csv` `CHECKSUMS.sha256` | ❌ no | Regenerables con `cmsc-data-logger` |
 
-## 11.3 Huellas SHA-256 (verificadas 2026-10-05, dataset en `PREPARADO_VACIO`)
+## 11.3 Huellas SHA-256 (verificadas 2026-10-05; `schema.json` actualizado 2026-10-07 por D5, dataset en `CAPTADO_INICIAL`)
 
 Raíz: `data/datasets/sigct_rural_acoustic/v1/`
 
 | Ruta | `schema_version` | SHA-256 |
 |---|---|---|
-| `metadata/schema.json` | `sigct_rural_acoustic_schema` **1.2.0** | `63cd50fca188ec3d0edb2e378ba34325f6b3b24fce0809336ad533fad29ea1d2` |
+| `metadata/schema.json` | `sigct_rural_acoustic_schema` **1.3.0** | `a5d33dd2ca59d0b3a08b56bb6af012c60c42e502657ece01c5f2128a97a7986a` |
 | `metadata/labels.csv` | `acoustic_v1_label_schema` | `bdd25ae307768ab491c882258b3f9727cdf00e5956f18eead9422f7a94656198` |
 | `manifests/raw_source_manifest.acoustic_v1.yaml` | `1.0` | `8f048392a685df6c25c6e30cf93b190e8d6734663f950bdf7d4396968e4b60da` |
 | `manifests/curation_manifest.acoustic_v1.yaml` | `1.0` | `b295114d9b51482a8082cd53ed4532c6cfffffb363019a24c1f9e95f13c4921f` |

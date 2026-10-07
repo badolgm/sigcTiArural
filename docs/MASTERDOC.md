@@ -1679,7 +1679,7 @@ Jornada de consolidación del frente CMSC/MMC: identidad visual del Motor de Mod
 - `83b6089` fix(cmsc): spectral instrument canvases from live FFT.
 
 ### 37.5 Pendiente y siguiente misión
-- **Pendiente documental:** 8 docs IA Acústica + `notebooks/CMSC_AI_ACOUSTIC_V1.ipynb` **untracked** (commit solo con orden explícita).
+- **Pendiente documental:** 15 docs IA Acústica (incluidos `AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md`, `AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md`, `AI_ACOUSTIC_REFERENCE_LAYER_ARCHITECTURE_V1.md`, `AI_ACOUSTIC_REFERENCE_DATASET_CATALOG.md`, `AI_ACOUSTIC_REFERENCE_INGESTION_PLAN_V1.md`, `AI_ACOUSTIC_H3_EXECUTION_READINESS_V1.md`, `AI_ACOUSTIC_H3_DECISION_PACKAGE_FINAL.md`) + `notebooks/CMSC_AI_ACOUSTIC_V1.ipynb` **untracked** (commit solo con orden explícita).
 - **Siguiente misión P1:** `CMSC_DATA_LOGGER_V1` (captura acústica aditiva, local-only, sin tocar backend/KH); luego P2 `SIGCT_RURAL_ACOUSTIC_DATASET_V1`, P3 S81 (`DISENO`), P4 S82 (`DISENO`).
 - **Pendiente por diseño:** decisión benchmark M1 vs M2; canonización del diseño V2 del workbench (GeoGebra/Pyodide).
 
@@ -1694,7 +1694,7 @@ Jornada de consolidación del frente CMSC/MMC: identidad visual del Motor de Mod
 
 1. **Auditoría (FASE 1)** de `docs/AI_ACOUSTIC_DATASET_V1_DESIGN.md` contra arquitectura, feature map, S30 y el dataset agrícola. Resultado: **14 observaciones** — 5 🔴, 6 🟠, 3 🟡/🟢.
 2. **Estructura real (FASE 2):** `data/datasets/sigct_rural_acoustic/v1/` = **46 directorios · 20 archivos**, **fuera de git** (política `/data/` de `.gitignore:68`).
-3. **Gobernanza (FASE 3):** `schema.json` v1.2.0 (**42 columnas** = 30 obligatorias + 9 opcionales + 3 derivadas) · `metadata.csv` (**0 filas**) · `labels.csv` (9 clases + binding `class_id`↔`dir_name`) · `manifest.csv` derivado · `places.csv` opcional · **5 manifiestos YAML** · `split_lists/` con reporte `NO_EJECUTADO` · `dataset_card.md` · `CHECKSUMS.sha256` · `README.md`.
+3. **Gobernanza (FASE 3):** `schema.json` v1.3.0 (**42 columnas** = 30 obligatorias + 9 opcionales + 3 derivadas; D5: `partition=reference`, `source=audioset`) · `metadata.csv` (**0 filas**) · `labels.csv` (9 clases + binding `class_id`↔`dir_name`) · `manifest.csv` derivado · `places.csv` opcional · **5 manifiestos YAML** · `split_lists/` con reporte `NO_EJECUTADO` · `dataset_card.md` · `CHECKSUMS.sha256` · `README.md`.
 4. **Gates (FASE 4):** `G-DS-1..6` reescritos con **criterio verificable + verificador + evidencia esperada**, más `AC-1..AC-10` (ingesta) y `SG-1..SG-5` (split). Estado **0/6 cerrados**.
 5. **Plan de captura (FASE 5):** piloto de **100 muestras** sobre las 8 clases vivas, con cupos 12/12/12/13/13/13/13/12.
 6. **Documentación (FASE 6):** este §38 · `docs/CONTINUITY_MASTER.md` §7 · `AGENTS.md` (Estado git + IA Acústica + Cómo retomar).
@@ -1790,7 +1790,7 @@ Decisión de gobernanza ejecutada sobre el contrato de features del dataset acú
 
 **Alcance acotado.** `acoustic.feat.v1` y `window.v1` quedan **CONGELADOS**, no borrados: sirven solo para reproducir artefactos históricos. De las 44 dims cambian **2** (`mean_profileEntropy` índice 21, `std_profileEntropy` índice 43); las otras 42 y los 22 nombres de feature son idénticos. `analyzeFrame` no se toca y la paridad con S30 sigue intacta.
 
-**Estado tras la revisión.** `schema.json` 1.2.0 con `feature_schema: acoustic.feat.v2` y `features/acoustic_features_v2.csv` (un CSV por versión). La raíz del dataset **se conserva en `v1`** solo porque `metadata.csv` tiene 0 filas: no hay artefacto v1 que versionar; en la primera captura pasará a `v2`. **G-DS-1 sigue `FAIL`** por los 7 mids `UNVERIFIED` — la corrección del esquema no cierra ninguna gate. Dataset sigue `PREPARADO_VACIO`, S81/S82 siguen `DISEÑO`, sin commit ni push.
+**Estado tras la revisión.** `schema.json` 1.3.0 (D5, `partition=reference` + `source=audioset`) con `feature_schema: acoustic.feat.v2` y `features/acoustic_features_v2.csv` (un CSV por versión). La raíz del dataset **se conserva en `v1`** solo porque `metadata.csv` tiene 0 filas: no hay artefacto v1 que versionar; en la primera captura pasará a `v2`. **G-DS-1 sigue `FAIL`** por los 7 mids `UNVERIFIED` — la corrección del esquema no cierra ninguna gate. Dataset sigue `PREPARADO_VACIO`, S81/S82 siguen `DISEÑO`, sin commit ni push.
 
 **Bugs de logger corregidos en la misma auditoría.** **BUG B** `meanAbs` → `meanPower` (nombre falso; el valor no cambia). **BUG C** `features` regenera también la cache de envelopes de AC-9, que antes solo mantenía `ingest`. **BUG D** G-DS-1 bloqueaba con `labels.csv` ausente, con ≠9 clases, sin `dir_name` o con `class_id` fuera de taxonomía: antes pasaba como falso verde. Cobertura: **76/76** pruebas + **21/21** selftest.
 

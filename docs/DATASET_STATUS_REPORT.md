@@ -11,7 +11,7 @@
 | Propiedad | Valor |
 |---|---|
 | `dataset_state` | `PREPARADO_VACIO` |
-| `schema_version` | `1.2.0` |
+| `schema_version` | `1.3.0` (D5: `partition=reference`, `source=audioset`) |
 | Filas en `metadata.csv` | 0 |
 | WAV en `raw/` | 0 |
 | WAV en `holdout/` | 0 |

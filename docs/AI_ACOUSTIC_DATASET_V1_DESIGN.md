@@ -360,3 +360,26 @@ sobre este dataset y el esquema `acoustic.feat.window.v1`.
 
 > **Regla final:** el CMSC no tiene hoy ni un segundo de audio etiquetado. Este documento lo dice y
 > diseña cómo conseguirlo; no finge que ya existe.
+
+---
+
+# PARTE C — §14 RECONCILIACIÓN Y ERRATAS (adenda 2026-10-06, D-4)
+
+**Decisión D-4 (aprobada por Bernardo, 2026-10-06):** este documento **no se reescribe**. Registra la
+**intención original del diseño**; el canon de **lo construido** es
+`docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md`. Esta sección es el puente declarado entre ambos.
+
+| # | Sección del diseño | Dice (intención original) | Realidad canónica | Fuente de la realidad |
+|---|---|---|---|---|
+| **OBS-01** | A.7 Estructura en disco | `RAW/`, `curated/`, `labels/` | `raw/`, `train\|validation\|test/`, `metadata/` | Estructura de misión (canónica); `curated/` supersedido; cero migración (0 muestras) |
+| **OBS-04** | A.2 Clip contract | "~65 frames por clip" | **63 frames** (64 con relleno de cola): `floor((132300−4096)/2048)+1` | `metadata/schema.json → clip_contract.frames_count: 63` |
+| **OBS-05** | A.6 y A.10 | `cmcs_logger` (typo, líneas 129 y 210 de la versión original) | **`cmsc_logger`** | Esquema, labels y manifiestos (valor canónico) |
+| **OBS-07** | A.2 | Hop 2048 presentado como constante del motor | El hop es parámetro **offline del dataset** (extracción por frames); S30 corre `requestAnimationFrame` con `N_FFT=4096` y **no tiene hop** | `schema.json → clip_contract` vs `spectralEngine.js:1-12` |
+| **OBS-10** | A.7 / B.6 | Caché de features `acoustic_features_v1.csv` (la gobernanza llegó a proponer `.parquet`) | **CSV**: `features/acoustic_features_v2.csv`, un CSV por versión, nunca geometrías mezcladas | `schema.json → feature_storage.path` (fila OBS-10 de la gobernanza corregida el 2026-10-06) |
+| **EV-1** | A.3 `acoustic.feat.window.v1` | `window.v1` PROPUESTO | **D-1 cerrada (2026-10-04/05):** vigente `acoustic.feat.window.v2` = mean+std → **44 dims**; `window.v1` congelado | Gobernanza §7.1 |
+| **EV-2** | A.1 / A.3 `acoustic.feat.v1` | `feat.v1` como esquema vigente | **`acoustic.feat.v2` vigente** (corrección feature 21 `profileEntropy`); `acoustic.feat.v1` **CONGELADO** — solo cambia la feature 21; los otros 42 dims y los 22 nombres son idénticos | Gobernanza §7.1 · `AI_ACOUSTIC_FEATURE_MAP.md §5` |
+| **EV-3** | A.1 Identidad (`dataset_version v1`) | Raíz `v1` para siempre | La raíz **pasa a `v2` en la primera captura** (feature_rows selladas con `feat.v2`); hoy sigue en `v1` porque `metadata.csv` tiene 0 filas y **no hay artefacto v1 que versionar** | `schema.json → feature_schema_history.*.dataset_root_note` |
+| **EV-4** | A.4 / A.5 Taxonomía y binding | (no resuelto en el diseño) | **D-3 cerrada (2026-10-06):** binding **ratificado permanente** — `dir_name = desconocido` · `class_id = ruido_desconocido` (etiqueta S81, bucket OOD). Uniformación decidida NO hacer | Gobernanza §7 · `labels.csv` · `schema.json → class_directories.map` |
+
+**Regla de invalidación:** si este documento vuelve a divergir de la gobernanza, **gana la gobernanza**
+y esta tabla se actualiza en el mismo cambio (invariante DG11).
