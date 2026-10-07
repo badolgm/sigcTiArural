@@ -3,6 +3,7 @@ import AcousticFlowStepper from './AcousticFlowStepper.jsx';
 import AcousticLoggerPanel from './AcousticLoggerPanel.jsx';
 import AcousticDatasetPanel from './AcousticDatasetPanel.jsx';
 import AcousticConsumersStrip from './AcousticConsumersStrip.jsx';
+import AcousticFirstResultCard from './AcousticFirstResultCard.jsx';
 import AcpCell from '../AcpCell.jsx';
 
 // Zona de Orquestación Científica V2 · freeze APROBADO 2026-10-04 21:51:22 (America/Bogota)
@@ -39,7 +40,7 @@ const OrchestrationZoneV2 = ({ pcmTapRef }) => {
         <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
           Zona de Orquestación Científica V2 · acústica
         </h2>
-        <span className="text-[10px] text-gray-600">Logger en reposo · Dataset PREPARADO_VACIO · 0 muestras</span>
+        <span className="text-[10px] text-gray-600">Logger en reposo · Dataset CAPTADO_INICIAL · 1 muestra (E1)</span>
       </div>
 
       {/* Franja A · siempre visible */}
@@ -54,6 +55,10 @@ const OrchestrationZoneV2 = ({ pcmTapRef }) => {
           <AcousticDatasetPanel />
         </div>
       </div>
+
+      {/* Franja B2 · primer resultado acústico visible (E5, ADITIVO). Preview de S81:
+          clasifica la ÚNICA muestra real del dataset con rules-v0; no promueve S81/S82. */}
+      <AcousticFirstResultCard />
 
       {/* Franja C · consumidores, siempre resumidos */}
       <div className="space-y-1">
