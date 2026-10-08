@@ -1,8 +1,8 @@
 # SIGCTiArural — Tabla Comparativa Benchmark V1 (M1–M5)
 
 **Documento:** TABLA_COMPARATIVA_MODELOS (D)
-**Fecha:** 2026-09-23 · **Rama:** `feature/ubtn-biological-telemetry`
-**Estado honestidad:** M1 = **real (APROBADO, baseline oficial)** · M2–M5 = `diseño/pendiente`
+**Fecha:** 2026-09-23 · **Actualización:** 2026-10-06 (integración evidencia M2 `1665bd1`) · **Rama:** `feature/cmsc-f3c-v1-implementation` (origen: `feature/ubtn-biological-telemetry`)
+**Estado honestidad:** M1 = **real (APROBADO, baseline oficial, congelado)** · M2 = **real (EJECUTADO OFICIALMENTE, challenger validado; decisión final pendiente)** · M3–M5 = `diseño/pendiente`
 **Dataset:** `agriculture_images_tomato-potato-corn` v1 · 22.488 / 16 clases / 3 especies · split 15.741/3.373/3.374 (seed 42)
 **Regla de oro:** el test set se toca **UNA sola vez** al cierre de cada modelo; ningún modelo se evalúa contra test en fases intermedias.
 
@@ -13,12 +13,12 @@
 | ID | Arquitectura | Rol oficial | Params (aprox.) | Coste entreno | Estado | macro-F1 val (real/esperado) | ECE val (real/esperado) |
 |---|---|---|---|---|---|---|---|
 | **M1** | **MobileNetV2** | **control clásico · baseline oficial SIGCTiArural** | **2.24M (medido)** | baja | ✅ **APROBADO — CONGELADO** | **0.9899 (real)** · esperado 0.955–0.970 | **0.0313 (real)** · esperado 0.04–0.08 |
-| M2 | EfficientNet-B0 | baseline_master_candidate | ~4.3M | media | ⏳ pendiente | esperado 0.955–0.970 | esperado 0.04–0.08 |
+| **M2** | **EfficientNet-B0** | baseline_master_candidate (challenger) | **4.028.044 (medido)** | media | ✅ **EJECUTADO OFICIALMENTE — challenger validado · decisión P4 pendiente** | **0.9937 (real)** · gate ≥ 0.955 | **0.0332 (real)** · gate ≤ 0.10 |
 | M3 | MobileNetV3-Large | baseline_edge_candidate | ~4.2M | baja | ⏳ pendiente | esperado 0.955–0.970 | esperado 0.04–0.08 |
 | M4 | ResNet50 | classic_control | ~23.6M | media-alta | ⏳ pendiente | esperado alto | por estimar |
 | M5 | ConvNeXt-Tiny | experimental_ceiling | ~27.9M | alta | ⏳ pendiente | esperado alto | por estimar |
 
-> Params de M2–M5: **estimaciones** (cabeza 16 clases, torchvision); se validan con `measure_params` al ejecutar cada run. Params de M1: **medidos** (celda #5 del notebook, total 2.244.368).
+> Params de M1: **medidos** (2.244.368). Params de M2: **medidos** en smoke test (4.028.044). Params de M3–M5: **estimaciones** (cabeza 16 clases, torchvision), se validan con `measure_params` al ejecutar cada run.
 
 ## 2. Criterios de aceptación (gates, idénticos en los 5)
 
@@ -27,6 +27,8 @@
 | macro-F1 (validation) | ≥ 0.955 | **0.9899 → PASS ✅** |
 | ECE (validation) | ≤ 0.10 | **0.0313 → PASS ✅** |
 | Diagnóstico | no fuga (macro-F1 no ≈ 1.0) · no bug (≥ 0.90) | consistente (0.9899 < 1.0) ✅ |
+
+> **Resultado M2 (corrida oficial 2026-09-27, validation):** macro-F1 **0.9937 → PASS ✅** · ECE **0.0332 → PASS ✅** · diagnóstico consistente (0.9937 < 1.0) ✅ · best epoch 32 · ≈4.66 h (Colab T4) · Balanced Accuracy 0.9943 · Weighted-F1 0.9956.
 
 ## 3. Método de comparación (idéntico en los 5)
 
@@ -47,5 +49,6 @@
 
 - M1 queda **congelado** como referencia: ningún re-entrenamiento, ningún ajuste de hiperparámetros.
 - registro oficial: `baseline_experiment_manifest.agriculture_v2_baseline_v2.yaml` (rol **control**).
-- M2–M5: al aprobarse, se registran con su estado de honestidad y se suman a esta tabla.
+- M2: **ejecutado y validado** (challenger, gates PASS); el promovido/baseline definitivo se decide en **P4 (M1 vs M2)** — hasta entonces M1 sigue siendo baseline oficial. M3–M5: al aprobarse, se registran con su estado de honestidad y se suman a esta tabla.
+- **Test single-use:** aún **no ejecutado** para ningún modelo (`RUN_FINAL_TEST=False`); la decisión P4 se toma con métricas de **validación** hasta que se libere el test.
 - Prohibido comparar arquitecturas fuera de la política idéntica (amenaza de validez interna).

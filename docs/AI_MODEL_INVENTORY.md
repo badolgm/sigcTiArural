@@ -2,6 +2,7 @@
 
 **Misión:** CMSC_AI_ACOUSTIC_V1 · **FASE 3 · Recuperación de modelos**
 **Fecha:** 2026-10-02 · **HEAD verificado:** `83b6089` · **Método:** solo lectura (rutas y tamaños en disco)
+**Actualización:** 2026-10-06 — integración de evidencia M2 en esta rama (`1665bd1` = original `ef892f5`, `a125a66` = `c79aba7`): §2 y §7 corregidos.
 **Propósito:** saber qué IA existe realmente antes de construir el clasificador acústico S81.
 
 > **Veredicto central:** el repositorio tiene gobernanza de ML de nivel industrial y **exactamente un
@@ -68,12 +69,13 @@ Estado real en disco:
 | Notebook | Bytes | Celdas | Con output | Estado |
 |---|---:|---:|---:|---|
 | `notebooks/SIGCTIARURAL_M1_MobileNetV2.ipynb` | 792.372 | 37 | **16** | EXISTE / ejecutado (única evidencia de métricas M1) |
-| `notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb` | 47.522 | 29 | **0** | EXISTE / **sin ejecutar** |
+| `notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb` | 647.230 | 29 | **18** | EXISTE / **ejecutado** — corrida oficial 2026-09-27, challenger validado |
 | `src/ai_models/notebooks/plant_disease_training.ipynb` | **0** | — | — | DISEÑO (vacío) |
 
 - M1 (macro-F1 0.9899 · ECE 0.0313) está respaldado por **outputs del notebook**; el `.pth` nunca se recogió.
-- M2 declara macro-F1 0.9937 · balanced 0.9943 · ECE 0.0332, pero **no contiene ningún output ni artefacto**:
-  las métricas M2 viven **solo en prosa** (`Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md`).
+- M2 (macro-F1 0.9937 · balanced 0.9943 · ECE 0.0332 · best epoch 32 · ≈4.66 h) está respaldado por
+  **18 celdas con outputs** desde la integración del 2026-10-06 (`1665bd1`, original `ef892f5`); los
+  artefactos (`.pth`, `metrics.csv`, PNG) viven en **Google Drive** (`runs/M2_efficientnet_b0/`), no en git.
 - M1 y M2 documentan el **sesgo de laboratorio** (9 coincidencias PlantVillage, 26 `leaf` en M1).
 
 ---
@@ -172,7 +174,7 @@ para S81/S82. → Es la **brecha #1** para la IA acústica (ver riesgos).
 
 ## 7. Documentación IA/ML relevante
 
-- `Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md` — M1 congelado; M2 "ejecutado"; **decisión PENDIENTE** (declara HEAD obsoleto `fa8e6a4`).
+- `Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md` — M1 baseline oficial congelado; M2 **EJECUTADO OFICIALMENTE** (challenger validado, corrida 09-27 con 5 métricas); **decisión final PENDIENTE (P4)**; test single-use aún no ejecutado.
 - `Documentacion/IA/Benchmark_M1/` — informe APA7, MASTERDOC, correcciones M2, evidencia de ejecución, tabla M1–M5.
 - `docs/ai/research_v2/` — programa V2 (18 docs, DISEÑO): `AI_TRAINING_PIPELINE_V2`, `AI_MLOPS_AND_TRAINING_GOVERNANCE_V2`, `AI_DATASET_STRATEGY_V2`, `AI_SCIENTIFIC_CORRECTION_DESIGN`, `AI_PREDICTION_VALIDATION_AUDIT`, `AGRICULTURE_AI_V2_*`, etc.
 - `docs/SIGCTIARURAL_AI_V5_FORENSIC_AUDIT.md` — colapso monoclasse; "SIMULACIÓN" vs "ROBOT DEMO" idénticos; badge "ONLINE" estático.
@@ -184,10 +186,10 @@ para S81/S82. → Es la **brecha #1** para la IA acústica (ver riesgos).
 ## 8. Estado real vs referenciado vs diseño
 
 ### EXISTE (en disco)
-`plant_disease_mbv2.h5` (descalificado) · `model_metadata.json` · notebooks M1 (con outputs) y M2 (sin ejecutar) · 8 scripts de entrenamiento/eval · dataset v1 (~670 MB, fuera de git) · 8 manifiestos · checksums/splits · `fastapi_app.py` + Dockerfile/compose · adaptador + resolver backend · `benchmark/.venv` (torch 2.5.1+cpu).
+`plant_disease_mbv2.h5` (descalificado) · `model_metadata.json` · notebooks M1 (con outputs) y M2 (con outputs — corrida oficial 2026-09-27) · 8 scripts de entrenamiento/eval · dataset v1 (~670 MB, fuera de git) · 8 manifiestos · checksums/splits · `fastapi_app.py` + Dockerfile/compose · adaptador + resolver backend · `benchmark/.venv` (torch 2.5.1+cpu).
 
 ### REFERENCIADO-AUSENTE
-`runs/M1_*/checkpoints/{best,last}.pth`, metrics, config, plots · toda la corrida M2 · `/content/M1_*` (Colab efímero) · `requirements.lock` · `data/datasets/plant_disease` · `artifacts_expected` del manifiesto v2 (benchmark/calibration/error reports, model_cards, confusion_matrices, curves) · exports edge `tflite_float16/int8` · métricas M2 sin artefacto · dataset externo PlantVillage · holdout de campo.
+`runs/M1_*/checkpoints/{best,last}.pth`, metrics, config, plots · artefactos M2 en git (`.pth`/`metrics.csv`/config/PNG: existen solo en Drive `runs/M2_efficientnet_b0/`) · `/content/M1_*` (Colab efímero) · `requirements.lock` · `data/datasets/plant_disease` · `artifacts_expected` del manifiesto v2 (benchmark/calibration/error reports, model_cards, confusion_matrices, curves) · exports edge `tflite_float16/int8` · dataset externo PlantVillage · holdout de campo.
 
 ### DISEÑO
 Dataset V3+ y holdout de campo · modelos M3–M5 · Edge AI (`tflite_api.py`, MQTT, sensor reader = 0 bytes) · `plant_disease_training.ipynb` (0 bytes) · 18 docs research_v2 · ACP multiagente / Knowledge Graph / Evidence Ledger · modelos de series (Prophet/ARIMA/XGBoost/LSTM/GRU/TCN/TFT) · **clasificación acústica (no existe en absoluto)**.

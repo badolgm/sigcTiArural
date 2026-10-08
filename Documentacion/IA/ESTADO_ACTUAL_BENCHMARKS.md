@@ -166,7 +166,7 @@ Evaluar en `TABLA_COMPARATIVA_M1_M5.md`, con Δ con signo **M2 − M1**:
 | `902e55e` | 2026-09-23 | docs(dataset-v2): baseline recuperado 22.488/16/3 |
 | `5a079f4` | 2026-09-22 | docs(dataset-v2): readiness + phase0 |
 
-> No hay pushes a `main` (prohibido por regla suprema). Todo vive en `feature/ubtn-biological-telemetry`.
+> No hay pushes a `main` (prohibido por regla suprema). Origen: `feature/ubtn-biological-telemetry`; la evidencia M2 fue integrada el **2026-10-06** en `feature/cmsc-f3c-v1-implementation` (`1665bd1` = `ef892f5`, `a125a66` = `c79aba7`, contenido idéntico).
 
 ---
 
@@ -181,9 +181,9 @@ Evaluar en `TABLA_COMPARATIVA_M1_M5.md`, con Δ con signo **M2 − M1**:
 5. **Bug `class_weights`/`evaluate`** — detectado en corrida real: el fallback `type("bm", (), {...})()` ligaba métodos e inyectaba `self` → TypeError que impedía arrancar el entrenamiento.
 6. **Fix con SimpleNamespace** — reemplazados ambos wrappers por `SimpleNamespace`; notebook regenerado (`fa8e6a4`).
 7. **Smoke test exitoso** — 19/19 celdas ejecutadas sin excepción en torch CPU con dataset sintético; DataLoaders, criterion, modelo (4.028.044 params · ~384 MMACs), entrenamiento 1 epoch, validation, exportaciones generadas.
-8. **Estado listo para corrida oficial** — notebook commiteado, pusheado y validado; pendiente ejecución Colab T4 con Dataset V2+ real.
+8. **Estado listo para corrida oficial** — notebook commiteado, pusheado y validado; pendiente ejecución Colab T4 con Dataset V2+ real. *(`supersedido por el punto 11`)*
 9. **Intento de corrida Colab T4 (2026-09-24)** — falló con OOM de **RAM CPU** del runtime ("Tu sesión ha fallado porque se ha usado toda la memoria RAM disponible"). No es fallo del modelo: la causa raíz fue acumulación de memoria (DataLoaders con workers+prefetch sobre Drive FUSE y figuras matplotlib sin cerrar).
-10. **RAM fix aplicado (2026-09-24)** — `num_workers=0` + `pin_memory=False` en los 3 DataLoaders y `plt.close(fig)` tras las 6 figuras (celdas 10, 20, 21, 23). Smoke test re-ejecutado 19/19 OK; diff mínimo (11 ins/9 del). **Sin commitear** (por orden).
+10. **RAM fix aplicado (2026-09-24)** — `num_workers=0` + `pin_memory=False` en los 3 DataLoaders y `plt.close(fig)` tras las 6 figuras (celdas 10, 20, 21, 23). Smoke test re-ejecutado 19/19 OK; diff mínimo (11 ins/9 del). *Sin commitear en ese momento (por orden); hoy integrado vía `1665bd1` (2026-10-06).*
 11. **Corrida oficial M2 ejecutada (2026-09-27)** — EfficientNet-B0 entrenado en Colab T4 con Dataset V2+ real: macro-F1 0.9937 · Balanced Accuracy 0.9943 · ECE 0.0332 · Weighted-F1 0.9956 · best epoch 32 · ≈4.66 h. RAM fix validado · benchmark/src fallback validado · smoke test validado · validation gates PASS. **M2 = challenger validado · M1 = baseline oficial · decisión benchmark final PENDIENTE.**
 
 ---
