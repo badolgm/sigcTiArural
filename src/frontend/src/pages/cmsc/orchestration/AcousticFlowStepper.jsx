@@ -7,17 +7,19 @@ import HonestyBadge from '../HonestyBadge.jsx';
 //
 // Los estados son literales y NO editables desde la UI. Fuentes de verdad:
 //   - S30      -> CMSC_ORCHESTRATION_V2_DESIGN.md §14.2 (REAL-LOCAL)
-//   - Dataset  -> metadata/schema.json 1.2.0 -> dataset_state = PREPARADO_VACIO
+//   - Logger   -> Tramo B 2026-10-09: motor ingestWav + bridge 127.0.0.1:8766
+//   - Dataset  -> metadata/schema.json 1.3.0 -> dataset_state = CAPTADO_INICIAL
 //   - S81/S82  -> CMSC_ORCHESTRATION_V2_DESIGN.md §14.2 (DISEÑO)
 //   - KH       -> CMSC_ORCHESTRATION_V2_DESIGN.md §14.2 (sin evidencia acústica promovida)
 // Este componente NO calcula ningún estado: solo presenta el canon congelado.
-// La lectura real del Dataset llega en Fase 3 (roadmap §13), no aquí.
+// La captura masiva sigue dependiendo del PCM continuo de S30 (Tramo C): REAL no
+// significa corpus listo, significa que los datos que existen son reales.
 
 const STEPS = [
-  { id: 'S30', label: 'S30', detail: 'Micrófono local', estado: 'REAL-LOCAL', nota: 'Productor único de la señal acústica' },
-  { id: 'LOGGER', label: 'Logger', detail: 'CMSC_DATA_LOGGER_V1', estado: 'DISENO', nota: 'Captura no habilitada en Fase 1 · integración S30 prevista en Fase 2' },
-  { id: 'DATASET', label: 'Dataset', detail: 'sigct_rural_acoustic/v1', estado: 'DISENO', nota: 'CAPTADO_INICIAL · 1 muestra (E1) · integración en Fase 3' },
-  { id: 'VALIDACION', label: 'Validación', detail: 'G-DS-1..6', estado: 'DISENO', nota: 'G-DS-1 FAIL · G-DS-2..6 PENDING' },
+  { id: 'S30', label: 'S30', detail: 'Micrófono local', estado: 'REAL-LOCAL', nota: 'Productor único de la señal acústica · PCM continuo pendiente (Tramo C)' },
+  { id: 'LOGGER', label: 'Logger', detail: 'CMSC_DATA_LOGGER_V1', estado: 'REAL', nota: 'Motor ingestWav + bridge 127.0.0.1:8766 operativos · suite 84/84 · la captura masiva depende del PCM de S30 (Tramo C)' },
+  { id: 'DATASET', label: 'Dataset', detail: 'sigct_rural_acoustic/v1', estado: 'REAL', nota: 'CAPTADO_INICIAL · 1 muestra real (E1) · conteos en vivo vía GET /stats' },
+  { id: 'VALIDACION', label: 'Validación', detail: 'G-DS-1..6', estado: 'DISENO', nota: 'G-DS-1 FAIL · G-DS-2..6 PENDING · ningún gate cerrado' },
   { id: 'S81', label: 'S81', detail: 'Acoustic Intelligence', estado: 'DISENO', nota: 'Bloqueada: Dataset + modelo + validación' },
   { id: 'S82', label: 'S82', detail: 'Anomaly Detector', estado: 'DISENO', nota: 'Bloqueada: baseline + thresholds + validación' },
   { id: 'KH', label: 'Knowledge Hub', detail: 'Evidencia acústica', estado: 'DISENO', nota: 'Sin evidencia acústica promovida · Ledger en diseño' }

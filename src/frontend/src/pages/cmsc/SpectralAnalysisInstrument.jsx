@@ -62,6 +62,10 @@ const SpectralAnalysisInstrument = ({ pcmTapRef }) => {
   const sgramRef2 = useRef(new Float32Array(SPECTROGRAM_ROWS * SPECTRUM_BUCKETS));
   const lastStatsTick = useRef(0);
   const pcmTapCallbacksRef = useRef(null);
+  const workletNodeRef = useRef(null);
+  const workletReadyRef = useRef(false);
+  const workletPortHandlerRef = useRef(null);
+  const procNodeRef = useRef(null);
 
   const docs = useMemo(() => docsBySignal('S30'), []);
   const signal = useMemo(() => S30 || null, []);
@@ -74,6 +78,21 @@ const SpectralAnalysisInstrument = ({ pcmTapRef }) => {
   const stop = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
+    if (workletNodeRef.current) {
+      try { workletNodeRef.current.port.postMessage({ type: 'stop' }); } catch (_) {}
+      try { workletNodeRef.current.port.close(); } catch (_) {}
+      try { workletNodeRef.current.disconnect(); } catch (_) {}
+      workletNodeRef.current = null;
+    }
+    workletReadyRef.current = false;
+    if (workletPortHandlerRef.current && workletNodeRef.current) {
+      try { workletNodeRef.current.port.removeEventListener('message', workletPortHandlerRef.current); } catch (_) {}
+    }
+    workletPortHandlerRef.current = null;
+    if (procNodeRef.current) {
+      try { procNodeRef.current.disconnect(); } catch (_) {}
+      procNodeRef.current = null;
+    }
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
@@ -116,6 +135,55 @@ const SpectralAnalysisInstrument = ({ pcmTapRef }) => {
       analyser.fftSize = N_FFT;
       analyser.smoothingTimeConstant = 0.55;
       source.connect(analyser);
+      
+      // Tramo C: ruta PCM continua Float32 hacia tap. Se mantiene Analyser intacto.
+      const pcmReady = { value: false };
+      try {
+        if (audioCtx.audioWorklet && audioCtx.audioWorklet.addModule) {
+          try {
+            await audioCtx.audioWorklet.addModule('/worklets/pcm-capture-processor.js');
+            const wNode = new AudioWorkletNode(audioCtx, 'pcm-capture-processor');
+            const handler = (ev) => {
+              const cb = pcmTapCallbacksRef.current;
+              if (!cb) return;
+              const d = ev.data;
+              if (!d) return;
+              try {
+                if (d instanceof Float32Array) cb(new Float32Array(d), audioCtx.sampleRate);
+                else cb(new Float32Array(d), audioCtx.sampleRate);
+              } catch (_) {}
+            };
+            wNode.port.onmessage = handler;
+            source.connect(wNode);
+            workletNodeRef.current = wNode;
+            workletPortHandlerRef.current = handler;
+            workletReadyRef.current = true;
+            pcmReady.value = true;
+          } catch (e) {
+            console.warn('[S30] AudioWorklet no disponible/falló, usando ScriptProcessor:', e);
+          }
+        }
+      } catch (e) {
+        console.warn('[S30] AudioWorklet no disponible:', e);
+      }
+      if (!pcmReady.value) {
+        try {
+          const proc = audioCtx.createScriptProcessor(4096, 1, 1);
+          proc.onaudioprocess = (ev) => {
+            const cb = pcmTapCallbacksRef.current;
+            if (!cb) return;
+            const input = ev.inputBuffer.getChannelData(0);
+            if (!input) return;
+            cb(new Float32Array(input), audioCtx.sampleRate);
+          };
+          source.connect(proc);
+          proc.connect(audioCtx.createGain());
+          procNodeRef.current = proc;
+          pcmReady.value = true;
+        } catch (e) {
+          console.warn('[S30] ScriptProcessor no disponible:', e);
+        }
+      }
 
       streamRef.current = stream;
       ctxRef.current = audioCtx;
@@ -129,23 +197,22 @@ const SpectralAnalysisInstrument = ({ pcmTapRef }) => {
       const history = sgramRef2.current;
       history.fill(0);
 
-      const loop = () => {
-        const waveCtx = waveRef.current?.getContext('2d');
-        const specCtx = specRef.current?.getContext('2d');
-        const sgramCtx = sgramRef.current?.getContext('2d');
-        analyser.getByteTimeDomainData(timeData);
-        for (let i = 0; i < timeData.length; i++) {
-          floatWindow[i] = (timeData[i] - 128) / 128;
-        }
-        const frame = analyzeFrame(floatWindow, sampleRate);
-        const level = frameLevelDb(floatWindow);
+        const loop = () => {
+          const waveCtx = waveRef.current?.getContext('2d');
+          const specCtx = specRef.current?.getContext('2d');
+          const sgramCtx = sgramRef.current?.getContext('2d');
+          analyser.getByteTimeDomainData(timeData);
+          for (let i = 0; i < timeData.length; i++) {
+            floatWindow[i] = (timeData[i] - 128) / 128;
+          }
+          const frame = analyzeFrame(floatWindow, sampleRate);
+          const level = frameLevelDb(floatWindow);
 
-        if (pcmTapCallbacksRef.current) {
-          const pcmChunk = new Float32Array(floatWindow);
-          try { pcmTapCallbacksRef.current(pcmChunk, sampleRate); } catch (_) {}
-        }
+          // NOTA Tramo C: el PCM continuo para captura ya se emite vía AudioWorklet/ScriptProcessor
+          // cuando existe onPcmChunk. NO duplicamos aquí para evitar solapados no deseados.
+          // El antiguo código emitía floatWindow (ventana FFT) por RAF; ahora se emite bloque continuo.
 
-        if (waveCtx && waveRef.current) {
+          if (waveCtx && waveRef.current) {
           const w = waveRef.current.width;
           const h = waveRef.current.height;
           waveCtx.fillStyle = '#050505';

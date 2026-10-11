@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HonestyBadge from '../HonestyBadge.jsx';
+import { BRIDGE_URL, bridgeHealth, getStats } from './acousticBridge.js';
 
 // Franja B · columna derecha del Visual Freeze (§12.2): Dataset + Validación.
 //
-// Los conteos y estados son LITERALES verificados contra el disco, NO leídos del filesystem:
-// el navegador no puede leer data/datasets/ (fuera de git, .gitignore:68) sin un backend, y
-// Fase 1 no autoriza backend. Toda lectura real llega en Fase 3 (roadmap §13), vía CLI.
+// Tramo B: los conteos YA NO son literales. Se leen del DISCO por el bridge local
+// (GET /stats), que es la única vía desde el navegador. Sin puente, los contadores
+// quedan en '—': nunca se muestra un número que no venga de metadata.csv/raw/features.
 //
-// Fuente de cada valor:
-//   dataset_state = CAPTADO_INICIAL -> metadata/schema.json 1.2.0 (E1: 1 muestra real, 2026-10-06)
-//   1 WAV / 1 fila / 1 vector      -> verificado en disco 2026-10-06
-//   G-DS-1 FAIL (7 mids UNVERIFIED) -> taxonomy_binding_manifest + labels.csv (audi_set_status)
-//   G-DS-2..6 PENDING              -> insuficiencia de muestras; NUNCA PASS por ausencia
+// Fuente de cada valor (los gates siguen siendo hechos verificados, no lecturas):
+//   accepted/rejected/WAV/metadata/features -> bridge GET /stats (tiempo real)
+//   G-DS-1 FAIL (7 mids UNVERIFIED)        -> taxonomy_binding_manifest + labels.csv
+//   G-DS-2..6 PENDING                      -> insuficiencia de muestras; NUNCA PASS por ausencia
 
 // Orden de taxonomía de labels.csv (9 clases). Se listan aunque no tengan muestras:
 // una clase con 0 es información; una clase ausente es ignorancia.
@@ -29,7 +29,7 @@ const CLASES = [
 
 const GATES = [
   { id: 'G-DS-1', nombre: 'Taxonomía y esquema', resultado: 'FAIL', motivo: '7 mids AudioSet sin verificar (UNVERIFIED)' },
-  { id: 'G-DS-2', nombre: '≥150 clips/clase', resultado: 'PENDING', motivo: '1 muestra · el piloto de 100 no cumple el mínimo' },
+  { id: 'G-DS-2', nombre: '≥150 clips/clase', resultado: 'PENDING', motivo: 'Corpus en captura · el piloto de 100 no cumple el mínimo' },
   { id: 'G-DS-3', nombre: 'Split sin fuga + holdout', resultado: 'PENDING', motivo: 'NO_EJECUTADO · leakage sin medir' },
   { id: 'G-DS-4', nombre: 'Gobernanza verificable', resultado: 'PENDING', motivo: 'Faltan artefactos de liberación y checksums reales' },
   { id: 'G-DS-5', nombre: 'Licencias verificadas', resultado: 'PENDING', motivo: 'Sin clips que licenciar' },
@@ -40,9 +40,45 @@ const GATES = [
 // PENDING no es FAIL, y ningún uno se maquilla como PASS.
 const RESULTADO_COLOR = { PASS: '#39FF14', FAIL: '#FF3131', PENDING: '#FFB300' };
 
+const DATASET_STATE = 'CAPTADO_INICIAL';
+
 const AcousticDatasetPanel = () => {
   const [gatesAbiertos, setGatesAbiertos] = useState(false);
   const [clasesAbiertas, setClasesAbiertas] = useState(false);
+  const [bridgeUp, setBridgeUp] = useState(null);
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    const tick = async () => {
+      const up = await bridgeHealth();
+      if (!alive) return;
+      setBridgeUp(up);
+      if (!up) return;
+      try {
+        const s = await getStats();
+        if (alive) setStats(s);
+      } catch {
+        if (alive) setBridgeUp(false);
+      }
+    };
+    tick();
+    const interval = setInterval(tick, 3000);
+    return () => { alive = false; clearInterval(interval); };
+  }, []);
+
+  const live = bridgeUp === true && stats;
+  const num = (v) => (live ? v : '—');
+  const summary = stats?.summary;
+  const byClass = stats?.byClass;
+
+  const metricas = [
+    { k: 'WAV', v: num(stats?.wavs), u: 'clips' },
+    { k: 'metadata.csv', v: num(stats?.totalRows), u: 'filas' },
+    { k: 'features', v: num(stats?.features), u: 'vectores' },
+    { k: 'accepted', v: num(summary?.accepted), u: 'muestras' },
+    { k: 'rejected', v: num(summary?.rejected), u: 'muestras' }
+  ];
 
   return (
     <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-3 flex flex-col gap-2.5">
@@ -51,24 +87,29 @@ const AcousticDatasetPanel = () => {
           <h3 className="text-sm font-bold text-gray-200">Dataset acústico</h3>
           <p className="text-[10px] text-gray-500 font-mono">sigct_rural_acoustic / v1</p>
         </div>
-        <HonestyBadge estado="SIM" showConfidence={false} />
+        <div className="flex flex-col items-end gap-1">
+          {bridgeUp === true && <HonestyBadge estado="REAL" showConfidence={false} />}
+          <span
+            className={`text-[10px] uppercase tracking-widest ${bridgeUp === true ? 'text-cyan-400' : bridgeUp === null ? 'text-gray-600' : 'text-yellow-400'}`}
+            title={`Puente local ${BRIDGE_URL}`}
+          >
+            {bridgeUp === true ? 'PUENTE OK' : bridgeUp === null ? 'CONECTANDO…' : 'SIN_PUENTE'}
+          </span>
+        </div>
       </div>
 
       <div className="rounded-lg border border-gray-800 bg-gray-950/50 px-3 py-2.5">
-        <p className="text-[11px] font-semibold text-gray-300">CAPTADO_INICIAL</p>
+        <p className="text-[11px] font-semibold text-gray-300">{DATASET_STATE}{stats?.schema_version ? ` · schema ${stats.schema_version}` : ''}</p>
         <p className="text-[10px] text-gray-500 leading-snug mt-0.5">
-          Primera muestra real ingestada (E1). El corpus aún no es un activo científico: faltan
-          curado, split y validación.
+          {live
+            ? 'Conteos leídos en vivo desde metadata.csv, raw/ y features/ por el bridge local.'
+            : 'Conteos no disponibles: sin puente local no hay lectura real del dataset.'}
         </p>
       </div>
 
       {/* Conteos con UNIDAD explícita. Nunca porcentajes: no hay denominador que los sostenga. */}
       <dl className="grid grid-cols-3 gap-1.5">
-        {[
-          { k: 'WAV', v: 1, u: 'clips' },
-          { k: 'metadata.csv', v: 1, u: 'filas' },
-          { k: 'features', v: 1, u: 'vectores' }
-        ].map((m) => (
+        {metricas.map((m) => (
           <div key={m.k} className="rounded-md border border-gray-800 bg-gray-900/40 px-2 py-1.5">
             <dt className="text-[9px] uppercase tracking-widest text-gray-500 truncate">{m.k}</dt>
             <dd className="text-sm font-mono font-bold text-gray-300 tabular-nums">
@@ -85,14 +126,18 @@ const AcousticDatasetPanel = () => {
           aria-expanded={clasesAbiertas}
           className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
         >
-          {clasesAbiertas ? '▾' : '▸'} Conteo por clase (9 clases · 1 en silencio)
+          {clasesAbiertas ? '▾' : '▸'} Conteo por clase (9 clases · aceptadas / rechazadas)
         </button>
         {clasesAbiertas && (
-          <div className="mt-1.5 flex items-center gap-1 rounded-lg border border-gray-800 bg-gray-950/40 px-2 py-1.5">
+          <div className="mt-1.5 grid grid-cols-3 gap-1 rounded-lg border border-gray-800 bg-gray-950/40 px-2 py-1.5">
             {CLASES.map((c) => (
-              <span key={c} className="flex items-center gap-1 text-[10px]">
-                <span className="text-gray-400">{c}</span>
-                <span className="font-mono text-gray-600">{c === 'silencio' ? 1 : 0}</span>
+              <span key={c} className="flex items-center justify-between gap-1 text-[10px]">
+                <span className="text-gray-400 truncate">{c}</span>
+                <span className="font-mono text-gray-500 tabular-nums">
+                  <span style={{ color: byClass?.[c]?.accepted ? '#39FF14' : undefined }}>{num(byClass?.[c]?.accepted)}</span>
+                  {' / '}
+                  <span style={{ color: byClass?.[c]?.rejected ? '#FF3131' : undefined }}>{num(byClass?.[c]?.rejected)}</span>
+                </span>
               </span>
             ))}
           </div>

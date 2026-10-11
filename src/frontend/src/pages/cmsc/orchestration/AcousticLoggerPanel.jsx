@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { BRIDGE_URL, bridgeHealth, postIngest, encodeWavPcm16 } from './acousticBridge.js';
 
 // Franja B · columna izquierda del Visual Freeze (§12.2): Logger expandible.
 // Fase 2C: Piloto operacional de 100 muestras + doble revisión + group split.
@@ -57,25 +58,6 @@ const PILOT_CLASSES = [
   { id: 'motor', target: 12 }
 ];
 
-function encodeWavPcm16(samples, sampleRate) {
-  const n = samples.length;
-  const buf = new ArrayBuffer(44 + n * 2);
-  const v = new DataView(buf);
-  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
-  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE');
-  w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
-  v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true);
-  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
-  w(36, 'data'); v.setUint32(40, n * 2, true);
-  let o = 44;
-  for (let i = 0; i < n; i++) {
-    const s = Math.max(-1, Math.min(1, samples[i]));
-    v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true);
-    o += 2;
-  }
-  return buf;
-}
-
 const AcousticLoggerPanel = ({ pcmTapRef }) => {
   const [s30Active, setS30Active] = useState(false);
   const [capturing, setCapturing] = useState(false);
@@ -94,6 +76,8 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
     notes: ''
   });
   const [cliResponse, setCliResponse] = useState(null);
+  const [bridgeUp, setBridgeUp] = useState(null);
+  const [ingesting, setIngesting] = useState(false);
 
   const chunksRef = useRef([]);
   const capturedRef = useRef(0);
@@ -111,6 +95,17 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
     const interval = setInterval(checkActive, 500);
     return () => clearInterval(interval);
   }, [pcmTapRef]);
+
+  useEffect(() => {
+    let alive = true;
+    const tick = async () => {
+      const up = await bridgeHealth();
+      if (alive) setBridgeUp(up);
+    };
+    tick();
+    const interval = setInterval(tick, 3000);
+    return () => { alive = false; clearInterval(interval); };
+  }, []);
 
   const missingFields = useCallback(() => {
     return ['session_id', 'place_id', 'operator_id', 'device_id'].filter(
@@ -195,12 +190,11 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
 
   const handleSavePacket = useCallback(() => {
     if (queue.length === 0) return;
-    const last = queue[queue.length - 1];
     const dir = `cmsc_capture_${new Date().toISOString().replace(/[:.]/g, '-')}`;
     const manifest = {
       schema: 'cmsc.acoustic.batch.v1',
       dataset: dir,
-      clips: [last.packet]
+      clips: queue.map((q) => q.packet)
     };
     const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
     const manifestUrl = URL.createObjectURL(manifestBlob);
@@ -210,15 +204,44 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
     a.click();
     URL.revokeObjectURL(manifestUrl);
 
-    const wavBuf = encodeWavPcm16(last.samples, last.packet.capture_source_rate);
-    const wavBlob = new Blob([wavBuf], { type: 'audio/wav' });
-    const wavUrl = URL.createObjectURL(wavBlob);
-    const link = document.createElement('a');
-    link.href = wavUrl;
-    link.download = `${last.packet.class_id}_${last.packet.session_id}_${String(last.packet.take_index).padStart(2, '0')}.wav`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(wavUrl), 4000);
+    queue.forEach((q) => {
+      const wavBuf = encodeWavPcm16(q.samples, q.packet.capture_source_rate);
+      const wavBlob = new Blob([wavBuf], { type: 'audio/wav' });
+      const wavUrl = URL.createObjectURL(wavBlob);
+      const link = document.createElement('a');
+      link.href = wavUrl;
+      link.download = `${q.packet.class_id}_${q.packet.session_id}_${String(q.packet.take_index).padStart(2, '0')}.wav`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(wavUrl), 4000);
+    });
   }, [queue]);
+
+  // Tramo B: ingesta real vía bridge local. El bridge ejecuta el MISMO motor que el CLI
+  // (ingestWav) y devuelve su veredicto. La UI NUNCA inventa accepted/rejected.
+  const handleIngest = useCallback(async () => {
+    if (ingesting || queue.length === 0) return;
+    setIngesting(true);
+    setCliResponse(null);
+    const batch = [];
+    for (let i = 0; i < queue.length; i++) {
+      const item = queue[i];
+      if (item.ingestState !== INGEST_STATES.PENDING) continue;
+      const wavBytes = encodeWavPcm16(item.samples, item.packet.capture_source_rate);
+      const res = await postIngest(wavBytes, item.packet);
+      batch.push(res);
+      setQueue((q) =>
+        q.map((it, idx) => {
+          if (idx !== i) return it;
+          const state = res.ok && res.verdict
+            ? INGEST_STATES[String(res.verdict).toUpperCase()] || INGEST_STATES.PENDING
+            : INGEST_STATES.PENDING;
+          return { ...it, ingestState: state, serverResponse: res };
+        })
+      );
+    }
+    setCliResponse(batch[batch.length - 1] || { ok: false, error: 'sin tomas pendientes' });
+    setIngesting(false);
+  }, [queue, ingesting]);
 
   const handleFieldChange = (key, value) => {
     setFormData((f) => ({ ...f, [key]: value }));
@@ -235,9 +258,17 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
             {s30Active ? 'S30 activo · PCM TAP disponible' : 'S30 no activo · PCM TAP no disponible'}
           </p>
         </div>
-        <span className={`text-[10px] uppercase tracking-widest shrink-0 ${s30Active ? 'text-green-400' : 'text-gray-500'}`}>
-          {s30Active ? 'S30 OK' : 'S30_NOT_ACTIVE'}
-        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span className={`text-[10px] uppercase tracking-widest shrink-0 ${s30Active ? 'text-green-400' : 'text-gray-500'}`}>
+            {s30Active ? 'S30 OK' : 'S30_NOT_ACTIVE'}
+          </span>
+          <span
+            className={`text-[10px] uppercase tracking-widest shrink-0 ${bridgeUp ? 'text-cyan-400' : bridgeUp === null ? 'text-gray-600' : 'text-yellow-400'}`}
+            title={bridgeUp ? `Puente local ${BRIDGE_URL}` : `Puente ${BRIDGE_URL} sin respuesta`}
+          >
+            {bridgeUp ? 'PUENTE OK' : bridgeUp === null ? 'CONECTANDO…' : 'SIN_PUENTE'}
+          </span>
+        </div>
       </div>
 
       {!s30Active && (
@@ -363,13 +394,23 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
               </div>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={handleSavePacket}
-            className="mt-2 text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
-          >
-            Guardar WAV + JSON
-          </button>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleIngest}
+              disabled={!bridgeUp || ingesting || queue.length === 0}
+              className="px-2.5 py-1 rounded-md border text-[10px] font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed border-cyan-800 bg-cyan-950/30 text-cyan-300 hover:text-cyan-100 hover:border-cyan-600"
+            >
+              {ingesting ? 'Ingiriendo…' : 'Ingresar al dataset'}
+            </button>
+            <button
+              type="button"
+              onClick={handleSavePacket}
+              className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              Descargar paquete (WAV + JSON)
+            </button>
+          </div>
         </div>
       )}
 
@@ -400,12 +441,25 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
         </div>
       )}
 
-      {cliResponse && (
+      {cliResponse && cliResponse.ok === false && (
+        <div className="rounded-lg border border-red-900/60 bg-red-950/20 px-2.5 py-2">
+          <p className="text-[10px] uppercase tracking-widest text-red-400 mb-1">Error al ingresar</p>
+          <p className="text-[10px] text-red-300 font-mono">
+            {cliResponse.error}
+            {cliResponse.reason ? ` · ${cliResponse.reason}` : ''}
+          </p>
+        </div>
+      )}
+
+      {cliResponse && cliResponse.ok && (
         <div className="rounded-lg border border-gray-800 bg-gray-950/40 px-2.5 py-2">
           <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1">
-            Respuesta del CLI
+            Respuesta del bridge (CLI ingest)
           </p>
           <div className="space-y-1">
+            {cliResponse.dryRun && (
+              <div className="text-[9px] text-yellow-400 font-mono">DRY RUN · no se escribió nada</div>
+            )}
             <div className="flex items-center justify-between text-[10px]">
               <span className="text-gray-400">Estado</span>
               <span
@@ -421,6 +475,10 @@ const AcousticLoggerPanel = ({ pcmTapRef }) => {
                 <span className="font-mono text-gray-300">{cliResponse.sample_id}</span>
               </div>
             )}
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-gray-400">features</span>
+              <span className="font-mono text-gray-300">{cliResponse.features44} dims</span>
+            </div>
             {cliResponse.failed && cliResponse.failed.length > 0 && (
               <div className="mt-1 space-y-0.5">
                 {cliResponse.failed.map((f, i) => (

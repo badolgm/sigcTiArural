@@ -40,7 +40,7 @@ const OrchestrationZoneV2 = ({ pcmTapRef }) => {
         <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
           Zona de Orquestación Científica V2 · acústica
         </h2>
-        <span className="text-[10px] text-gray-600">Logger en reposo · Dataset CAPTADO_INICIAL · 1 muestra (E1)</span>
+        <span className="text-[10px] text-gray-600">Logger en reposo · Dataset CAPTADO_INICIAL · conteos en vivo vía puente local</span>
       </div>
 
       {/* Franja A · siempre visible */}
