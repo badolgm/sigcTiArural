@@ -1,0 +1,2848 @@
+{
+  "version": "F00-v1.0",
+  "total": 404,
+  "by_category": {
+    "Governance": 7,
+    "Knowledge": 238,
+    "Operations": 34,
+    "Benchmark": 15,
+    "Architecture": 52,
+    "Dataset": 58
+  },
+  "by_ext": {
+    ".md": 364,
+    ".yaml": 24,
+    ".json": 15,
+    ".yml": 1
+  },
+  "items": [
+    {
+      "path": "AGENTS.md",
+      "size_bytes": 69935,
+      "ext": ".md",
+      "category": "Governance",
+      "indexable": true
+    },
+    {
+      "path": "AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md",
+      "size_bytes": 17389,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "AI_SERVICE_FORENSIC_AUDIT.md",
+      "size_bytes": 13400,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "AI_SERVICE_RECOVERY_PLAN.md",
+      "size_bytes": 11594,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/ACTA_APROBACION_F3A.md",
+      "size_bytes": 2760,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/ACTA_APROBACION_F3B.md",
+      "size_bytes": 3093,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/BENCHMARK_GATE_DECISION_TEMPLATE.md",
+      "size_bytes": 2799,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_AI_ACOUSTIC_RULES_V0_DESIGN.md",
+      "size_bytes": 16211,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_CANONICAL_STATES_APPENDIX_V1.md",
+      "size_bytes": 4720,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_CANONICAL_STATE_v1.md",
+      "size_bytes": 25102,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_DASHBOARD_IMPLEMENTATION_STRATEGY_v1.md",
+      "size_bytes": 35479,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_DOCUMENTATION_RELEASE_NOTE_v1.md",
+      "size_bytes": 9361,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md",
+      "size_bytes": 23029,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_F3A_INTERCONNECTION_BLUEPRINT_v1.md",
+      "size_bytes": 26777,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_F3B_SIGNAL_PRODUCERS_ECOSYSTEM_v1.md",
+      "size_bytes": 34202,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_F3C_DASHBOARD_CONSTRUCTION_STRATEGY_v1.md",
+      "size_bytes": 28992,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_F3C_V1_IMPLEMENTATION_BLUEPRINT.md",
+      "size_bytes": 30226,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_F3D_SIGNAL_NAVIGATION_STRATEGY_v1.md",
+      "size_bytes": 22684,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_F3E_KNOWLEDGE_INTEGRATION_STRATEGY_v1.md",
+      "size_bytes": 20891,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_F4_ACP_ARCHITECTURE_v1.md",
+      "size_bytes": 21361,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md",
+      "size_bytes": 22159,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md",
+      "size_bytes": 2775,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_LABS_RESTRUCTURING_PLAN_v1.md",
+      "size_bytes": 17701,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_MASTERPLAN_v1.md",
+      "size_bytes": 19319,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md",
+      "size_bytes": 41138,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_SESSION_CLOSEOUT_2026_10_02.md",
+      "size_bytes": 16171,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_SIGNAL_MAP_v1.md",
+      "size_bytes": 24054,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/CMSC_UI_ARCHITECTURE_v1.md",
+      "size_bytes": 24970,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/FRONTEND_EXECUTION_STRATEGY.md",
+      "size_bytes": 12638,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/MMC_WORKBENCH_V1.md",
+      "size_bytes": 48646,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/SIGCTIARURAL_CANONICAL_PHILOSOPHY_EVOLUTION_v1.md",
+      "size_bytes": 27394,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/SIGCTIARURAL_ECOSYSTEM_FORENSIC_AUDIT_v1.md",
+      "size_bytes": 31037,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/Arquitectura/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md",
+      "size_bytes": 3591,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/IA/AUDITORIA_BENCHMARK_SRC_FALLBACK.md",
+      "size_bytes": 9887,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/IA/Benchmark_M1_MobileNetV2/CORRECCIONES_PARA_M2.md",
+      "size_bytes": 3905,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/IA/Benchmark_M1_MobileNetV2/EVIDENCIA_EJECUCION_M1.md",
+      "size_bytes": 3618,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/IA/Benchmark_M1_MobileNetV2/INFORME_TECNICO_CIENTIFICO_M1_APA7.md",
+      "size_bytes": 8607,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/IA/Benchmark_M1_MobileNetV2/MASTERDOC_EXPERIMENTO_M1.md",
+      "size_bytes": 4911,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/IA/Benchmark_M1_MobileNetV2/README.md",
+      "size_bytes": 3121,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/IA/Benchmark_M1_MobileNetV2/TABLA_COMPARATIVA_M1_M5.md",
+      "size_bytes": 4334,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md",
+      "size_bytes": 14588,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "KNOWLEDGE_HUB_ARCHITECTURE.md",
+      "size_bytes": 16169,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 57229,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "SIGCT_RURAL_SYSTEM_BOOT.md",
+      "size_bytes": 43978,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md",
+      "size_bytes": 77607,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/AI_PIPELINE.md",
+      "size_bytes": 2496,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/API_REFERENCE.md",
+      "size_bytes": 3305,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/CONTINUITY_MASTER.md",
+      "size_bytes": 24206,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/CONTINUITY_RUNBOOK.md",
+      "size_bytes": 2502,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/DEPLOYMENT.md",
+      "size_bytes": 2213,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/DEPLOYMENT_AWS.md",
+      "size_bytes": 5409,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/ECOSYSTEM_IDENTITY.md",
+      "size_bytes": 7467,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/EDGE_SETUP.md",
+      "size_bytes": 3401,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/GOVERNANCE_RULES.md",
+      "size_bytes": 3490,
+      "ext": ".md",
+      "category": "Governance",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/HEXAGONAL_REFACTOR_PLAN.md",
+      "size_bytes": 31375,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/INDICE_PROYECTO.md",
+      "size_bytes": 1459,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md",
+      "size_bytes": 18288,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md",
+      "size_bytes": 17819,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/MASTERDOC.md",
+      "size_bytes": 85554,
+      "ext": ".md",
+      "category": "Governance",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/PLAN_MAESTRO.md",
+      "size_bytes": 30381,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/README.md",
+      "size_bytes": 53527,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md",
+      "size_bytes": 4952,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_COMPONENT_MAP.md",
+      "size_bytes": 12300,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md",
+      "size_bytes": 7087,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md",
+      "size_bytes": 16845,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_EVOLUTION_MATRIX.md",
+      "size_bytes": 11021,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md",
+      "size_bytes": 8237,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_IMPLEMENTATION_READINESS.md",
+      "size_bytes": 8524,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md",
+      "size_bytes": 9275,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_NAVIGATION_EVOLUTION.md",
+      "size_bytes": 8648,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_PRESERVATION_AUDIT.md",
+      "size_bytes": 11408,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md",
+      "size_bytes": 12263,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_REFACTORING_AUDIT.md",
+      "size_bytes": 9150,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md",
+      "size_bytes": 6180,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCTIARURAL_VISION_ALIGNMENT.md",
+      "size_bytes": 6835,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/SIGCT_RURAL_SYSTEM_BOOT.md",
+      "size_bytes": 37805,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_ADR_INDEX.md",
+      "size_bytes": 18507,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_AGGREGATE_DESIGN.md",
+      "size_bytes": 8131,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_ARCHITECTURE.md",
+      "size_bytes": 28462,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_AUDIT_REVIEW.md",
+      "size_bytes": 10614,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_BBB_EDGE_GATEWAY.md",
+      "size_bytes": 7199,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_CONTEXT_MAP.md",
+      "size_bytes": 10129,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_DATABASE_EVOLUTION.md",
+      "size_bytes": 6568,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_DATA_CONTRACTS.md",
+      "size_bytes": 8492,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_DOMAIN_MODEL.md",
+      "size_bytes": 16985,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_EDGE_AI_STRATEGY.md",
+      "size_bytes": 9642,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_EVENT_STORMING.md",
+      "size_bytes": 8875,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md",
+      "size_bytes": 5442,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_FRONTEND_UX_STRATEGY.md",
+      "size_bytes": 4520,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_HARDWARE_ROADMAP.md",
+      "size_bytes": 4998,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_INDEX.md",
+      "size_bytes": 14087,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_LAB_INTEGRATION.md",
+      "size_bytes": 8163,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_MQTT_ARCHITECTURE.md",
+      "size_bytes": 7013,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_OPERATIONS_RUNBOOK.md",
+      "size_bytes": 5504,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_RESEARCH_BACKLOG.md",
+      "size_bytes": 7017,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_RESEARCH_GAPS.md",
+      "size_bytes": 5516,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_RISK_ANALYSIS.md",
+      "size_bytes": 14890,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_ROADMAP.md",
+      "size_bytes": 12569,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_SECURITY_MODEL.md",
+      "size_bytes": 5615,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_SENSOR_CATALOG.md",
+      "size_bytes": 10922,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md",
+      "size_bytes": 6988,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "backup_ubtn_docs/UBTN_USE_CASES.md",
+      "size_bytes": 10101,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "benchmark/README.md",
+      "size_bytes": 2846,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "benchmark/config.yaml",
+      "size_bytes": 249,
+      "ext": ".yaml",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/dataset_card.md",
+      "size_bytes": 4156,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/baseline_experiment_manifest.agriculture_v2_baseline_v1.yaml",
+      "size_bytes": 1758,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/baseline_experiment_manifest.agriculture_v2_baseline_v2.yaml",
+      "size_bytes": 2022,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/curation_manifest.agriculture_v2_dataset_v1.yaml",
+      "size_bytes": 2360,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/curation_manifest.agriculture_v2_dataset_v2.yaml",
+      "size_bytes": 2381,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/raw_source_manifest.agriculture_v2_dataset_v1.yaml",
+      "size_bytes": 1459,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/raw_source_manifest.agriculture_v2_dataset_v2.yaml",
+      "size_bytes": 1730,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/split_manifest.agriculture_v2_split_v1.yaml",
+      "size_bytes": 1415,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/manifests/taxonomy_binding_manifest.agriculture_v2_taxonomy_v1.yaml",
+      "size_bytes": 5175,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/split_lists/split_report.json",
+      "size_bytes": 1966,
+      "ext": ".json",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/agriculture_images_tomato-potato-corn/v1/split_lists/split_report.md",
+      "size_bytes": 2255,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/reference/esc50/PILOT_REPORT.md",
+      "size_bytes": 2181,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/reference/esc50/README.md",
+      "size_bytes": 2199,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/reference/esc50/ingest/staging/_draft_archive_2026_10_08/README.md",
+      "size_bytes": 1046,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/reference/esc50/ingest/staging/_draft_archive_2026_10_08/manifest_ref.esc50.yaml",
+      "size_bytes": 125730,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/reference/esc50/ingest/staging/_draft_archive_2026_10_08/source_card.md",
+      "size_bytes": 744,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/reference/esc50/manifest_ref.esc50.yaml",
+      "size_bytes": 179537,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/reference/esc50/source_card.md",
+      "size_bytes": 1116,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/README.md",
+      "size_bytes": 1528,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/dataset_card.md",
+      "size_bytes": 5328,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/features/README.md",
+      "size_bytes": 2106,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/features/acoustic_envelopes_v1.json",
+      "size_bytes": 1824,
+      "ext": ".json",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/holdout/real_world_holdout_v1/README.md",
+      "size_bytes": 1313,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/manifests/baseline_experiment_manifest.acoustic_v1.yaml",
+      "size_bytes": 2237,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/manifests/curation_manifest.acoustic_v1.yaml",
+      "size_bytes": 4022,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/manifests/raw_source_manifest.acoustic_v1.yaml",
+      "size_bytes": 1709,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/manifests/split_manifest.acoustic_v1.yaml",
+      "size_bytes": 2066,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/manifests/taxonomy_binding_manifest.acoustic_v1.yaml",
+      "size_bytes": 3888,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/metadata/README.md",
+      "size_bytes": 3800,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/metadata/schema.json",
+      "size_bytes": 23740,
+      "ext": ".json",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "data/datasets/sigct_rural_acoustic/v1/split_lists/split_report.json",
+      "size_bytes": 900,
+      "ext": ".json",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docker-compose.yml",
+      "size_bytes": 3186,
+      "ext": ".yml",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md",
+      "size_bytes": 77607,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_ARCHITECTURE_V1.md",
+      "size_bytes": 16044,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_CAPTURE_OPERATOR_GUIDE.md",
+      "size_bytes": 9830,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md",
+      "size_bytes": 47503,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_DATASET_REVIEW.md",
+      "size_bytes": 13540,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_DATASET_V1_DESIGN.md",
+      "size_bytes": 19646,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_FEATURE_MAP.md",
+      "size_bytes": 11946,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_H3_DECISION_PACKAGE_FINAL.md",
+      "size_bytes": 12521,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_H3_EXECUTION_READINESS_V1.md",
+      "size_bytes": 9892,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md",
+      "size_bytes": 25311,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_MODEL_BENCHMARK.md",
+      "size_bytes": 11066,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_REFERENCE_DATASET_CATALOG.md",
+      "size_bytes": 9943,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_REFERENCE_INGESTION_PLAN_V1.md",
+      "size_bytes": 17614,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_REFERENCE_LAYER_ARCHITECTURE_V1.md",
+      "size_bytes": 31196,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_ROADMAP_V1.md",
+      "size_bytes": 6353,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_ACOUSTIC_S81_INTEGRATION.md",
+      "size_bytes": 9877,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_MODEL_INVENTORY.md",
+      "size_bytes": 12970,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AI_PIPELINE.md",
+      "size_bytes": 2496,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/API_REFERENCE.md",
+      "size_bytes": 3305,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/AUDIT_TRAMO_BC.md",
+      "size_bytes": 4199,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/CMSC_CONTINUATION_PROMPT.md",
+      "size_bytes": 4737,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/CMSC_DECISION_LOG.md",
+      "size_bytes": 4584,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/CMSC_PROJECT_STATUS_2026_10_05.md",
+      "size_bytes": 4526,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/CONTINUITY_MASTER.md",
+      "size_bytes": 38865,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/CONTINUITY_RUNBOOK.md",
+      "size_bytes": 2502,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/DATASET_C0_EXECUTION_PLAN_v1.md",
+      "size_bytes": 5612,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/DATASET_STATUS_REPORT.md",
+      "size_bytes": 1629,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "size_bytes": 2213,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/DEPLOYMENT_AWS.md",
+      "size_bytes": 5409,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ECOSYSTEM_IDENTITY.md",
+      "size_bytes": 7467,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/EDGE_SETUP.md",
+      "size_bytes": 3401,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/EVIDENCIA_FLUJO_BRIDGE.md",
+      "size_bytes": 4163,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/FIELD_CAPTURE_RUN_001_REPORT.md",
+      "size_bytes": 3706,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/FIELD_DATA_COLLECTION_PROTOCOL.md",
+      "size_bytes": 6608,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/FIELD_PILOT_EXECUTION_PLAN.md",
+      "size_bytes": 7428,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/GOVERNANCE_RULES.md",
+      "size_bytes": 3490,
+      "ext": ".md",
+      "category": "Governance",
+      "indexable": true
+    },
+    {
+      "path": "docs/HEXAGONAL_REFACTOR_PLAN.md",
+      "size_bytes": 31375,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/INDICE_PROYECTO.md",
+      "size_bytes": 1459,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/INFORME_BRIDGE_E2E_UI.md",
+      "size_bytes": 4918,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/INFORME_TRAMO_C_FINAL.md",
+      "size_bytes": 4261,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/INITIAL_CAPTURE_EVIDENCE.md",
+      "size_bytes": 2379,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/INITIAL_METADATA_AUDIT.md",
+      "size_bytes": 1502,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md",
+      "size_bytes": 18288,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md",
+      "size_bytes": 17819,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/MASTERDOC.md",
+      "size_bytes": 112422,
+      "ext": ".md",
+      "category": "Governance",
+      "indexable": true
+    },
+    {
+      "path": "docs/PILOT_ACCEPTANCE_CRITERIA.md",
+      "size_bytes": 2607,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/PILOT_CAPTURE_CHECKLIST.md",
+      "size_bytes": 3543,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/PILOT_REVIEW_CHECKLIST.md",
+      "size_bytes": 2359,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/PLAN_MAESTRO.md",
+      "size_bytes": 33203,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/RECOMMENDATIONS_CONSOLIDATION.md",
+      "size_bytes": 3121,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARUAL_DESIGN_PARITY_AUDIT.md",
+      "size_bytes": 12233,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARUAL_HARDWARE_DETAIL_LAYER.md",
+      "size_bytes": 16631,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARUAL_U2_3_DEVICE_MAP.md",
+      "size_bytes": 17186,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARUAL_U2_ROADMAP_DECISION.md",
+      "size_bytes": 13239,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_AI_ML_STATE_OF_THE_ART.md",
+      "size_bytes": 22937,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_AI_ONBOARDING_GUIDE.md",
+      "size_bytes": 25794,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_AI_RECOVERY_PLAN.md",
+      "size_bytes": 16766,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_AI_V5_FORENSIC_AUDIT.md",
+      "size_bytes": 12874,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_BBB03_DEPLOYMENT_GUIDE.md",
+      "size_bytes": 14943,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_BBB03_EXECUTION_PLAYBOOK.md",
+      "size_bytes": 16643,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_BBB_TELEMETRY_READINESS.md",
+      "size_bytes": 14603,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_BENCHMARK_V1_EXECUTION_PLAYBOOK.md",
+      "size_bytes": 10032,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_BENCHMARK_V1_PLAN.md",
+      "size_bytes": 10131,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_CANONICAL_ENGINEERING_REVIEW.md",
+      "size_bytes": 20391,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_CAPABILITIES_UX_REVIEW.md",
+      "size_bytes": 5827,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_CAPABILITIES_VS_HARDWARE.md",
+      "size_bytes": 4952,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_COMPONENT_MAP.md",
+      "size_bytes": 12300,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md",
+      "size_bytes": 9229,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DASHBOARD_GAP_ANALYSIS.md",
+      "size_bytes": 7048,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DASHBOARD_NAVIGATION_MODEL.md",
+      "size_bytes": 7087,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DASHBOARD_PARITY_REVIEW.md",
+      "size_bytes": 10337,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md",
+      "size_bytes": 16845,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_GOVERNANCE_IMPACT_REVIEW.md",
+      "size_bytes": 9331,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_BASELINE_FREEZE.md",
+      "size_bytes": 10990,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_BUILD_PLAYBOOK.md",
+      "size_bytes": 13722,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_EXECUTION_PLAN.md",
+      "size_bytes": 20660,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_INVENTORY.md",
+      "size_bytes": 22167,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_MASTERPLAN.md",
+      "size_bytes": 21516,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_MATERIALIZATION_PLAN.md",
+      "size_bytes": 21374,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_PLUS_ACQUISITION_AUDIT.md",
+      "size_bytes": 16643,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_PLUS_ACQUISITION_ROADMAP.md",
+      "size_bytes": 11238,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_PLUS_MVP.md",
+      "size_bytes": 20595,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_READINESS_REPORT.md",
+      "size_bytes": 15447,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DATASET_V2_RECOVERY_CONSOLIDATION.md",
+      "size_bytes": 10317,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DEPENDENCY_AUDIT.md",
+      "size_bytes": 5121,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DEPENDENCY_DOWNGRADE_PREP.md",
+      "size_bytes": 5008,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_DEVICE_MAP_LINK_AUDIT.md",
+      "size_bytes": 6581,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_ECOSYSTEM_ALIGNMENT_AUDIT.md",
+      "size_bytes": 9307,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_ECOSYSTEM_CONSOLIDATION_AUDIT_v1.md",
+      "size_bytes": 11807,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_ECOSYSTEM_DATA_GOVERNANCE_ALIGNMENT.md",
+      "size_bytes": 27460,
+      "ext": ".md",
+      "category": "Governance",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_ECOSYSTEM_MATURITY_AUDIT.md",
+      "size_bytes": 8834,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_ESTADO_SESION_2026-09-14.md",
+      "size_bytes": 6627,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_EVOLUTION_MATRIX.md",
+      "size_bytes": 11021,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_F1_COMMIT_PLAN.md",
+      "size_bytes": 5702,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_F1_FIRST_REAL_SENSOR.md",
+      "size_bytes": 19862,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_F1_PRECOMMIT_REVIEW.md",
+      "size_bytes": 10914,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_FRONTEND_ARCHITECTURE_AUDIT.md",
+      "size_bytes": 14971,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_FRONTEND_LOCAL_STRATEGY.md",
+      "size_bytes": 6927,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md",
+      "size_bytes": 9677,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_HARDWARE_CATALOG_IMPLEMENTATION_PLAN.md",
+      "size_bytes": 7450,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_HARDWARE_CATALOG_REVIEW.md",
+      "size_bytes": 7258,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md",
+      "size_bytes": 8237,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_HARDWARE_REGISTRY_ARCHITECTURE.md",
+      "size_bytes": 17336,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_HEALTH_REPORT.md",
+      "size_bytes": 11511,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_IMPLEMENTATION_READINESS.md",
+      "size_bytes": 8524,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md",
+      "size_bytes": 9275,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_LAB_PRESERVATION_STRATEGY.md",
+      "size_bytes": 8536,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_LEARNING_LAYER_ARCHITECTURE.md",
+      "size_bytes": 12137,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_MIGRATION_AUDIT.md",
+      "size_bytes": 8570,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_MULTIDATASET_FEASIBILITY_AUDIT.md",
+      "size_bytes": 16135,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_NAVIGATION_EVOLUTION.md",
+      "size_bytes": 8648,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_PAGE_MAPPING.md",
+      "size_bytes": 6093,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_PHASE0_EXECUTION_CHECKLIST.md",
+      "size_bytes": 15693,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_PHASE0_EXECUTION_GUIDE.md",
+      "size_bytes": 15522,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_PHASE0_READYCHECK.md",
+      "size_bytes": 10345,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_PLANTVILLAGE_RECOVERY_PLAN.md",
+      "size_bytes": 15934,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_PRESERVATION_AUDIT.md",
+      "size_bytes": 11408,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md",
+      "size_bytes": 12263,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_RC1_AUDIT.md",
+      "size_bytes": 9714,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_RC2_CONSOLIDATION.md",
+      "size_bytes": 7057,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_RC2_FREEZE.md",
+      "size_bytes": 9991,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_RC2_READINESS.md",
+      "size_bytes": 7025,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_REFACTORING_AUDIT.md",
+      "size_bytes": 9150,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md",
+      "size_bytes": 6180,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_RESEARCH_EXPERIMENTATION_LAYER.md",
+      "size_bytes": 10906,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_RESEARCH_PRODUCTION_LAYER.md",
+      "size_bytes": 11587,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md",
+      "size_bytes": 7478,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_ROUTE_EVOLUTION.md",
+      "size_bytes": 5925,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_STATE_SYNC_REPORT.md",
+      "size_bytes": 6451,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_STRATEGIC_ACCELERATION.md",
+      "size_bytes": 5420,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_U1_0_BASELINE.md",
+      "size_bytes": 14669,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md",
+      "size_bytes": 15541,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_U1_BOOTSTRAP.md",
+      "size_bytes": 13411,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_U1_GO_NO_GO.md",
+      "size_bytes": 15452,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_U1_REVIEW.md",
+      "size_bytes": 7146,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_U2_1_EXECUTIVE_LAYER.md",
+      "size_bytes": 8175,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_U3_5_UX_REVIEW.md",
+      "size_bytes": 8617,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_U4_2_CONTENT_AUDIT.md",
+      "size_bytes": 5765,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_UX_03_NAVIGATION_AUDIT.md",
+      "size_bytes": 9950,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCTIARURAL_VISION_ALIGNMENT.md",
+      "size_bytes": 6835,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md",
+      "size_bytes": 6333,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_ADR_INDEX.md",
+      "size_bytes": 18507,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_AGGREGATE_DESIGN.md",
+      "size_bytes": 8131,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_ARCHITECTURE.md",
+      "size_bytes": 28462,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_AUDIT_REVIEW.md",
+      "size_bytes": 10614,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_BBB_EDGE_GATEWAY.md",
+      "size_bytes": 7199,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_CONTEXT_MAP.md",
+      "size_bytes": 10129,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_DATABASE_EVOLUTION.md",
+      "size_bytes": 6568,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_DATA_CONTRACTS.md",
+      "size_bytes": 8492,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_DOMAIN_MODEL.md",
+      "size_bytes": 16985,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_EDGE_AI_STRATEGY.md",
+      "size_bytes": 9642,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_EVENT_STORMING.md",
+      "size_bytes": 8875,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md",
+      "size_bytes": 5442,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_FRONTEND_UX_STRATEGY.md",
+      "size_bytes": 4520,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_HARDWARE_ROADMAP.md",
+      "size_bytes": 4998,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_INDEX.md",
+      "size_bytes": 14087,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_LAB_INTEGRATION.md",
+      "size_bytes": 8163,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_MQTT_ARCHITECTURE.md",
+      "size_bytes": 7013,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_OPERATIONS_RUNBOOK.md",
+      "size_bytes": 5504,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_RESEARCH_BACKLOG.md",
+      "size_bytes": 7017,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_RESEARCH_GAPS.md",
+      "size_bytes": 5516,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_RISK_ANALYSIS.md",
+      "size_bytes": 14890,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_ROADMAP.md",
+      "size_bytes": 12569,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_SECURITY_MODEL.md",
+      "size_bytes": 5615,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_SENSOR_CATALOG.md",
+      "size_bytes": 10922,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md",
+      "size_bytes": 6988,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/UBTN_USE_CASES.md",
+      "size_bytes": 10101,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/debug-ai-model-loader.md",
+      "size_bytes": 672,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/manifests/baseline_experiment_manifest.agriculture_v2_baseline_v1.yaml",
+      "size_bytes": 1758,
+      "ext": ".yaml",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/manifests/baseline_experiment_manifest.agriculture_v2_baseline_v2.yaml",
+      "size_bytes": 2022,
+      "ext": ".yaml",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/manifests/curation_manifest.agriculture_v2_dataset_v1.yaml",
+      "size_bytes": 2360,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/manifests/curation_manifest.agriculture_v2_dataset_v2.yaml",
+      "size_bytes": 2381,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/manifests/raw_source_manifest.agriculture_v2_dataset_v1.yaml",
+      "size_bytes": 1459,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/manifests/raw_source_manifest.agriculture_v2_dataset_v2.yaml",
+      "size_bytes": 1730,
+      "ext": ".yaml",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/manifests/split_manifest.agriculture_v2_split_v1.yaml",
+      "size_bytes": 1415,
+      "ext": ".yaml",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/manifests/taxonomy_binding_manifest.agriculture_v2_taxonomy_v1.yaml",
+      "size_bytes": 5175,
+      "ext": ".yaml",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AGRICULTURE_AI_V2_BENCHMARK_READINESS.md",
+      "size_bytes": 4952,
+      "ext": ".md",
+      "category": "Benchmark",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AGRICULTURE_AI_V2_DATASET_INVENTORY.md",
+      "size_bytes": 5284,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AGRICULTURE_AI_V2_DATA_QUALITY_FRAMEWORK.md",
+      "size_bytes": 4154,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AGRICULTURE_AI_V2_EXECUTION_PLAN.md",
+      "size_bytes": 17054,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AGRICULTURE_AI_V2_LABEL_SCHEMA.md",
+      "size_bytes": 4061,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AGRICULTURE_AI_V2_NOTEBOOK_ROADMAP.md",
+      "size_bytes": 5338,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AGRICULTURE_AI_V2_SPLIT_SPECIFICATION.md",
+      "size_bytes": 3370,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AGRICULTURE_AI_V2_TAXONOMY.md",
+      "size_bytes": 3877,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_CONTEXT_V2_ARCHITECTURE.md",
+      "size_bytes": 20474,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_CONTEXT_V2_IMPLEMENTATION_AUDIT.md",
+      "size_bytes": 23289,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_CONTEXT_V2_REMEDIATION_REPORT.md",
+      "size_bytes": 7763,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_DATASET_DISCOVERY_AND_AUDIT.md",
+      "size_bytes": 13683,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_DATASET_STRATEGY_V2.md",
+      "size_bytes": 21064,
+      "ext": ".md",
+      "category": "Dataset",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_MLOPS_AND_TRAINING_GOVERNANCE_V2.md",
+      "size_bytes": 28979,
+      "ext": ".md",
+      "category": "Governance",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_PREDICTION_VALIDATION_AUDIT.md",
+      "size_bytes": 17905,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_SCIENTIFIC_CORRECTION_DESIGN.md",
+      "size_bytes": 13786,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/AI_TRAINING_PIPELINE_V2.md",
+      "size_bytes": 17446,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md",
+      "size_bytes": 23781,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/architect_master/01_REPOSITORY_AUDIT.md",
+      "size_bytes": 13139,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/architect_master/02_SIGCTRURAL_CANONICAL_MODEL.md",
+      "size_bytes": 8384,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/architect_master/03_DOCUMENT_TRUTH_MATRIX.md",
+      "size_bytes": 5663,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/architect_master/04_DIAGRAM_AUDIT.md",
+      "size_bytes": 11151,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/architect_master/05_FINAL_ARCHITECTURE_BASELINE.md",
+      "size_bytes": 7951,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md",
+      "size_bytes": 7582,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/architect_master/07_ARCHITECT_MASTER_SUMMARY.md",
+      "size_bytes": 7780,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/architect_master/08_DEVELOPMENT_ROADMAP_2026_2027.md",
+      "size_bytes": 7340,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/architecture/README.md",
+      "size_bytes": 1817,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/architecture/robotics_contracts.md",
+      "size_bytes": 1692,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/architecture/simulation_stack.md",
+      "size_bytes": 2138,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/database/README.md",
+      "size_bytes": 2064,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/01_FOUNDATION/EIARC_MISSION.md",
+      "size_bytes": 5088,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/01_FOUNDATION/EIARC_SCOPE.md",
+      "size_bytes": 5303,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/01_FOUNDATION/EIARC_VISION.md",
+      "size_bytes": 5288,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/AI_CONTEXT_IMPLEMENTATION_GUIDE.md",
+      "size_bytes": 15818,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/AI_CONTEXT_REFACTOR_PLAN.md",
+      "size_bytes": 14783,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/AI_PR1_CODE_REVIEW.md",
+      "size_bytes": 12249,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/EIARC_AI_SEMANTIC_CONTRACT.md",
+      "size_bytes": 7599,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/EIARC_CANONICAL_DATA_MODEL.md",
+      "size_bytes": 16041,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/EIARC_CANONICAL_PRINCIPLES.md",
+      "size_bytes": 5408,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/EIARC_CONTEXTS.md",
+      "size_bytes": 7531,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/EIARC_IMPLEMENTATION_BLUEPRINT.md",
+      "size_bytes": 20387,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/EIARC_TRANSFORMATION_PLAN.md",
+      "size_bytes": 13423,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/TELEMETRY_CONTEXT_IMPLEMENTATION_GUIDE.md",
+      "size_bytes": 22045,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/TELEMETRY_CONTEXT_REFACTOR_PLAN.md",
+      "size_bytes": 19622,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md",
+      "size_bytes": 11493,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/eiarc/02_ARCHITECTURE/TELEMETRY_PR1_CODE_REVIEW.md",
+      "size_bytes": 5984,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "docs/historical/INFORME_ANALISIS_Y_PLAN_DE_ACCION.md",
+      "size_bytes": 57375,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/historical/README_REALITY_CHECK.md",
+      "size_bytes": 13554,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/historical/TRAE_AI_INTEGRATION_AUDIT.md",
+      "size_bytes": 6728,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/historical/TRAE_INDEPENDENT_REPOSITORY_AUDIT.md",
+      "size_bytes": 22577,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/KB-001-TRAE-INDEPENDENT-REPOSITORY-AUDIT.md",
+      "size_bytes": 4739,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/KB-002-README-REALITY-CHECK.md",
+      "size_bytes": 2959,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/KB-003-AI-INTEGRATION-AUDIT.md",
+      "size_bytes": 2991,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/KB-004-AI-SEMANTIC-CONTRACT-AUDIT.md",
+      "size_bytes": 3634,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/KB-005-EIARC-AI-CANONICAL-MODEL.md",
+      "size_bytes": 4199,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/KB-006-PENDING-CHANGES-AUDIT.md",
+      "size_bytes": 15742,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md",
+      "size_bytes": 1692,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md",
+      "size_bytes": 1874,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md",
+      "size_bytes": 1779,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md",
+      "size_bytes": 17271,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md",
+      "size_bytes": 1986,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md",
+      "size_bytes": 2224,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md",
+      "size_bytes": 2807,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md",
+      "size_bytes": 2128,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/puppeteer-config.json",
+      "size_bytes": 165,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/reports/AI_SERVICE_EXECUTION_READINESS.md",
+      "size_bytes": 11579,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/reports/continuity_status.md",
+      "size_bytes": 326,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/sena_artifacts/API_DELIVERY_PACKAGE.md",
+      "size_bytes": 7722,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/sena_artifacts/DEPLOYMENT_FINAL.md",
+      "size_bytes": 5413,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/sena_artifacts/EVIDENCIAS_ADSO_MASTER.md",
+      "size_bytes": 8450,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/sena_artifacts/PRESENTACION_SUSTENTACION.md",
+      "size_bytes": 9855,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/sena_artifacts/PROYECTO_FORMATIVO_FINAL.md",
+      "size_bytes": 8656,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/sena_artifacts/README_DELIVERABLES_INDEX.md",
+      "size_bytes": 711,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md",
+      "size_bytes": 17005,
+      "ext": ".md",
+      "category": "Operations",
+      "indexable": true
+    },
+    {
+      "path": "docs/session_plans/_archive/SESSION_PLAN_2025-12-08_DJANGO_MINIMO.md",
+      "size_bytes": 1777,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "package-lock.json",
+      "size_bytes": 272448,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "package.json",
+      "size_bytes": 514,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/ai_models/production_models/model_metadata.json",
+      "size_bytes": 65,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/backend/.pytest_cache/README.md",
+      "size_bytes": 302,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/backend/api/logic/README.md",
+      "size_bytes": 1594,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/package-lock.json",
+      "size_bytes": 300101,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/package.json",
+      "size_bytes": 1225,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/public/manifest.json",
+      "size_bytes": 230,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/public/vendor/circuitjs1/NOTICE.md",
+      "size_bytes": 1530,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/public/vendor/circuitjs1/font/config.json",
+      "size_bytes": 15511,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/src/data/ADDING_LABS.md",
+      "size_bytes": 1594,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/src/knowledge-hub/registry/knowledgeRegistry.generated.json",
+      "size_bytes": 27939,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/src/labs/math-resources/README.md",
+      "size_bytes": 494,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/frontend/src/vendor/jsxgraph/NOTICE.md",
+      "size_bytes": 2089,
+      "ext": ".md",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "src/package-lock.json",
+      "size_bytes": 88,
+      "ext": ".json",
+      "category": "Knowledge",
+      "indexable": true
+    },
+    {
+      "path": "tools/cmsc-data-logger/docs/FASE1_AUDIT.md",
+      "size_bytes": 3403,
+      "ext": ".md",
+      "category": "Architecture",
+      "indexable": true
+    },
+    {
+      "path": "tools/cmsc-data-logger/package.json",
+      "size_bytes": 717,
+      "ext": ".json",
+      "category": "Architecture",
+      "indexable": true
+    }
+  ]
+}
