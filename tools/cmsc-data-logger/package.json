@@ -17,6 +17,7 @@
     "status": "node src/cli.js status",
     "checksums": "node src/cli.js checksums",
     "features": "node src/cli.js features",
+    "bridge": "node bridge/server.js",
     "test": "node --test \"test/*.test.mjs\""
   },
   "dependencies": {},
