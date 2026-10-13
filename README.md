@@ -455,9 +455,9 @@ Esta fase es explícitamente posterior al cierre de las Fases 7–8 del refactor
 
 ### 📊 Modelo de Datos Principal
 
-> **Diagrama pendiente de validación contra modelos y migraciones reales.**
+> 📖 **ERD canónico:** [`docs/database/er_schema_v8.mmd`](docs/database/er_schema_v8.mmd) — generado campo por campo contra `src/backend/api/models.py` y `src/backend/api/migrations/`.
 >
-> El diagrama entidad-relación anterior fue retirado porque no coincidía de forma verificable con `src/backend/api/models.py`. No se genera un ERD alternativo hasta validarlo directamente contra los modelos y migraciones activos.
+> El antiguo `er_schema.svg` quedó **obsoleto** (contenía entidades retiradas: USER/PROJECT/TELEMETRY/COURSE) y se conserva por trazabilidad. Índice de diagramas vigentes: [`docs/CANONICAL_DIAGRAM_MANIFEST.md`](docs/CANONICAL_DIAGRAM_MANIFEST.md).
 
 ### 🔑 Características de la Base de Datos
 

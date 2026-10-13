@@ -566,3 +566,16 @@ No avanzar fase si falta su gate. Cada implementación requiere autorización ex
 - Estado: S30 `REAL-LOCAL`; Logger `VALIDADO` en prototipo/pruebas; Dataset `PREPARADO_VACIO`; S81 y S82 `DISEÑO`; Knowledge Hub operativo como Hub documental; Zona V2 congelada.
 - Próximo paso aprobado: misión `CMSC_ORCHESTRATION_V2_PHASE_1_IMPLEMENTATION`, integración visual dentro de la zona existente. Mantener intactos Hero, S30, Workbench, Benchmark, ACP y Knowledge Hub. Esta entrada no ejecuta ni autoriza esa implementación.
 - Referencias prevalentes: `Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md` §§12–14; roadmap técnico §13.
+
+## 12. Ciclo de auditoría arquitectónica — `ARCHITECTURE_EVIDENCE_FREEZE` (corte 2026-10)
+
+> **SOLO AUDITORÍA / CONSOLIDACIÓN DOCUMENTAL.** No hubo cambios de código, migraciones ni commits en la fase de consolidación ejecutada. R1 y R2 (reconciliación de código) NO se ejecutaron.
+
+- **Informes de auditoría (base del ciclo):** `docs/SIGCTIARURAL_ARCHITECTURE_RECONCILIATION_AUDIT.md`, `docs/REAL_ARCHITECTURE_REPORT.md`, `docs/G1_SCHEMA_CONSISTENCY_REPORT.md`, `docs/R1_DEPENDENCY_INVERSION_AUDIT.md`, `docs/SIGCTIARURAL_FRONTEND_OFFICIALIZATION_AUDIT.md`, `docs/ARCHITECTURE_EVIDENCE_FREEZE_REPORT.md`.
+- **Estado real verificado:** coexisten `api/logic/` (legacy V1/V2), `core/`+`infrastructure/` (transición) y `contexts/{telemetry,labs}` + `shared_kernel/event_bus` (DDD real, `wiring.py` cablea Telemetry→Labs por eventos). `interfaces/web/api/**` son carpetas vacías (0 bytes). Sobreviven `contexts/*` + `shared_kernel`; `core/*` se absorbe; `infrastructure/*` sobrevive reubicado; se retiran `api/logic/*` y V1/V2.
+- **Deuda registrada (R1):** `contexts/labs/domain/services/laboratorio_service.py:9` importa `api.logic.ports.ai_service.AIServicePort` — **import muerto** (type-hint nunca usado). Cortar la arista no cambia comportamiento. Contrato a unificar en `shared_kernel/services/`. Test acoplado: `tests/contexts/labs/test_services.py:483`.
+- **Fuente de verdad del esquema (zanja G1):** `src/backend/api/models.py` + `src/backend/api/migrations/` (reflejados en `docs/database/er_schema_v8.mmd`), conforme a `MASTERDOC.md §2.9` y `docs/database/README.md`. `schema_postgresql.sql` = volcado histórico. Contradicción previa en `architect_master/03` **corregida**.
+- **Consolidación documental ejecutada (F1–F6):** F1 marcado de obsoletos (`er_schema.svg`, `class_db_models.svg`, `uml/class_backend.svg`, `ModelEER_Sigct-rural.mwb`, `architect_master/04..06`) · F2 `MASTERDOC §1.1/§1.2` actualizado con `contexts/` + `shared_kernel` · F3 `EIARC_CODE_TO_CONTEXT_MAP.mmd` → v1.1.0 · F4 `architect_master/03` corregido · F5 nuevo **`docs/CANONICAL_DIAGRAM_MANIFEST.md`** · F6 esta entrada.
+- **Siguiente paso (bloqueado / no autorizado):** reconciliación de código R2 (absorber `core`, retirar `api/logic`, reubicar adaptadores) requiere misión explícita. R1 es el corte previo recomendado.
+- **Runtime:** daemon Docker caído en la auditoría → no se validó build ni la BD real; registro de prueba pendiente.
+

@@ -1,14 +1,19 @@
 %% EIARC Code to Context Map
 %% Fecha: 2026-07-12
-%% Versión: v1.0.0
+%% Versión: v1.1.0 (actualizado 2026-10 — F3 ARCHITECTURE_EVIDENCE_FREEZE_REPORT)
 %% Propósito:
 %% Mapear el código actual del repositorio hacia los Contextos EIARC,
 %% mostrando estado relativo, legacy y orden recomendado de migración.
+%% Nota v1.1.0: se añaden los bounded contexts materializados `src/backend/contexts/**`
+%% (telemetry, labs) y el Shared Kernel `src/backend/shared_kernel/**` (event_bus),
+%% ausentes en v1.0.0. No se elimina ninguna arista previa.
 
 flowchart LR
     subgraph CODE["Código actual"]
         BAPI[src/backend/api/**]
         BCORE[src/backend/core/**]
+        BCTX[src/backend/contexts/**<br/>telemetry · labs]
+        BSK[src/backend/shared_kernel/**<br/>event_bus]
         BINFRA[src/backend/infrastructure/**]
         AIM[src/ai_models/**]
         FAPP[src/frontend/src/App.jsx]
@@ -47,6 +52,12 @@ flowchart LR
     FSTORE --> LABS
     BCORE --> LABS
     BAPI --> LABS
+
+    %% Bounded contexts materializados y Shared Kernel (v1.1.0)
+    BCTX --> TELEMETRY
+    BCTX --> LABS
+    BSK --> TELEMETRY
+    BSK --> LABS
 
     DOCS --> KNOWLEDGE
     FPAGES --> KNOWLEDGE
@@ -107,7 +118,7 @@ flowchart LR
     classDef knowledge fill:#bbdefb,color:#0d47a1,stroke:#1976d2,stroke-width:2px;
     classDef legend fill:#0f172a,color:#e5e7eb,stroke:#475569,stroke-width:1px,stroke-dasharray: 5 5;
 
-    class BAPI,BCORE,BINFRA,AIM,FAPP,FPAGES,FLABS,FCOMP,FAUTH,FSTORE,EMB,SCR,DEP,DOCS code;
+    class BAPI,BCORE,BCTX,BSK,BINFRA,AIM,FAPP,FPAGES,FLABS,FCOMP,FAUTH,FSTORE,EMB,SCR,DEP,DOCS code;
     class TELEMETRY,AI,LABS,KNOWLEDGE,IDENTITY,IOT,DEPLOYMENT ctx;
     class T1 aligned;
     class A1,L1,D1 partial;

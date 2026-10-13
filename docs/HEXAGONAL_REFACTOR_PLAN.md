@@ -157,6 +157,8 @@ sigcTiArural/
 
 ### 2.3 Estructura Objetivo Propuesta (Clean + Hexagonal Adaptada a Django)
 
+> **Nota de estado (auditoría arquitectónica 2026-10):** esta estructura es la **dirección objetivo**, no el estado actual. Parte de ella **ya se materializó** (`src/backend/contexts/{telemetry,labs}/` + `src/backend/shared_kernel/event_bus/`, con `wiring.py` cableando Telemetry→Labs por eventos), mientras coexisten `core/`, `infrastructure/` y el legacy `api/logic/`. El AS-IS reconciliado vive en `docs/SIGCTIARURAL_ARCHITECTURE_RECONCILIATION_AUDIT.md` y `docs/REAL_ARCHITECTURE_REPORT.md`; el estado verificado por capa, en `docs/MASTERDOC.md §1`.
+
 Estructura final recomendada (migrar hacia ella incrementalmente):
 
 ```

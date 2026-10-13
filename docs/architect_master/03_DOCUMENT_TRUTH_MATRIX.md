@@ -3,6 +3,8 @@
 Matriz de verdad — fuente oficial por aspecto del sistema.
 Basado exclusivamente en: `01_REPOSITORY_AUDIT.md`, `02_SIGCTRURAL_CANONICAL_MODEL.md`, `README.md`, `docs/MASTERDOC.md`, `docs/PLAN_MAESTRO.md`, `docs/HEXAGONAL_REFACTOR_PLAN.md`.
 
+> **Corrección de fuente de verdad (F4 — ARCHITECTURE_EVIDENCE_FREEZE_REPORT, 2026-10):** este documento es un artefacto histórico previo a la consolidación V8. Su fila **Base de datos** declaraba `schema_postgresql.sql` como fuente de verdad del esquema; eso quedó **corregido** abajo: la fuente de verdad es `src/backend/api/models.py` + `src/backend/api/migrations/` (reflejados en `docs/database/er_schema_v8.mmd`), conforme a `docs/MASTERDOC.md §2.9` y `docs/database/README.md`. `schema_postgresql.sql` es un volcado histórico. El resto del documento se conserva intacto por trazabilidad.
+
 Formato por categoría:
 - Documento principal
 - Documento secundario
@@ -36,10 +38,10 @@ IoT
 - Acción recomendada: Decidir patrón de despliegue Edge (fuera del Compose o integrado); actualizar `README` y `MASTERDOC` para reflejar la decisión y anotar pruebas de integración requeridas.
 
 Base de datos
-- Documento principal: schema_postgresql.sql (esquema) and docs/MASTERDOC.md
-- Documento secundario: docker-compose.yml / README.md
-- Riesgo de inconsistencia: Bajo-Medio — el esquema está en el repo; la orquestación expone Postgres, pero existe un servicio MySQL legado.
-- Acción recomendada: Establecer `schema_postgresql.sql` y `docs/MASTERDOC.md` como fuente de verdad para el modelo de datos; eliminar o documentar MySQL legado en Compose.
+- Documento principal: src/backend/api/models.py + src/backend/api/migrations/ (esquema) and docs/MASTERDOC.md (corregido 2026-10; antes decía `schema_postgresql.sql`)
+- Documento secundario: docs/database/er_schema_v8.mmd / docker-compose.yml / README.md
+- Riesgo de inconsistencia: Bajo-Medio — el esquema se deriva de `models.py` y `migrations/`; la orquestación expone Postgres, pero existe un servicio MySQL legado.
+- Acción recomendada: Establecer `src/backend/api/models.py` + `src/backend/api/migrations/` (reflejados en `docs/database/er_schema_v8.mmd`) y `docs/MASTERDOC.md §2.9` como fuente de verdad para el modelo de datos; tratar `schema_postgresql.sql` como volcado histórico; eliminar o documentar MySQL legado en Compose.
 
 Frontend
 - Documento principal: src/frontend/package.json y README.md (secciones UI)

@@ -1,6 +1,6 @@
 # 06_EVIDENCE_STATUS_MATRIX
 
-> **Nota de obsolescencia (FASE 5C — migración documental V8):** este documento es un artefacto histórico de auditoría previo a la consolidación arquitectónica V8. Las entradas "Diagramas reutilizables" que citan archivos de `docs/diagrams/` pueden apuntar a rutas migradas o retiradas; ver FASE 5 / 5A / 5B. La fuente vigente de diagramas canónicos es `docs/eiarc/03_DIAGRAMS/*_V8.mmd`. Este documento se conserva intacto por trazabilidad histórica.
+> **Nota de obsolescencia (FASE 5C — migración documental V8):** este documento es un artefacto histórico de auditoría previo a la consolidación arquitectónica V8. Las entradas "Diagramas reutilizables" que citan archivos de `docs/diagrams/` pueden apuntar a rutas migradas o retiradas; ver FASE 5 / 5A / 5B. La fuente vigente de diagramas canónicos es `docs/eiarc/03_DIAGRAMS/*_V8.mmd`. Este documento se conserva intacto por trazabilidad histórica. Índice vigente de diagramas: `docs/CANONICAL_DIAGRAM_MANIFEST.md`.
 
 Matriz de estado de evidencias (fuente: `01_REPOSITORY_AUDIT.md`, `02_SIGCTRURAL_CANONICAL_MODEL.md`, `03_DOCUMENT_TRUTH_MATRIX.md`, `04_DIAGRAM_AUDIT.md`, `05_FINAL_ARCHITECTURE_BASELINE.md` y diagramas en `docs/`).
 

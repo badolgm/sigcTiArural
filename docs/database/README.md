@@ -27,5 +27,18 @@ El backend coexiste actualmente en dos capas de persistencia relevantes (ver `do
 
 En ambas capas el dominio no habla directamente con el ORM — la diferencia es que V3 lo logra sin ninguna dependencia de Django en el dominio, mientras V2 es una capa de transición.
 
+## 5. Artefactos obsoletos (F1 — consolidación arquitectónica 2026-10)
+
+Los siguientes artefactos se conservan por trazabilidad histórica (regla: *nada desaparece*), pero **NO deben usarse como referencia**. Están marcados con una nota `OBSOLETO` en su cabecera cuando el formato lo permite, y su estado canónico se registra en `docs/CANONICAL_DIAGRAM_MANIFEST.md`.
+
+| Artefacto | Motivo | Sustituto vigente |
+| :--- | :--- | :--- |
+| `er_schema.svg` | Modela entidades retiradas (USER/PROJECT/TELEMETRY/COURSE) | `er_schema_v8.mmd` |
+| `class_db_models.svg` | Modela User/Project/Telemetry/ImageSample, ajenos al esquema | `er_schema_v8.mmd` |
+| `ModelEER_Sigct-rural.mwb` | MySQL Workbench; el stack migró a PostgreSQL 15 | `er_schema_v8.mmd` |
+| `docs/uml/class_backend.svg` | Modela User/Project/Telemetry/ImageSample/Course (retirados) | `er_schema_v8.mmd` |
+
+> Fuente de verdad del esquema: `er_schema_v8.mmd` derivado de `src/backend/api/models.py` + `src/backend/api/migrations/` (ver `docs/MASTERDOC.md` §2.9). `schema_postgresql.sql` es un volcado histórico, no la fuente de verdad.
+
 ---
 *Bernardo Adolfo Gómez Montoya — 2026*

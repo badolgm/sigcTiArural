@@ -1,5 +1,7 @@
 # 🏗️ Arquitectura del Sistema — SIGC&T Rural
 
+> **Nota de vigencia (auditoría arquitectónica 2026-10):** este documento describe el **hexágono V2** (`Django Views V2`, `LaboratorioService`) como capa presente. El estado real es multi-capa (V1/V2/V3 + `contexts/{telemetry,labs}` + `shared_kernel/event_bus`). Para el estado verificado usar `docs/MASTERDOC.md §1` y el AS-IS de `docs/SIGCTIARURAL_ARCHITECTURE_RECONCILIATION_AUDIT.md`; índice de diagramas en `docs/CANONICAL_DIAGRAM_MANIFEST.md`.
+
 Este documento detalla los niveles de arquitectura del sistema, desde la visión general hasta la implementación de bajo nivel en el backend.
 
 ## 1. Nivel 1: Vista de Contexto (C4 Model)
