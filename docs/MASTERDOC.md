@@ -75,38 +75,45 @@ El proyecto atraviesa una migración activa hacia **Modular Monolith con límite
 | **Legacy (V1)** | `api/views.py`, `api/models.py` | Activa, sin instrumentar | ViewSets acoplados directo al ORM. Endpoints: `/api/telemetry/history/`, `RobotViewSet`, etc. |
 | **V2 (Strangler Fig, mayo 2026)** | `api/logic/{domain,ports,adapters}/` | Activa, **en proceso de deprecación** | Strategy + Factory para los 4 laboratorios. Adaptador `DjangoRepository` instrumentado con decorador `@deprecated_legacy` (`obtener_por_id`, `guardar`, `listar_todos`) desde 2026-07-04 — dispara `DeprecationWarning` en cada invocación, verificado por test. |
 | **V3 (Hexagonal estricta, recuperada 2026-07-03)** | `core/domain/`, `core/ports/`, `infrastructure/`, `interfaces/` | Activa, expuesta en `/api/v3/*` | Dominio sin dependencias de Django. Inyección de dependencias vía `infrastructure/config/dependencies.py`. Endpoints `TelemetryHistoryV3View`, `AICropAdviceV3View`, y desde **F1 (2026-09-21, commit `941a55d`) `TelemetryIngestV3View` (`POST /api/v3/telemetry/readings/`) — primer endpoint de ingesta real de `SensorReading`** con `source_mode:"live"`. Los tres con fallback silencioso a V2 si el import de `core`/`infrastructure` falla (deuda técnica pendiente: el fallback oculta errores reales de configuración, no solo ausencia del módulo). |
-| **Contextos DDD sobre Shared Kernel (auditoría 2026-10)** | `contexts/{telemetry,labs}/`, `shared_kernel/event_bus/` | Parcial, **materializándose** | Bounded Contexts reales en disco sobre un Shared Kernel (`EventBusPort` + `InMemoryEventBus`). `contexts/telemetry` y `contexts/labs` existen; el composition root `src/backend/sigct_backend/wiring.py` cablea `sensor_reading` (Telemetry→Labs) por eventos. Deuda registrada: dependencia invertida `contexts/labs → api.logic` (import muerto, ver `docs/R1_DEPENDENCY_INVERSION_AUDIT.md`). |
+| **Contextos DDD sobre Shared Kernel (auditoría 2026-10)** | `contexts/{telemetry,labs}/`, `shared_kernel/event_bus/` | Parcial, **materializándose** | Bounded Contexts reales en disco (`contexts/telemetry`, `contexts/labs`) sobre un Shared Kernel: **EventBus** (`EventBusPort` + `InMemoryEventBus`) + `LabSignal`. El composition root `src/backend/sigct_backend/wiring.py` cablea `sensor_reading` (Telemetry→Labs) por Pub/Sub — aunque `wire_all()` aún **no se invoca en el arranque de Django**. Mapas: `docs/eiarc/03_DIAGRAMS/SIGCT_RURAL_CONTEXT_MAP_AS_IS.mmd`. Deuda registrada: dependencia invertida `contexts/labs → api.logic` (import muerto, ver `docs/R1_DEPENDENCY_INVERSION_AUDIT.md`). |
 
 `urls.py` expone simultáneamente V1, V2 y V3. No hay fecha de remoción fijada para V1 y V2 — pendiente definir en el plan de migración (ver `HEXAGONAL_REFACTOR_PLAN.md`).
 
-### 📐 Diagrama de Arquitectura (V3 — capa objetivo)
+### 📐 Diagrama de Arquitectura (AS-IS — V1/V2/V3 + Contextos DDD)
+
+> Estado real verificado, no objetivo. `api/views.py` expone las tres capas en paralelo. El núcleo DDD materializado son los **`contexts/{telemetry,labs}`** sobre el **`shared_kernel/event_bus`** (**EventBus** Pub/Sub), cableado por el composition root `sigct_backend/wiring.py`. Mapas completos: `docs/eiarc/03_DIAGRAMS/SIGCT_RURAL_CONTEXT_MAP_AS_IS.mmd`.
 
 ```mermaid
 graph TD
-    subgraph "Capa de Adaptadores (Entrada/Salida)"
-        UI[React Frontend] -->|HTTP/REST| API_V3[Django Views V3]
-        API_V3 --> DB_ADAPTER[DjangoSensorReadingRepository]
-        API_V3 --> AI_ADAPTER[FastAPI_AIAdapter]
+    subgraph "Adaptadores de Entrada"
+        UI[React Frontend] -->|HTTP/REST| VIEWS[Django api/views.py]
     end
 
-    subgraph "Capa de Puertos (core/ports)"
+    subgraph "Legacy (coexisten)"
+        UI -->|"V1: ORM directo"| ORM[(api/models.py)]
+        UI -->|"V2: en deprecación"| LOGIC[api/logic — LaboratorioService]
+    end
+
+    subgraph "V3 (capa de transición — core)"
+        UI -->|HTTP/REST /api/v3/*| API_V3[Django Views V3]
         API_V3 --> PORT_REPO[SensorReadingRepositoryPort]
         API_V3 --> PORT_AI[AIServicePort]
         API_V3 --> PORT_NOTIF[NotificationPort]
-    end
-
-    subgraph "Capa de Dominio (core/domain — sin Django)"
+        API_V3 --> DB_ADAPTER[DjangoSensorReadingRepository]
+        API_V3 --> AI_ADAPTER[FastAPI_AIAdapter]
         PORT_REPO -.-> DOMAIN_LOGIC[LabService]
         DOMAIN_LOGIC --> STRATEGY[Patrón Strategy]
-        STRATEGY --> ROBOTICA[RoboticsStrategy]
-        STRATEGY --> AGRICULTURA[AgricultureStrategy]
-        STRATEGY --> TELECOM[TelecomStrategy]
-        STRATEGY --> ELECTRONICA[ElectronicsStrategy]
     end
 
-    style DOMAIN_LOGIC fill:#f96,stroke:#333,stroke-width:4px
-    style PORT_REPO fill:#bbf,stroke:#333,stroke-width:2px
-    style API_V3 fill:#dfd,stroke:#333,stroke-width:2px
+    subgraph "Contextos DDD + Shared Kernel (núcleo real en materialización)"
+        TEL[contexts/telemetry] -->|"publica sensor_reading (LabSignal)"| BUS[[EventBus - shared_kernel/event_bus]]
+        BUS -->|"notifica"| LAB[contexts/labs - OnSensorReadingHandler]
+        WIRE[sigct_backend/wiring.py - wire_all] -->|"subscribe"| BUS
+    end
+
+    style BUS fill:#ddf,stroke:#009,stroke-width:3px
+    style LAB fill:#dfd,stroke:#090,stroke-width:2px
+    style TEL fill:#dfd,stroke:#090,stroke-width:2px
 ```
 
 ### 📂 Estructura del código (backend)

@@ -19,18 +19,19 @@
 | Histórico | `docs/database/ModelEER_Sigct-rural.mwb` | **OBSOLETO** (MySQL Workbench; el stack migró a PostgreSQL). |
 | Histórico | `schema_postgresql.sql` (raíz) | Volcado histórico (solo `api_sensorreading` + 10 built-ins; `0002` no materializada). NO es fuente de verdad. |
 | Canónico (datos EIARC) | `docs/eiarc/03_DIAGRAMS/EIARC_CANONICAL_DATA_MODEL.mmd` (+ `.md`) | Vigente para el modelo de datos EIARC a nivel de contexto. |
+| Canónico (EIARC) | `docs/eiarc/03_DIAGRAMS/EIARC_CONTEXT_MAP.mmd` | Congelado (vista EIARC de contexto; histórico respecto al AS-IS real). |
 
 ## 2. Context Map (EIARC)
 
 | Rol | Artefacto | Estado |
 | :--- | :--- | :--- |
-| **CANÓNICO (raíz)** | `docs/eiarc/03_DIAGRAMS/SIGCT_RURAL_CONTEXT_MAP_V8.mmd` | Vigente. Convención de 3 niveles (🟢 núcleo / 🔷 soporte / ⚪ periferia). |
+| **CANÓNICO (raíz)** | `docs/eiarc/03_DIAGRAMS/SIGCT_RURAL_CONTEXT_MAP_V8.mmd` | Vigente. Convención de 3 niveles (🟢 núcleo / 🔷 soporte / ⚪ periferia). Modelo TO-BE a nivel EIARC. |
 | Canónico (vista EIARC) | `docs/eiarc/03_DIAGRAMS/EIARC_CONTEXT_MAP.mmd` | Vigente. |
 | Canónico (interacción) | `docs/eiarc/03_DIAGRAMS/EIARC_CONTEXT_INTERACTION.mmd` | Vigente. |
 | Canónico (código→contexto) | `docs/eiarc/03_DIAGRAMS/EIARC_CODE_TO_CONTEXT_MAP.mmd` | Vigente (**v1.1.0**, 2026-10: incluye `contexts/**` y `shared_kernel/**`). |
 | Canónico (dominio) | `docs/eiarc/03_DIAGRAMS/EIARC_DOMAIN_MAP.mmd` | Vigente. |
 | Fuente textual | `docs/eiarc/02_ARCHITECTURE/EIARC_CONTEXTS.md` | Vigente (definición formal de los 7 contextos). |
-| _Faltante_ | Context Map **AS-IS** del hex real (contexts + shared_kernel + core + infrastructure + api/logic) | **No existe** — ver `SIGCTIARURAL_ARCHITECTURE_RECONCILIATION_AUDIT.md`. Propuesta, no creada. |
+| **CANÓNICO (AS-IS real)** | `docs/eiarc/03_DIAGRAMS/SIGCT_RURAL_CONTEXT_MAP_AS_IS.mmd` | **Creado 2026-10** (misión `DOCUMENTATION_FREEZE_EXECUTION`). Grafo real de `src/backend/`: `api/{views,models,logic}` · `core` · `infrastructure` · `contexts/{telemetry,labs}` · `shared_kernel/event_bus` · `sigct_backend/wiring.py`. Declara la deuda R1 y que `wire_all()` no se invoca al arranque. |
 
 ## 3. Arquitectura hexagonal AS-IS
 
@@ -39,7 +40,7 @@
 | **CANÓNICO (texto)** | `docs/MASTERDOC.md §1` (§1.1 tabla de 4 estructuras; §1.2 dirección técnica) | Vigente (actualizado 2026-10). |
 | Canónico (contrato) | `docs/HEXAGONAL_REFACTOR_PLAN.md` + `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` | Vigente (Strangler Fig, `EventBusPort`). |
 | Evidencia AS-IS | `docs/SIGCTIARURAL_ARCHITECTURE_RECONCILIATION_AUDIT.md`, `docs/REAL_ARCHITECTURE_REPORT.md` | Vigente (informes de auditoría). |
-| Histórico | `docs/architecture/README.md` | Describe hex V2; **pendiente actualización a V3/contexts**. |
+| Histórico | `docs/architecture/README.md` | **Actualizado 2026-10** a V3/`contexts` + `shared_kernel/event_bus` (misión `DOCUMENTATION_FREEZE_EXECUTION`). |
 
 ## 3-bis. Arquitectura hexagonal EIARC (vistas por contexto)
 

@@ -24,12 +24,16 @@ export async function fetchBackendHealth(urls = [
 
 export async function fetchClusterNodesReal() {
   const health = await fetchBackendHealth();
-  const online = health.ok ? 'online' : 'offline';
-  const sourceLabel = health.ok ? 'Cloud Backend (OK)' : 'Cloud Backend (Down)';
+  const backendReachable = health.ok;
+  const gatewayStatus = backendReachable ? 'online' : 'offline';
+  const sourceLabel = backendReachable ? 'Gateway / Cloud (alcanzable)' : 'Gateway / Cloud (sin conexión)';
+  // Estado honesto: solo se conoce el alcance del backend (health).
+  // No se fabrican métricas de CPU, temperatura, red, diagnóstico ni humedad
+  // porque no provienen de una fuente real de telemetría del clúster BBB.
   return [
-    { id: 'BBB-01', name: sourceLabel, role: 'Gateway', status: online, data: { cpu: health.ok ? '25%' : '0%', temp: health.ok ? '41°C' : 'N/A', network: health.ok ? 'OK' : 'FAIL' } },
-    { id: 'BBB-02', name: 'IA Edge / TFLite', role: 'Analista', status: health.ok ? 'online' : 'alert', data: { cpu: health.ok ? '62%' : '88%', temp: health.ok ? '65°C' : '68°C', diagnosis: health.ok ? 'Sin alerta' : 'Enfermedad Detectada' } },
-    { id: 'BBB-03', name: 'Adquisición de Datos / IoT', role: 'Sensor', status: 'online', data: { cpu: '12%', temp: '29°C', humidity: '66%' } },
+    { id: 'BBB-01', name: sourceLabel, role: 'Gateway', status: gatewayStatus, data: {} },
+    { id: 'BBB-02', name: 'IA Edge / TFLite', role: 'Analista', status: 'offline', data: {} },
+    { id: 'BBB-03', name: 'Adquisición de Datos / IoT', role: 'Sensor', status: 'offline', data: {} },
   ];
 }
 

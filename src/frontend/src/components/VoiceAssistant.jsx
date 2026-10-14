@@ -1,6 +1,12 @@
 import React, { useState, useRef } from 'react';
+import { resolveEndpoint } from '../config/endpoints.js';
 
-const API_BASE = import.meta.env.VITE_AI_API_BASE || 'http://localhost:8081';
+// S62 /assist: en dev usa el servicio IA local (:8081); en build se normaliza a
+// relativo (P2) para no hornear localhost en el artefacto desplegable.
+const API_BASE = resolveEndpoint(
+  import.meta.env.VITE_AI_API_BASE,
+  import.meta.env.DEV ? 'http://localhost:8081' : ''
+);
 
 const VoiceAssistant = () => {
   const [isListening, setIsListening] = useState(false);

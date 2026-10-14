@@ -1,0 +1,70 @@
+%% SIGCT-Rural — Context Map AS-IS (hexagonal real)
+%% Estado: vigente a 2026-10 (auditoría ARCHITECTURE_EVIDENCE_FREEZE / reconciliación 2026-10)
+%% Fuente: derivado ESTÁTICO del árbol src/backend/ (grafo de imports) + sigct_backend/wiring.py
+%% NO es el objetivo (TO-BE). NO usa EIARC. Es el estado REAL verificado en código.
+%% Regla: NADA DESAPARECE — este mapa declara lo que existe, no lo que debería existir.
+%% Nodos: contexts/{telemetry,labs} · shared_kernel/event_bus · core / infrastructure / api/logic / api
+%% ---------------------------------------------------------------
+flowchart TD
+
+    subgraph ENTRADA["Entrada HTTP (Django)"]
+        URLS["api/urls.py\n(V1 + V2 + V3 en paralelo)"]
+        VIEWS["api/views.py\n(Views V1 / V2 / V3)"]
+        URLS --> VIEWS
+    end
+
+    subgraph V1["Legacy V1"]
+        ORMV1["ORM directo\n(api/models)"]
+    end
+
+    subgraph V2["Legacy V2 (api/logic) - en deprecacion"]
+        LOGICDOM["api/logic/domain\n(services, strategies, factories)"]
+        LOGICPORTS["api/logic/ports\n(ai_service, notifications)"]
+        LOGICADAPT["api/logic/adapters"]
+        LOGICDOM --> LOGICPORTS
+    end
+
+    subgraph V3["V3 (core + infrastructure) - capa de transicion"]
+        CORE["core/\n(domain, ports)"]
+        INFRA["infrastructure/\n(adapters: AI, notif, ORM)"]
+        INFRA --> CORE
+    end
+
+    subgraph DDD["Contextos DDD (destino) + Shared Kernel"]
+        TEL["contexts/telemetry\n(domain, application, ports, infrastructure)"]
+        LAB["contexts/labs\n(domain, application, ports, infrastructure)"]
+        SK["shared_kernel/event_bus\n(EventBusPort, InMemoryEventBus, LabSignal)"]
+        TEL -->|"publica sensor_reading (LabSignal)"| SK
+        LAB -->|"se suscribe a sensor_reading"| SK
+    end
+
+    subgraph COMP["Composition Root"]
+        WIRE["sigct_backend/wiring.py\nwire_all(bus)"]
+        WIRE -->|"subscribe(sensor_reading) -> OnSensorReadingHandler"| LAB
+        WIRE -->|"usa EventBusPort"| SK
+    end
+
+    MODELS["api/models.py\n(persistencia compartida: SensorReading, Robot*)"]
+
+    VIEWS -->|"V1: ORM directo"| ORMV1
+    VIEWS -->|"V2: llama servicios"| LOGICDOM
+    VIEWS -->|"V3: core LabService"| CORE
+    VIEWS -->|"V3: adapters/deps"| INFRA
+    VIEWS -->|"V3: telemetria real"| TEL
+
+    LOGICADAPT -->|"usa"| MODELS
+    INFRA -->|"usa"| MODELS
+    TEL -->|"persistencia Django"| MODELS
+
+    LAB -. "DEUDA (R1): import muerto\ncontexts/labs -> api.logic (AIServicePort)" .-> LOGICPORTS
+
+    classDef legacy fill:#fdd,stroke:#c00;
+    classDef transit fill:#ffd,stroke:#c90;
+    classDef dest fill:#dfd,stroke:#090;
+    classDef sk fill:#ddf,stroke:#009;
+    class V1,LOGICDOM,LOGICPORTS,LOGICADAPT legacy;
+    class V3,CORE,INFRA transit;
+    class DDD,TEL,LAB dest;
+    class SK sk;
+
+    NOTE["ESTADO HONESTO 2026-10\n- V1/V2/V3 coexisten (urls.py expone las tres)\n- contexts/{telemetry,labs} + shared_kernel REALES en disco\n- wire_all() NO se invoca al arranque (Labs no recibe senales en produccion)\n- api/logic deprecandose; core se absorbe; contexts es el destino\n- Deuda R1: contexts/labs importa api.logic (import muerto)"]

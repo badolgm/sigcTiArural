@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { resolveEndpoint } from '../config/endpoints.js';
 
 const PYODIDE_SRC = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
 const PLOTLY_SRC = 'https://cdn.plot.ly/plotly-2.27.0.min.js';
-const API_BASE = import.meta.env.VITE_AI_API_BASE || 'https://sigct-backend.onrender.com';
+const API_BASE = resolveEndpoint(import.meta.env.VITE_AI_API_BASE, '/api');
 
 const DataScienceLab = () => {
   const [pyodide, setPyodide] = useState(null);

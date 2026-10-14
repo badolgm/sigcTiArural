@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { resolveEndpoint } from '../config/endpoints.js';
 
 const AuthContext = createContext(null);
 
-// URL absoluta, consistente con el resto del frontend (ej. AIPredictiva.jsx /
-// VITE_AI_INFERENCE_URL): el nginx que sirve el build de producción no repite
-// el proxy /api del dev server de Vite, así que una ruta relativa no llega al
-// backend fuera de `vite dev`.
-const API_BASE = import.meta.env.VITE_API_URL?.trim() || '';
+// Base relativa por defecto ('') para hablar con el mismo origen: tanto el proxy
+// /api de Vite (dev) como el `location /api/` de nginx (prod) enrutan al backend.
+// Un VITE_API_URL absoluto a localhost se normaliza a relativo (P2) para no
+// hornear la máquina del desarrollador en el build.
+const API_BASE = resolveEndpoint(import.meta.env.VITE_API_URL, '');
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('authToken'));

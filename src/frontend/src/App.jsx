@@ -96,12 +96,14 @@ const AppContent = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: NEON_COLORS.darkBackground }}>
       
-      {/* --- DEBUG: GLOBAL STATUS --- */}
-      <div className="fixed top-0 left-0 w-full z-50 pointer-events-none p-1 flex justify-center opacity-50">
-        <span className="bg-black/80 text-green-400 text-[10px] px-2 rounded border border-green-900">
-            SYSTEM DEBUG · {location.pathname}
-        </span>
-      </div>
+      {/* --- DEBUG: GLOBAL STATUS (solo dev — P3: retirado del build oficial) --- */}
+      {import.meta.env.DEV && (
+        <div className="fixed top-0 left-0 w-full z-50 pointer-events-none p-1 flex justify-center opacity-50">
+          <span className="bg-black/80 text-green-400 text-[10px] px-2 rounded border border-green-900">
+              SYSTEM DEBUG · {location.pathname}
+          </span>
+        </div>
+      )}
 
       {/* 1. Barra de Navegación (Pasa los nodos para el status del cluster) */}
       <TopNav clusterNodes={nodes} />

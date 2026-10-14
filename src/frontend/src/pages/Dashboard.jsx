@@ -90,7 +90,7 @@ async function fetchTelemetryEnvelope() {
 const futureNodes = [
   {
     id: 'RPI-05', name: 'Raspberry Pi 5 / Edge AI', role: 'SBC', status: 'construction',
-    data: { cpu: '—', temp: '—' }, icon: '🍓', banner: 'Placeholder de integración',
+    data: { cpu: '—', temp: '—' }, icon: '🍓', banner: 'Roadmap · no integrado',
     links: [
       { label: 'Docs Raspberry Pi', href: 'https://www.raspberrypi.com/documentation/' },
       { label: 'Software (Imager)', href: 'https://www.raspberrypi.com/software/' },
@@ -98,7 +98,7 @@ const futureNodes = [
   },
   {
     id: 'FPGA-X', name: 'FPGA Moderna / HDL', role: 'Aceleradora', status: 'construction',
-    data: { cpu: '—', temp: '—' }, icon: '🧩', banner: 'Placeholder de integración',
+    data: { cpu: '—', temp: '—' }, icon: '🧩', banner: 'Roadmap · no integrado',
     links: [
       { label: 'AMD Adaptive SoCs', href: 'https://www.amd.com/en/products/adaptive-socs-and-fpgas' },
       { label: 'Yosys Open Source', href: 'https://yosyshq.net/yosys/' },
@@ -106,7 +106,7 @@ const futureNodes = [
   },
   {
     id: 'ARDUINO-UNO-Q', name: 'Arduino UNO Q', role: 'SBC/MCU', status: 'construction',
-    data: { cpu: '—', temp: '—' }, icon: '⚡', banner: 'Placeholder de integración',
+    data: { cpu: '—', temp: '—' }, icon: '⚡', banner: 'Roadmap · no integrado',
     links: [
       { label: 'Arduino Docs', href: 'https://docs.arduino.cc/' },
       { label: 'Arduino Cloud', href: 'https://cloud.arduino.cc/' },
@@ -114,14 +114,14 @@ const futureNodes = [
   },
   {
     id: 'ALEXA-IOT', name: 'Alexa / Google Assistant', role: 'Voz IoT', status: 'construction',
-    data: { cpu: '—', temp: '—' }, icon: '🎙️', banner: 'Placeholder de integración',
+    data: { cpu: '—', temp: '—' }, icon: '🎙️', banner: 'Roadmap · no integrado',
     links: [
       { label: 'Alexa Developer', href: 'https://developer.amazon.com/en-US/alexa' },
     ],
   },
   {
     id: 'DRONE-NAV', name: 'Drones / Autopilots', role: 'UAV', status: 'construction',
-    data: { cpu: '—', temp: '—' }, icon: '🛸', banner: 'Placeholder de integración',
+    data: { cpu: '—', temp: '—' }, icon: '🛸', banner: 'Roadmap · no integrado',
     links: [
       { label: 'PX4 Docs', href: 'https://docs.px4.io/main/en/' },
       { label: 'ArduPilot', href: 'https://ardupilot.org/' },

@@ -1,48 +1,76 @@
-# 🏗️ Arquitectura del Sistema — SIGC&T Rural
+# Arquitectura — SIGCT-Rural (estado verificado)
 
-> **Nota de vigencia (auditoría arquitectónica 2026-10):** este documento describe el **hexágono V2** (`Django Views V2`, `LaboratorioService`) como capa presente. El estado real es multi-capa (V1/V2/V3 + `contexts/{telemetry,labs}` + `shared_kernel/event_bus`). Para el estado verificado usar `docs/MASTERDOC.md §1` y el AS-IS de `docs/SIGCTIARURAL_ARCHITECTURE_RECONCILIATION_AUDIT.md`; índice de diagramas en `docs/CANONICAL_DIAGRAM_MANIFEST.md`.
+> **Estado:** vigente (actualizado 2026-10, misión `DOCUMENTATION_FREEZE_EXECUTION`).
+> **Fuente de verdad:** `docs/MASTERDOC.md §1` · `docs/REAL_ARCHITECTURE_REPORT.md` · `docs/CANONICAL_DIAGRAM_MANIFEST.md`.
+> **Context Map AS-IS:** `docs/eiarc/03_DIAGRAMS/SIGCT_RURAL_CONTEXT_MAP_AS_IS.mmd`.
 
-Este documento detalla los niveles de arquitectura del sistema, desde la visión general hasta la implementación de bajo nivel en el backend.
+Este documento describe la arquitectura **real** del backend (no el objetivo aspiracional). Conviven **tres capas históricas** + un **núcleo DDD** en materialización.
 
-## 1. Nivel 1: Vista de Contexto (C4 Model)
-Define cómo interactúan los usuarios y los sistemas externos con la plataforma.
-*(Ver diagrama en el README principal)*
+## 1. Nivel 1: Vista de Contexto (C4)
+Usuarios y sistemas externos. *(Diagrama en el README principal.)*
 
 ## 2. Nivel 2: Vista de Contenedores
-Detalla la infraestructura Docker y la comunicación entre servicios (Frontend, Backend, AI Service, DB, Edge).
-*(Ver diagrama en el README principal)*
+Frontend (Vite) · Backend (Django :8010), AI Service (FastAPI), PostgreSQL, Edge. *(Ver README principal.)*
 
-## 3. Nivel 3: Arquitectura Hexagonal (Backend)
-Implementada para desacoplar el **Dominio** (Reglas de Negocio Rural) de la **Infraestructura** (Django, DB, APIs).
+## 3. Backend — estado real verificado (2026-10)
 
-### Diagrama de Puertos y Adaptadores
+**Coexisten** (ver `MASTERDOC §1.1` y `REAL_ARCHITECTURE_REPORT`):
+
+| Capa | Ubicación | Estado | Rol |
+|---|---|---|---|
+| **V1 legacy** | `api/views.py`, `api/models.py` | Activa | ORM directo |
+| **V2 legacy** | `api/logic/{domain,ports,adapters}/` | En deprecación | Strategy+Factory; lo sirven `/api/v2/*` |
+| **V3 (transición)** | `core/` + `infrastructure/` | Activa (`/api/v3/*`) | Hexagonal estricta |
+| **Contextos DDD (destino)** | `contexts/{telemetry,labs}/` + `shared_kernel/event_bus/` | **Parcial (real en disco)** | Bounded Contexts + Shared Kernel; cableado por eventos |
+
+### Diagrama real (AS-IS)
 ```mermaid
-graph TD
-    subgraph "Adaptadores de Entrada (Driven)"
-        UI[Frontend] -->|REST| Views[Django Views V2]
-    end
-
-    subgraph "Hexágono (Dominio Puro)"
-        Views --> Service[LaboratorioService]
-        Service --> Strategy[Strategy Pattern]
-        Strategy --> R[Robotica]
-        Strategy --> A[Agricultura]
-        Strategy --> T[Telecom]
-        Strategy --> E[Electronica]
-    end
-
-    subgraph "Adaptadores de Salida (Driving)"
-        Service --> RepoPort[RepositoryPort]
-        Service --> AIPort[AIServicePort]
-        RepoPort --> DjangoORM[PostgreSQL Adapter]
-        AIPort --> FastAPI[AI Service Adapter]
-    end
+flowchart TD
+    URLS[api/urls.py] --> VIEWS[api/views.py]
+    VIEWS -->|V1| ORM[api/models.py]
+    VIEWS -->|V2| LOGIC[api/logic/*]
+    VIEWS -->|V3| CORE[core/*]
+    VIEWS -->|V3| INFRA[infrastructure/*]
+    VIEWS -->|V3| TEL[contexts/telemetry]
+    LOGIC --> ORM
+    INFRA --> CORE
+    INFRA --> ORM
+    TEL --> ORM
+    TEL -->|publica sensor_reading| SK[shared_kernel/event_bus]
+    LAB[contexts/labs] -->|se suscribe| SK
+    LAB -.->|deuda R1: import muerto| LOGIC
+    WIRE[sigct_backend/wiring.py] --> LAB
 ```
 
-### Ventajas de este Diseño
-- **Testabilidad**: Se puede probar la lógica de agricultura sin levantar Django.
-- **Flexibilidad**: Podemos cambiar PostgreSQL por MongoDB solo creando un nuevo adaptador.
-- **Resiliencia**: Si la IA falla, el adaptador de salida maneja el error y devuelve una sugerencia básica.
+> Mapa completo y comentado: `docs/eiarc/03_DIAGRAMS/SIGCT_RURAL_CONTEXT_MAP_AS_IS.mmd`.
+
+### 3.1 Estado por capa (honesto)
+
+- **`contexts/telemetry` — REAL.** Dominio, aplicación, puertos e infraestructura; publica `sensor_reading` como `LabSignal` por el bus; persistencia vía `api.models`.
+- **`contexts/labs` — REAL (vía bus).** Estrategias por dominio (agricultura, electrónica, robótica, telecom) + `OnSensorReadingHandler`. **`wire_all()` no se invoca al arranque**, por lo que en producción no recibe señales aún.
+- **`shared_kernel/event_bus` — REAL.** `EventBusPort` + `InMemoryEventBus` + `LabSignal`; neutral (no depende de contextos).
+- **`core/` + `infrastructure/` — TRANSICIÓN.** Definición estricta hexagonal que se **absorbe** en `contexts`/`shared_kernel` (R2, no ejecutado).
+- **`api/logic/` — LEGACY en deprecación.** Consumido por V2 y tests.
+- **`interfaces/`** — estructura **vacía** (0 bytes).
+
+### 3.2 Deuda registrada (no resuelta)
+
+- **R1 (dependencia invertida):** `contexts/labs/domain/services/laboratorio_service.py:9` importa `api.logic.ports.ai_service.AIServicePort` — **import muerto** (type-hint nunca usado). Ver `docs/R1_DEPENDENCY_INVERSION_AUDIT.md`.
+- **`wire_all()` sin arranque:** el caso Telemetría→Labs está cableado pero **no activo** en el boot de Django.
+
+### 3.3 Fuente de verdad
+
+- **Esquema:** `src/backend/api/models.py` + `src/backend/api/migrations/` (`MASTERDOC §2.9`; `docs/database/er_schema_v8.mmd`).
+- **Contextos:** `docs/eiarc/02_ARCHITECTURE/EIARC_CONTEXTS.md` (7 contextos oficiales) + `docs/eiarc/03_DIAGRAMS/*_V8.mmd`.
+- **Diagramas:** `docs/CANONICAL_DIAGRAM_MANIFEST.md`.
+
+### Ventajas del diseño hexagonal (vigente)
+
+- **Testabilidad:** se prueba la lógica sin levantar Django.
+- **Flexibilidad:** cambiar el adaptador de persistencia sin tocar el dominio.
+- **Aislamiento:** el servicio de IA es un runtime independiente (FastAPI), accedido por puerto.
 
 ---
+
+*Actualizado 2026-10 (misión `DOCUMENTATION_FREEZE_EXECUTION`). Histórico: la versión previa describía solo el hexágono V2.*
 *Bernardo Adolfo Gómez Montoya — 2026*
