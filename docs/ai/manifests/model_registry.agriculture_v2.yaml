@@ -1,0 +1,144 @@
+schema_version: "1.0"
+manifest_type: "model_registry"
+manifest_generation: "v1"
+context: "agriculture"
+modality: "computer_vision"
+created: "2026-10-14"
+mission: "AI_R1_EXECUTION"
+notes: >
+  Índice de artefactos de modelo. Registra la HUELLA y la DIRECCIÓN del artefacto,
+  nunca sus binarios. Complementa a baseline_experiment_manifest.yaml (que describe
+  el experimento), no lo sustituye.
+
+dataset_inputs:
+  dataset_id: "agriculture_images_tomato-potato-corn"
+  dataset_version: "v1"
+  taxonomy_version: "agriculture_v2_taxonomy_v1"
+  split_version: "agriculture_v2_split_v1"
+
+governance:
+  gate: "M1_BASELINE_M2_CHALLENGER"
+  serving_strategy: "AI_SERVING_ONNX"
+  serving_note: "servir != promover; ningun artefacto esta servido"
+  artifact_home: "benchmark/runs/  (ruta ignorada por git)"
+  weight_policy: "binarios fuera de git; docs versionan ruta + sha256"
+
+class_index_map:
+  order_source: "torchvision.ImageFolder (sorted)"
+  taxonomy_version: "agriculture_v2_taxonomy_v1"
+  classes:
+    - "corn__cercospora_gray_leaf_spot"
+    - "corn__common_rust"
+    - "corn__healthy"
+    - "corn__northern_leaf_blight"
+    - "potato__early_blight"
+    - "potato__healthy"
+    - "potato__late_blight"
+    - "tomato__bacterial_spot"
+    - "tomato__early_blight"
+    - "tomato__healthy"
+    - "tomato__late_blight"
+    - "tomato__leaf_mold"
+    - "tomato__mosaic_virus"
+    - "tomato__septoria_leaf_spot"
+    - "tomato__target_spot"
+    - "tomato__yellow_leaf_curl_virus"
+
+models:
+  - id: "M1_mobilenetv2_001"
+    name: "MobileNetV2"
+    role: "baseline_official"
+    status: "EVIDENCE_ONLY"
+    artifact_present: false
+    artifact_path: null
+    artifact_sha256: null
+    checkpoint: null
+    params: 2244368
+    metrics:
+      macro_f1: 0.9899
+      ece: 0.0313
+      balanced_accuracy: 0.9898
+      weighted_f1: 0.9902
+      best_epoch: 38
+      split: "validation"
+    metrics_ref: "docs/M1_RECOVERY_AUDIT_REPORT.md"
+    model_card: null
+    provenance: "notebooks/SIGCTIARURAL_M1_MobileNetV2.ipynb"
+    notes: "Pesos NO recuperados (M1_PARTIAL). Evidencia embebida en notebook."
+
+  - id: "M2_efficientnet_b0_001"
+    name: "EfficientNet-B0"
+    role: "challenger"
+    status: "ARTIFACT_PRESENT"
+    artifact_present: true
+    artifact_path: "benchmark/runs/M2_efficientnet_b0/"
+    artifact_dir_gitignored: true
+    artifact_bytes: 65665990
+    artifact_files: 13
+    checksums: "benchmark/runs/M2_efficientnet_b0/CHECKSUMS.sha256"
+    checkpoint: "checkpoints/best.pth"
+    checkpoint_sha256: "3FDF86A7AAED770EFB582D2D3F0921D0B688F5E38E04F8125A927E4FBDFFABC3"
+    last_checkpoint: "checkpoints/last.pth"
+    last_checkpoint_sha256: "1996F10558DAAB603C7DFB4BB1B638E9B5D8A1340C100992BC9E0665D9E221F4"
+    onnx:
+      present: true
+      path: "benchmark/runs/M2_efficientnet_b0/exports/model.onnx"
+      sha256: "4BD657B363407D4012F013589A5469DCA57B9C5E347A9EA54E1F6E57A3274EC3"
+      bytes: 16102181
+      opset: 17
+      input: "input: float32 [batch,3,224,224]"
+      output: "logits: float32 [batch,16] (sin softmax)"
+      dynamic_batch: true
+      parity_gate: "G-NEW-A"
+      parity_status: "PASS"
+      parity_max_abs_diff: 1.5736e-04
+      parity_val_macro_f1: 0.9936878552054299
+      export_record: "benchmark/runs/M2_efficientnet_b0/exports/export_record.json"
+      export_doc: "docs/ai/artifacts/M2_ONNX_EXPORT_RECORD.md"
+    params: 4028044
+    input: "224x224x3"
+    metrics:
+      macro_f1: 0.9936878552054299
+      weighted_f1: 0.9955578564108665
+      balanced_accuracy: 0.9943169418974069
+      ece: 0.03321474453997425
+      accuracy: 0.995553
+      best_epoch: 32
+      split: "validation"
+      test: "not_executed"
+    metrics_ref: "benchmark/runs/M2_efficientnet_b0/report/validation_metrics.json"
+    model_card: "docs/ai/artifacts/model_cards/M2_efficientnet_b0.model_card.md"
+    artifact_record: "docs/ai/artifacts/M2_ARTIFACT_RECORD.md"
+    provenance: "notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb"
+    notes: "Challenger validado. Servir != promover. ONNX exportado (AI-R2, G-NEW-A PASS); no servido."
+
+  - id: "plant_disease_mbv2_h5"
+    name: "MobileNetV2 (legacy)"
+    role: "historical"
+    status: "HISTORICAL"
+    artifact_present: true
+    artifact_path: "src/ai_models/production_models/plant_disease_mbv2.h5"
+    artifact_sha256: null
+    scope: "binary_only"
+    serving: "currently_served_by_ai_service"
+    metrics_ref: "docs/AI_MODEL_INVENTORY.md"
+    notes: "Binario degenerado (doble normalizacion). Historico, no canonico."
+
+roadmap:
+  - id: "AI-R1"
+    name: "preparacion de artefacto"
+    status: "DONE"
+  - id: "AI-R2"
+    name: "export ONNX + paridad dorada"
+    status: "DONE"
+    artifact: "benchmark/runs/M2_efficientnet_b0/exports/model.onnx"
+    gate: "G-NEW-A PASS"
+  - id: "AI-R3"
+    name: "ai_service neutral (onnxruntime)"
+    status: "PENDING"
+  - id: "AI-R4"
+    name: "API v2 + frontend"
+    status: "PENDING"
+  - id: "AI-R5"
+    name: "validacion canonica (holdout)"
+    status: "PENDING"

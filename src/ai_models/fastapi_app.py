@@ -185,13 +185,11 @@ def load_latest_model():
 load_latest_model()
 
 def preprocess_image(img_data: bytes, target_size=(224, 224)):
+    # El modelo ya incluye Rescaling(1/127.5, -1): recibe [0,255] y normaliza internamente.
+    # No aplicar segunda normalización aquí (evita el bug de doble normalización).
     image = Image.open(io.BytesIO(img_data)).convert("RGB")
     image = image.resize(target_size)
-    arr = np.array(image)
-    if TF_AVAILABLE:
-        arr = tf.keras.applications.mobilenet_v2.preprocess_input(arr)
-    else:
-        arr = (arr / 127.5) - 1.0
+    arr = np.array(image).astype("float32")
     return np.expand_dims(arr, axis=0)
 
 # =========================
