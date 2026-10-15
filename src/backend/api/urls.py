@@ -9,6 +9,7 @@ from .views import (
     RobotTelemetryViewSet,
     RobotCommandViewSet
 )
+from .health import health
 
 router = DefaultRouter()
 router.register(r'robots', RobotViewSet)
@@ -16,6 +17,7 @@ router.register(r'robot-telemetry', RobotTelemetryViewSet)
 router.register(r'robot-commands', RobotCommandViewSet)
 
 urlpatterns = [
+    path('health/', health, name='health'),
     path('', include(router.urls)),
     path('auth/login/', TokenObtainPairView.as_view(), name='auth-login'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='auth-refresh'),

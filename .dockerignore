@@ -18,6 +18,11 @@
 !docs
 !docs/**
 
+!tools
+!tools/cmsc-data-logger
+!tools/cmsc-data-logger/src
+!tools/cmsc-data-logger/src/**
+
 # Volver a excluir, dentro de lo repermitido, lo que no debe entrar a la imagen
 src/frontend/node_modules
 src/frontend/node_modules/**
