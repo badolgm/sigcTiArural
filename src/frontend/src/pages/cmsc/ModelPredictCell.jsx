@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import HonestyBadge from './HonestyBadge.jsx';
 import { NEON } from './honesty.js';
 import { SIGNAL_CATALOG } from './signalCatalog.js';
-import { AI_INFERENCE_URL, buildInfoFromOfficialResponse, getStatusPresentation } from '../AIPredictiva.jsx';
+import { AI_INFERENCE_URL, buildInfoFromOfficialResponse, getStatusPresentation, getProvenancePresentation, buildNarrationPrefix } from '../AIPredictiva.jsx';
 
 const S61 = SIGNAL_CATALOG.find((s) => s.signal_id === 'S61');
 const S60 = SIGNAL_CATALOG.find((s) => s.signal_id === 'S60');
@@ -50,7 +50,7 @@ const ModelPredictCell = () => {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const message = new SpeechSynthesisUtterance(
-          `Inferencia real finalizada. ${built.disease}. ${built.recommendation}`
+          `${buildNarrationPrefix(built)} ${built.disease}. ${built.recommendation}`
         );
         message.lang = 'es-ES';
         window.speechSynthesis.speak(message);
@@ -63,13 +63,14 @@ const ModelPredictCell = () => {
   };
 
   const presentation = info ? getStatusPresentation(info.status) : null;
+  const provenancePresentation = info ? getProvenancePresentation(info) : null;
 
   return (
     <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-2.5 flex flex-col gap-2 min-h-0 overflow-hidden">
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-bold text-gray-200">Modelos y predicciones</h3>
-          <p className="text-[10px] text-gray-500">operar inferencia real · S61</p>
+          <p className="text-[10px] text-gray-500">inferencia declarada · S61</p>
         </div>
         {S61 && <HonestyBadge estado={S61.estado} confidence={S61.confianza} showConfidence={false} />}
       </div>
@@ -116,6 +117,14 @@ const ModelPredictCell = () => {
             <span className="text-xs font-bold" style={{ color: presentation?.titleClass }}>
               {presentation?.badgeIcon} {presentation?.badgeLabel}
             </span>
+            {provenancePresentation && (
+              <span
+                className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${provenancePresentation.className}`}
+                title={provenancePresentation.title}
+              >
+                {provenancePresentation.label}
+              </span>
+            )}
             <span className="text-[10px] font-mono text-gray-300">
               {(Number(info.confidence || 0) * 100).toFixed(1)}%
             </span>
@@ -132,7 +141,7 @@ const ModelPredictCell = () => {
           <div className="mt-1.5 text-xs font-medium text-gray-200">{info.disease}</div>
           <div className="text-[10px] text-gray-500">{info.recommendation}</div>
           <div className="mt-1.5 text-[10px] font-mono text-gray-600">
-            {info.predictionCode} · class {info.rawClassIndex} · {info.modelVersion} · {info.sourceMode}
+            {info.predictionCode} · class {info.rawClassIndex} · {info.modelVersion} · {info.modelStatus} · {info.scientificScope} · {info.inferenceExecuted ? 'inferencia ejecutada' : 'sin inferencia'} · {info.sourceMode}
           </div>
         </div>
       )}

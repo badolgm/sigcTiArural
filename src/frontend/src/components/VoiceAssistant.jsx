@@ -11,12 +11,16 @@ const API_BASE = resolveEndpoint(
 const VoiceAssistant = () => {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  // L-4 (2026-10-30): el fallo del asistente era solo `console.error`. Un canal que
+  // falla en silencio no es auditable: ahora el error se declara en pantalla.
+  const [error, setError] = useState(null);
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
 
   const startRecording = async () => {
     // 1. Limpieza absoluta antes de empezar
     audioChunks.current = [];
+    setError(null);
     
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -53,7 +57,9 @@ const VoiceAssistant = () => {
       console.log("🎙️ Micrófono activado y escuchando...");
     } catch (err) {
       console.error("❌ Error al abrir micrófono:", err);
-      alert("Revisa que el navegador tenga permiso para usar el micrófono.");
+      setIsListening(false);
+      // L-4: el fallo se declara junto al botón (antes solo había un alert bloqueante).
+      setError('Micrófono no disponible: revise los permisos del navegador.');
     }
   };
 
@@ -65,6 +71,7 @@ const VoiceAssistant = () => {
         // 3. Verificación de seguridad: ¿Hay audio?
         if (audioChunks.current.length === 0) {
           console.error("⚠️ El buffer de audio está vacío. Abortando...");
+          setError('No se capturó audio. Intente de nuevo.');
           setIsProcessing(false);
           return;
         }
@@ -93,11 +100,14 @@ const VoiceAssistant = () => {
             
             // Forzamos la reproducción e indicamos éxito
             await audio.play();
+            setError(null);
           } else {
             console.error("❌ Error en la IA:", response.statusText);
+            setError(`Asistente de voz no disponible (HTTP ${response.status}).`);
           }
         } catch (error) {
           console.error("❌ Fallo de conexión:", error);
+          setError('Asistente de voz no disponible: sin conexión con el servicio.');
         } finally {
           setIsProcessing(false);
           audioChunks.current = []; // Reset total
@@ -114,7 +124,22 @@ const VoiceAssistant = () => {
   const toggleListen = () => isListening ? stopRecordingAndProcess() : startRecording();
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+      {error && (
+        <div
+          role="alert"
+          className="max-w-[260px] flex items-start gap-2 rounded-lg border border-amber-500/60 bg-gray-900/95 px-3 py-2 text-[11px] leading-snug text-amber-200 shadow-lg"
+        >
+          <span className="flex-1">{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="shrink-0 text-gray-400 hover:text-white"
+            aria-label="Descartar aviso"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <button
         onClick={toggleListen}
         disabled={isProcessing}
@@ -135,11 +160,13 @@ export default VoiceAssistant;
 export function useAiVoiceAssist() {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
 
   const start = async () => {
     audioChunks.current = [];
+    setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       let selectedMimeType = 'audio/webm';
@@ -155,6 +182,7 @@ export function useAiVoiceAssist() {
     } catch (err) {
       console.error('ACP voz · error al abrir micrófono:', err);
       setIsListening(false);
+      setError('Micrófono no disponible: revise los permisos del navegador.');
     }
   };
 
@@ -162,7 +190,11 @@ export function useAiVoiceAssist() {
     if (!mediaRecorder.current || !isListening) return;
     mediaRecorder.current.onstop = async () => {
       setIsProcessing(true);
-      if (audioChunks.current.length === 0) { setIsProcessing(false); return; }
+      if (audioChunks.current.length === 0) {
+        setError('No se capturó audio. Intente de nuevo.');
+        setIsProcessing(false);
+        return;
+      }
       const mimeType = mediaRecorder.current?.mimeType || 'audio/webm';
       const audioBlob = new Blob(audioChunks.current, { type: mimeType });
       const extension = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
@@ -174,11 +206,14 @@ export function useAiVoiceAssist() {
           const resAudioBlob = await response.blob();
           const audioUrl = URL.createObjectURL(resAudioBlob);
           await new Audio(audioUrl).play();
+          setError(null);
         } else {
           console.error('ACP voz · error en la IA:', response.statusText);
+          setError(`Asistente de voz no disponible (HTTP ${response.status}).`);
         }
       } catch (error) {
         console.error('ACP voz · fallo de conexión:', error);
+        setError('Asistente de voz no disponible: sin conexión con el servicio.');
       } finally {
         setIsProcessing(false);
         audioChunks.current = [];
@@ -189,5 +224,7 @@ export function useAiVoiceAssist() {
     mediaRecorder.current.stream.getTracks().forEach((track) => track.stop());
   };
 
-  return { isListening, isProcessing, toggle: () => (isListening ? stop() : start()) };
+  // `error` se expone para que el consumidor lo pinte (L-4c en AcpCell: NO ejecutado
+  // en esta misión por la prohibición de tocar CMSC).
+  return { isListening, isProcessing, error, toggle: () => (isListening ? stop() : start()) };
 }

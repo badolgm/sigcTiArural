@@ -385,6 +385,12 @@ if AI_INFERENCE_V3_AVAILABLE:
                 # mientras preserve trazabilidad y no publique semántica ficticia.
                 resolved["source_mode"] = "fallback"
 
+            # L-2 (2026-10-30): tres claves de traza, aditivas. La procedencia del
+            # artefacto viaja en prediction; el resultado de la inferencia y su
+            # origen real viajan aquí (inference_origin corrige el enum
+            # source_mode="cloud", que es factualmente falso: corre local).
+            resolved_trace = resolved.get("trace") or {}
+
             return Response({
                 "context": "ai",
                 "contract_version": "v1",
@@ -398,6 +404,9 @@ if AI_INFERENCE_V3_AVAILABLE:
                     "processing_time": raw_result.get("processing_time"),
                     "upstream_status": upstream_status,
                     "upstream_detail": upstream_detail,
+                    "model_file": resolved_trace.get("model_file"),
+                    "inference_executed": resolved_trace.get("inference_executed"),
+                    "inference_origin": resolved_trace.get("inference_origin"),
                 },
             })
 

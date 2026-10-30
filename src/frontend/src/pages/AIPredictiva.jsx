@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 
 const AI_INFERENCE_URL = import.meta.env.VITE_AI_INFERENCE_URL?.trim() || '/api/v3/ai/inference/';
 
+// D-L3 (2026-10-30): "INFERENCIA REAL" nombraba el origen con un adjetivo que el
+// sistema no puede probar. La ruta se llama por lo que hace: analisis con modelo.
 const ANALYSIS_MODES = {
-  real: 'INFERENCIA REAL',
+  real: 'ANÁLISIS CON MODELO',
   simulation: 'SIMULACION',
   robot_demo: 'ROBOT DEMO',
 };
+
+// Vocabulario de procedencia del artefacto (D-L1). Default fail-closed.
+const MODEL_STATUS_FALLBACK = 'NO_DECLARADO';
 
 const DEMO_SCENARIOS = [
   {
@@ -120,10 +125,115 @@ const getModePresentation = (mode) => {
     };
   }
 
+  if (mode === 'degraded') {
+    return {
+      label: 'MODO DEGRADADO',
+      className: 'bg-amber-500/20 border-amber-500 text-amber-300',
+    };
+  }
+
+  if (mode === 'real') {
+    return {
+      label: ANALYSIS_MODES.real,
+      className: 'bg-cyan-500/20 border-cyan-500 text-cyan-300',
+    };
+  }
+
+  // Fail-closed: un modo desconocido no se presenta como analisis con modelo.
   return {
-    label: ANALYSIS_MODES.real,
-    className: 'bg-cyan-500/20 border-cyan-500 text-cyan-300',
+    label: 'NO DETERMINADO',
+    className: 'bg-gray-500/20 border-gray-600 text-gray-400',
   };
+};
+
+// Presentacion de la procedencia del artefacto. Prioridad: modo de demostracion >
+// peticion degradada > si hubo inferencia > estado declarado. Un badge jamas eleva
+// el estado.
+const getProvenancePresentation = (info) => {
+  if (info?.mode === 'degraded') {
+    return {
+      label: 'SIN INFERENCIA · MODO DEGRADADO',
+      className: 'bg-amber-500/20 border-amber-500 text-amber-300',
+      title: 'La peticion volvio como fallback: no se ejecuto el modelo. El resultado no es inferencia.',
+    };
+  }
+
+  if (info?.mode && info.mode !== 'real') {
+    return {
+      label: 'SIN MODELO · DEMOSTRACION',
+      className: 'bg-gray-500/10 border-gray-600 text-gray-400',
+      title: 'Resultado sintetico de demostracion. No proviene de inferencia.',
+    };
+  }
+
+  if (info?.inferenceExecuted === false) {
+    return {
+      label: 'SIN INFERENCIA · MODO DEGRADADO',
+      className: 'bg-amber-500/20 border-amber-500 text-amber-300',
+      title: 'No se ejecuto el modelo. El resultado no proviene de inferencia.',
+    };
+  }
+
+  const status = info?.modelStatus || MODEL_STATUS_FALLBACK;
+
+  if (status === 'HISTORICO') {
+    return {
+      label: 'MODELO HISTÓRICO · BINARIO · SIN HOLDOUT',
+      className: 'bg-amber-500/20 border-amber-500 text-amber-300',
+      title: 'Artefacto declarado historico. No es el modelo canonico y no hay holdout de campo.',
+    };
+  }
+
+  if (status === 'CANONICO') {
+    return {
+      label: 'MODELO CANÓNICO',
+      className: 'bg-cyan-500/20 border-cyan-500 text-cyan-300',
+      title: 'Artefacto declarado canonico en el registro de procedencia.',
+    };
+  }
+
+  if (status === 'INCONSISTENTE') {
+    return {
+      label: 'PROCEDENCIA INCONSISTENTE',
+      className: 'bg-red-500/20 border-red-500 text-red-400',
+      title: 'El class_space declarado no coincide con model_metadata.json o con el grafo cargado.',
+    };
+  }
+
+  if (status === 'NO_DISPONIBLE') {
+    return {
+      label: 'MODELO NO DISPONIBLE',
+      className: 'bg-gray-500/20 border-gray-600 text-gray-400',
+      title: 'No hay artefacto cargable. El resultado no proviene de inferencia.',
+    };
+  }
+
+  return {
+    label: 'PROCEDENCIA NO DECLARADA',
+    className: 'bg-red-500/20 border-red-500 text-red-400',
+    title: 'El artefacto servido no consta en el registro. No se afirma su estado.',
+  };
+};
+
+// Narracion unica de inferencia (Canal A). Ni "real" ni "certeza": solo hechos.
+const buildNarrationPrefix = (info) => {
+  if (info?.mode === 'degraded') {
+    return 'Modo degradado: no se ejecutó el modelo.';
+  }
+  if (info?.mode && info.mode !== 'real') {
+    return `${getModePresentation(info.mode).label}.`;
+  }
+  if (info?.inferenceExecuted === false) {
+    return 'Modo degradado: no se ejecutó el modelo.';
+  }
+  const status = info?.modelStatus || MODEL_STATUS_FALLBACK;
+  if (status === 'HISTORICO') {
+    return 'Inferencia ejecutada con modelo histórico binario. No identifica enfermedad específica.';
+  }
+  if (status === 'CANONICO') {
+    return 'Inferencia ejecutada con el modelo canónico.';
+  }
+  return 'Inferencia ejecutada. Procedencia del modelo no declarada.';
 };
 
 const buildInfoFromOfficialResponse = (data) => {
@@ -139,7 +249,11 @@ const buildInfoFromOfficialResponse = (data) => {
     status: getOfficialStatus(healthState),
     recommendation: prediction?.recommended_action || 'Sin recomendacion oficial disponible.',
     description: 'El modelo actual solo soporta clasificacion binaria saludable/no saludable y no identifica enfermedad especifica.',
-    mode: 'real',
+    // L-3a: el modo se deriva del origen real de la respuesta, no se asume.
+    // `source_mode: "fallback"` significa que el modelo NO corrio: el badge de modo
+    // no puede seguir diciendo "ANALISIS CON MODELO" mientras la procedencia dice
+    // "sin inferencia".
+    mode: data?.source_mode === 'fallback' ? 'degraded' : 'real',
     rawDiagnosis: trace?.raw_diagnosis || 'unknown',
     rawClassIndex,
     confidence: Number(prediction?.confidence ?? 0),
@@ -149,6 +263,17 @@ const buildInfoFromOfficialResponse = (data) => {
     sourceMode: data?.source_mode || 'unknown',
     predictionCode: prediction?.prediction_code || 'unknown',
     conditionGroup: prediction?.condition_group || 'unknown',
+    // L-2/L-3a: procedencia del artefacto y resultado real de la peticion.
+    // Fail-closed: sin campo => NO_DECLARADO; sin declaracion => no ejecutada.
+    modelStatus: prediction?.model_status || MODEL_STATUS_FALLBACK,
+    modelSha256: prediction?.model_sha256 || null,
+    artifactId: prediction?.artifact_id || null,
+    classSpace: prediction?.class_space ?? null,
+    classLabels: Array.isArray(prediction?.class_labels) ? prediction.class_labels : [],
+    supersededBy: prediction?.superseded_by || null,
+    modelFile: trace?.model_file || null,
+    inferenceExecuted: trace?.inference_executed === true,
+    inferenceOrigin: trace?.inference_origin || null,
   };
 };
 
@@ -170,6 +295,9 @@ const buildDemoInfo = (scenario, mode) => {
     sourceMode: mode,
     predictionCode: `demo.${scenario.id}`,
     conditionGroup: 'demonstration',
+    // Un escenario sintetico no ejecuta modelo alguno.
+    inferenceExecuted: false,
+    modelStatus: null,
   };
 };
 
@@ -183,13 +311,12 @@ const AIPredictiva = () => {
   const [analysisMode, setAnalysisMode] = useState('real');
   const statusPresentation = detailedInfo ? getStatusPresentation(detailedInfo.status) : null;
   const modePresentation = getModePresentation(detailedInfo?.mode || analysisMode);
+  const provenancePresentation = detailedInfo ? getProvenancePresentation(detailedInfo) : null;
 
   const speakResult = (info) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const prefix = info.mode === 'real'
-        ? 'Inferencia real finalizada.'
-        : `${getModePresentation(info.mode).label}.`;
+      const prefix = buildNarrationPrefix(info);
       const text = `${prefix} ${info.disease}. ${info.classification}. ${info.recommendation}`;
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'es-ES';
@@ -339,7 +466,7 @@ const AIPredictiva = () => {
                     onClick={() => activateMode('real')}
                     className={`px-5 py-3 border font-bold tracking-widest ${analysisMode === 'real' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300' : 'bg-gray-900 border-gray-700 text-gray-400'}`}
                 >
-                    INFERENCIA REAL
+                    {ANALYSIS_MODES.real}
                 </button>
                 <button
                     onClick={() => activateMode(analysisMode === 'simulation' ? 'real' : 'simulation')}
@@ -460,13 +587,21 @@ const AIPredictiva = () => {
                                     <div className={`px-4 py-2 rounded font-bold uppercase text-xs border ${modePresentation.className}`}>
                                         {modePresentation.label}
                                     </div>
+                                    {provenancePresentation && (
+                                        <div
+                                            className={`px-4 py-2 rounded font-bold uppercase text-[11px] border ${provenancePresentation.className}`}
+                                            title={provenancePresentation.title}
+                                        >
+                                            {provenancePresentation.label}
+                                        </div>
+                                    )}
                                 </div>
                              </div>
 
                              {/* CONFIDENCE BAR */}
                              <div className="mb-6">
                                 <div className="flex justify-between text-xs font-mono text-gray-400 mb-2">
-                                    <span>CERTEZA DEL MODELO</span>
+                                    <span>CONFIANZA POR IMAGEN</span>
                                     <span className="text-white">{(Number(detailedInfo?.confidence ?? 0) * 100).toFixed(1)}%</span>
                                 </div>
                                 <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
@@ -478,6 +613,13 @@ const AIPredictiva = () => {
                                         }}
                                     ></div>
                                 </div>
+                                <p className="mt-2 text-[11px] leading-snug text-gray-500 font-mono">
+                                    {detailedInfo?.mode === 'degraded'
+                                        ? 'Petición degradada (fallback): el modelo no se ejecutó. Este valor no es una inferencia.'
+                                        : detailedInfo?.mode && detailedInfo.mode !== 'real'
+                                            ? 'Escenario de demostración: valor sintético, no proviene de un modelo.'
+                                            : 'Confianza por imagen (softmax). NO es precisión validada: sin holdout de campo (G-3b).'}
+                                </p>
                              </div>
 
                              {/* PLANT TYPE */}
@@ -555,6 +697,31 @@ const AIPredictiva = () => {
                                         <p className="text-gray-500 uppercase text-xs">source_mode</p>
                                         <p className="text-gray-200">{detailedInfo.sourceMode}</p>
                                     </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">inference_executed</p>
+                                        <p className="text-gray-200">{String(detailedInfo.inferenceExecuted)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">model_status</p>
+                                        <p className="text-gray-200">{String(detailedInfo.modelStatus)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">artifact_id</p>
+                                        <p className="text-gray-200 break-all">{detailedInfo.artifactId || '—'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">class_space</p>
+                                        <p className="text-gray-200">
+                                            {detailedInfo.classSpace ?? '—'}
+                                            {detailedInfo.classLabels?.length ? ` · ${detailedInfo.classLabels.join(' / ')}` : ''}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">model_sha256</p>
+                                        <p className="text-gray-200 break-all" title={detailedInfo.modelSha256 || 'sin hash declarado'}>
+                                            {detailedInfo.modelSha256 ? `${detailedInfo.modelSha256.slice(0, 12)}…` : '—'}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -568,7 +735,7 @@ const AIPredictiva = () => {
                         </div>
                         <h3 className="text-xl font-bold text-gray-500 uppercase tracking-widest mb-2">Sistema en Espera</h3>
                         <p className="text-gray-600 text-sm text-center max-w-md">
-                            Seleccione inferencia real, simulacion o robot demo para iniciar el analisis.
+                            Seleccione análisis con modelo, simulación o robot demo para iniciar el análisis.
                         </p>
                     </div>
                 )}
@@ -582,4 +749,4 @@ const AIPredictiva = () => {
 
 export default AIPredictiva;
 // Reutilización aditiva para CMSC_V7_LOWER_HALF_ACTIVATION · sin cambios de lógica.
-export { AI_INFERENCE_URL, buildInfoFromOfficialResponse, getStatusPresentation, getModePresentation, getClassificationLabel };
+export { AI_INFERENCE_URL, buildInfoFromOfficialResponse, getStatusPresentation, getModePresentation, getClassificationLabel, getProvenancePresentation, buildNarrationPrefix };

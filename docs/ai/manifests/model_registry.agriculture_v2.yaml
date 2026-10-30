@@ -19,9 +19,18 @@ dataset_inputs:
 governance:
   gate: "M1_BASELINE_M2_CHALLENGER"
   serving_strategy: "AI_SERVING_ONNX"
-  serving_note: "servir != promover; ningun artefacto esta servido"
+  serving_note: >-
+    servir != promover. Hoy el ai_service sirve el .h5 legacy por mtime
+    (plant_disease_mbv2_h5) y NINGUN artefacto de benchmark/ esta servido.
   artifact_home: "benchmark/runs/  (ruta ignorada por git)"
   weight_policy: "binarios fuera de git; docs versionan ruta + sha256"
+  # L-6 (2026-10-30): espejo de ejecucion del registro de procedencia.
+  # El contenedor ai_service NO contiene docs/ (Dockerfile hace COPY . . del
+  # directorio del microservicio), por lo que el estado se resuelve en runtime
+  # desde src/ai_models/model_identity.py. AC-L13 exige que ambos hashes coincidan.
+  runtime_registry: "src/ai_models/model_identity.py"
+  status_vocabulary: ["HISTORICO", "CANONICO", "NO_DECLARADO", "INCONSISTENTE", "NO_DISPONIBLE"]
+  status_alias_policy: "HISTORICAL (solo documental) -> HISTORICO; cualquier otro valor -> NO_DECLARADO"
 
 class_index_map:
   order_source: "torchvision.ImageFolder (sorted)"
@@ -115,14 +124,38 @@ models:
   - id: "plant_disease_mbv2_h5"
     name: "MobileNetV2 (legacy)"
     role: "historical"
-    status: "HISTORICAL"
+    # D-L1 (2026-10-30): el runtime emite HISTORICO. HISTORICAL queda como alias
+    # documental aceptado; no es un valor de enum independiente.
+    status: "HISTORICO"
+    status_alias: "HISTORICAL"
     artifact_present: true
     artifact_path: "src/ai_models/production_models/plant_disease_mbv2.h5"
-    artifact_sha256: null
+    artifact_sha256: "77B0EFECD602F95FD31846C3058B4D45E41289155438FBD22738BCE0640219C0"
+    artifact_bytes: 9431432
+    artifact_mtime: "2026-08-21T22:14:27Z"
+    class_space: 2
+    class_labels: ["enferma", "sana"]
+    declared_in: "src/ai_models/model_identity.py"
+    superseded_by: "M2_efficientnet_b0_001"
     scope: "binary_only"
     serving: "currently_served_by_ai_service"
     metrics_ref: "docs/AI_MODEL_INVENTORY.md"
-    notes: "Binario degenerado (doble normalizacion). Historico, no canonico."
+    notes: >-
+      Clasificador binario enferma/sana. Registro historico: docs/AI_MODEL_INVENTORY.md
+      lo documenta como ROTO por doble normalizacion en el preprocesamiento y
+      colapso a class_0. La doble normalizacion fue retirada de fastapi_app.py
+      (preprocess_image recibe [0,255]; el modelo normaliza internamente), pero NO
+      existe holdout de campo (G-3b) que demuestre la correccion: la confianza
+      mostrada es softmax por imagen, no precision validada. Historico, no canonico.
+    conditional_window:
+      # Mientras este artefacto siga servido, la correccion de identidad y de
+      # contrato (AI-R3 + AI-R4) no puede cerrarse. Al vencer, re-evaluar.
+      # C-3/C-4 (DOCKER_READY_CONDITIONAL): dueno, fecha, caducidad y disparador.
+      owner: "Bernardo"
+      declared_on: "2026-10-30"
+      expires_on: "AI-R3+R4"
+      trigger: "AI-R3 + AI-R4 ejecutados, o decision B-1 (registry vs OCI)"
+      on_expiry: "revisar serving != promover; migrar a artefacto canonico o re-registrar"
 
 roadmap:
   - id: "AI-R1"

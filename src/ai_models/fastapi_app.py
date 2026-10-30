@@ -24,6 +24,15 @@ import numpy as np
 from PIL import Image
 import requests
 
+# L-1 (2026-10-30): identidad del artefacto por bytes. Modulo stdlib puro,
+# mismo directorio que este archivo. Se importa fuera del try de TensorFlow a
+# proposito: saber QUE archivo hay no depende de poder cargarlo.
+from model_identity import (
+    SEMANTIC_CONTRACT_VERSION,
+    STATUS_NO_DISPONIBLE,
+    refresh_model_identity,
+)
+
 # Librerías de Voz y Base de Datos (Postgres)
 try:
     import speech_recognition as sr
@@ -184,6 +193,58 @@ def load_latest_model():
 
 load_latest_model()
 
+
+def _model_output_dim():
+    """Numero de clases del grafo cargado, o None si no es determinable.
+
+    Tercera fuente del cross-check de class_space (L-1).
+    """
+    try:
+        shape = getattr(model, "output_shape", None)
+        if not shape:
+            return None
+        dimension = int(shape[-1])
+        return dimension if dimension > 0 else None
+    except Exception:
+        return None
+
+
+def _model_identity():
+    """Identidad del artefacto servible actual (nunca lanza)."""
+    try:
+        return refresh_model_identity(MODELS_DIR, output_dim=_model_output_dim())
+    except Exception as exc:  # pragma: no cover - defensa de liveness
+        print(f"⚠️ No se pudo calcular la identidad del artefacto: {exc}")
+        return {
+            "model_file": model_name,
+            "model_sha256": None,
+            "model_bytes": None,
+            "model_mtime": None,
+            "model_status": STATUS_NO_DISPONIBLE,
+            "artifact_id": None,
+            "identity_source": "none",
+            "class_space": None,
+            "class_labels": [],
+            "scientific_scope": "unknown",
+            "superseded_by": None,
+            "declared_in": "src/ai_models/model_identity.py",
+            "expires_on": None,
+            "semantic_contract_version": SEMANTIC_CONTRACT_VERSION,
+        }
+
+
+def _identity_fields(identity):
+    """Subconjunto de identidad que viaja en /infer (el envelope V3 lo publica)."""
+    return {
+        "model_sha256": identity.get("model_sha256"),
+        "model_status": identity.get("model_status"),
+        "artifact_id": identity.get("artifact_id"),
+        "class_space": identity.get("class_space"),
+        "class_labels": identity.get("class_labels") or [],
+        "scientific_scope": identity.get("scientific_scope") or "unknown",
+    }
+
+
 def preprocess_image(img_data: bytes, target_size=(224, 224)):
     # El modelo ya incluye Rescaling(1/127.5, -1): recibe [0,255] y normaliza internamente.
     # No aplicar segunda normalización aquí (evita el bug de doble normalización).
@@ -198,13 +259,39 @@ def preprocess_image(img_data: bytes, target_size=(224, 224)):
 
 @app.get("/health")
 def health():
-    if not model: load_latest_model()
+    """Liveness + procedencia del artefacto (L-1, D-L2).
+
+    SIEMPRE 200: la alarma viaja en `model_status`, nunca en el codigo HTTP.
+    Un 5xx por procedencia marcaria el contenedor `unhealthy` y, por
+    `depends_on: ai_service: service_healthy` (docker-compose.yml), impediria
+    arrancar el frontend.
+    """
+    if not model:
+        load_latest_model()
+    identity = _model_identity()
     return {
+        # --- contrato previo, intacto ---
         "status": "ok",
         "tensorflow": TF_AVAILABLE,
         "voice": VOICE_AVAILABLE,
-        "model_loaded": model_name
+        "model_loaded": model_name,
+        # --- procedencia del artefacto (L-1) ---
+        "model_file": identity.get("model_file"),
+        "model_sha256": identity.get("model_sha256"),
+        "model_bytes": identity.get("model_bytes"),
+        "model_mtime": identity.get("model_mtime"),
+        "model_status": identity.get("model_status"),
+        "artifact_id": identity.get("artifact_id"),
+        "identity_source": identity.get("identity_source"),
+        "class_space": identity.get("class_space"),
+        "class_labels": identity.get("class_labels") or [],
+        "scientific_scope": identity.get("scientific_scope"),
+        "superseded_by": identity.get("superseded_by"),
+        "declared_in": identity.get("declared_in"),
+        "expires_on": identity.get("expires_on"),
+        "semantic_contract_version": SEMANTIC_CONTRACT_VERSION,
     }
+
 
 
 @app.post("/infer")
@@ -237,6 +324,7 @@ async def infer(file: Optional[UploadFile] = File(default=None)):
             idx = -1
 
         processing_time = f"{(time.time() - start_time):.2f}s"
+        identity = _model_identity()
 
         result = {
             "diagnosis": diagnosis,
@@ -244,8 +332,12 @@ async def infer(file: Optional[UploadFile] = File(default=None)):
             "class_index": idx,
             "model": model_name or "unavailable",
             "processing_time": processing_time,
-            "status": "ok" if diagnosis != "unknown" else "error"
+            "status": "ok" if diagnosis != "unknown" else "error",
+            # L-1 / D-L4: procedencia del artefacto != resultado de la inferencia
+            "inference_executed": diagnosis != "unknown",
+            **_identity_fields(identity),
         }
+
 
         if diagnosis == "unknown":
             result["detail"] = (
@@ -273,6 +365,10 @@ async def infer(file: Optional[UploadFile] = File(default=None)):
             "processing_time": f"{(time.time() - start_time):.2f}s",
             "status": "error",
             "detail": f"No fue posible ejecutar inferencia oficial: {str(e)}",
+            # L-1 / D-L4: no hubo inferencia, pero el artefacto sigue siendo el
+            # que esta en disco. Se declaran ambos hechos por separado.
+            "inference_executed": False,
+            **_identity_fields(_model_identity()),
         }
 
 
