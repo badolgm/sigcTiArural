@@ -154,6 +154,13 @@ Estos artefactos **no son fuente de verdad** pero se mantienen en `docs/` (uso o
 
 **`DOCUMENTATION_ALIGNED`** — la documentación admite una clasificación **canónico / histórico / obsoleto / pendiente** sin contradicciones de fondo, y con un conjunto canónico claramente delimitado.
 
+**Integración ASUS ↔ Toshiba (2026-11-04) resuelta:**
+- C-02 = RESUELTO PASS (arquitectura, implementado y validado).
+- 4 documentos KEEP adoptados en `docs/architecture/` (ARQUITECTURA).
+- 1 MERGE: `C02_IMPLEMENTATION_STRATEGY.md` → absorción en `HEXAGONAL_REFACTOR_PLAN.md`.
+- 7 documentos ARCHIVE preservados en rutas actuales.
+- 1 documento LOCAL_EVIDENCE_ONLY fuera de GitHub.
+
 **Pendiente para `DOCUMENTATION_FROZEN`:**
 1. Actualizar `MASTERDOC §1` (diagrama) y `docs/architecture/README.md` a `contexts`/V3 (C-1, C-2).
 2. Fijar estatus de `PLAN_MAESTRO.md`, `INDICE_PROYECTO.md`, `CMSC_*` (A-1, A-2).

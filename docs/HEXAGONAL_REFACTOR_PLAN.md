@@ -501,6 +501,14 @@ El trabajo ya realizado en Mayo 2026 (la carpeta `logic/`) es un **activo** muy 
 - **Priorización backend vs. frontend:** definir si se acelera primero la migración del backend (Fases 1-4) o si se adelanta en paralelo el refactor de frontend (Fase 5), según disponibilidad de tiempo.
 - **Revisión de diffs por fase:** cada fase debe cerrarse con revisión de los cambios (`git diff`) antes de hacer commit, siguiendo la regla de oro de la Sección 7.
 
+### Integración ASUS ↔ Toshiba (C-02) completada 2026-11-04
+
+- **Hallazgo:** C-02 (arquitectura) = IMPLEMENTADO, VALIDADO, PASS, RESUELTO.
+- **KEEP (4):** `ARCHITECTURE_AUDIT_VALIDATION.md`, `ARCHITECTURE_ACTION_MATRIX.md`, `ARCHITECTURE_ACTION_REVIEW.md`, `C02_EXECUTION_PACKAGE.md` → `docs/architecture/` (canónico).
+- **MERGE:** `C02_IMPLEMENTATION_STRATEGY.md` absorbido en este plan como sección estratégica de refactor hexagonal; el archivo original permanece in situ con rol ARCHIVE.
+- **ARCHIVE (7):** `ARCHITECTURE_AUDIT.md`, `TOSHIBA_AUDIT_SPRINT_CLOSURE.md`, `DOCUMENTATION_LANGUAGE_NORMALIZATION.md`, `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md`, `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md`, `TOSHIBA_EXPORT_MANIFEST.md`, `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` → preservados in situ, rol histórico.
+- **LOCAL_EVIDENCE_ONLY:** `ARCHITECTURE_GOVERNANCE_REVIEW.md` → fuera del árbol versionado, uso interno del sprint.
+
 **Fin del Plan de la Fase de Análisis.**
 
 ---
