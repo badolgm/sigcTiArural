@@ -25,7 +25,7 @@ import {
   resolveFeatureSchemaId, windowSchemaFor, schemaTag
 } from './constants.js';
 import {
-  DatasetPaths, defaultDatasetRoot, loadMetadata, readCsv, loadFeatures, saveFeatures, refreshChecksums,
+  DatasetPaths, defaultDatasetRoot, loadMetadata, readCsv, loadFeatures, saveFeatures, refreshChecksums, ensureDir, nowIso,
   loadEnvelopes, saveEnvelopes
 } from './dataset.js';
 import { decodeWav, encodeWav } from './wav.js';
