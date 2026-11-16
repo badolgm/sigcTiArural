@@ -179,10 +179,28 @@
 
 ## 8. GOBERNANZA
 
+### Documento fundacional
+
+| Ámbito | Autoridad | Referencia |
+|---|---|---|
+| Misión · visión · propósito · principios fundacionales | **CONSTITUCIÓN** | `docs/CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md` (v1.0.1) |
+| Gobernanza de IA (reglas de actuación de toda inteligencia) | **CARTA IA** | `docs/CARTA_GOBERNANZA_IA_SIGCT_RURAL_V1.md` (v1.0.1) |
+| Navegación del ecosistema (componentes · capas · actores · flujos · dominios · roadmap) | **MAPA MAESTRO** | `docs/MAPA_MAESTRO_ECOSISTEMA_SIGCT_RURAL_V1.md` (v1.0) |
+| Resolución de conflictos documentales | **D-003** | `docs/DOCUMENTATION_ARCHITECTURE_DECISION_V1.md` |
+
+La Constitución es el documento fundacional del ecosistema: define misión, visión, propósito y principios fundacionales. **NO modifica D-003**; D-003 continúa siendo la autoridad para resolver conflictos documentales (jerarquía: `docs/` › `CANONICAL_PROJECT_STATE_20261109.md` › `AGENTS.md` › `DOCUMENTATION_GOVERNANCE_REVIEW.md` › `MASTERDOC.md` › `Documentacion/`). La prioridad de la Constitución aplica a los artefactos operativos (datasets, modelos IA, LLMs, dashboards, S81, laboratorios, integraciones futuras y agentes), nunca a la jerarquía entre documentos canónicos.
+
+La **Carta de Gobernanza IA** es el documento canónico **subordinado** a la Constitución que gobierna la actuación de toda inteligencia del ecosistema. **Complementa** la Constitución; **no la sustituye, no la modifica y no altera D-003**. Cadena de autoridad: `CONSTITUCIÓN → CARTA IA → ACP → LLM / INTERPRETE → EVIDENCE LEDGER → KNOWLEDGE HUB`. Veredictos de respuesta unificados con el ACP (`RESOLVED` · `PARTIAL` · `NO_DATA` · `BLOCKED` · `UNANSWERABLE`); **`HIPÓTESIS`** = nuevo veredicto predictivo **PENDIENTE DE G-IA-1**, **no activo** y **no confundible con los 7 estados de honestidad**.
+
+El **Mapa Maestro** es el documento canónico de **navegación** del ecosistema. **Solo describe** (componentes · capas · actores · flujos · dominios · roadmap); **no crea gobernanza nueva** y **no modifica** la Constitución, la Carta IA ni D-003. Reparto de autoridad: **CONSTITUCIÓN → misión · visión · propósito · principios** · **CARTA IA → gobernanza IA** · **MAPA MAESTRO → navegación del ecosistema** · **D-003 → conflictos documentales**.
+
 ### Fuentes de verdad (canónicas, priority 1)
 
 | Documento | Rol | Ámbito |
 |---|---|---|
+| `CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md` | **Documento fundacional** (misión, visión, propósito, principios fundacionales) | Nivel ecosistema; norma superior frente a artefactos operativos |
+| `CARTA_GOBERNANZA_IA_SIGCT_RURAL_V1.md` | **Gobernanza de IA** (reglas de actuación de toda inteligencia) | Nivel ecosistema; subordinado a la Constitución; no altera D-003 |
+| `MAPA_MAESTRO_ECOSISTEMA_SIGCT_RURAL_V1.md` | **Navegación** (componentes · capas · actores · flujos · dominios · roadmap) | Nivel ecosistema; descriptivo; sin gobernanza nueva |
 | `AGENTS.md` | Identidad, estado git, decisiones, cadencias | Nivel proyecto general |
 | `CMSC_CANONICAL_STATE_v1.md` | Punto único entrada CMSC | Arquitectura, labs, filosofía |
 | `AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` | Gobernancia dataset acústico | S30/S81/S82, features, splits, gates G-DS-1..6 |
@@ -201,11 +219,21 @@
 
 ### Flujo de consulta recomendado
 
-1. Estado proyecto general: `AGENTS.md` → `CMSC_CANONICAL_STATE_v1.md`
-2. Dataset acústico: `AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` → `AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md`
-3. Docker readiness: `DOCUMENTATION_GOVERNANCE_REVIEW.md` §7 + `DEPLOYMENT.md` L-5
-4. Documentación clasificada: `DOCUMENTATION_CONSOLIDATION_PLAN.md` (tabla completa)
-5. Implementación CMSC: `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` (6 condiciones) + `CMSC_F3A_INTERCONNECTION_BLUEPRINT_v1.md`
+**Onboarding canónico (en orden):**
+
+1. Constitución: `CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md` (misión · visión · propósito · principios)
+2. Carta IA: `CARTA_GOBERNANZA_IA_SIGCT_RURAL_V1.md` (gobernanza IA)
+3. Mapa Maestro: `MAPA_MAESTRO_ECOSISTEMA_SIGCT_RURAL_V1.md` (navegación del ecosistema)
+4. Canonical Project State: `CANONICAL_PROJECT_STATE_20261109.md` (estado canónico del proyecto)
+5. AGENTS: `AGENTS.md` (identidad, estado git, decisiones, cadencias)
+
+**Consulta temática:**
+
+6. CMSC general: `CMSC_CANONICAL_STATE_v1.md`
+7. Dataset acústico: `AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` → `AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md`
+8. Docker readiness: `DOCUMENTATION_GOVERNANCE_REVIEW.md` §7 + `DEPLOYMENT.md` L-5
+9. Documentación clasificada: `DOCUMENTATION_CONSOLIDATION_PLAN.md` (tabla completa)
+10. Implementación CMSC: `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` (6 condiciones) + `CMSC_F3A_INTERCONNECTION_BLUEPRINT_v1.md`
 
 ## 9. SIGUIENTE MISIÓN RECOMENDADA (por prioridad)
 
@@ -237,3 +265,6 @@
 
 ---
 *Fotografía canónica verificada. HEAD `004deb8`; `stash@{0}` intacto. No se realizaron modificaciones al repositorio durante la redacción; solo extracción y presentación de estado existente sobre base de commits, tags, documentación canónica y consensos de sesión.*
+
+## Referencia cruzada: Decision Arquitectonica V1
+- Consulte docs/DOCUMENTATION_ARCHITECTURE_DECISION_V1.md para la decision oficial de governance documental.

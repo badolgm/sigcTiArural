@@ -6,6 +6,35 @@ Ecosistema vivo de conocimiento verificable (no plataforma, no dashboard) sobre 
 ## Regla suprema
 NADA DESAPARECE · TODO SE PRESERVA · TODO SE CONECTA · TODO EVOLUCIONA. Honestidad de estado (real/referencia/simulación/diseño) es invariante de dominio. La documentación canónica es la fuente de verdad.
 
+## Documento fundacional — Constitución
+`docs/CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md` (v1.0.1) es el **documento fundacional** del ecosistema y registra explícitamente:
+- **CONSTITUCIÓN → misión · visión · propósito · principios fundacionales.**
+- **D-003 → resolución de conflictos documentales** (`docs/DOCUMENTATION_ARCHITECTURE_DECISION_V1.md`).
+
+La Constitución **NO modifica D-003**: D-003 continúa siendo la autoridad para resolver conflictos documentales y la jerarquía entre documentos canónicos (`docs/` › `CANONICAL_PROJECT_STATE_20261109.md` › `AGENTS.md` › `DOCUMENTATION_GOVERNANCE_REVIEW.md` › `MASTERDOC.md` › `Documentacion/`). La prioridad de la Constitución aplica a los artefactos operativos (datasets, modelos IA, LLMs, dashboards, S81, laboratorios, integraciones futuras y agentes), nunca a la jerarquía entre documentos canónicos.
+
+## Gobernanza IA — Carta de Gobernanza IA
+`docs/CARTA_GOBERNANZA_IA_SIGCT_RURAL_V1.md` (v1.0.1) es el **documento canónico de gobernanza de IA**, **subordinado** a la Constitución (la **complementa**, nunca la sustituye ni la modifica). Registra explícitamente:
+- **Sujetos gobernados:** inteligencias `IA-1`..`IA-6` (ACP · LLM/`Interprete` · sub-agentes · agentes futuros · sistemas de razonamiento · modelos predictivos) y **cauces de misión** `CM-1` ASUS · `CM-2` TOSHIBA (no son IA).
+- **Cadena de autoridad:** `CONSTITUCIÓN → CARTA IA → ACP → LLM / INTERPRETE → EVIDENCE LEDGER → KNOWLEDGE HUB`.
+- **Veredictos de respuesta (vocabulario unificado con el ACP):** `RESOLVED` · `PARTIAL` · `NO_DATA` · `BLOCKED` · `UNANSWERABLE`.
+- **`HIPÓTESIS` = nuevo veredicto predictivo**, **PENDIENTE DE G-IA-1**, **NO activo todavía**. **NO** es un estado de honestidad: los **7 estados** (`REAL` · `REAL-LOCAL` · `SIM` · `DISENO` · `ROTO` · `HUERFANO` · `REF`) permanecen intactos.
+- **Gates G-IA-1..8** y principios `P-IA-1..P-IA-7` (Honestidad · Trazabilidad · Explicabilidad · Seguridad · No fabricación · Supervisión humana · Preservación de evidencia).
+
+La Carta **NO modifica D-003**, ni la Constitución, ni H5, ni el ACP. En conflicto, prevalece la Constitución y, en materia documental, **D-003**.
+
+## Navegación del ecosistema — Mapa Maestro
+`docs/MAPA_MAESTRO_ECOSISTEMA_SIGCT_RURAL_V1.md` (v1.0) es el **documento canónico de navegación** del ecosistema. **Solo describe** (no crea gobernanza nueva, no autoriza implementación). Registra explícitamente:
+- **MAPA MAESTRO → navegación → componentes · capas · actores · flujos · dominios · roadmap.**
+
+Reparto de autoridad (sin solapamiento):
+- **CONSTITUCIÓN → misión · visión · propósito · principios.**
+- **CARTA IA → gobernanza IA.**
+- **MAPA MAESTRO → navegación del ecosistema.**
+- **D-003 → conflictos documentales.**
+
+El Mapa Maestro **no modifica** la Constitución, la Carta IA ni D-003. En conflicto, prevalecen esos documentos.
+
 ## Prohibido
 - Commits/push/merge/rebase a `main`; tocar backend, Docker, Telemetry Context, SensorReading/RobotTelemetry, BBB, Labs, Knowledge Hub, IA existente.
 - NO implementar, NO modificar código, NO crear rutas/páginas/frontend salvo misión explícita que lo ordene (las últimas misiones fueron SOLO DISEÑAR Y DOCUMENTAR).
@@ -188,3 +217,7 @@ NADA DESAPARECE · TODO SE PRESERVA · TODO SE CONECTA · TODO EVOLUCIONA. Hones
 - `127.0.0.1:8765` queda clasificado como **VALIDACIÓN TEMPORAL**, descartado como arquitectura final. Flujo oficial: S30 → Logger → Dataset → Validación → S81 → S82 → Knowledge Hub.
 - Estado al hito: S30 `REAL-LOCAL`; Logger `VALIDADO` técnicamente; Dataset `PREPARADO_VACIO`; S81/S82 `DISEÑO`; Knowledge Hub operativo como Hub documental; Zona V2 congelada.
 - Próxima misión: `CMSC_ORCHESTRATION_V2_PHASE_1_IMPLEMENTATION`. No iniciada en este registro. Respetar Visual Freeze y no modificar Hero, S30, Workbench, Benchmark, ACP ni Knowledge Hub sin misión explícita.
+
+## Documentación Arquitectónica Decisión V1
+
+- Source of truth documentation: docs/DOCUMENTATION_ARCHITECTURE_DECISION_V1.md
