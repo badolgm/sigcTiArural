@@ -164,11 +164,39 @@ def get_latest_sensor_data_pg():
         if conn: conn.close()
 
 # =========================
+# Backend de inferencia (AI-R3, DORMIDO por defecto)
+# =========================
+# AI-R3 introduce un segundo motor (ONNX Runtime) SIN activarlo:
+#   AI_BACKEND=tf    (default) -> sirve el .h5 historico con TensorFlow.
+#   AI_BACKEND=onnx            -> sirve model.onnx (M2); lo activa AI-R4.
+# `auto` se descarta a proposito: activaria ONNX sin decision explicita.
+# Un valor desconocido cae a `tf` (fail-safe: nunca enciende ONNX solo).
+
+AI_BACKEND = (os.environ.get("AI_BACKEND") or "tf").strip().lower()
+if AI_BACKEND not in ("tf", "onnx"):
+    AI_BACKEND = "tf"
+AI_MODEL_PATH = (os.environ.get("AI_MODEL_PATH") or "").strip() or None
+
+# Identificador de contrato de modelo (aditivo en /health). AI-R4 lo consumira
+# para detectar el espacio de clases (eco del modo), sin adivinar.
+MODEL_CONTRACT_VERSION_TF = "binary_only"
+MODEL_CONTRACT_VERSION_ONNX = "agriculture_v2_multiclass16"
+
+# Contrato del artefacto ONNX (AI-R2 export_record.json).
+ONNX_INPUT_NAME = "input"
+ONNX_OUTPUT_NAME = "logits"
+ONNX_INPUT_SIZE = 224
+ONNX_RESIZE_SIZE = 256
+IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype="float32")
+IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype="float32")
+
+# =========================
 # TensorFlow
 # =========================
 
 model = None
 model_name = None
+model_backend = None  # "tf" | "onnx" | None (ninguno cargado)
 
 try:
     import tensorflow as tf
@@ -177,19 +205,70 @@ except ImportError:
     TF_AVAILABLE = False
     print("⚠️ TensorFlow no disponible. Modo MOCK activado.")
 
-def load_latest_model():
-    global model, model_name
+try:
+    import onnxruntime as ort
+    ONNX_AVAILABLE = True
+except ImportError:
+    ort = None
+    ONNX_AVAILABLE = False
+    print("⚠️ onnxruntime no disponible. Backend ONNX deshabilitado (AI-R3 dormido).")
+
+
+def _onnx_candidates():
+    """Rutas .onnx candidatas: AI_MODEL_PATH o, si no, MODELS_DIR (orden fijo).
+
+    Seleccion explicita, NUNCA por `mtime` (R-EXEC-4): evita que el .h5 mas
+    reciente gane cuando coexisten ambos artefactos.
+    """
+    if AI_MODEL_PATH:
+        return [Path(AI_MODEL_PATH)]
+    return sorted(MODELS_DIR.glob("*.onnx"))
+
+
+def _load_tf_model():
+    global model, model_name, model_backend
     if not TF_AVAILABLE: return None
     files = list(MODELS_DIR.glob("*.h5")) + list(MODELS_DIR.glob("*.keras"))
     if not files: return None
     latest = max(files, key=lambda p: p.stat().st_mtime)
-    if model_name != latest.name:
+    if model_name != latest.name or model_backend != "tf":
         try:
             model = tf.keras.models.load_model(latest, compile=False)
             model_name = latest.name
+            model_backend = "tf"
         except Exception as e:
             print(f"❌ Error cargando modelo: {e}")
     return model_name
+
+
+def _load_onnx_model():
+    global model, model_name, model_backend
+    if not ONNX_AVAILABLE:
+        print("⚠️ AI_BACKEND=onnx pero onnxruntime no esta disponible.")
+        return None
+    candidates = [path for path in _onnx_candidates() if path.is_file()]
+    if not candidates:
+        print("⚠️ AI_BACKEND=onnx pero no se encontro ningun artefacto .onnx.")
+        return None
+    if len(candidates) > 1:
+        print(f"⚠️ Varios .onnx; se usa el primero por orden estable: {candidates[0].name}")
+    target = candidates[0]
+    if model_backend != "onnx" or model_name != target.name:
+        try:
+            model = ort.InferenceSession(str(target), providers=["CPUExecutionProvider"])
+            model_name = target.name
+            model_backend = "onnx"
+        except Exception as e:
+            print(f"❌ Error cargando modelo ONNX: {e}")
+    return model_name
+
+
+def load_latest_model():
+    """Carga el artefacto servible segun AI_BACKEND (dormido: tf)."""
+    if AI_BACKEND == "onnx":
+        return _load_onnx_model()
+    return _load_tf_model()
+
 
 load_latest_model()
 
@@ -200,7 +279,13 @@ def _model_output_dim():
     Tercera fuente del cross-check de class_space (L-1).
     """
     try:
-        shape = getattr(model, "output_shape", None)
+        if model_backend == "onnx":
+            get_outputs = getattr(model, "get_outputs", None)
+            if not callable(get_outputs):
+                return None
+            shape = get_outputs()[0].shape
+        else:
+            shape = getattr(model, "output_shape", None)
         if not shape:
             return None
         dimension = int(shape[-1])
@@ -209,9 +294,24 @@ def _model_output_dim():
         return None
 
 
+def _served_onnx_path():
+    """Ruta del .onnx que se sirve, o None (AI-R3)."""
+    candidates = [path for path in _onnx_candidates() if path.is_file()]
+    return candidates[0] if candidates else None
+
+
 def _model_identity():
     """Identidad del artefacto servible actual (nunca lanza)."""
     try:
+        if model_backend == "onnx":
+            path = _served_onnx_path()
+            directory = path.parent if path else MODELS_DIR
+            return refresh_model_identity(
+                directory,
+                output_dim=_model_output_dim(),
+                include_onnx=True,
+                explicit_path=path,
+            )
         return refresh_model_identity(MODELS_DIR, output_dim=_model_output_dim())
     except Exception as exc:  # pragma: no cover - defensa de liveness
         print(f"⚠️ No se pudo calcular la identidad del artefacto: {exc}")
@@ -233,6 +333,15 @@ def _model_identity():
         }
 
 
+def _model_contract_version():
+    """Contrato del modelo servido (eco del modo), o None si no hay modelo."""
+    if model_backend == "onnx":
+        return MODEL_CONTRACT_VERSION_ONNX
+    if model_backend == "tf":
+        return MODEL_CONTRACT_VERSION_TF
+    return None
+
+
 def _identity_fields(identity):
     """Subconjunto de identidad que viaja en /infer (el envelope V3 lo publica)."""
     return {
@@ -245,10 +354,39 @@ def _identity_fields(identity):
     }
 
 
+def _preprocess_image_onnx(image):
+    """Preprocesado M2 (identico al de exportacion, AI-R2).
+
+    Resize(256) del lado corto -> CenterCrop(224) -> [0,1] -> Normalize(ImageNet)
+    -> NCHW. NO reutiliza el preprocesado del .h5 (aquel no normaliza).
+    """
+    resize = max(ONNX_RESIZE_SIZE, ONNX_INPUT_SIZE)
+    width, height = image.size
+    scale = resize / float(min(width, height))
+    new_size = (max(1, int(round(width * scale))), max(1, int(round(height * scale))))
+    image = image.resize(new_size, Image.BILINEAR)
+    left = (new_size[0] - ONNX_INPUT_SIZE) // 2
+    top = (new_size[1] - ONNX_INPUT_SIZE) // 2
+    image = image.crop((left, top, left + ONNX_INPUT_SIZE, top + ONNX_INPUT_SIZE))
+    arr = np.asarray(image).astype("float32") / 255.0
+    arr = (arr - IMAGENET_MEAN) / IMAGENET_STD
+    arr = np.transpose(arr, (2, 0, 1))  # HWC -> CHW
+    return np.expand_dims(arr, axis=0).astype("float32")
+
+
+def _softmax(values):
+    """Softmax numericamente estable sobre el ultimo eje."""
+    shifted = values - np.max(values, axis=-1, keepdims=True)
+    exp = np.exp(shifted)
+    return exp / np.sum(exp, axis=-1, keepdims=True)
+
+
 def preprocess_image(img_data: bytes, target_size=(224, 224)):
     # El modelo ya incluye Rescaling(1/127.5, -1): recibe [0,255] y normaliza internamente.
     # No aplicar segunda normalización aquí (evita el bug de doble normalización).
     image = Image.open(io.BytesIO(img_data)).convert("RGB")
+    if model_backend == "onnx":
+        return _preprocess_image_onnx(image)
     image = image.resize(target_size)
     arr = np.array(image).astype("float32")
     return np.expand_dims(arr, axis=0)
@@ -275,6 +413,10 @@ def health():
         "tensorflow": TF_AVAILABLE,
         "voice": VOICE_AVAILABLE,
         "model_loaded": model_name,
+        # --- backend y contrato de modelo (AI-R3, aditivo) ---
+        "model_backend": model_backend,
+        "onnxruntime": getattr(ort, "__version__", None) if ONNX_AVAILABLE else None,
+        "model_contract_version": _model_contract_version(),
         # --- procedencia del artefacto (L-1) ---
         "model_file": identity.get("model_file"),
         "model_sha256": identity.get("model_sha256"),
@@ -313,7 +455,15 @@ async def infer(file: Optional[UploadFile] = File(default=None)):
         img_bytes = await file.read()
         processed = preprocess_image(img_bytes)
 
-        if TF_AVAILABLE and model is not None:
+        if model_backend == "onnx" and model is not None:
+            # ONNX entrega logits crudos (sin softmax): replicar la semantica
+            # del .h5 para conservar `confidence` como probabilidad.
+            logits = model.run([ONNX_OUTPUT_NAME], {ONNX_INPUT_NAME: processed})[0]
+            preds = _softmax(np.asarray(logits, dtype="float64"))[0]
+            idx = int(np.argmax(preds))
+            confidence = float(np.max(preds))
+            diagnosis = f"class_{idx}"
+        elif TF_AVAILABLE and model is not None:
             preds = model.predict(processed, verbose=0)[0]
             idx = int(np.argmax(preds))
             confidence = float(np.max(preds))

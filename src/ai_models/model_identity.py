@@ -190,30 +190,67 @@ def _empty_identity(status: str = STATUS_NO_DISPONIBLE) -> Dict[str, Any]:
     }
 
 
-def _candidate_files(models_dir: Path) -> List[Path]:
+def _candidate_files(models_dir: Path, include_onnx: bool = False) -> List[Path]:
+    """Artefactos candidatos del directorio.
+
+    Por defecto solo `.h5`/`.keras` (comportamiento historico, AI-R3 dormido).
+    `include_onnx=True` anade `.onnx` (rama AI-R3/AI-R4).
+    """
     directory = Path(models_dir)
     if not directory.is_dir():
         return []
-    files = list(directory.glob("*.h5")) + list(directory.glob("*.keras"))
+    patterns = ["*.h5", "*.keras"]
+    if include_onnx:
+        patterns.append("*.onnx")
+    files: List[Path] = []
+    for pattern in patterns:
+        files.extend(directory.glob(pattern))
     return [path for path in files if path.is_file()]
+
+
+def _select_artifact(
+    models_dir: Path,
+    include_onnx: bool = False,
+    explicit_path: Optional[Path] = None,
+) -> Optional[Path]:
+    """Artefacto servible: ruta explicita si se da; si no, el de mayor `mtime`.
+
+    AI-R3: `explicit_path` (`AI_MODEL_PATH`) evita la seleccion por `mtime`
+    cuando coexisten `.h5` y `.onnx` (R-EXEC-4). Sin el, la regla es identica a
+    la historica (max `mtime`), por lo que el default no cambia.
+    """
+    if explicit_path is not None:
+        candidate = Path(explicit_path)
+        return candidate if candidate.is_file() else None
+    files = _candidate_files(models_dir, include_onnx=include_onnx)
+    if not files:
+        return None
+    return max(files, key=lambda path: path.stat().st_mtime_ns)
 
 
 def _iso_utc(timestamp: float) -> str:
     return datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def compute_identity(models_dir: Path, output_dim: Optional[int] = None) -> Dict[str, Any]:
-    """Identidad completa del artefacto servible mas reciente de ``models_dir``.
+def compute_identity(
+    models_dir: Path,
+    output_dim: Optional[int] = None,
+    include_onnx: bool = False,
+    explicit_path: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """Identidad completa del artefacto servible de ``models_dir``.
 
     La regla de seleccion es la misma que usa ``load_latest_model()`` en
-    ``fastapi_app.py``: el archivo de mayor ``mtime``. Se replica a proposito para
-    que la etiqueta describa exactamente el archivo que se sirve.
+    ``fastapi_app.py``: el archivo de mayor ``mtime`` (o ``explicit_path`` cuando
+    se indica, AI-R3). Se replica a proposito para que la etiqueta describa
+    exactamente el archivo que se sirve.
     """
-    files = _candidate_files(models_dir)
-    if not files:
+    latest = _select_artifact(
+        models_dir, include_onnx=include_onnx, explicit_path=explicit_path
+    )
+    if latest is None:
         return _empty_identity(STATUS_NO_DISPONIBLE)
 
-    latest = max(files, key=lambda path: path.stat().st_mtime_ns)
     stats = latest.stat()
     sha256 = hash_file(latest)
     metadata = read_artifact_metadata(latest)
@@ -265,22 +302,33 @@ def compute_identity(models_dir: Path, output_dim: Optional[int] = None) -> Dict
     return identity
 
 
-def refresh_model_identity(models_dir: Path, output_dim: Optional[int] = None) -> Dict[str, Any]:
+def refresh_model_identity(
+    models_dir: Path,
+    output_dim: Optional[int] = None,
+    include_onnx: bool = False,
+    explicit_path: Optional[Path] = None,
+) -> Dict[str, Any]:
     """``compute_identity`` con cache por (ruta, tamano, mtime_ns, output_dim)."""
-    files = _candidate_files(models_dir)
-    if not files:
+    latest = _select_artifact(
+        models_dir, include_onnx=include_onnx, explicit_path=explicit_path
+    )
+    if latest is None:
         _CACHE["key"] = None
         _CACHE["value"] = None
         return _empty_identity(STATUS_NO_DISPONIBLE)
 
-    latest = max(files, key=lambda path: path.stat().st_mtime_ns)
     stats = latest.stat()
-    key = (str(latest.resolve()), stats.st_size, stats.st_mtime_ns, output_dim)
+    key = (str(latest.resolve()), stats.st_size, stats.st_mtime_ns, output_dim, include_onnx)
 
     if _CACHE["key"] == key and _CACHE["value"] is not None:
         return dict(_CACHE["value"])
 
-    value = compute_identity(models_dir, output_dim=output_dim)
+    value = compute_identity(
+        models_dir,
+        output_dim=output_dim,
+        include_onnx=include_onnx,
+        explicit_path=explicit_path,
+    )
     _CACHE["key"] = key
     _CACHE["value"] = value
     return dict(value)

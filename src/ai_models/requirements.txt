@@ -5,6 +5,9 @@ requests>=2.31
 numpy>=1.24
 Pillow>=10.0
 tensorflow-cpu>=2.15.0
+# AI-R3: motor de inferencia ONNX (dormido; AI_BACKEND=tf por defecto).
+# Version fijada a la del entorno de exportacion (AI-R2 export_record.json).
+onnxruntime==1.31.0
 SpeechRecognition
 gTTS
 pydub

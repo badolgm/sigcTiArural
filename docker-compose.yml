@@ -93,6 +93,14 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      # AI-R3 (dormido): `tf` sirve el .h5 historico como hoy. AI-R4 activa
+      # `onnx` (interruptor unico) sin tocar este bloque mas alla del valor.
+      - AI_BACKEND=${AI_BACKEND:-tf}
+      - AI_MODEL_PATH=${AI_MODEL_PATH:-/app/models/model.onnx}
+    volumes:
+      # AI-R3: el .onnx se inyecta en runtime (G-NEW-C: NO horneado).
+      # Read-only; el artefacto vive fuera del contexto de build (gitignored).
+      - ./benchmark/runs/M2_efficientnet_b0/exports/model.onnx:/app/models/model.onnx:ro
     depends_on:
       db:
         condition: service_healthy
