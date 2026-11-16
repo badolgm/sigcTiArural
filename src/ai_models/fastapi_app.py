@@ -351,6 +351,10 @@ def _identity_fields(identity):
         "class_space": identity.get("class_space"),
         "class_labels": identity.get("class_labels") or [],
         "scientific_scope": identity.get("scientific_scope") or "unknown",
+        # AI-R4 (R4-PLU): el contrato del modelo viaja tambien en /infer, de modo
+        # que el resolver del backend detecta el modo (v1/v2) sin heuristicas
+        # fragiles. Eco de `_model_contract_version()`, no una segunda verdad.
+        "model_contract_version": _model_contract_version(),
     }
 
 

@@ -391,9 +391,13 @@ if AI_INFERENCE_V3_AVAILABLE:
             # source_mode="cloud", que es factualmente falso: corre local).
             resolved_trace = resolved.get("trace") or {}
 
+            # AI-R4: el sobre ECOA el modo del contrato (v1 binario / v2
+            # multiclase 16) que el resolver detecto. Con el .h5 historico
+            # (sin model_contract_version) sigue siendo "v1": cero cambio
+            # observable mientras AI_BACKEND=tf.
             return Response({
                 "context": "ai",
-                "contract_version": "v1",
+                "contract_version": resolved.get("contract_version", "v1"),
                 "operation": "plant_diagnosis",
                 "source_mode": resolved["source_mode"],
                 "prediction": resolved["prediction"],
@@ -407,6 +411,9 @@ if AI_INFERENCE_V3_AVAILABLE:
                     "model_file": resolved_trace.get("model_file"),
                     "inference_executed": resolved_trace.get("inference_executed"),
                     "inference_origin": resolved_trace.get("inference_origin"),
+                    # AI-R4: eco del contrato del modelo + huella del artefacto.
+                    "model_contract_version": resolved.get("model_contract_version"),
+                    "model_sha256": resolved["prediction"].get("model_sha256"),
                 },
             })
 

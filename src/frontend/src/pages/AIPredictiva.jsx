@@ -51,6 +51,10 @@ const NEON_COLORS = {
 
 const SPECIES_LABELS = {
   unknown: 'Cultivo no determinado',
+  // AI-R4: especies reales del contrato v2 (M2).
+  tomato: 'Tomate',
+  potato: 'Papa',
+  corn: 'Maiz',
 };
 
 const getOfficialStatus = (healthState) => {
@@ -60,7 +64,19 @@ const getOfficialStatus = (healthState) => {
   return 'unknown';
 };
 
-const getClassificationLabel = (rawClassIndex) => {
+// AI-R4: la etiqueta de clasificacion deja de asumir binario. El segundo
+// argumento (prediction) es opcional: si falta o el contrato es v1, conserva
+// el comportamiento binario historico (compatibilidad hacia atras).
+const getClassificationLabel = (rawClassIndex, prediction) => {
+  const contract = String(prediction?.semantic_contract_version || '').toLowerCase();
+  const canonicalClassId = prediction?.canonical_class_id;
+  if (contract === 'v2' || canonicalClassId) {
+    const species = SPECIES_LABELS[String(prediction?.plant_species || '').toLowerCase()]
+      || prediction?.plant_species
+      || 'Cultivo no determinado';
+    const condition = prediction?.condition_name || 'no determinada';
+    return `Clasificacion multiclase (16): ${species} - ${condition}`;
+  }
   if (Number(rawClassIndex) === 0) return 'Clasificacion binaria del modelo: enferma';
   if (Number(rawClassIndex) === 1) return 'Clasificacion binaria del modelo: sana';
   return 'Clasificacion binaria del modelo: no determinada';
@@ -226,6 +242,10 @@ const buildNarrationPrefix = (info) => {
   if (info?.inferenceExecuted === false) {
     return 'Modo degradado: no se ejecutó el modelo.';
   }
+  // AI-R4: si el contrato es v2, la narracion no puede decir "binario".
+  if (String(info?.semanticContractVersion || '').toLowerCase() === 'v2') {
+    return 'Inferencia ejecutada con modelo multiclase (16 clases).';
+  }
   const status = info?.modelStatus || MODEL_STATUS_FALLBACK;
   if (status === 'HISTORICO') {
     return 'Inferencia ejecutada con modelo histórico binario. No identifica enfermedad específica.';
@@ -241,14 +261,20 @@ const buildInfoFromOfficialResponse = (data) => {
   const trace = data?.trace || {};
   const healthState = String(prediction?.health_state || 'unknown').toLowerCase();
   const rawClassIndex = Number(trace?.raw_class_index ?? -1);
+  // AI-R4: el modo del contrato decide la presentacion. Tolerante a v1
+  // (respuesta binaria historica) y a v2 (16 clases).
+  const isMulticlass = String(prediction?.semantic_contract_version || '').toLowerCase() === 'v2'
+    || Boolean(prediction?.canonical_class_id);
 
   return {
     plant: SPECIES_LABELS[String(prediction?.plant_species || 'unknown').toLowerCase()] || prediction?.plant_species || 'Cultivo Desconocido',
     disease: prediction?.prediction_label || 'Resultado oficial',
-    classification: getClassificationLabel(rawClassIndex),
+    classification: getClassificationLabel(rawClassIndex, prediction),
     status: getOfficialStatus(healthState),
     recommendation: prediction?.recommended_action || 'Sin recomendacion oficial disponible.',
-    description: 'El modelo actual solo soporta clasificacion binaria saludable/no saludable y no identifica enfermedad especifica.',
+    description: isMulticlass
+      ? 'Modelo de clasificacion multiclase (16 clases: tomate, papa y maiz) de investigacion (PlantVillage). No sustituye diagnostico agronomico profesional.'
+      : 'El modelo servido solo soporta clasificacion binaria saludable/no saludable y no identifica enfermedad especifica.',
     // L-3a: el modo se deriva del origen real de la respuesta, no se asume.
     // `source_mode: "fallback"` significa que el modelo NO corrio: el badge de modo
     // no puede seguir diciendo "ANALISIS CON MODELO" mientras la procedencia dice
@@ -263,6 +289,10 @@ const buildInfoFromOfficialResponse = (data) => {
     sourceMode: data?.source_mode || 'unknown',
     predictionCode: prediction?.prediction_code || 'unknown',
     conditionGroup: prediction?.condition_group || 'unknown',
+    // AI-R4: trazabilidad multiclase (null en modo v1).
+    canonicalClassId: prediction?.canonical_class_id || null,
+    taxonomyVersion: prediction?.taxonomy_version || null,
+    modelContractVersion: trace?.model_contract_version || null,
     // L-2/L-3a: procedencia del artefacto y resultado real de la peticion.
     // Fail-closed: sin campo => NO_DECLARADO; sin declaracion => no ejecutada.
     modelStatus: prediction?.model_status || MODEL_STATUS_FALLBACK,
@@ -676,6 +706,14 @@ const AIPredictiva = () => {
                                     <div>
                                         <p className="text-gray-500 uppercase text-xs">condition_group</p>
                                         <p className="text-gray-200">{detailedInfo.conditionGroup}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">canonical_class_id</p>
+                                        <p className="text-gray-200 break-all">{detailedInfo.canonicalClassId || '—'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-500 uppercase text-xs">taxonomy_version</p>
+                                        <p className="text-gray-200">{detailedInfo.taxonomyVersion || '—'}</p>
                                     </div>
                                     <div>
                                         <p className="text-gray-500 uppercase text-xs">confidence</p>
