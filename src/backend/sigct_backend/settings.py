@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'corsheaders', 
     
     # Aplicaciones del Proyecto
+    'sigct_backend',
     'api', 
     'users',
 ]
