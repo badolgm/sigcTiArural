@@ -17,6 +17,8 @@
 > **Nota de reconciliación LOTE-1 (2026-11-18):** este inventario es el **snapshot original previo a la ejecución** (296 archivos). Tras LOTE-1 (commit `82d26cf`), 18 documentos de las familias `SIGCT_MEMORY_*` (11), `SIGCTIARURAL_RESEARCH_*` (3) y `CMSC_*` (4) residen en las carpetas canónicas `docs/memory/`, `docs/research/` y `docs/cmsc/`. El inventario se conserva como evidencia del estado previo.
 >
 > **Nota de reconciliación LOTE-3 (2026-11-18):** 17 documentos de la familia de gobernanza IA y benchmark (`AI_R1_*`…`AI_R5_*`, `M1_*`, `M1_M2_*`, `M2_*`, `H5_AI_GOVERNANCE_CLOSURE_REPORT`, `R5_AI_SERVING_STRATEGY_REPORT`) fueron **trasladados** de `docs/` a `docs/ai/` mediante `git mv` (**sin commit**). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución.
+>
+> **Nota de reconciliación UNCLASSIFIED-5 (2026-11-18):** 5 documentos previamente sin clasificar quedaron clasificados (D-007) y reubicados mediante `git mv` (**sin commit**): `TOSHIBA_CLOSURE_REPORT_20261117.md`, `DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md`, `PRE_COMMIT_CLASSIFICATION.md` y `PRE_COMMIT_FORENSIC_REVIEW.md` → `docs/historical/` (HISTORICAL); `DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` → `docs/reports/` (KEEP). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución.
 
 ### Raíz `docs/` — 296 archivos `.md`
 
@@ -127,8 +129,8 @@
 | `docs/` | `PLANT_DISEASE_DATASET_TRACEABILITY_AUDIT.md` | HISTORICAL |
 | `docs/` | `PLANT_DISEASE_MODEL_PROVENANCE_REPORT.md` | HISTORICAL |
 | `docs/` | `PLANT_DISEASE_MODEL_RECOVERY_REPORT.md` | HISTORICAL |
-| `docs/` | `PRE_COMMIT_CLASSIFICATION.md` | UNKNOWN |
-| `docs/` | `PRE_COMMIT_FORENSIC_REVIEW.md` | UNKNOWN |
+| `docs/` | `PRE_COMMIT_CLASSIFICATION.md` | HISTORICAL |
+| `docs/` | `PRE_COMMIT_FORENSIC_REVIEW.md` | HISTORICAL |
 | `docs/` | `PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | OBSOLETE |
 | `docs/` | `project_knowledge_base\governance\BACKUP_CONTENT_INDEX.md` | CANONICAL |
 | `docs/` | `project_knowledge_base\governance\BACKUP_VERIFICATION_REPORT.md` | CANONICAL |
@@ -522,6 +524,20 @@ El traslado de los **17 documentos** de gobernanza IA y benchmark a `docs/ai/` q
 - `AI_R1_*` (3) · `AI_R2_*` (2) · `AI_R3_*` (4) · `AI_R4_*` (1) · `AI_R5_HOLDOUT_STRATEGY_REPORT` (1) · `M1_M2_*` (2) · `M1_RECOVERY_AUDIT_REPORT` (1) · `M2_ARTIFACT_FORENSIC_VALIDATION_REPORT` (1) · `H5_AI_GOVERNANCE_CLOSURE_REPORT` (1) · `R5_AI_SERVING_STRATEGY_REPORT` (1).
 
 El destino `docs/bounded-contexts/ai-runtime/` previsto para esta familia **no fue materializado**; el destino canónico adoptado es `docs/ai/`. Referencias D-005 reconciliadas (12 entrantes + 14 internas) y movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación LOTE-3*. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+### UNCLASSIFIED-5 ejecutado (2026-11-18) — 5 documentos Toshiba/pre-commit
+
+Los **5 documentos previamente sin clasificar** del cierre Toshiba y de la auditoría pre-commit quedan clasificados (D-007) y reubicados por `UNCLASSIFIED-5` mediante `git mv` (**sin commit**):
+
+| Documento | Origen | Destino final | Acción |
+|---|---|---|---|
+| `TOSHIBA_CLOSURE_REPORT_20261117.md` | `docs/` | `docs/historical/` | HISTORICAL |
+| `DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md` | `docs/` | `docs/historical/` | HISTORICAL |
+| `DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` | `docs/` | `docs/reports/` | KEEP |
+| `PRE_COMMIT_CLASSIFICATION.md` | `docs/` | `docs/historical/` | HISTORICAL |
+| `PRE_COMMIT_FORENSIC_REVIEW.md` | `docs/` | `docs/historical/` | HISTORICAL |
+
+Cabecera **D-004.6** añadida/actualizada en los 5; referencias **D-005** reconciliadas en `AGENTS.md` y en los propios documentos; movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación UNCLASSIFIED-5*. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
 
 ---
 

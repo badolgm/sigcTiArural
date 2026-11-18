@@ -4,7 +4,7 @@
 > - Autor: Bernardo Adolfo Gómez Montoya
 > - Timestamp: 2026-11-17T22:45:56-05:00
 > - Origen: DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md
-> - Destino: docs/DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md
+> - Destino: docs/reports/DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md
 
 ## Informe de alineación de la decisión de arquitectura documental
 

@@ -1,5 +1,11 @@
 # PRE_COMMIT_CLASSIFICATION
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T18:45:37-05:00
+> - Origen: docs/PRE_COMMIT_CLASSIFICATION.md
+> - Destino: docs/historical/PRE_COMMIT_CLASSIFICATION.md
+
 **Misión:** `PRE_COMMIT_CLASSIFICATION`
 **Naturaleza:** SOLO análisis/clasificación. **NO modifica código · NO stage · NO commits · NO push.**
 **Rama:** `feature/cmsc-f3c-v1-implementation` · **HEAD:** `9109050` · **adelante de origin:** **37 commits**
@@ -134,7 +140,7 @@ src/frontend/Dockerfile      |  8 ++++++++
 | `docs/IA_PREDICTIVA_EXECUTION_READINESS_REPORT.md` |
 | `docs/memory/SIGCT_MEMORY_IMPLEMENTATION_READINESS_REPORT.md` |
 | `docs/memory/SIGCT_MEMORY_M0_DECISION_ACTA.md` |
-| `docs/PRE_COMMIT_FORENSIC_REVIEW.md` |
+| `docs/historical/PRE_COMMIT_FORENSIC_REVIEW.md` |
 
 ### 4. Categoría **E — Temporales / no commitear**
 | Archivo | Motivo |
@@ -232,7 +238,7 @@ docs/IA_PREDICTIVA_RECOVERY_EXECUTION_PLAN.md
 docs/IA_PREDICTIVA_EXECUTION_READINESS_REPORT.md
 docs/memory/SIGCT_MEMORY_IMPLEMENTATION_READINESS_REPORT.md
 docs/memory/SIGCT_MEMORY_M0_DECISION_ACTA.md
-docs/PRE_COMMIT_FORENSIC_REVIEW.md
+docs/historical/PRE_COMMIT_FORENSIC_REVIEW.md
 ```
 **Riesgo:** nulo (solo docs).
 

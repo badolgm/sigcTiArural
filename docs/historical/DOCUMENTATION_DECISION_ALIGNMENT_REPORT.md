@@ -1,5 +1,11 @@
 # DOCUMENTATION DECISION ALIGNMENT REPORT V1
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T18:45:37-05:00
+> - Origen: docs/DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md
+> - Destino: docs/historical/DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md
+
 ## Propósito
 
 Validar que la decisión arquitectónica DOCUMENTATION_ARCHITECTURE_DECISION_V1.md esté correctamente integrada en la documentación del proyecto SIGCTIARURAL y que las referencias cruzadas funcionen para que cualquier IA futura encuentre la decisión de gobernanza documental en menos de 2 saltos documentales.

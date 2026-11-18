@@ -1,5 +1,11 @@
 # PRE_COMMIT_FORENSIC_REVIEW
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T18:45:37-05:00
+> - Origen: docs/PRE_COMMIT_FORENSIC_REVIEW.md
+> - Destino: docs/historical/PRE_COMMIT_FORENSIC_REVIEW.md
+
 **Misión:** `PRE_COMMIT_FORENSIC_REVIEW`
 **Proyecto:** SIGCT-Rural · **Rama:** `feature/cmsc-f3c-v1-implementation` · **HEAD:** `415ee2b`
 **Base remota:** `origin/feature/cmsc-f3c-v1-implementation` — **36 commits adelante, sin push**

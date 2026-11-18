@@ -1,5 +1,11 @@
 # TOSHIBA_CLOSURE_REPORT_20261117
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T18:45:37-05:00
+> - Origen: docs/TOSHIBA_CLOSURE_REPORT_20261117.md
+> - Destino: docs/historical/TOSHIBA_CLOSURE_REPORT_20261117.md
+
 **Tipo:** informe técnico de cierre de la reconciliación documental Toshiba
 **Rama:** `feature/cmsc-f3c-v1-implementation`
 **HEAD de cierre:** `1727121` (publicado en `origin`)
@@ -16,7 +22,7 @@ La reconciliación documental del Sprint Toshiba queda cerrada. En 7 commits pub
 
 Resultado:
 - **14 documentos SUBIR** integrados en `docs/` y `docs/architecture/`, sin sobrescribir contenido previo.
-- **7 documentos KEEP** integrados; uno de ellos renombrado a `docs/DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` por colisión de nombre, preservando ambos reportes.
+- **7 documentos KEEP** integrados; uno de ellos renombrado a `docs/reports/DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` por colisión de nombre, preservando ambos reportes.
 - **3 documentos MERGE** absorbidos como anexos dentro de documentos canónicos ya existentes, sin crear documentos nuevos.
 - **`docs/` consolidado como único SOURCE OF TRUTH** (358 `.md` al cierre); `Documentacion/` queda como repositorio legacy CMSC con 37 `.md`, sin eliminaciones.
 - **12 archivos permanecen fuera de Git** por decisión registrada (evidencia local, `LOCAL_ONLY`, `LOCAL_EVIDENCE_ONLY`, ARCHIVE pendientes de destino y originales MERGE absorbidos).
@@ -96,9 +102,9 @@ Los 5 documentos de `docs/architecture/` requirieron `git add -f` por la regla `
 | 4 | `C02_POST_IMPLEMENTATION_VALIDATION.md` | raíz | `docs/` | `a457b62` |
 | 5 | `CAPTURE_PILOT_V1.md` | raíz | `docs/` | `a457b62` |
 | 6 | `GDS2_CAPTURE_PLAN_V1.md` | raíz | `docs/` | `a457b62` |
-| 7 | `DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md` | raíz | `docs/DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` | `a457b62` |
+| 7 | `DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md` | raíz | `docs/reports/DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` | `a457b62` |
 
-El documento 7 se renombró en destino por **colisión de nombre** con `docs/DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md`, ya versionado y con contenido distinto (67 líneas frente a 145). Se preservaron ambos; no se sobrescribió nada.
+El documento 7 se renombró en destino por **colisión de nombre** con `docs/historical/DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md`, ya versionado y con contenido distinto (67 líneas frente a 145). Se preservaron ambos; no se sobrescribió nada.
 
 ### 4.3 MERGE absorbidos (3 documentos)
 
@@ -194,7 +200,7 @@ Conteo total: 4 + 2 + 3 + 3 = **12**.
 | R1 | 3 documentos ARCHIVE versionables fuera de Git | Abierto, no bloqueante | Dictamen emitido; destino `docs/historical/` con D-004.6 definido | No |
 | R2 | 6 archivos de evidencia local en la raíz del repositorio | Abierto, no bloqueante | Aislables en una carpeta local excluida por `.git/info/exclude` | No |
 | R3 | `.gitignore:160` (`docs/*`) ignora nuevas incorporaciones en subcarpetas de `docs/` | Vigente | Requiere `git add -f` salvo rutas des-ignoradas (`docs/historical/`, `docs/ai/`, etc.) | No |
-| R4 | Coexistencia de dos reportes de alineación distintos: `docs/DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md` (67 líneas) y `docs/DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` (145 líneas) | Abierto | Se preservaron ambos por colisión de nombre; la decisión MERGE entre ellos no se tomó | No |
+| R4 | Coexistencia de dos reportes de alineación distintos: `docs/historical/DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md` (67 líneas) y `docs/reports/DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` (145 líneas) | Abierto | Se preservaron ambos por colisión de nombre; la decisión MERGE entre ellos no se tomó | No |
 | R5 | Sub-movimiento de `CAPTURE_PILOT_V1.md` y `GDS2_CAPTURE_PLAN_V1.md` a `docs/capture/` | No ejecutado | Designación de la matriz de migración; la carpeta no existe y no se creó | No |
 | R6 | `C02_BACKLOG_CLOSEOUT.md` registra como deuda técnica aceptada `C-01`, `A-03`, `A-08`; el canon acepta `C-01` y `A-01` | Abierto, documental | Prevalece `docs/architecture/ARCHITECTURE_ACTION_REVIEW.md` por D-003; el documento debe conservarse como histórico, no como decisión | No |
 | R7 | Masterplan FASE 2 marca `docs/ESTADO_ACTUAL_BENCHMARKS.md` ↔ `Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md` como `DUPLICADO_EXACTO`; ese archivo no existe en `docs/` | Abierto, documental | Nota de consistencia añadida en anexo del masterplan; duplicados exactos reales = 0 | No |

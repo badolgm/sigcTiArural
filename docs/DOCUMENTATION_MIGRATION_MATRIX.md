@@ -84,6 +84,26 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 
 ---
 
+## Reconciliación UNCLASSIFIED-5 (2026-11-18)
+
+**Decisión de gobernanza:** los **5 documentos previamente sin clasificar (UNCLASSIFIED)** del cierre Toshiba y de la auditoría pre-commit quedan **clasificados y reubicados** por esta reconciliación, según **D-007**. Ninguno se reclasifica fuera de este conjunto.
+
+| # | Documento | Ubicación canónica | Acción | Origen |
+|---|---|---|---|---|
+| 1 | `TOSHIBA_CLOSURE_REPORT_20261117.md` | `docs/historical/` | HISTORICAL | `docs/` |
+| 2 | `DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md` | `docs/historical/` | HISTORICAL | `docs/` |
+| 3 | `DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` | `docs/reports/` | KEEP | `docs/` |
+| 4 | `PRE_COMMIT_CLASSIFICATION.md` | `docs/historical/` | HISTORICAL | `docs/` |
+| 5 | `PRE_COMMIT_FORENSIC_REVIEW.md` | `docs/historical/` | HISTORICAL | `docs/` |
+
+**D-004.6 (metadatos):** cabecera de migración (autor, timestamp, origen, destino gobernado) añadida a los 4 documentos que carecían de ella y **destino actualizado** en `DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` (`docs/` → `docs/reports/`).
+
+**D-005 (referencias):** referencias reconciliadas en `AGENTS.md` (bullet `KEEP-INTEGRATION-PHASE-2` y tabla «Fase 2 — KEEP»), `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` (FASE 1 y FASE 4), `TOSHIBA_CLOSURE_REPORT_20261117.md` (§1, §4.2, §8) y `PRE_COMMIT_CLASSIFICATION.md` (§3, §4). Sin referencias colgantes.
+
+**D-007 (registro):** movimiento registrado en esta matriz y en `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` (FASE 1 + FASE 4). El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+---
+
 ## Matriz completa de migración
 
 | # | Archivo actual | Ubicación destino | Acción | Justificación |
