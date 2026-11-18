@@ -1,7 +1,7 @@
 # AI-R3 ONNXRuntime Serving Plan
 
 **mission:** `AI_R3_ONNXRUNTIME_SERVING_PLAN` · **date:** 2026-10-14
-**base:** `docs/AI_R2_EXECUTION_REPORT.md` (`AI_R2_COMPLETE`, G-NEW-A PASS)
+**base:** `docs/ai/AI_R2_EXECUTION_REPORT.md` (`AI_R2_COMPLETE`, G-NEW-A PASS)
 **alcance:** diseño de AI-R3 (servir `model.onnx` con `onnxruntime` reemplazando el `.h5` histórico).
 **EXPLÍCITO:** **NO se implementa · NO se toca código · NO commits · NO push.**
 

@@ -134,4 +134,4 @@ Controles C1–C7 cumplidos · PROHIBIDO respetado · 13/13 hashes verificados.
 
 **Entregables:** `benchmark/runs/M2_efficientnet_b0/**` (13+1, ignorado) · `docs/ai/artifacts/M2_ARTIFACT_RECORD.md` · `docs/ai/artifacts/model_cards/M2_efficientnet_b0.model_card.md` · `docs/ai/manifests/model_registry.agriculture_v2.yaml`.
 
-**Referencias:** `docs/AI_R1_ARTIFACT_IMPLEMENTATION_PLAN.md` · `docs/AI_R1_EXECUTION_READINESS_REPORT.md` · `docs/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` · `docs/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` · `docs/AI_CANON_IMPLEMENTATION_DECISION_REPORT.md`.
+**Referencias:** `docs/ai/AI_R1_ARTIFACT_IMPLEMENTATION_PLAN.md` · `docs/ai/AI_R1_EXECUTION_READINESS_REPORT.md` · `docs/ai/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` · `docs/ai/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` · `docs/AI_CANON_IMPLEMENTATION_DECISION_REPORT.md`.

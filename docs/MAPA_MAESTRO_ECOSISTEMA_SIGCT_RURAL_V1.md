@@ -264,7 +264,7 @@ Los laboratorios son **espacios de exploración**; producen evidencia, no conten
 | **M2** EfficientNet-B0 (challenger) | `VALIDADO` | macro-F1 0.9937 · balanced_acc 0.9943 · ECE 0.0332 · weighted-F1 0.9956 · epoch 32 · ~4.66 h | `runs/M2_efficientnet_b0/` |
 | **`plant_disease_mbv2.h5`** (servicio) | `ROTO` | Doble normalización | Descalificado (`fastapi_app.py:192`) |
 
-**Decisión M1 vs M2: CERRADA (2026-10-14).** M1 permanece baseline oficial congelado y M2 permanece challenger; la promoción de M2 no procede (no supera el discriminador primario ECE). Gate M1↔M2 cerrado — `docs/M1_M2_GOVERNANCE_CLOSURE_REPORT.md`.
+**Decisión M1 vs M2: CERRADA (2026-10-14).** M1 permanece baseline oficial congelado y M2 permanece challenger; la promoción de M2 no procede (no supera el discriminador primario ECE). Gate M1↔M2 cerrado — `docs/ai/M1_M2_GOVERNANCE_CLOSURE_REPORT.md`.
 
 ### 5.2 Datos
 
@@ -449,7 +449,7 @@ Clasificación de temas a **elevar a rango constitucional** en una futura `CONST
 | `docs/CANONICAL_PROJECT_STATE_20261109.md` | Estado canónico del proyecto |
 | `AGENTS.md` | Identidad, estado git, decisiones, cadencias |
 | `docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` | Gobernanza dataset acústico (G-DS-1..6) |
-| `docs/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` | Línea canónica de IA (M1/M2) |
+| `docs/ai/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` | Línea canónica de IA (M1/M2) |
 | `Documentacion/Arquitectura/CMSC_F4_ACP_ARCHITECTURE_v1.md` | Arquitectura del ACP |
 | `Documentacion/Arquitectura/CMSC_F3E_KNOWLEDGE_INTEGRATION_STRATEGY_v1.md` | Evidence Ledger y Knowledge Graph |
 | `Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md` | Flujo operativo S30 → … → KH |

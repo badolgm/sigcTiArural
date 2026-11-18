@@ -257,8 +257,8 @@ Sin cambios de código · sin mover/crear archivos · sin captura · sin entrena
 - `docs/ai/manifests/split_manifest.agriculture_v2_split_v1.yaml` (anti-fuga: SHA-256 + pHash ≤ 8 + grupo)
 - `benchmark/runs/M2_efficientnet_b0/report/validation_metrics.json` (macro-F1 0.9937 · ECE 0.0332)
 - `docs/ai/artifacts/model_cards/M2_efficientnet_b0.model_card.md` (§5 índice→clase, §5b métricas, §7b ONNX)
-- `docs/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` §0 (`G-3b`), §3 (`real_world_holdout` 0)
-- `docs/R5_AI_SERVING_STRATEGY_REPORT.md` (§8 P1–P4, A9 G-3b)
+- `docs/ai/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` §0 (`G-3b`), §3 (`real_world_holdout` 0)
+- `docs/ai/R5_AI_SERVING_STRATEGY_REPORT.md` (§8 P1–P4, A9 G-3b)
 - `docs/ai/research_v2/AI_DATASET_STRATEGY_V2.md` §14.5 · `AI_TRAINING_PIPELINE_V2.md` §246,382 · `AGRICULTURE_AI_V2_EXECUTION_PLAN.md` §5.5 · `AGRICULTURE_AI_V2_NOTEBOOK_ROADMAP.md` §15
 - `docs/SIGCTIARURAL_DATASET_V2_MASTERPLAN.md` §138,245,247 (holdout intocable / κ / anti-fuga)
 - `docs/FIELD_DATA_COLLECTION_PROTOCOL.md` (precedente: holdout por sitio, doble revisión, checksums)

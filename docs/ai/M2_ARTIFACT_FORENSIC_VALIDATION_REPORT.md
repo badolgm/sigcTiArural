@@ -4,7 +4,7 @@
 **Misión:** `M2_ARTIFACT_FORENSIC_VALIDATION` (solo validación de artefactos)
 **Fecha:** 2026-10-14
 **Reglas respetadas:** sin entrenamiento · sin conversión ONNX · sin modificar código · sin commits · sin push. Solo lectura.
-**Supersede (para M2):** `docs/M1_M2_ARTIFACT_RECOVERY_REPORT.md` (que declaraba M2 `UNVERIFIED`). M1 permanece **no recuperado**.
+**Supersede (para M2):** `docs/ai/M1_M2_ARTIFACT_RECOVERY_REPORT.md` (que declaraba M2 `UNVERIFIED`). M1 permanece **no recuperado**.
 
 ---
 

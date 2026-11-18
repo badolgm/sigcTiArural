@@ -15,6 +15,8 @@
 ## FASE 1 – INVENTARIO TOTAL
 
 > **Nota de reconciliación LOTE-1 (2026-11-18):** este inventario es el **snapshot original previo a la ejecución** (296 archivos). Tras LOTE-1 (commit `82d26cf`), 18 documentos de las familias `SIGCT_MEMORY_*` (11), `SIGCTIARURAL_RESEARCH_*` (3) y `CMSC_*` (4) residen en las carpetas canónicas `docs/memory/`, `docs/research/` y `docs/cmsc/`. El inventario se conserva como evidencia del estado previo.
+>
+> **Nota de reconciliación LOTE-3 (2026-11-18):** 17 documentos de la familia de gobernanza IA y benchmark (`AI_R1_*`…`AI_R5_*`, `M1_*`, `M1_M2_*`, `M2_*`, `H5_AI_GOVERNANCE_CLOSURE_REPORT`, `R5_AI_SERVING_STRATEGY_REPORT`) fueron **trasladados** de `docs/` a `docs/ai/` mediante `git mv` (**sin commit**). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución.
 
 ### Raíz `docs/` — 296 archivos `.md`
 
@@ -512,6 +514,14 @@ docs/
 | `Documentacion/Arquitectura/*` (todos los 37) | `docs/cmsc/` o `docs/deployment/` o `docs/historical/` | MOVE (planificado) |
 | `Documentacion/IA/*` (todos los 8) | `docs/bounded-contexts/ai-runtime/` | MOVE (planificado) |
 | `Documentacion/` (directorio raíz vacío) | — | DELETE_CANDIDATE |
+
+### LOTE-3 ejecutado (2026-11-18) — familia IA/benchmark → `docs/ai/`
+
+El traslado de los **17 documentos** de gobernanza IA y benchmark a `docs/ai/` quedó **ejecutado** mediante `git mv` (**sin commit**):
+
+- `AI_R1_*` (3) · `AI_R2_*` (2) · `AI_R3_*` (4) · `AI_R4_*` (1) · `AI_R5_HOLDOUT_STRATEGY_REPORT` (1) · `M1_M2_*` (2) · `M1_RECOVERY_AUDIT_REPORT` (1) · `M2_ARTIFACT_FORENSIC_VALIDATION_REPORT` (1) · `H5_AI_GOVERNANCE_CLOSURE_REPORT` (1) · `R5_AI_SERVING_STRATEGY_REPORT` (1).
+
+El destino `docs/bounded-contexts/ai-runtime/` previsto para esta familia **no fue materializado**; el destino canónico adoptado es `docs/ai/`. Referencias D-005 reconciliadas (12 entrantes + 14 internas) y movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación LOTE-3*. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
 
 ---
 

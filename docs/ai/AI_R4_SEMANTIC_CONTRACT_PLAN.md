@@ -1,7 +1,7 @@
 # AI-R4 Semantic Contract Plan
 
 **mission:** `AI_R4_SEMANTIC_CONTRACT_PLAN` · **date:** 2026-10-14
-**base:** `AI_R3_ONNXRUNTIME_SERVING_PLAN` · `docs/AI_R2_EXECUTION_REPORT.md` (`AI_R2_COMPLETE`) · `M2_RECOVERED` · `AI_CANON_HYBRID`
+**base:** `AI_R3_ONNXRUNTIME_SERVING_PLAN` · `docs/ai/AI_R2_EXECUTION_REPORT.md` (`AI_R2_COMPLETE`) · `M2_RECOVERED` · `AI_CANON_HYBRID`
 **objetivo:** resolver la semántica completa de las **16 clases canónicas** (fin del `binary_only`).
 **estado:** **`AI_R4_READY`** (condicionado a D4-A · D4-B · D4-C · D4-D)
 

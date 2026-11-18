@@ -4,7 +4,7 @@
 **Naturaleza:** SOLO plan. **NO exportar · NO modificar código · NO entrenar · NO commits · NO push.**
 **Rama:** `feature/cmsc-f3c-v1-implementation` · **HEAD:** `9109050`
 **Fecha:** 2026-10-14
-**Base:** `AI_CANON_IMPLEMENTATION_DECISION_REPORT` (`AI_SERVING_ONNX`) · `docs/R5_AI_SERVING_STRATEGY_REPORT.md` (`R5_NOT_READY`) · `docs/AI_R1_EXECUTION_REPORT.md` (`AI_R1_EXECUTED`)
+**Base:** `AI_CANON_IMPLEMENTATION_DECISION_REPORT` (`AI_SERVING_ONNX`) · `docs/ai/R5_AI_SERVING_STRATEGY_REPORT.md` (`R5_NOT_READY`) · `docs/ai/AI_R1_EXECUTION_REPORT.md` (`AI_R1_EXECUTED`)
 
 ---
 
@@ -215,4 +215,4 @@ Si P-A no se satisface → degradar a AI_R2_NOT_READY (sesgo de fidelidad).
 
 **NO exportado · NO modificado (código) · NO entrenado · sin commits · sin push.**
 
-**Referencias:** `docs/AI_R1_EXECUTION_REPORT.md` · `docs/AI_CANON_IMPLEMENTATION_DECISION_REPORT.md` · `docs/R5_AI_SERVING_STRATEGY_REPORT.md` · `docs/ai/artifacts/model_cards/M2_efficientnet_b0.model_card.md` · `docs/ai/manifests/model_registry.agriculture_v2.yaml` · `notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb` · `src/ai_models/{fastapi_app.py,requirements.txt,Dockerfile}` · `benchmark/{requirements.txt,config.yaml}` · `.gitignore:20`.
+**Referencias:** `docs/ai/AI_R1_EXECUTION_REPORT.md` · `docs/AI_CANON_IMPLEMENTATION_DECISION_REPORT.md` · `docs/ai/R5_AI_SERVING_STRATEGY_REPORT.md` · `docs/ai/artifacts/model_cards/M2_efficientnet_b0.model_card.md` · `docs/ai/manifests/model_registry.agriculture_v2.yaml` · `notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb` · `src/ai_models/{fastapi_app.py,requirements.txt,Dockerfile}` · `benchmark/{requirements.txt,config.yaml}` · `.gitignore:20`.

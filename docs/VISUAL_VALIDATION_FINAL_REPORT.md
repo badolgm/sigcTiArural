@@ -339,7 +339,7 @@ AIPredictiva.jsx  (etiqueta UI "IA Predictiva v5.0", línea 329)
 11. Selector por entorno: `AI_BACKEND=tf|onnx` (por defecto `tf`). El `.h5` **permanece** en la imagen como fallback.
 12. `Dockerfile` y `MODELS_DIR` no deben borrar `production_models/*.h5`.
 
-**P4 — Orden obligatorio (ya definido en `AI_R3_R4_EXECUTION_PLAN`)**
+**P4 — Orden obligatorio (ya definido en `docs/ai/AI_R3_R4_EXECUTION_PLAN.md`)**
 13. **F1 R4-backend → F2 R3 dormido → F3 R4-frontend → F4 activación → F5 validación.**
 14. **Nunca** activar ONNX sin resolver v2 desplegado (elimina R-EXEC-1 por construcción).
 

@@ -118,4 +118,4 @@ Han cerrado los bloques de **gobernanza** (H5 ✅, gate M1↔M2 ✅) y el tramo 
 
 **Sin modificar código · sin commits · sin push · sin dockerizar · sin `down -v` · sin OCI.**
 
-**Referencias:** `docs/DOCKER_READY_CLOSURE_REPORT.md` · `docs/DOCKER_READY_R1_R4_REPORT.md` · `docs/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` · `docs/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` · `docs/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` · `docs/M1_RECOVERY_AUDIT_REPORT.md` · `docs/R5_AI_SERVING_STRATEGY_REPORT.md` · `docs/R6_R7_EXECUTION_PLAN.md`.
+**Referencias:** `docs/DOCKER_READY_CLOSURE_REPORT.md` · `docs/DOCKER_READY_R1_R4_REPORT.md` · `docs/ai/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` · `docs/ai/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` · `docs/ai/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` · `docs/ai/M1_RECOVERY_AUDIT_REPORT.md` · `docs/ai/R5_AI_SERVING_STRATEGY_REPORT.md` · `docs/R6_R7_EXECUTION_PLAN.md`.

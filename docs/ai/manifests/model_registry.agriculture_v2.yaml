@@ -70,7 +70,7 @@ models:
       weighted_f1: 0.9902
       best_epoch: 38
       split: "validation"
-    metrics_ref: "docs/M1_RECOVERY_AUDIT_REPORT.md"
+    metrics_ref: "docs/ai/M1_RECOVERY_AUDIT_REPORT.md"
     model_card: null
     provenance: "notebooks/SIGCTIARURAL_M1_MobileNetV2.ipynb"
     notes: "Pesos NO recuperados (M1_PARTIAL). Evidencia embebida en notebook."

@@ -4,7 +4,7 @@
 **Misión:** `M1_RECOVERY_AUDIT` (solo búsqueda forense y auditoría)
 **Fecha:** 2026-10-14
 **Reglas respetadas:** sin entrenamiento · sin generación de modelos · sin export ONNX · sin modificar código · sin commits · sin push.
-**Continúa:** `docs/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` (`M2_RECOVERED`).
+**Continúa:** `docs/ai/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` (`M2_RECOVERED`).
 
 ---
 

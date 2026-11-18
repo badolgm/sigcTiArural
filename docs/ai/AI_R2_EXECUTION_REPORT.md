@@ -1,7 +1,7 @@
 # AI-R2 Execution Report
 
 **mission:** `AI_R2_EXECUTION` · **date:** 2026-10-14
-**precedente:** `docs/AI_R2_ONNX_EXECUTION_PLAN.md` (clasificación `AI_R2_READY`)
+**precedente:** `docs/ai/AI_R2_ONNX_EXECUTION_PLAN.md` (clasificación `AI_R2_READY`)
 **decisión:** `D-serve = AUTORIZADO` (servir M2) · **alcance:** AI-R2.1 … AI-R2.5
 **estado:** **`AI_R2_COMPLETE`** · gate `G-NEW-A = PASS`
 

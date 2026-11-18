@@ -143,7 +143,7 @@ docs/ai/manifests/
 | 3 | `docs/ai/artifacts/M2_ARTIFACT_RECORD.md` | nuevo |
 | 4 | `docs/ai/artifacts/model_cards/M2_efficientnet_b0.model_card.md` | nuevo |
 | 5 | `docs/ai/manifests/model_registry.agriculture_v2.yaml` | nuevo |
-| 6 | `docs/AI_R1_ARTIFACT_IMPLEMENTATION_PLAN.md` | **este documento** |
+| 6 | `docs/ai/AI_R1_ARTIFACT_IMPLEMENTATION_PLAN.md` | **este documento** |
 
 ## 6. Q6b — Plantilla `model_card.md` (M2)
 
@@ -169,7 +169,7 @@ limitations: bootstrap de laboratorio ≠ validez de campo · ECE > M1
 | `docs/ai/manifests/baseline_experiment_manifest.agriculture_v2_baseline_v2.yaml` | Enlazar `model_registry` / huella M2 | Sí |
 | `Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md` | M2: artefactos **materializados** (no solo "en Drive") | Sí |
 | `docs/DOCS_MAP.md` | Registrar los 3 documentos nuevos | Sí |
-| `docs/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` | Addendum: artefacto materializado | Opcional |
+| `docs/ai/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` | Addendum: artefacto materializado | Opcional |
 | `AGENTS.md` / `docs/MASTERDOC.md` | Estado IA | **Solo con orden explícita** |
 
 > La lista de §3 de `H5_AI_GOVERNANCE_CLOSURE_REPORT` (docs CMSC/diagramas) es un frente **aparte**; no bloquea AI-R1.
@@ -232,4 +232,4 @@ limitations: bootstrap de laboratorio ≠ validez de campo · ECE > M1
 
 **NO implementado · NO entrenado · NO exportado (ONNX) · NO modificado (código) · sin commits · sin push.**
 
-**Referencias:** `docs/AI_CANON_IMPLEMENTATION_DECISION_REPORT.md` (`AI_SERVING_ONNX`) · `docs/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` (`M2_RECOVERED`) · `docs/M1_RECOVERY_AUDIT_REPORT.md` (`M1_PARTIAL`) · `docs/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` (`M1_BASELINE_M2_CHALLENGER`) · `docs/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` (`H5_CLOSED`) · `docs/R5_AI_SERVING_STRATEGY_REPORT.md` · `.gitignore:20,68` · `data/datasets/agriculture_images_tomato-potato-corn/v1/{dataset_card.md,labels/labels_v1.csv,manifests/*}` · `docs/ai/manifests/baseline_experiment_manifest.agriculture_v2_baseline_v2.yaml` · `notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb`.
+**Referencias:** `docs/AI_CANON_IMPLEMENTATION_DECISION_REPORT.md` (`AI_SERVING_ONNX`) · `docs/ai/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` (`M2_RECOVERED`) · `docs/ai/M1_RECOVERY_AUDIT_REPORT.md` (`M1_PARTIAL`) · `docs/ai/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` (`M1_BASELINE_M2_CHALLENGER`) · `docs/ai/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` (`H5_CLOSED`) · `docs/ai/R5_AI_SERVING_STRATEGY_REPORT.md` · `.gitignore:20,68` · `data/datasets/agriculture_images_tomato-potato-corn/v1/{dataset_card.md,labels/labels_v1.csv,manifests/*}` · `docs/ai/manifests/baseline_experiment_manifest.agriculture_v2_baseline_v2.yaml` · `notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb`.

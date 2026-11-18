@@ -197,11 +197,11 @@ La vía D está adoptada; **falta decidir qué artefacto se exporta primero**:
 
 **Referencias (evidencia):**
 - `docs/AI_CANONICAL_STRATEGY_DECISION_REPORT.md` (`AI_CANON_HYBRID`, §7.3 contrato neutral, gates G-1..G-5)
-- `docs/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` (`H5_CLOSED`, canónico vs histórico, impacto Docker)
-- `docs/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` (`M1_BASELINE_M2_CHALLENGER`, G-7 servicio)
-- `docs/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` (`M2_RECOVERED`)
-- `docs/M1_RECOVERY_AUDIT_REPORT.md` (`M1_PARTIAL`, pesos perdidos)
-- `docs/R5_AI_SERVING_STRATEGY_REPORT.md` (`R5_NOT_READY`, estrategia ONNX, §7.0 interim)
+- `docs/ai/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` (`H5_CLOSED`, canónico vs histórico, impacto Docker)
+- `docs/ai/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` (`M1_BASELINE_M2_CHALLENGER`, G-7 servicio)
+- `docs/ai/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` (`M2_RECOVERED`)
+- `docs/ai/M1_RECOVERY_AUDIT_REPORT.md` (`M1_PARTIAL`, pesos perdidos)
+- `docs/ai/R5_AI_SERVING_STRATEGY_REPORT.md` (`R5_NOT_READY`, estrategia ONNX, §7.0 interim)
 - `docs/DOCKER_READY_FINAL_DECISION_REPORT.md` (`DOCKER_NOT_READY`)
 - `src/ai_models/fastapi_app.py:171-193,199-263` · `src/ai_models/Dockerfile:21` · `src/ai_models/requirements.txt:1-13`
 - `src/backend/.../semantic_prediction_resolver.py:74` · `src/frontend/src/pages/AIPredictiva.jsx:58-62,141,147-148`

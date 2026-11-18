@@ -106,7 +106,7 @@ Registro: `benchmark/runs/M2_efficientnet_b0/exports/export_record.json` · `doc
 
 ### H6 — `READY_FOR_ONNX_ACTIVATION` quedó confirmado ✅
 
-`docs/AI_R3_R4_CLOSURE_REPORT.md` §0: **`READY_FOR_ONNX_ACTIVATION = TRUE`** — motor ONNX *implementado pero dormido*; activación = **interruptor único** (`AI_BACKEND=onnx`), **no accionado**.
+`docs/ai/AI_R3_R4_CLOSURE_REPORT.md` §0: **`READY_FOR_ONNX_ACTIVATION = TRUE`** — motor ONNX *implementado pero dormido*; activación = **interruptor único** (`AI_BACKEND=onnx`), **no accionado**.
 
 ---
 

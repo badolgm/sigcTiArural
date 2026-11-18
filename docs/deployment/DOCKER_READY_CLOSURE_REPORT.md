@@ -104,7 +104,7 @@ Estado derivado de `DOCKER_READY_R1_R4_REPORT` (V2–V11 + runtime) y `PRE_DOCKE
 ## 3. Evidencias existentes (reutilizables)
 
 - **Ejecutado y verificado:** `docs/DOCKER_READY_R1_R4_REPORT.md` (cambios R1–R4, V2–V11, D1/D2, runtime). Rollback: tag `PRE_R1_R4_EXECUTION` + `pg_dump` (39.396 B · SHA-256 `FEF4A7C9A0371E580A679F08E3BBECB6EC179D1589B5A198B62238447F1FE1BB`).
-- **Gobernanza IA:** `docs/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` (`H5_CLOSED`; canon vs histórico).
+- **Gobernanza IA:** `docs/ai/H5_AI_GOVERNANCE_CLOSURE_REPORT.md` (`H5_CLOSED`; canon vs histórico).
 - **Validación estática + build/ruteo:** `docs/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` (build EXIT 0, 14/14 rutas 200, overlay ausente).
 - **Config vigente:** `.env.example` ya en **mismo-origen** (`VITE_API_URL=/api`, `VITE_AI_API_BASE=`, `VITE_AI_INFERENCE_URL=/api/v3/ai/inference/`) + guía `SECRET_KEY`/`DEBUG`/`ALLOWED_HOSTS`.
 - **Artefacto de smoke disponible (no ejecutado):** `src/frontend/scripts/smoke-frontend.ps1`.

@@ -245,7 +245,7 @@ M1/M2 (canónico) ──────┼─► R5.1 ONNX ─► R5.2 ai_service �
 - `src/backend/infrastructure/external/ai_service/semantic_prediction_resolver.py:4-93` · `fastapi_ai_adapter.py:34-42`
 - `src/frontend/src/pages/AIPredictiva.jsx:3,58-62,129-153`
 - `docs/AI_CANONICAL_STRATEGY_DECISION_REPORT.md:14,123-128,151-160` (`AI_CANON_HYBRID`, gates G-1..G-5)
-- `docs/H5_AI_GOVERNANCE_CLOSURE_REPORT.md:45-58,120-128` (canónico/histórico, impacto Docker)
+- `docs/ai/H5_AI_GOVERNANCE_CLOSURE_REPORT.md:45-58,120-128` (canónico/histórico, impacto Docker)
 - `docker-compose.yml:77-98` (`ai_service`, healthcheck)
 
 **Sin implementar · sin entrenar · sin modificar código · sin commits · sin push · sin OCI.**

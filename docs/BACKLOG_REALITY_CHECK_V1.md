@@ -10,7 +10,7 @@
 Estado:
 ABIERTO
 Evidencia:
-`docs/CANONICAL_PROJECT_STATE_20261109.md`, sección DECISIONES CERRADAS, fila M1_BASELINE_M2_CHALLENGER: "CONGELADO/DECISIÓN PENDIENTE · M1 baseline congelado · M2 challenger validado · decisión pendiente por diseño". Fuente adicional: `docs/ESTADO_ACTUAL_BENCHMARKS.md` § "Decisión benchmark final PENDIENTE". Aunque `docs/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` (2026-10-14) declara "Gate M1↔M2: CERRADO" para el componente de status/arquitectura, es documentación anterior al CANONICAL_PROJECT_STATE_20261109.md (2026-11-09) y no existe evidencia documental posterior al canónico que cierre la decisión definitiva de promoción M1 vs M2. El test single-use confirmatorio permanece reservado sin ejecutar.
+`docs/CANONICAL_PROJECT_STATE_20261109.md`, sección DECISIONES CERRADAS, fila M1_BASELINE_M2_CHALLENGER: "CONGELADO/DECISIÓN PENDIENTE · M1 baseline congelado · M2 challenger validado · decisión pendiente por diseño". Fuente adicional: `docs/ESTADO_ACTUAL_BENCHMARKS.md` § "Decisión benchmark final PENDIENTE". Aunque `docs/ai/M1_M2_GOVERNANCE_CLOSURE_REPORT.md` (2026-10-14) declara "Gate M1↔M2: CERRADO" para el componente de status/arquitectura, es documentación anterior al CANONICAL_PROJECT_STATE_20261109.md (2026-11-09) y no existe evidencia documental posterior al canónico que cierre la decisión definitiva de promoción M1 vs M2. El test single-use confirmatorio permanece reservado sin ejecutar.
 
 ## Dataset acústico Tramo C
 Estado:

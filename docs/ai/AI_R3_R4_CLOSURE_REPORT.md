@@ -4,7 +4,7 @@
 **Naturaleza:** SOLO documentación/trazabilidad. **NO implementa · NO modifica código · NO activa ONNX · NO commits · NO push.**
 **Fecha:** 2026-11-15 (America/Bogota)
 **Rama:** `feature/cmsc-f3c-v1-implementation` · **HEAD:** `449c969`
-**Precedentes:** `docs/AI_R3_ONNXRUNTIME_SERVING_PLAN.md` · `docs/AI_R3_EXECUTION_READINESS_REPORT.md` (`NOT_SAFE_TO_EXECUTE` en aislamiento) · `docs/AI_R4_SEMANTIC_CONTRACT_PLAN.md` (`AI_R4_READY`) · `docs/AI_R3_R4_EXECUTION_PLAN.md` (`SAFE_TO_EXECUTE`) · `docs/AI_R2_EXECUTION_REPORT.md` (`AI_R2_COMPLETE`)
+**Precedentes:** `docs/ai/AI_R3_ONNXRUNTIME_SERVING_PLAN.md` · `docs/ai/AI_R3_EXECUTION_READINESS_REPORT.md` (`NOT_SAFE_TO_EXECUTE` en aislamiento) · `docs/ai/AI_R4_SEMANTIC_CONTRACT_PLAN.md` (`AI_R4_READY`) · `docs/ai/AI_R3_R4_EXECUTION_PLAN.md` (`SAFE_TO_EXECUTE`) · `docs/ai/AI_R2_EXECUTION_REPORT.md` (`AI_R2_COMPLETE`)
 **Regla:** toda afirmación anclada a commit/disco/repo; lo no evidenciado se declara como tal.
 
 ---

@@ -220,12 +220,12 @@ AI-R3+R4 (este plan, SAFE_TO_EXECUTE) ─► cierra R5.1–R5.4/G-2·G-3·G-5·G
 Sin cambios de código · sin instalar dependencias · sin rebuild · sin tocar contenedores · sin commits · sin push · sin OCI.
 
 ## 11. Referencias (evidencia)
-- `docs/AI_R3_EXECUTION_READINESS_REPORT.md` (`NOT_SAFE_TO_EXECUTE` · R-EXEC-1)
-- `docs/AI_R3_ONNXRUNTIME_SERVING_PLAN.md` (`AI_R3_READY` · D3-A/B/C)
-- `docs/AI_R4_SEMANTIC_CONTRACT_PLAN.md` (`AI_R4_READY` · D4-A/B/C/D)
-- `docs/R5_AI_SERVING_STRATEGY_REPORT.md` (`R5_NOT_READY` · P1–P4 · A1–A9 · G-1..G-5)
+- `docs/ai/AI_R3_EXECUTION_READINESS_REPORT.md` (`NOT_SAFE_TO_EXECUTE` · R-EXEC-1)
+- `docs/ai/AI_R3_ONNXRUNTIME_SERVING_PLAN.md` (`AI_R3_READY` · D3-A/B/C)
+- `docs/ai/AI_R4_SEMANTIC_CONTRACT_PLAN.md` (`AI_R4_READY` · D4-A/B/C/D)
+- `docs/ai/R5_AI_SERVING_STRATEGY_REPORT.md` (`R5_NOT_READY` · P1–P4 · A1–A9 · G-1..G-5)
 - `docs/AI_CANONICAL_STRATEGY_DECISION_REPORT.md` (`AI_CANON_HYBRID` · `AI_SERVING_ONNX`)
-- `docs/AI_R2_EXECUTION_REPORT.md` · `docs/ai/artifacts/M2_ONNX_EXPORT_RECORD.md`
+- `docs/ai/AI_R2_EXECUTION_REPORT.md` · `docs/ai/artifacts/M2_ONNX_EXPORT_RECORD.md`
 - `src/ai_models/{fastapi_app.py,requirements.txt,.dockerignore,Dockerfile}` · `docker-compose.yml`
 - `src/backend/{api/views.py,infrastructure/external/ai_service/semantic_prediction_resolver.py,tests/test_semantic_prediction_resolver.py}`
 - `src/frontend/src/pages/AIPredictiva.jsx` · `docs/ai/manifests/taxonomy_binding_manifest.agriculture_v2_taxonomy_v1.yaml`

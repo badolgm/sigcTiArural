@@ -48,7 +48,7 @@ Sustituir contenido obsoleto (21/08/2026; dice "no incluye `docker-compose.yml`"
 4. **Entorno:** `.env` (fuera de git) vs `.env.example`; `SECRET_KEY`/`DJANGO_DEBUG`/`ALLOWED_HOSTS`/`CORS_ALLOWED_ORIGINS`.
 5. **Operación:** arranque (`up -d <servicios explícitos>`), logs, `down` (**nunca `-v`**).
 6. **Backup/Rollback:** tag `PRE_R1_R4_EXECUTION` + `pg_dump -Fc`; `pg_restore`; reconstruir.
-7. **Honestidad IA:** declarar `model_loaded` histórico (enlace a `H5_AI_GOVERNANCE_CLOSURE_REPORT`).
+7. **Honestidad IA:** declarar `model_loaded` histórico (enlace a `docs/ai/H5_AI_GOVERNANCE_CLOSURE_REPORT.md`).
 8. **Versión/tag:** documentar el tag de release de §1 (SHA).
 
 **Observaciones de consistencia (menores, dentro de R6 docs):**

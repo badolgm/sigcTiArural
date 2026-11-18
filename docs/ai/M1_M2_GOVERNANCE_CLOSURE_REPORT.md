@@ -5,7 +5,7 @@
 **Fecha:** 2026-10-14
 **Marco:** `AI_CANON_HYBRID` (baseline/challenger · gates macro-F1 + ECE · test single-use · honestidad de estado)
 **Reglas respetadas:** sin entrenar · sin modificar código · sin commits · sin push.
-**Evidencia base:** `docs/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` (`M2_RECOVERED`) · `docs/M1_RECOVERY_AUDIT_REPORT.md` (`M1_PARTIAL`).
+**Evidencia base:** `docs/ai/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` (`M2_RECOVERED`) · `docs/ai/M1_RECOVERY_AUDIT_REPORT.md` (`M1_PARTIAL`).
 
 ---
 

@@ -8,7 +8,7 @@
 
 ## Matriz de migración documental — SIGCT-Rural
 
-**Estado:** Planificación + reconciliación. Las familias `SIGCT_MEMORY_*`, `SIGCTIARURAL_RESEARCH_*` y `CMSC_*` ya fueron **publicadas** por LOTE-1 en `docs/memory/`, `docs/research/` y `docs/cmsc/`; el resto permanece como planificación sin ejecutar.
+**Estado:** Planificación + reconciliación. Las familias `SIGCT_MEMORY_*`, `SIGCTIARURAL_RESEARCH_*` y `CMSC_*` ya fueron **publicadas** por LOTE-1 en `docs/memory/`, `docs/research/` y `docs/cmsc/`; la familia de gobernanza IA y benchmark (`AI_R*`, `M1*`, `M2*`, `H5_*`, `R5_*`) fue **trasladada** por LOTE-3 a `docs/ai/`; el resto permanece como planificación sin ejecutar.
 
 **Acciones permitidas:** KEEP, MOVE, MERGE, ARCHIVE, DELETE_CANDIDATE.
 
@@ -49,6 +49,38 @@ Destinos sustituidos en esta matriz (sin movimiento de archivos):
 | 18 | `CMSC_PROJECT_STATUS_2026_10_05.md` | `docs/cmsc/` | raíz |
 
 Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aquí. La fila 33 (documento 17) y las filas 201–203 y 217–227 se actualizan in situ con el destino canónico.
+
+---
+
+## Reconciliación LOTE-3 (2026-11-18)
+
+**Decisión de gobernanza:** el traslado ejecutado en LOTE-3 (`git mv`, **sin commit**) se adopta como **estructura canónica aprobada** para la familia de gobernanza IA y benchmark. Los **17 documentos** de las familias `AI_R1_*`…`AI_R5_*`, `M1_*`, `M1_M2_*`, `M2_*`, `H5_AI_GOVERNANCE_CLOSURE_REPORT` y `R5_AI_SERVING_STRATEGY_REPORT` residen ahora en `docs/ai/`. El árbol `docs/bounded-contexts/ai-runtime/` previsto para esta familia **no fue materializado** y **no** es su destino canónico.
+
+### Familia reconciliada (17 documentos)
+
+| # | Documento | Ubicación canónica | Origen |
+|---|---|---|---|
+| 1 | `AI_R1_ARTIFACT_IMPLEMENTATION_PLAN.md` | `docs/ai/` | `docs/` |
+| 2 | `AI_R1_EXECUTION_READINESS_REPORT.md` | `docs/ai/` | `docs/` |
+| 3 | `AI_R1_EXECUTION_REPORT.md` | `docs/ai/` | `docs/` |
+| 4 | `AI_R2_EXECUTION_REPORT.md` | `docs/ai/` | `docs/` |
+| 5 | `AI_R2_ONNX_EXECUTION_PLAN.md` | `docs/ai/` | `docs/` |
+| 6 | `AI_R3_EXECUTION_READINESS_REPORT.md` | `docs/ai/` | `docs/` |
+| 7 | `AI_R3_ONNXRUNTIME_SERVING_PLAN.md` | `docs/ai/` | `docs/` |
+| 8 | `AI_R3_R4_CLOSURE_REPORT.md` | `docs/ai/` | `docs/` |
+| 9 | `AI_R3_R4_EXECUTION_PLAN.md` | `docs/ai/` | `docs/` |
+| 10 | `AI_R4_SEMANTIC_CONTRACT_PLAN.md` | `docs/ai/` | `docs/` |
+| 11 | `AI_R5_HOLDOUT_STRATEGY_REPORT.md` | `docs/ai/` | `docs/` |
+| 12 | `M1_M2_ARTIFACT_RECOVERY_REPORT.md` | `docs/ai/` | `docs/` |
+| 13 | `M1_M2_GOVERNANCE_CLOSURE_REPORT.md` | `docs/ai/` | `docs/` |
+| 14 | `M1_RECOVERY_AUDIT_REPORT.md` | `docs/ai/` | `docs/` |
+| 15 | `M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` | `docs/ai/` | `docs/` |
+| 16 | `H5_AI_GOVERNANCE_CLOSURE_REPORT.md` | `docs/ai/` | `docs/` |
+| 17 | `R5_AI_SERVING_STRATEGY_REPORT.md` | `docs/ai/` | `docs/` |
+
+**D-005 (referencias):** 26 referencias reconciliadas = **12 entrantes** + **14 internas**. Las referencias internas entre documentos co-movidos se conservan por nombre (misma carpeta `docs/ai/`); las entrantes con prefijo de ruta (`docs/…`, `./…`) se reescribieron a `docs/ai/…`. Se preserva la cita `CANONICAL_PROJECT_STATE_20261109.md` (documento canónico, no editado).
+
+**D-007 (registro):** movimiento registrado en esta matriz y en `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` (FASE 4). El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
 
 ---
 

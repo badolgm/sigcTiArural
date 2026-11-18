@@ -185,4 +185,4 @@ class_index_map (R-EJEC-4) — ambos controlados por C1/C5.
 
 **NO implementado · NO copiado · NO exportado (ONNX) · sin commits · sin push.**
 
-**Referencias:** `docs/AI_R1_ARTIFACT_IMPLEMENTATION_PLAN.md` · `docs/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` · `docs/AI_CANON_IMPLEMENTATION_DECISION_REPORT.md` · `.gitignore:20,68` · `data/datasets/agriculture_images_tomato-potato-corn/v1/{curated,split_lists,holdout,dataset_card.md}` · `docs/ai/manifests/` · `benchmark/runs/` · `notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb`.
+**Referencias:** `docs/ai/AI_R1_ARTIFACT_IMPLEMENTATION_PLAN.md` · `docs/ai/M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md` · `docs/AI_CANON_IMPLEMENTATION_DECISION_REPORT.md` · `.gitignore:20,68` · `data/datasets/agriculture_images_tomato-potato-corn/v1/{curated,split_lists,holdout,dataset_card.md}` · `docs/ai/manifests/` · `benchmark/runs/` · `notebooks/SIGCTIARURAL_M2_EfficientNetB0.ipynb`.
