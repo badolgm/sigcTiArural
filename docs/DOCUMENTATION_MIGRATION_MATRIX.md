@@ -106,7 +106,7 @@
 | 86 | `docs/DOCKER_READY_CONDITIONAL_DECISION_REPORT.md` | `docs/historical/DOCKER_READY_CONDITIONAL_DECISION_REPORT.md` | ARCHIVE | Superseded por decisión final |
 | 87 | `docs/DOCKER_BLOCKERS_EXECUTIVE_REVIEW_REPORT.md` | `docs/historical/DOCKER_BLOCKERS_EXECUTIVE_REVIEW_REPORT.md` | ARCHIVE | Bloqueadores resueltos |
 | 88 | `docs/DOCKER_OFFICIAL_EXECUTION_PLAN.md` | `docs/historical/DOCKER_OFFICIAL_EXECUTION_PLAN.md` | ARCHIVE | Plan ejecutado |
-| 89 | `docs/DOCKER_READY_CLOSURE_REPORT.md` | `docs/historical/DOCKER_READY_CLOSURE_REPORT.md` | ARCHIVE | Reporte cierre ejecutado |
+| 89 | `docs/DOCKER_READY_CLOSURE_REPORT.md` | `docs/deployment/DOCKER_READY_CLOSURE_REPORT.md` | KEEP | Canónico de cierre Docker R6/R7 · KEEP reafirmado por reconciliación C-4 |
 | 90 | `docs/DOCKER_READY_R1_R4_EXECUTION_PLAN.md` | `docs/historical/DOCKER_READY_R1_R4_EXECUTION_PLAN.md` | ARCHIVE | Plan R1-R4 ejecutado |
 | 91 | `docs/DOCKER_READY_R1_R4_REPORT.md` | `docs/historical/DOCKER_READY_R1_R4_REPORT.md` | ARCHIVE | Reporte R1-R4 ejecutado |
 | 92 | `docs/DOCKER_READY_REMEDIATION_PLAN.md` | `docs/historical/DOCKER_READY_REMEDIATION_PLAN.md` | ARCHIVE | Plan remediación ejecutado |
