@@ -505,9 +505,135 @@ El trabajo ya realizado en Mayo 2026 (la carpeta `logic/`) es un **activo** muy 
 
 - **Hallazgo:** C-02 (arquitectura) = IMPLEMENTADO, VALIDADO, PASS, RESUELTO.
 - **KEEP (4):** `ARCHITECTURE_AUDIT_VALIDATION.md`, `ARCHITECTURE_ACTION_MATRIX.md`, `ARCHITECTURE_ACTION_REVIEW.md`, `C02_EXECUTION_PACKAGE.md` → `docs/architecture/` (canónico).
-- **MERGE:** `C02_IMPLEMENTATION_STRATEGY.md` absorbido en este plan como sección estratégica de refactor hexagonal; el archivo original permanece in situ con rol ARCHIVE.
+- **MERGE:** `C02_IMPLEMENTATION_STRATEGY.md` absorbido en este plan — ver anexo «C-02 — Composition Root en el arranque». El archivo original permanece **sin versionar en la raíz**, no se elimina.
 - **ARCHIVE (7):** `ARCHITECTURE_AUDIT.md`, `TOSHIBA_AUDIT_SPRINT_CLOSURE.md`, `DOCUMENTATION_LANGUAGE_NORMALIZATION.md`, `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md`, `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md`, `TOSHIBA_EXPORT_MANIFEST.md`, `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` → preservados in situ, rol histórico.
 - **LOCAL_EVIDENCE_ONLY:** `ARCHITECTURE_GOVERNANCE_REVIEW.md` → fuera del árbol versionado, uso interno del sprint.
+- **Estado 2026-11-17 (verificado):** los ARCHIVE versionables de esa lista ya están integrados en `docs/` / `docs/architecture/` y los documentos integrables del sprint están en `docs/` (registro en `AGENTS.md`); los `LOCAL_ONLY` y la evidencia local siguen fuera del árbol versionado.
+
+### Anexo C-02 — Composition Root en el arranque (absorbido de `C02_IMPLEMENTATION_STRATEGY.md`)
+
+> Contenido absorbido por **MERGE-REMAINING-DOCUMENTS** (2026-11-17). No introduce decisiones nuevas de arquitectura ni de gobernanza: registra el hallazgo C-02, su causa raíz, su estrategia de corrección y su estado real tal como fueron documentados en el origen. Las mayúsculas y el formato de tablas del original se conservan compactados para no duplicar filas equivalentes.
+
+**Hallazgo C-02.** El composition root (`src/backend/sigct_backend/wiring.py`, función `wire_all()`) **no se invocaba en el arranque de Django** (`wsgi.py` / `settings.py` no lo llamaban). El EventBus (`shared_kernel.event_bus`) solo quedaba cableado si algún caller llamaba a `get_telemetry_event_bus()` durante una petición, lo que no está garantizado en producción (gunicorn + wsgi). Consecuencia: la interconexión Telemetría → Labs/Agricultura (`sensor_reading` → `OnSensorReadingHandler`) podía quedar inoperante en entorno productivo aunque el piloto `verify_dia16_17_pilot.py` y `tests/sigct_backend/test_wiring.py` demostraran que funcionaba al cablearse manualmente.
+
+#### Causa raíz
+
+| Elemento | Estado en el origen (2026-11-04) |
+|---|---|
+| `sigct_backend/wiring.py` | Define `wire_all(event_bus)`, que suscribe `OnSensorReadingHandler` a `signal_type="sensor_reading"`. Incluye guardia de idempotencia (`_wired_buses: WeakSet`) para no duplicar suscripciones en el mismo bus. |
+| `sigct_backend/wsgi.py` | Minimalista: solo `get_wsgi_application()`. No importa ni llama a `wiring` ni a `event_bus`. |
+| `sigct_backend/settings.py` | `INSTALLED_APPS = ['api', 'users', ...]`. No incluía `'sigct_backend'`. Sin `AppConfig` ni `ready()`. |
+| `sigct_backend/apps.py` | No existía. |
+| `contexts/telemetry/infrastructure/config/dependencies.py` | `get_telemetry_event_bus()` crea un `InMemoryEventBus` y llama internamente a `wire_all(bus)`, pero solo se ejecuta si algún caller la invoca durante una petición; no se dispara al arranque. |
+| `verify_dia16_17_pilot.py` | Llama a `wire_all(bus)` manualmente (piloto, no producción). |
+| `tests/sigct_backend/test_wiring.py` | Prueba `wire_all()` manualmente por bus. |
+
+**Raíz:** no había punto de arranque de Django que invocara `wire_all()` ni `get_telemetry_event_bus()`; el bus existía pero no quedaba cableado hasta que un caller lo solicitaba explícitamente.
+
+#### Archivos afectados
+
+| Archivo | Rol en C-02 | Cambio requerido |
+|---|---|---|
+| `src/backend/sigct_backend/wsgi.py` | Punto de entrada WSGI. No contacta con el composition root. | Opción A: invocar `get_telemetry_event_bus()` tras `get_wsgi_application()`. |
+| `src/backend/sigct_backend/settings.py` | Define `INSTALLED_APPS`. | Opción B: agregar `'sigct_backend'` a `INSTALLED_APPS`. |
+| `src/backend/sigct_backend/apps.py` | No existía; lugar canónico para `AppConfig.ready()`. | Opción B: crear con `ready()` que invoque `get_telemetry_event_bus()`. |
+| `src/backend/sigct_backend/wiring.py` | Define `wire_all()`. Ya idempotente. | **Sin cambios.** |
+| `src/backend/contexts/telemetry/infrastructure/config/dependencies.py` | `get_telemetry_event_bus()` crea el bus y lo cablea. | **Sin cambios.** |
+
+#### Dependencias y bounded contexts impactados
+
+- **`InMemoryEventBus`** (implementación en memoria, síncrona, mismo proceso): se instancia una vez al arranque vía `lru_cache` de `get_telemetry_event_bus()`.
+- **`EventBusPort`** (puerto abstracto `publish`/`subscribe`): sin cambios.
+- **`LabSignal`** (modelo de señal publicada): sin cambios.
+- **`OnSensorReadingHandler`** (suscriptor de `sensor_reading`; traduce payload y delega en `LaboratorioService(AGRICULTURA)`): se suscribe al arranque y empieza a recibir señales publicadas por Telemetry.
+- **`LaboratorioService`** (`tipo_lab="AGRICULTURA"`): se instancia dentro del handler al suscribirse.
+- **`ConsoleNotificationAdapter`** (puerto de notificación por defecto del handler): se usa para la salida de consola (alerta S.O.S).
+- **`RegistrarLecturaSensorCommand`** (publicador de `LabSignal(signal_type="sensor_reading")`): sus publicaciones pasan a tener suscriptor garantizado.
+- **`get_telemetry_event_bus()`**: se convierte en el punto único de creación del bus al arranque.
+
+| Contexto | Rol | Impacto |
+|---|---|---|
+| **Telemetry** | Publicador (`RegistrarLecturaSensorCommand` publica `sensor_reading`). | Sus publicaciones pasan de no tener suscriptor garantizado a tener uno activo. |
+| **Labs** | Suscriptor (`OnSensorReadingHandler` → `LaboratorioService(AGRICULTURA)`). | Comienza a recibir y procesar señales de telemetría en producción. |
+| **Shared Kernel** | `event_bus` (puerto + implementación en memoria). | Se instancia y cablea al arranque del proceso Django. |
+
+Efecto sobre artefactos auxiliares: `verify_dia16_17_pilot.py` y `tests/sigct_backend/test_wiring.py` **sin cambios** (siguen operando de forma independiente con sus propios buses).
+
+#### Riesgos
+
+| Riesgo | Descripción | Mitigación |
+|---|---|---|
+| **Doble cableado** | Invocar `wire_all()` dos veces sobre el mismo bus duplicaría la suscripción y la alerta S.O.S se dispararía dos veces por lectura crítica. | `wire_all()` ya incluye guardia de idempotencia vía `_wired_buses: WeakSet`; es un no-op si el bus ya fue cableado. |
+| **Búsquedas de bus diferentes** | Si el arranque cablea un bus A y `get_telemetry_event_bus()` devuelve un bus B, los suscriptores de A no reciben publicaciones de B. | `lru_cache(maxsize=1)`: la primera llamada crea y cablea el bus; las posteriores retornan el mismo. Llamarla al arranque garantiza que el bus cacheado está cableado. |
+| **Acoplamiento de `wsgi` a Telemetry** | Invocar `get_telemetry_event_bus()` desde `wsgi.py` acopla el punto de entrada WSGI al contexto Telemetry. | Preferir Opción B (`AppConfig.ready()`), punto canónico de Django para inicialización, que respeta la jerarquía composition root > contextos. |
+| **Fallo silencioso en `ready()`** | Si `AppConfig.ready()` lanza excepción, Django no arranca. | `get_telemetry_event_bus()` solo crea un bus en memoria y llama a `wire_all()`; no toca BD ni red. Riesgo de fallo mínimo. |
+| **Comportamiento en tests** | `test_wiring.py` crea sus propios buses y llama a `wire_all()` manualmente. | Sin impacto; los tests siguen independientes del arranque de Django. |
+
+#### Estrategia de implementación (Opción B: `AppConfig.ready()`)
+
+1. **Crear `src/backend/sigct_backend/apps.py`:**
+
+   ```python
+   from django.apps import AppConfig
+
+
+   class SigctBackendConfig(AppConfig):
+       default_auto_field = 'django.db.models.BigAutoField'
+       name = 'sigct_backend'
+
+       def ready(self):
+           """
+           Cablea el composition root al arranque de Django.
+           Invoca get_telemetry_event_bus() que internamente construye el
+           InMemoryEventBus y lo cablea mediante wire_all() (con guardia de
+           idempotencia). Debido al lru_cache(maxsize=1), el mismo bus
+           cableado se reutiliza en toda la vida del proceso.
+           """
+           from contexts.telemetry.infrastructure.config.dependencies import (
+               get_telemetry_event_bus,
+           )
+
+           get_telemetry_event_bus()
+   ```
+
+2. **Registrar la app** en `INSTALLED_APPS` de `src/backend/sigct_backend/settings.py`.
+3. **No modificar nada más:** `wiring.py`, `dependencies.py`, `wsgi.py`, `verify_dia16_17_pilot.py` y `tests/sigct_backend/test_wiring.py` quedan intactos.
+
+**¿Por qué no Opción A (`wsgi.py`)?** Funcionaría, pero acopla el punto de entrada WSGI directamente al contexto Telemetry. `wiring.py` establece que el composition root se sienta por encima de shared kernel y contextos; `AppConfig.ready()` es el lugar idiomático de Django para esa inicialización y respeta esa jerarquía.
+
+#### Rollback
+
+El cambio es estructuralmente reversible sin migración de datos ni modificación de lógica de negocio: (1) quitar `'sigct_backend'` de `INSTALLED_APPS`; (2) eliminar `src/backend/sigct_backend/apps.py`; (3) resultado: `get_telemetry_event_bus()` deja de llamarse al arranque y el bus solo se cablea si un caller lo invoca durante una petición (estado pre-C-02). No hay migraciones de BD, ni cambios en modelos, ni cambios de API.
+
+#### Plan de validación
+
+| Validación | Cómo verificarlo | Criterio de éxito |
+|---|---|---|
+| **Bus cableado al arranque** | Iniciar `sigctiarural_backend` con `gunicorn` + `wsgi.py` y comprobar el suscriptor `sensor_reading`. | El bus de `get_telemetry_event_bus()` tiene al menos un suscriptor para `signal_type="sensor_reading"`. |
+| **Idempotencia** | Reiniciar el contenedor varias veces. | La alerta S.O.S se dispara exactamente una vez por lectura crítica publicada. |
+| **Flujo extremo a extremo** | Publicar `LabSignal(signal_type="sensor_reading", temperature > 35)` vía `RegistrarLecturaSensorCommand` en producción. | `OnSensorReadingHandler.manejar()` se ejecuta y emite «ALERTA S.O.S RURAL». |
+| **No regresión en tests** | Ejecutar `tests/sigct_backend/test_wiring.py` y `verify_dia16_17_pilot.py`. | Todos pasan sin modificación. |
+| **Servicios operativos** | `docker-compose ps`. | `sigctiarural_backend` en Up (healthy) y healthcheck respondiendo. |
+
+#### Estimación de complejidad
+
+| Dimensión | Estimación |
+|---|---|
+| Complejidad técnica | **Media**: cambio localizado (1 archivo nuevo + 1 línea en `settings.py`); no toca lógica de negocio ni modelos. |
+| Riesgo de regresión | **Bajo**: `get_telemetry_event_bus()` solo crea un bus en memoria y llama a `wire_all()`, que es idempotente. |
+| Tiempo estimado | **Pocas horas** de desarrollo + validación en contenedor. |
+| Prerrequisitos | Ninguno: `wiring.py`, `get_telemetry_event_bus()` y `OnSensorReadingHandler` ya existían y estaban probados por `test_wiring.py`. |
+
+#### Veredicto del origen
+
+**SÍ a ejecución real.** C-02 era el único hallazgo CRITICAL que afectaba directamente el comportamiento en producción; su corrección es de complejidad media, bajo riesgo, no exige rediseño arquitectónico ni reescrituras y restaura un comportamiento diseñado. No era deuda técnica aceptable (a diferencia de C-01/A-01: es una omisión funcional, no solo mantenibilidad) ni NO_ACTION.
+
+#### Estado real de implementación (verificado 2026-11-17)
+
+- `src/backend/sigct_backend/apps.py` **existe** y `'sigct_backend'` figura en `INSTALLED_APPS` de `src/backend/sigct_backend/settings.py`.
+- Commit de referencia: `f3cdbcf` — `fix(backend): register sigct_backend telemetry bootstrap`.
+- Las afirmaciones del origen sobre «`apps.py` no existe» y «`settings.py` no incluye `'sigct_backend'`» son por tanto **estado histórico previo a la corrección**.
+- La validación E2E en contenedor (alerta S.O.S ante lectura crítica) **no se re-ejecutó en esta misión documental**; el estado verificado aquí es «implementado y presente en código», no «revalidado end-to-end».
 
 **Fin del Plan de la Fase de Análisis.**
 

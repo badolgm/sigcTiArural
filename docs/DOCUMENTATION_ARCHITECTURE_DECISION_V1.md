@@ -230,3 +230,74 @@ Con la decisión D-001 (docs/ = source of truth) y D-002 (Documentacion/ = LEGAC
 
 ---
 *Decision Arquitectural Oficial V1. Institucionaliza la gobernanza documental para SIGCTIARURAL. Aprobado con ajustes. Sin modificaciones al repositorio, sin migraciones ejecutadas, sin commits.*
+
+---
+
+## Anexo — Inventario de raíces y evidencia de D-001 / D-002 (absorbido de `DOCUMENT_ROOT_GOVERNANCE_V1.md`)
+
+> Contenido absorbido por **MERGE-REMAINING-DOCUMENTS** (2026-11-17). **No crea decisiones nuevas** ni modifica D-001…D-010: aporta la evidencia de inventario que sustenta D-001 (`docs/` = SOURCE OF TRUTH) y D-002 (`Documentacion/` = LEGACY CMSC). La clasificación documento-por-documento ya vive en `docs/DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` (FASE 1) y no se duplica aquí.
+
+### 1. Inventario de las dos raíces
+
+| Raíz | Rol | Conteo en el documento origen | Verificación 2026-11-17 |
+|---|---|---|---|
+| `docs/` | CANÓNICA | 296 archivos `.md` | **358** archivos `.md` (274 en la raíz de `docs/` + 84 en subdirectorios) |
+| `Documentacion/` | LEGACY | 45 archivos `.md` (37 en `Arquitectura/` + 8 en `IA/`; raíz sin `.md` directos) | **37** archivos `.md` (29 en `Arquitectura/` + 8 en `IA/`; raíz sin `.md` directos) |
+
+La diferencia entre ambas columnas es el resultado de movimientos e integraciones **posteriores** al documento origen; este anexo no ejecutó ningún movimiento.
+
+**Subdirectorios de `docs/`:** `ai/`, `architecture/`, `architect_master/`, `database/`, `eiarc/`, `historical/`, `project_knowledge_base/`, `reports/`, `sena_artifacts/`, `session_plans/` (más `diagrams/`, `edge/`, `styles/`, `uml/` sin `.md`), y la raíz de `docs/` con el resto (estado canónico, gobernanza, arquitectura, dataset acústico, benchmark, Docker, CMSC).
+
+**Subdirectorios de `Documentacion/`:** `Arquitectura/` (documentos CMSC F3A–F4, MMC, Signal Map, Orchestration, frontend, benchmarks y gobernanza CMSC) e `IA/` (`AUDITORIA_BENCHMARK_SRC_FALLBACK.md`, `ESTADO_ACTUAL_BENCHMARKS.md` y `Benchmark_M1_MobileNetV2/` con 6 archivos).
+
+### 2. Determinación de raíces (justificación registrada en el origen)
+
+**`docs/` = CANÓNICA**, porque: contiene `CANONICAL_PROJECT_STATE_20261109.md` (estado extraído de commits, tags, documentación canónica y consensos de sesión); contiene los demás `CANONICAL_*` (`CANONICAL_DOCUMENTATION_ALIGNMENT.md`, `CANONICAL_CONSISTENCY_AUDIT_V1.md`, `CANONICAL_ARCHITECTURE_MASTER_REPORT.md`, `CANONICAL_DIAGRAM_MANIFEST.md`); concentra la documentación operativa vigente (gobernanza, benchmark, dataset acústico, Docker, IA, CMSC); está declarada como fuente de verdad en `CANONICAL_PROJECT_STATE_20261109.md` §8 (priority 1); y ya está organizada por dominio.
+
+**`Documentacion/` = LEGACY**, porque: contiene documentos de arquitectura CMSC creados en sesiones de diseño 2026-09-27/29 bajo la regla «SOLO DISEÑAR Y DOCUMENTAR» (sin implementación) y los benchmarks M1/M2 detallados; **no** posee un documento de estado canónico equivalente; varios de sus documentos ya señalan a `docs/` como destino canónico (por ejemplo, `CMSC_DOCUMENTATION_RELEASE_NOTE_v1.md` consolida documentos de ambos árboles).
+
+### 3. Duplicados y unicidad
+
+- **Duplicados exactos por nombre de archivo entre ambas raíces: 0.** Verificado también el 2026-11-17: `docs/ESTADO_ACTUAL_BENCHMARKS.md` **no existe**; el único `ESTADO_ACTUAL_BENCHMARKS.md` está en `Documentacion/IA/`.
+- **Documentos de `Documentacion/` absorbidos formalmente por `docs/`: 0** (ningún documento legacy tiene copia idéntica ni versión migrada bajo el mismo nombre).
+- **Documentos únicos de `Documentacion/`: los 45 del inventario origen** (todos, por nombre de archivo).
+- **Solapamiento temático** (no duplicidad) registrado en el origen:
+
+| Documento en `Documentacion/` | Solapamiento temático con `docs/` |
+|---|---|
+| `CMSC_CANONICAL_STATE_v1.md` | `docs/CANONICAL_PROJECT_STATE_20261109.md` (estado canónico del proyecto) |
+| `CMSC_MASTERPLAN_v1.md` | `docs/architect_master/05_FINAL_ARCHITECTURE_BASELINE.md` (maestrazgo de arquitectura) |
+| `CMSC_SIGNAL_MAP_v1.md` | documentos de mapa de señales en `docs/` (no existe el mismo nombre) |
+| `FRONTEND_EXECUTION_STRATEGY.md` | múltiples documentos de frontend en `docs/` (`FRONTEND_OFFICIALIZATION_*`) |
+| `ESTADO_ACTUAL_BENCHMARKS.md` (`Documentacion/IA`) | no existe equivalente exacto en `docs/` |
+| `MMC_WORKBENCH_V1.md` | `docs/` no tiene equivalente directo |
+
+### 4. Estructura objetivo registrada en el origen (no adoptada)
+
+El documento origen propuso una estructura de 12 carpetas bajo `docs/`: `architecture/`, `ai/`, `governance/`, `continuity/`, `reports/`, `historical/`, `eiarc/`, `acoustic/`, `docker/`, `knowledge_base/`, `pilot/`, `UBTN/`, con la ruta de migración `Documentacion/Arquitectura/*` → `docs/architecture/` y `Documentacion/IA/*` → `docs/ai/benchmark/` + `docs/ai/`.
+
+**Estado:** variante previa, **no adoptada**. La estructura objetivo vigente es la de `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` FASE 3 (organización por *bounded contexts*), por ser la que la propia gobernanza tomó como referencia. Ninguna de las dos se ha ejecutado.
+
+### 5. Riesgos de mover archivos
+
+| # | Riesgo | Detalle |
+|---|---|---|
+| R1 | **Rutas rotas en `AGENTS.md` y otros documentos** | `AGENTS.md` referencia rutas dentro de `docs/` (`docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md`, `docs/MASTERDOC.md`, `docs/CONTINUITY_MASTER.md`); moverlos invalidaría esas referencias. |
+| R2 | **Referencias cruzadas entre documentos** | Muchos documentos de `docs/` se citan entre sí (por ejemplo, `CANONICAL_PROJECT_STATE_20261109.md` cita `docs/DOCUMENTATION_GOVERNANCE_REVIEW.md` y `docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md`). |
+| R3 | **Documentos únicos en `Documentacion/`** | Algunos contienen información no duplicada en `docs/` (`CMSC_CANONICAL_STATE_v1.md`, `ESTADO_ACTUAL_BENCHMARKS.md`) y se perderían si se descartara la raíz sin migración cuidadosa. |
+| R4 | **Historial de Git** | `git mv` preservaría historial, pero la misión del origen lo prohibía; un `mv` simple perdería el rastreo. Cualquier movimiento futuro debe usar `git mv`. |
+| R5 | **Referencias externas** | Scripts, notebooks o procesos externos podrían apuntar a rutas bajo `Documentacion/` o `docs/`. |
+
+### 6. Archivos que pueden permanecer donde están
+
+**Todos.** Ningún archivo de `docs/` ni de `Documentacion/` requiere movimiento inmediato para mantener la operatividad del repositorio (dictamen del origen, vigente).
+
+### 7. Archivos que requerirían consolidación futura (solo con autorización explícita)
+
+Los 28 documentos de `Documentacion/Arquitectura/` y los 8 de `Documentacion/IA/` listados por el origen, con destino propuesto `docs/architecture/` y `docs/ai/` respectivamente. La lista nominal completa —y su reclasificación por *bounded context*— está en `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` FASE 1 y FASE 4; **no se duplica aquí**.
+
+### 8. Dictamen del origen (conservado)
+
+- Raíz canónica: `docs/`. Raíz legacy: `Documentacion/`. Duplicados exactos: **0**. Documentos únicos en `Documentacion/`: todos los del inventario.
+- **Acción requerida: ninguna por ahora.** La misión de origen no autorizaba mover, borrar, renombrar ni commitear.
+- **Recomendación:** se requiere autorización explícita de Bernardo mediante una misión de consolidación documental antes de cualquier migración de `Documentacion/` a `docs/`.

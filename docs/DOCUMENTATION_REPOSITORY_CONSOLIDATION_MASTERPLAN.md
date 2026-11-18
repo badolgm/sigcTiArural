@@ -593,3 +593,98 @@ Al finalizar la consolidación (cuando se autorice ejecutar):
 **Archivo generado:** `docs/DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`
 
 Sin ejecutar migraciones. Sin mover archivos. Sin modificar repositorio. Sin acciones Git.
+
+---
+
+## ANEXO — Modelo de dominios documentales (absorbido de `SIGCT_DOCUMENT_ARCHITECTURE_V1.md`)
+
+> Contenido absorbido por **MERGE-REMAINING-DOCUMENTS** (2026-11-17). **No crea gobernanza nueva**: registra el modelo de dominios, fuentes de verdad y reglas de arquitectura documental que el documento origen derivó del canon existente. No se duplica aquí la clasificación documento-por-documento (FASE 1), el mapa de migración (FASE 4) ni la fuente de verdad (FASE 5).
+
+### 1. Dominios documentales oficiales
+
+| Dominio | Alcance |
+|---|---|
+| Estado canónico del proyecto | Fotografía de estado, HEAD, ramas, tags, decisiones cerradas, backlog abierto |
+| Identidad y cadencias del proyecto | Identidad del ecosistema, estado git, decisiones, cadencias operativas |
+| Arquitectura de software | Hexagonal, refactor, EIARC, labs, señal, diagrama maestro |
+| Gobernanza documental | Clasificación KEEP/MERGE/ARCHIVE/OBSOLETE, reglas de documentación |
+| Dataset acústico SIGCT-Rural | Gobernanza, estrategia híbrida, referencia, features, splits, gates G-DS-1..6 |
+| Benchmark IA (M1/M2) | Ejecución, artefactos, model cards, comparación, métricas |
+| Despliegue e infraestructura | Docker readiness, bloques R1-R5, despliegue AWS, healthchecks |
+| Knowledge Hub | Especificación, migración, registros, categorías de documentos |
+| Continuidad operativa | Maestría del proyecto, runbook, estado de continuidad |
+| Ecosistema y forense | Auditoría forense, evolución cronológica, veredicto de rescate |
+
+### 2. Fuente de verdad de cada dominio
+
+| Dominio | Fuente de verdad (canónica) | Ubicación |
+|---|---|---|
+| Estado canónico del proyecto | `CANONICAL_PROJECT_STATE_20261109.md` | `docs/` |
+| Identidad y cadencias | `AGENTS.md` | Raíz del repositorio |
+| Arquitectura de software | `CANONICAL_ARCHITECTURE_MASTER_REPORT.md` + `HEXAGONAL_REFACTOR_PLAN.md` + `docs/eiarc/` | `docs/` |
+| Gobernanza documental | `DOCUMENTATION_GOVERNANCE_REVIEW.md` + `GOVERNANCE_RULES.md` | `docs/` |
+| Dataset acústico | `AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` | `docs/` |
+| Benchmark IA (M1/M2) | artefactos, model cards y execution reports | `docs/ai/` |
+| Despliegue e infraestructura | `DOCUMENTATION_GOVERNANCE_REVIEW.md` §7 + `DEPLOYMENT.md` L-5 | `docs/` |
+| Knowledge Hub | `KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md` + `KNOWLEDGE_HUB_MIGRATION_PLAN.md` | `docs/` |
+| Continuidad operativa | `CONTINUITY_MASTER.md` + `CONTINUITY_RUNBOOK.md` | `docs/` |
+| Ecosistema y forense | `SIGCTIARURAL_ECOSYSTEM_FORENSIC_AUDIT_v1.md` | `docs/` |
+
+**Regla derivada:** cada dominio tiene exactamente un documento canónico prioritario; los documentos de `Documentacion/` son referencia de diseño y **no** son fuente de verdad de ningún dominio.
+
+### 3. Flujo de consulta canónica
+
+| Necesidad | Ruta de consulta |
+|---|---|
+| Estado general del proyecto | `AGENTS.md` → `CANONICAL_PROJECT_STATE_20261109.md` |
+| Arquitectura del ecosistema | `CANONICAL_ARCHITECTURE_MASTER_REPORT.md` → `HEXAGONAL_REFACTOR_PLAN.md` → `docs/eiarc/` |
+| Gobernanza documental | `DOCUMENTATION_GOVERNANCE_REVIEW.md` → `GOVERNANCE_RULES.md` |
+| Dataset acústico | `AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` → `AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md` |
+| Benchmark IA | `docs/ai/` (artefactos, model cards, reportes M1/M2) |
+| Docker y despliegue | `DOCUMENTATION_GOVERNANCE_REVIEW.md` §7 → `DEPLOYMENT.md` L-5 |
+| Knowledge Hub | `KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md` → `KNOWLEDGE_HUB_MIGRATION_PLAN.md` |
+| Continuidad | `CONTINUITY_MASTER.md` → `CONTINUITY_RUNBOOK.md` |
+
+El origen registra además una ruta abreviada de cinco pasos (estado general → dataset acústico → Docker readiness → documentación clasificada → implementación CMSC) y una consulta por dominio CMSC (`CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` → `CMSC_F3A_INTERCONNECTION_BLUEPRINT_v1.md`), coherente con la tabla anterior.
+
+### 4. Documentos que gobiernan el ecosistema
+
+El origen los tomó del canon, no de una clasificación propia, y por eso **no se re-enumeran aquí**:
+
+- **Fuentes de verdad priority 1** (5 documentos) y **priority 2** (16 documentos): las declaradas en `CANONICAL_PROJECT_STATE_20261109.md` §8 y §9.2.
+- **Documentos KEEP** (4): `ARCHITECTURE_AUDIT_VALIDATION.md`, `ARCHITECTURE_ACTION_MATRIX.md`, `ARCHITECTURE_ACTION_REVIEW.md`, `C02_EXECUTION_PACKAGE.md`.
+- **Documentos de prioridad crítica y de preservación obligatoria:** D-006 y D-007 de `DOCUMENTATION_ARCHITECTURE_DECISION_V1.md`.
+
+### 5. Documentos derivados
+
+**Definición:** documentos generados a partir de las fuentes de verdad canónicas que **no** constituyen decisión independiente de arquitectura ni de gobernanza y, por tanto, **no gobiernan**.
+
+| Categoría | Documentos representativos |
+|---|---|
+| Informes de ejecución y validación | `C02_POST_IMPLEMENTATION_VALIDATION.md`, `AI_R1_EXECUTION_REPORT.md`, `AI_R2_EXECUTION_REPORT.md`, `AI_R3_EXECUTION_READINESS_REPORT.md`, `AI_R3_R4_EXECUTION_PLAN.md`, `AI_R4_SEMANTIC_CONTRACT_PLAN.md`, `AI_R5_HOLDOUT_STRATEGY_REPORT.md` |
+| Reportes de artefactos y forense | `M2_ARTIFACT_RECORD.md`, `M2_ARTIFACT_FORENSIC_VALIDATION_REPORT.md`, `M1_M2_ARTIFACT_RECOVERY_REPORT.md`, `M1_RECOVERY_AUDIT_REPORT.md` |
+| Planes de ejecución derivados | `C02_EXECUTION_PACKAGE.md`, `C02_IMPLEMENTATION_STRATEGY.md` (MERGE hacia `HEXAGONAL_REFACTOR_PLAN.md`), `AI_R1_ARTIFACT_IMPLEMENTATION_PLAN.md`, `DOCKER_READY_R1_R4_EXECUTION_PLAN.md`, `DOCKER_READY_REMEDIATION_PLAN.md` |
+| Informes de cierre y validación | `DOCKER_READY_CLOSURE_REPORT.md`, `DOCKER_READY_FINAL_DECISION_REPORT.md`, `H5_AI_GOVERNANCE_CLOSURE_REPORT.md`, `M1_M2_GOVERNANCE_CLOSURE_REPORT.md` |
+| Informes de realidad y backlog | `REALITY_RECONSTRUCTION_AUDIT_V1.md`, `BACKLOG_REALITY_CHECK_V1.md` |
+| Informes de piloto y captura | `PILOT_CAPTURE_CHECKLIST.md`, `PILOT_REVIEW_CHECKLIST.md`, `PILOT_ACCEPTANCE_CRITERIA.md`, `FIELD_CAPTURE_RUN_001_REPORT.md`, `FIELD_DATA_COLLECTION_PROTOCOL.md`, `FIELD_PILOT_EXECUTION_PLAN.md`, `INITIAL_CAPTURE_EVIDENCE.md`, `INITIAL_METADATA_AUDIT.md` |
+| Informes de dataset y modelo | `DATASET_STATUS_REPORT.md`, `PLANT_DISEASE_DATASET_TRACEABILITY_AUDIT.md`, `PLANT_DISEASE_MODEL_PROVENANCE_REPORT.md`, `PLANT_DISEASE_MODEL_RECOVERY_REPORT.md` |
+| Informes de validación y verificación | `L1_L6_EXECUTION_REPORT.md`, `L1_L6_RUNTIME_VERIFICATION_REPORT.md`, `CMSC_DISCLOSURE_ALIGNMENT_REPORT.md`, `VISUAL_VALIDATION_FINAL_REPORT.md` |
+
+La lista es una lectura del estado por archivo ya registrado en FASE 1; **no reclasifica** ningún documento.
+
+### 6. Documentos históricos
+
+El origen coincide con la clasificación ya recogida en FASE 1 y FASE 4: los 7 documentos **ARCHIVE** del sprint Toshiba (`ARCHITECTURE_AUDIT.md`, `TOSHIBA_AUDIT_SPRINT_CLOSURE.md`, `DOCUMENTATION_LANGUAGE_NORMALIZATION.md`, `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md`, `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md`, `TOSHIBA_EXPORT_MANIFEST.md`, `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md`), las carpetas históricas (`docs/historical/`, `docs/sena_artifacts/`, `docs/session_plans/_archive/`) y los documentos de punto en el tiempo (`DOCUMENTATION_FREEZE_COMPLETION_PLAN.md`, `DOCUMENTATION_FREEZE_EXECUTION_REPORT.md`, `CMSC_SESSION_CLOSEOUT_2026_10_02.md` —ubicado en `Documentacion/Arquitectura/`—, `SIGCTIARURAL_ESTADO_SESION_2026-09-14.md`, `STAGE_FREEZE_20261013.txt`, `TOSHIBA_EXECUTIVE_MATRIX.md`).
+
+### 7. Reglas de arquitectura documental
+
+1. **Una sola fuente de verdad por dominio:** cada dominio tiene exactamente un documento canónico prioritario definido en `CANONICAL_PROJECT_STATE_20261109.md` §8-9.
+2. **`docs/` es la raíz activa:** toda documentación vigente reside y se consulta desde `docs/`.
+3. **`Documentacion/` es legacy:** no aporta fuentes de verdad; su contenido es referencia de diseño previo sin estatus canónico.
+4. **Los documentos derivados no gobiernan:** informes de ejecución, validación, cierre y planes derivados no establecen reglas de arquitectura ni de gobernanza.
+5. **Los documentos históricos no se modifican:** son evidencia de estado previo y no participan en el flujo de consulta vigente.
+6. **No reorganizar sin autorización:** cualquier migración de `Documentacion/` a `docs/`, o reestructuración interna de `docs/`, requiere autorización explícita y una misión de consolidación documental separada.
+
+### 8. Nota de consistencia (verificada 2026-11-17)
+
+La fila de **FASE 2** que declara `docs/ESTADO_ACTUAL_BENCHMARKS.md` ↔ `Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md` como `DUPLICADO_EXACTO` **no se corresponde con el árbol real**: `docs/ESTADO_ACTUAL_BENCHMARKS.md` no existe. El inventario absorbido (y la propia clasificación D-006, que marca el documento como `SUPERSEDED`) confirman **0 duplicados exactos** entre ambas raíces. Se deja constancia sin reescribir la fila original: el recuento vigente de duplicados exactos es **0**.
