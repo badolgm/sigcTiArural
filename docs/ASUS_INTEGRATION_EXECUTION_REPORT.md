@@ -12,12 +12,12 @@ La integración ASUS ↔ Toshiba ha sido completada exitosamente sobre la base d
 |---|---|---|---|
 | **KEEP** | 4 | Adoptados como conocimiento oficial | `docs/architecture/` (GitHub) |
 | **MERGE** | 1 | Fusionado lógicamente | `C02_IMPLEMENTATION_STRATEGY.md` → `HEXAGONAL_REFACTOR_PLAN.md` |
-| **ARCHIVE** | 7 | Preservados in situ | Rutas actuales, rol histórico |
+| **ARCHIVE** | 7 | Preservados con rol histórico | `docs/architecture/` (1) y `docs/` (6) |
 | **LOCAL_EVIDENCE_ONLY** | 1 | Fuera de repositorio | `ARCHITECTURE_GOVERNANCE_REVIEW.md` |
 
 ## 2. Documentos KEEP (4 adoptados oficialmente)
 
-Estos 4 documentos son ahora parte del conocimiento canónico del proyecto, ubicados en `docs/architecture/`:
+Estos 4 documentos son ahora parte del conocimiento canónico del proyecto, con destino gobernado en `docs/architecture/` (movimiento pendiente de integración Git):
 
 | Documento | Contenido | Propósito |
 |---|---|---|
@@ -32,9 +32,9 @@ Estos 4 documentos son ahora parte del conocimiento canónico del proyecto, ubic
 |---|---|---|
 | `C02_IMPLEMENTATION_STRATEGY.md` | `HEXAGONAL_REFACTOR_PLAN.md` | Puntos estratégicos de implementación de C-02 incorporados al plan rector de refactor hexagonal. El archivo original permanece in situ con rol ARCHIVE. Este merge requiere autorización explícita de proyecto para ejecución futura. |
 
-## 4. Documentos ARCHIVE (7 preservados in situ)
+## 4. Documentos ARCHIVE (7 preservados con rol histórico)
 
-Estos 7 documentos permanecen en sus rutas actuales con rol de evidencia histórica, sin publicación activa en GitHub:
+Estos 7 documentos conservan rol de evidencia histórica y tienen destino gobernado en el repositorio (movimiento pendiente de integración Git):
 
 | Documento | Ruta | Rol |
 |---|---|---|
@@ -94,13 +94,13 @@ Los siguientes 4 documentos ASUS han sido actualizados para reflejar el cierre d
 | `ARCHITECTURE_ACTION_REVIEW.md` | **KEEP** | Estado cumplimiento | Mantener en `docs/architecture/`; versión canónica. |
 | `C02_EXECUTION_PACKAGE.md` | **KEEP** | Evidencia implementación | Mantener en `docs/architecture/`; versión canónica. |
 | `C02_IMPLEMENTATION_STRATEGY.md` | **MERGE → HEXAGONAL_REFACTOR_PLAN.md** | Estrategia | Ejecutar merge con autorización; archivo original a ARCHIVE. |
-| `ARCHITECTURE_AUDIT.md` | **ARCHIVE** | Auditoría completada | Mantener en sitio; rol histórico. |
-| `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | **ARCHIVE** | Cierre sprint | Mantener en sitio; rol administrativo. |
-| `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | **ARCHIVE** | Normalización | Mantener en sitio; sin acción posterior. |
-| `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | **ARCHIVE** | Remediación | Mantener en sitio; sin acción posterior. |
-| `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | **ARCHIVE** | Revisión consolidación | Mantener en sitio; sin acción posterior. |
-| `TOSHIBA_EXPORT_MANIFEST.md` | **ARCHIVE** | Manifiesto exportación | Mantener en sitio; sin publicación GitHub. |
-| `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | **ARCHIVE** | Plan ejecución | Mantener en sitio; sin acción posterior. |
+| `ARCHITECTURE_AUDIT.md` | **ARCHIVE** | Auditoría completada | Integrar en `docs/architecture/`; rol histórico. |
+| `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | **ARCHIVE** | Cierre sprint | Integrar en `docs/`; rol administrativo. |
+| `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | **ARCHIVE** | Normalización | Integrar en `docs/`; sin acción posterior. |
+| `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | **ARCHIVE** | Remediación | Integrar en `docs/`; sin acción posterior. |
+| `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | **ARCHIVE** | Revisión consolidación | Integrar en `docs/`; sin acción posterior. |
+| `TOSHIBA_EXPORT_MANIFEST.md` | **ARCHIVE** | Manifiesto exportación | Integrar en `docs/`; rol histórico. |
+| `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | **ARCHIVE** | Plan ejecución | Integrar en `docs/`; sin acción posterior. |
 | `ARCHITECTURE_GOVERNANCE_REVIEW.md` | **LOCAL_EVIDENCE_ONLY** | Revisión gobernanza | Mantener fuera de GitHub; evidencia local. |
 
 ## 9. Secuencia de ejecución completada
@@ -111,7 +111,7 @@ Los siguientes 4 documentos ASUS han sido actualizados para reflejar el cierre d
 4. **Actualización DOCUMENTATION_GOVERNANCE_REVIEW.md:** Sección 9 con clasificación oficial.
 5. **Actualización DOCUMENTATION_CONSOLIDATION_PLAN.md:** Clusters 4-36 con clasificación Toshiba.
 6. **Generación ASUS_INTEGRATION_EXECUTION_REPORT.md:** Reporte final (entregable actual).
-7. **Reposo:** Sin commit, sin push, sin merge. Archivos ARCHIVE en rutas actuales. LOCAL_EVIDENCE_ONLY fuera de GitHub.
+7. **Reposo:** Sin commit, sin push, sin merge. Archivos ARCHIVE con destino gobernado (`docs/architecture/` y `docs/`) pendiente de integración Git. LOCAL_EVIDENCE_ONLY fuera de GitHub.
 
 ## 10. Restricciones respetadas
 
