@@ -28,7 +28,7 @@
 | **IA acústica (gobernanza)** | `docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` · `AI_ACOUSTIC_FEATURE_MAP.md` · `AI_ACOUSTIC_CAPTURE_OPERATOR_GUIDE.md` · `AI_ACOUSTIC_ARCHITECTURE_V1.md` | Contratos vigentes S30/S81/S82 |
 | **IA (manifiestos)** | `docs/ai/manifests/*.yaml` (8) | Gobernanza de datasets |
 | **Knowledge Hub** | `docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md` | Spec canónica del Hub |
-| **SIGCT Memory (diseño)** | `docs/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md` · `SIGCT_MEMORY_IMPLEMENTATION_01.md` · `SIGCT_MEMORY_F01..F06.5` | Diseño aprobado (no implementado) |
+| **SIGCT Memory (diseño)** | `docs/memory/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md` · `SIGCT_MEMORY_IMPLEMENTATION_01.md` · `SIGCT_MEMORY_F01..F06.5` | Diseño aprobado (no implementado) |
 | **Frontend** | `docs/SIGCTIARURAL_FRONTEND_OFFICIALIZATION_AUDIT.md` | Dictamen `GO_CONDICIONADO` |
 | **Proyecto (estado)** | `docs/DATASET_STATUS_REPORT.md` · `docs/INDICE_PROYECTO.md` | Estado consolidado |
 
@@ -93,7 +93,7 @@ Estos artefactos **no son fuente de verdad** pero se mantienen en `docs/` (uso o
 - **C-1 (residual):** diagrama `MASTERDOC §1` rotulado *"V3 — capa objetivo"* dibuja `core/` y no nombra `contexts/` ni `EventBus` → **pendiente actualizar** (A-3 del FINAL_REPORT).
 - **C-2 (residual):** `docs/architecture/README.md` describe hexágono **V2**; solo lleva nota de vigencia → **pendiente actualizar a V3/contexts**.
 - **A-1 (ambigüedad):** `docs/PLAN_MAESTRO.md` vs `docs/MASTERDOC.md` — dos "maestros"; el canónico es `MASTERDOC.md`; `PLAN_MAESTRO.md` queda ambiguo.
-- **A-2 (ambigüedad):** `docs/INDICE_PROYECTO.md` y `docs/CMSC_CONTINUATION_PROMPT.md` / `CMSC_DECISION_LOG.md` — estatus no fijado; recomendar anclarlos al canon CMSC (`Documentacion/Arquitectura/`).
+- **A-2 (ambigüedad):** `docs/INDICE_PROYECTO.md` y `docs/cmsc/CMSC_CONTINUATION_PROMPT.md` / `docs/cmsc/CMSC_DECISION_LOG.md` — estatus no fijado; recomendar anclarlos al canon CMSC (`docs/cmsc/`).
 - **A-3 (ambigüedad):** `docs/ai/research_v2/*` conviven con canon IA acústica → declarar `research_v2` como histórico de la etapa agrícola v2.
 
 ---

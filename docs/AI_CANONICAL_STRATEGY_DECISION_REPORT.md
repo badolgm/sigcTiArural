@@ -100,8 +100,8 @@ Riesgo transversal de A/B/C: **acoplar el contrato público al framework** (TF o
 |---|---|---|---|---|
 | **Frontend Oficial** (`AIPredictiva.jsx`) | Llama `VITE_AI_INFERENCE_URL` → `/api/v3/ai/inference/`; consume `prediction.*` y `trace.raw_class_index`; hoy rotula binario ("solo clasificacion binaria") | **Alta** (contrato ya binario) | **Media** (mismo contrato `prediction/trace`, pero el resolver debe pasar a 16 clases) | **Alta** (se conserva el contrato y se generaliza a 16 sin romper UI) |
 | **Docker Oficial** (`docker-compose.yml`) | `ai_service` se construye desde `src/ai_models` (TF); `fastapi_app` carga `*.h5`/`*.keras` | **Nativa** | **Requiere rediseño** de serving (PyTorch no está en la imagen) | **Media-alta** vía ONNX Runtime en la imagen (añade runtime neutral) |
-| **OCI** | `docs/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md:59`: OCI = almacenamiento/registry de contenedores; "fuera MVP" (`:96`) | Neutro | Neutro | **Neutro** (el contenedor sirve igual cualquier runtime) |
-| **SIGCT Memory** | `docs/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md`: **excluye binarios** de modelo (`*.h5/*.keras/*.onnx`) y indexa documentación | Neutro (no indexa el modelo) | Neutro | **Favorable**: canonizar **documenta** la línea y alimenta la memoria con gobernanza, no con binarios |
+| **OCI** | `docs/memory/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md:59`: OCI = almacenamiento/registry de contenedores; "fuera MVP" (`:96`) | Neutro | Neutro | **Neutro** (el contenedor sirve igual cualquier runtime) |
+| **SIGCT Memory** | `docs/memory/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md`: **excluye binarios** de modelo (`*.h5/*.keras/*.onnx`) y indexa documentación | Neutro (no indexa el modelo) | Neutro | **Favorable**: canonizar **documenta** la línea y alimenta la memoria con gobernanza, no con binarios |
 | **Voice Assistant** | `src/frontend/src/components/VoiceAssistant.jsx:8,83,172` → `/assist` (STT/TTS en `ai_service`, `fastapi_app.py:291`) | Independiente (comparte contenedor) | Independiente | **Independiente** (la voz no depende del modelo de imagen) |
 | **ACP** | Solo diseño (`CMSC_F4_ACP_ARCHITECTURE_v1.md`): lee evidencia/KH, no ejecuta labs | Neutro | Neutro | **Favorable**: el ACP consume un **contrato estable** `prediction/trace`, no un framework; mejora su trazabilidad |
 
@@ -189,7 +189,7 @@ El `.h5` binario gana en integración pero está degenerado; M1/M2 son la única
 - `src/backend/.../semantic_prediction_resolver.py` (clases 0/1, `scientific_scope: binary_only`).
 6. `src/frontend/src/pages/AIPredictiva.jsx:3,58-62,129-153` · `src/frontend/src/components/VoiceAssistant.jsx:8,83,172`.
 7. `docs/SIGCTIARURAL_AI_ML_STATE_OF_THE_ART.md:95,128,149,163` (perímetro TF/Keras+TFLite).
-8. `docs/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md:59,96` (OCI; exclusión de binarios).
+8. `docs/memory/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md:59,96` (OCI; exclusión de binarios).
 9. `docs/UBTN_EDGE_AI_STRATEGY.md:36,128` (edge TFLite/ONNX).
 10. `docs/PLANT_DISEASE_MODEL_RECOVERY_REPORT.md` · `docs/PLANT_DISEASE_DATASET_TRACEABILITY_AUDIT.md` · `docs/PLANT_DISEASE_MODEL_PROVENANCE_REPORT.md`.
 11. `AGENTS.md` (estado M1/M2, decisión benchmark PENDIENTE) · `Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md`.

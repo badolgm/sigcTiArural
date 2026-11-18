@@ -37,7 +37,7 @@
 | `docs/HEXAGONAL_REFACTOR_PLAN.md` | Absorber `C02_IMPLEMENTATION_STRATEGY.md` (MERGE). |
 | `docs/DOCUMENTATION_GOVERNANCE_REVIEW.md` | Añadir nota de integración Toshiba: clasificación de los 13 entregables Toshiba y su ubicación canónica. |
 | `docs/DOCUMENTATION_CONSOLIDATION_PLAN.md` | Actualizar el plan con la fila de integración Toshiba (C-02 y KEEP/MERGE/ARCHIVE/LOCAL_EVIDENCE_ONLY). |
-| `docs/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | Sin cambio (alineación CMSC completada; solo referenciar C-02 como contexto de arquitectura si aplica). |
+| `docs/cmsc/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | Sin cambio (alineación CMSC completada; solo referenciar C-02 como contexto de arquitectura si aplica). |
 | `docs/DEPLOYMENT.md` | Sin cambio en esta integración (validación previa: `OUTDATED`, sección canónica vigente). |
 | `docs/CONTINUITY_RUNBOOK.md` | Sin cambio en esta integración (`OUTDATED`, procedimiento vigente). |
 | `docs/ECOSYSTEM_IDENTITY.md` | Sin cambio en esta integración (`OUTDATED`, principios fundacionales vigentes). |

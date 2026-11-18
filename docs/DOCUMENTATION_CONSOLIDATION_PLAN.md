@@ -21,7 +21,7 @@
 | 2 | `L1_L6_EXECUTION_REPORT.md` | `docs/L1_L6_EXECUTION_REPORT.md` | **KEEP** | Canónico del cluster L1-L6 | (ninguno) | Ejecución realizada, cambios por archivo, enmiendas, deuda residual, anexos A/B. **Actualizar:** sección "Decisiones aprobadas D-L1..D-L3" + AC-L6/AC-L8 ahora PASS. |
 | 3 | `L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | `docs/L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | **MERGE** | Permanece in situ; rol = "plan de disclosure histórico" | `docs/L1_L6_RUNTIME_VERIFICATION_REPORT.md` | Tabla de decisiones D-L1..D-L4, análisis de vocabulario, plan de disclosure, dependencias. |
 | 4 | `L1_L6_RUNTIME_VERIFICATION_REPORT.md` | `docs/L1_L6_RUNTIME_VERIFICATION_REPORT.md` | **KEEP** | Canónico de verificación runtime | (ninguno) | V-10..V-19 con evidencia, 11 puntos de comprobación, AC-L1..AC-L14. **Actualizar:** V-17/V-18 → PASS, clasificación → `VERIFIED`. |
-| 5 | `CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | `docs/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | **KEEP** | Canónico de alineación CMSC | (ninguno) | Cambios exactos en `ModelPredictCell.jsx`, cierre AC-L6/AC-L8, validación no-rotura. |
+| 5 | `CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | `docs/cmsc/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | **KEEP** | Canónico de alineación CMSC | (ninguno) | Cambios exactos en `ModelPredictCell.jsx`, cierre AC-L6/AC-L8, validación no-rotura. |
 | 6 | `PLANT_DISEASE_MODEL_PROVENANCE_REPORT.md` | `docs/PLANT_DISEASE_MODEL_PROVENANCE_REPORT.md` | **KEEP** | Canónico de procedencia del modelo | (ninguno) | Procedencia del artefacto `.h5`, SHA-256, `KNOWN_ARTIFACTS`, `status_alias`. |
 
 ## 2. Cluster Docker-ready (validación runtime)

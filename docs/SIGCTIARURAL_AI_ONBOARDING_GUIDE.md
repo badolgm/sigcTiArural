@@ -237,7 +237,7 @@ Bounded context hermano `bio`, modelado DDD táctico: dominio (`UBTN_DOMAIN_MODE
 | Refactor hexagonal en detalle | `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` |
 | Estado congelado / cómo retomar | `docs/SIGCTIARURAL_RC2_FREEZE.md`, `RC2_READINESS.md`, `RC2_CONSOLIDATION.md` |
 | Raíz conceptual (auditoría canónica) | `docs/SIGCTIARURAL_CANONICAL_ENGINEERING_REVIEW.md` |
-| Visión de toda la cadena científica | `docs/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md`, `_LAYER.md`, `_EXPERIMENTATION_LAYER.md` |
+| Visión de toda la cadena científica | `docs/research/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md`, `_LAYER.md`, `_EXPERIMENTATION_LAYER.md` |
 | Familia UBTN (índice) | `docs/UBTN_INDEX.md` (árbol + trazabilidad) |
 | UBTN arquitectura / dominio / ADR | `UBTN_ARCHITECTURE.md`, `UBTN_DOMAIN_MODEL.md`, `UBTN_ADR_INDEX.md` |
 | Auditar coherencia frontend-código | `docs/SIGCTIARURAL_FRONTEND_ARCHITECTURE_AUDIT.md` |
@@ -313,7 +313,7 @@ Bounded context hermano `bio`, modelado DDD táctico: dominio (`UBTN_DOMAIN_MODE
 **Primero — comprender el porqué:** `README.md` + `docs/ECOSYSTEM_IDENTITY.md` (identidad, qué NO es).
 **Segundo — marco del sistema:** `SIGCT_RURAL_SYSTEM_BOOT.md` + `docs/PLAN_MAESTRO.md` (fases) + `docs/MASTERDOC.md` §1 (estado hexagonal).
 **Tercero — contextos:** `docs/eiarc/02_ARCHITECTURE/EIARC_CONTEXTS.md` + `ADSO_GUIA...` tabla técnica.
-**Cuarto — profundizar la cadena científica:** `docs/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md` + research_v2.
+**Cuarto — profundizar la cadena científica:** `docs/research/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md` + research_v2.
 
 **Laboratorios para dominar:**
 1. Matemáticas Avanzadas V1→V2 (fundamento: por qué los mapas/rotaciones).
@@ -360,7 +360,7 @@ Bounded context hermano `bio`, modelado DDD táctico: dominio (`UBTN_DOMAIN_MODE
    7. `docs/SIGCTIARURAL_RC2_READINESS.md`
    8. `docs/SIGCTIARURAL_RC2_CONSOLIDATION.md`
    9. `docs/SIGCTIARURAL_CANONICAL_ENGINEERING_REVIEW.md`
-   10. `docs/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md`
+   10. `docs/research/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md`
 3. **Las 10 verdades canónicas:** (las de la Sección 6, en orden).
 4. **Mayor riesgo de perder el norte:** la **inversión de identidad** (leer EIARC como paraguas en vez de como caso de uso) sumada a la **triple enumeración de contextos** — ambos pueden hacer que una IA "arregle" lo que está deliberadamente registrado y rompa NADA DESAPARECE.
 5. **Esencia en una sola frase:**

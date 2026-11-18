@@ -14,6 +14,8 @@
 
 ## FASE 1 – INVENTARIO TOTAL
 
+> **Nota de reconciliación LOTE-1 (2026-11-18):** este inventario es el **snapshot original previo a la ejecución** (296 archivos). Tras LOTE-1 (commit `82d26cf`), 18 documentos de las familias `SIGCT_MEMORY_*` (11), `SIGCTIARURAL_RESEARCH_*` (3) y `CMSC_*` (4) residen en las carpetas canónicas `docs/memory/`, `docs/research/` y `docs/cmsc/`. El inventario se conserva como evidencia del estado previo.
+
 ### Raíz `docs/` — 296 archivos `.md`
 
 | Ruta actual | Nombre archivo | Estado |
@@ -397,11 +399,13 @@ docs/
 │   ├── eiarc/
 │   └── labs/
 ├── bounded-contexts/                   ← Bounded Contexts del ecosistema SIGCT-Rural
-│   ├── cmsc/                           ← Centro de Modelado, Simulación y Ciencias Computacionales
 │   ├── acoustic-dataset/               ← Dataset acústico SIGCT-Rural (gobernanza, estrategia, referencia, features)
 │   ├── ai-runtime/                     ← Runtime IA (benchmark M1/M2, modelos, pipeline, ONNX)
 │   ├── telemetry/                      ← Telemetría (UBTN, sensor reading, robot telemetry)
 │   ├── identity/                       ← Identidad del ecosistema (ECOSYSTEM_IDENTITY, VISION_ALIGNMENT)
+├── cmsc/                               ← Centro de Modelado, Simulación y Ciencias Computacionales (CMSC_*) [canónico LOTE-1]
+├── memory/                             ← SIGCT Memory (embedding, Qdrant, query, dominio, API) [canónico LOTE-1]
+├── research/                           ← Cadena científica de investigación (vision, production layer, experimentation layer) [canónico LOTE-1]
 ├── deployment/                         ← Despliegue e infraestructura (Docker, R1-R5, healthchecks)
 ├── runbooks/                           ← Continuidad operativa (CONTINUITY_MASTER, CONTINUITY_RUNBOOK)
 ├── datasets/                           ← Datasets (PlantVillage, dataset acústico, splits, holdout)
@@ -415,11 +419,13 @@ docs/
 └── UBTN/                               ← UBTN (ADR, architecture, edge, MQTT, hardware, use cases)
 ```
 
+> **Nota de reconciliación LOTE-1 (2026-11-18):** las carpetas `docs/memory/`, `docs/research/` y `docs/cmsc/` son **estructura canónica aprobada** (commit `82d26cf`). No son subcarpetas de `bounded-contexts/`. El destino `docs/bounded-contexts/cmsc/` queda **eliminado** de este plan porque nunca se materializó.
+
 ### Bounded Contexts reales según SIGCTIARURAL
 
 | Bounded Context | Contenido principal | Ejemplo de documentos |
 |---|---|---|
-| `cmsc` | Centro de Modelado, Simulación y Ciencias Computacionales | CMSC_*, MMC_WORKBENCH, F3A-F4 |
+| `cmsc` (primer nivel `docs/cmsc/`) | Centro de Modelado, Simulación y Ciencias Computacionales | CMSC_*, MMC_WORKBENCH, F3A-F4 |
 | `acoustic-dataset` | Dataset acústico SIGCT-Rural v1 | AI_ACOUSTIC_*, schema, labels, manifests |
 | `ai-runtime` | Runtime de IA y benchmark | M1/M2, EfficientNet, MobileNet, ONNX, metrics |
 | `telemetry` | Telemetría y señales | SensorReading, RobotTelemetry, UBTN, signal map |
@@ -462,18 +468,18 @@ docs/
 | `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md` | `docs/knowledge-base/KNOWLEDGE_HUB_MIGRATION_PLAN.md` | KEEP |
 | `docs/REALITY_RECONSTRUCTION_AUDIT_V1.md` | `docs/reports/REALITY_RECONSTRUCTION_AUDIT_V1.md` | KEEP |
 | `docs/BACKLOG_REALITY_CHECK_V1.md` | `docs/reports/BACKLOG_REALITY_CHECK_V1.md` | KEEP |
-| `docs/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | `docs/bounded-contexts/cmsc/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | KEEP |
+| `docs/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | `docs/cmsc/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | KEEP |
 | `docs/L1_L6_EXECUTION_REPORT.md` | `docs/reports/L1_L6_EXECUTION_REPORT.md` | KEEP |
 | `docs/L1_L6_RUNTIME_VERIFICATION_REPORT.md` | `docs/reports/L1_L6_RUNTIME_VERIFICATION_REPORT.md` | KEEP |
-| `docs/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | `docs/bounded-contexts/cmsc/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
+| `docs/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | `docs/cmsc/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
 | `docs/CMSC_CANONICAL_STATE_v1.md` | `docs/state/CMSC_CANONICAL_STATE_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
 | `docs/CMSC_CANONICAL_STATES_APPENDIX_V1.md` | `docs/state/CMSC_CANONICAL_STATES_APPENDIX_V1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
-| `docs/CMSC_MASTERPLAN_v1.md` | `docs/bounded-contexts/cmsc/CMSC_MASTERPLAN_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
-| `docs/CMSC_ORCHESTRATION_V2_DESIGN.md` | `docs/bounded-contexts/cmsc/CMSC_ORCHESTRATION_V2_DESIGN.md` | MOVE (desde `Documentacion/Arquitectura/`) |
-| `docs/CMSC_SIGNAL_MAP_v1.md` | `docs/bounded-contexts/cmsc/CMSC_SIGNAL_MAP_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
-| `docs/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | `docs/bounded-contexts/cmsc/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
-| `docs/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | `docs/bounded-contexts/cmsc/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | MOVE (desde `Documentacion/Arquitectura/`) |
-| `docs/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | `docs/bounded-contexts/cmsc/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | MOVE (desde `Documentacion/Arquitectura/`) |
+| `docs/CMSC_MASTERPLAN_v1.md` | `docs/cmsc/CMSC_MASTERPLAN_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
+| `docs/CMSC_ORCHESTRATION_V2_DESIGN.md` | `docs/cmsc/CMSC_ORCHESTRATION_V2_DESIGN.md` | MOVE (desde `Documentacion/Arquitectura/`) |
+| `docs/CMSC_SIGNAL_MAP_v1.md` | `docs/cmsc/CMSC_SIGNAL_MAP_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
+| `docs/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | `docs/cmsc/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
+| `docs/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | `docs/cmsc/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | MOVE (desde `Documentacion/Arquitectura/`) |
+| `docs/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | `docs/cmsc/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | MOVE (desde `Documentacion/Arquitectura/`) |
 | `docs/SIGCTIARURAL_ECOSYSTEM_FORENSIC_AUDIT_v1.md` | `docs/historical/SIGCTIARURAL_ECOSYSTEM_FORENSIC_AUDIT_v1.md` | MOVE (desde `Documentacion/Arquitectura/`) |
 | `docs/FRONTEND_EXECUTION_STRATEGY.md` | `docs/deployment/FRONTEND_EXECUTION_STRATEGY.md` | MOVE (desde `Documentacion/Arquitectura/`) |
 | `docs/ESTADO_ACTUAL_BENCHMARKS.md` | `docs/bounded-contexts/ai-runtime/ESTADO_ACTUAL_BENCHMARKS.md` | MOVE (desde `Documentacion/IA/`) |
@@ -503,7 +509,7 @@ docs/
 | `docs/historical/*` | `docs/historical/*` | KEEP |
 | `docs/sena_artifacts/*` | `docs/historical/sena_artifacts/*` | MOVE (dentro de docs/) |
 | `docs/session_plans/*` | `docs/historical/session_plans/*` | MOVE (dentro de docs/) |
-| `Documentacion/Arquitectura/*` (todos los 37) | `docs/bounded-contexts/cmsc/` o `docs/deployment/` o `docs/historical/` | MOVE (planificado) |
+| `Documentacion/Arquitectura/*` (todos los 37) | `docs/cmsc/` o `docs/deployment/` o `docs/historical/` | MOVE (planificado) |
 | `Documentacion/IA/*` (todos los 8) | `docs/bounded-contexts/ai-runtime/` | MOVE (planificado) |
 | `Documentacion/` (directorio raíz vacío) | — | DELETE_CANDIDATE |
 

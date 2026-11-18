@@ -8,9 +8,47 @@
 
 ## Matriz de migración documental — SIGCT-Rural
 
-**Estado:** Solo planificación. Sin ejecutar acciones. Sin mover archivos. Sin modificar repositorio. Sin acciones Git.
+**Estado:** Planificación + reconciliación. Las familias `SIGCT_MEMORY_*`, `SIGCTIARURAL_RESEARCH_*` y `CMSC_*` ya fueron **publicadas** por LOTE-1 en `docs/memory/`, `docs/research/` y `docs/cmsc/`; el resto permanece como planificación sin ejecutar.
 
 **Acciones permitidas:** KEEP, MOVE, MERGE, ARCHIVE, DELETE_CANDIDATE.
+
+---
+
+## Reconciliación LOTE-1 (2026-11-18)
+
+**Decisión de gobernanza:** la reducción de raíz ejecutada en LOTE-1 (commit `82d26cf`) se adopta como **estructura canónica aprobada**. Las carpetas `docs/memory/`, `docs/research/` y `docs/cmsc/` existen, están publicadas y son el destino canónico de las familias `SIGCT_MEMORY_*`, `SIGCTIARURAL_RESEARCH_*` y `CMSC_*`. El árbol `docs/bounded-contexts/` nunca fue materializado y **no** es destino de estas familias.
+
+Destinos sustituidos en esta matriz (sin movimiento de archivos):
+
+- `SIGCT_MEMORY_*` → `docs/memory/` (antes `docs/ai/`).
+- `SIGCTIARURAL_RESEARCH_*` → `docs/research/` (antes `docs/bounded-contexts/identity/`).
+- `CMSC_*` → `docs/cmsc/` (antes `docs/bounded-contexts/cmsc/`).
+- El destino `docs/bounded-contexts/cmsc/` queda **eliminado**: nunca fue materializado.
+
+### Familia reconciliada (18 documentos)
+
+| # | Documento | Ubicación canónica | Origen |
+|---|---|---|---|
+| 1 | `SIGCT_MEMORY_F01_EMBEDDING_STRATEGY.md` | `docs/memory/` | raíz |
+| 2 | `SIGCT_MEMORY_F02_QDRANT_ARCHITECTURE.md` | `docs/memory/` | raíz |
+| 3 | `SIGCT_MEMORY_F03_QUERY_ARCHITECTURE.md` | `docs/memory/` | raíz |
+| 4 | `SIGCT_MEMORY_F04_DOMAIN_MODEL.md` | `docs/memory/` | raíz |
+| 5 | `SIGCT_MEMORY_F05_API_ARCHITECTURE.md` | `docs/memory/` | raíz |
+| 6 | `SIGCT_MEMORY_F06_5_STAGING_MODEL.md` | `docs/memory/` | raíz |
+| 7 | `SIGCT_MEMORY_F06_IMPLEMENTATION_PLAN.md` | `docs/memory/` | raíz |
+| 8 | `SIGCT_MEMORY_IMPLEMENTATION_01.md` | `docs/memory/` | raíz |
+| 9 | `SIGCT_MEMORY_IMPLEMENTATION_READINESS_REPORT.md` | `docs/memory/` | raíz |
+| 10 | `SIGCT_MEMORY_M0_DECISION_ACTA.md` | `docs/memory/` | raíz |
+| 11 | `SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md` | `docs/memory/` | raíz |
+| 12 | `SIGCTIARURAL_RESEARCH_EXPERIMENTATION_LAYER.md` | `docs/research/` | raíz |
+| 13 | `SIGCTIARURAL_RESEARCH_PRODUCTION_LAYER.md` | `docs/research/` | raíz |
+| 14 | `SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md` | `docs/research/` | raíz |
+| 15 | `CMSC_CONTINUATION_PROMPT.md` | `docs/cmsc/` | raíz |
+| 16 | `CMSC_DECISION_LOG.md` | `docs/cmsc/` | raíz |
+| 17 | `CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | `docs/cmsc/` | raíz |
+| 18 | `CMSC_PROJECT_STATUS_2026_10_05.md` | `docs/cmsc/` | raíz |
+
+Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aquí. La fila 33 (documento 17) y las filas 201–203 y 217–227 se actualizan in situ con el destino canónico.
 
 ---
 
@@ -50,7 +88,7 @@
 | 30 | `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md` | `docs/knowledge-base/KNOWLEDGE_HUB_MIGRATION_PLAN.md` | KEEP | Plan migración Knowledge Hub |
 | 31 | `docs/REALITY_RECONSTRUCTION_AUDIT_V1.md` | `docs/reports/REALITY_RECONSTRUCTION_AUDIT_V1.md` | KEEP | Auditoría reconstrucción realidad |
 | 32 | `docs/BACKLOG_REALITY_CHECK_V1.md` | `docs/reports/BACKLOG_REALITY_CHECK_V1.md` | KEEP | Chequeo realidad backlog |
-| 33 | `docs/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | `docs/bounded-contexts/cmsc/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | KEEP | Alineación divulgación CMSC |
+| 33 | `docs/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | `docs/cmsc/CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | KEEP | Alineación divulgación CMSC |
 | 34 | `docs/L1_L6_EXECUTION_REPORT.md` | `docs/reports/L1_L6_EXECUTION_REPORT.md` | KEEP | Reporte ejecución L1-L6 |
 | 35 | `docs/L1_L6_RUNTIME_VERIFICATION_REPORT.md` | `docs/reports/L1_L6_RUNTIME_VERIFICATION_REPORT.md` | KEEP | Verificación runtime L1-L6 |
 | 36 | `docs/AI_PIPELINE.md` | `docs/bounded-contexts/ai-runtime/AI_PIPELINE.md` | MOVE | Pipeline IA |
@@ -232,9 +270,9 @@
 | 198 | `docs/SIGCTIARURAL_RC2_READINESS.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_RC2_READINESS.md` | KEEP | Alistamiento RC2 |
 | 199 | `docs/SIGCTIARURAL_REFACTORING_AUDIT.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_REFACTORING_AUDIT.md` | MOVE | Auditoría refactorización |
 | 200 | `docs/SIGCTIARURAL_REFACTORING_GUARDRAILS.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_REFACTORING_GUARDRAILS.md` | MOVE | Guardrails refactorización |
-| 201 | `docs/SIGCTIARURAL_RESEARCH_EXPERIMENTATION_LAYER.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_RESEARCH_EXPERIMENTATION_LAYER.md` | MOVE | Capa experimentación investigación |
-| 202 | `docs/SIGCTIARURAL_RESEARCH_PRODUCTION_LAYER.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_RESEARCH_PRODUCTION_LAYER.md` | MOVE | Capa producción investigación |
-| 203 | `docs/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md` | MOVE | Visión producción investigación |
+| 201 | `docs/SIGCTIARURAL_RESEARCH_EXPERIMENTATION_LAYER.md` | `docs/research/SIGCTIARURAL_RESEARCH_EXPERIMENTATION_LAYER.md` | MOVE | Capa experimentación investigación |
+| 202 | `docs/SIGCTIARURAL_RESEARCH_PRODUCTION_LAYER.md` | `docs/research/SIGCTIARURAL_RESEARCH_PRODUCTION_LAYER.md` | MOVE | Capa producción investigación |
+| 203 | `docs/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md` | `docs/research/SIGCTIARURAL_RESEARCH_PRODUCTION_VISION.md` | MOVE | Visión producción investigación |
 | 204 | `docs/SIGCTIARURAL_ROUTE_EVOLUTION.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_ROUTE_EVOLUTION.md` | MOVE | Evolución rutas |
 | 205 | `docs/SIGCTIARURAL_STATE_SYNC_REPORT.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_STATE_SYNC_REPORT.md` | MOVE | Reporte sincronización estado |
 | 206 | `docs/SIGCTIARURAL_STRATEGIC_ACCELERATION.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_STRATEGIC_ACCELERATION.md` | MOVE | Aceleración estratégica |
@@ -248,17 +286,17 @@
 | 214 | `docs/SIGCTIARURAL_U4_2_CONTENT_AUDIT.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_U4_2_CONTENT_AUDIT.md` | MOVE | Auditoría contenido U4.2 |
 | 215 | `docs/SIGCTIARURAL_UX_03_NAVIGATION_AUDIT.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_UX_03_NAVIGATION_AUDIT.md` | MOVE | Auditoría navegación UX 03 |
 | 216 | `docs/SIGCTIARURAL_VISION_ALIGNMENT.md` | `docs/bounded-contexts/identity/SIGCTIARURAL_VISION_ALIGNMENT.md` | MOVE | Alineación visión |
-| 217 | `docs/SIGCT_MEMORY_F01_EMBEDDING_STRATEGY.md` | `docs/ai/SIGCT_MEMORY_F01_EMBEDDING_STRATEGY.md` | MOVE | Estrategia embedding F01 |
-| 218 | `docs/SIGCT_MEMORY_F02_QDRANT_ARCHITECTURE.md` | `docs/ai/SIGCT_MEMORY_F02_QDRANT_ARCHITECTURE.md` | MOVE | Arquitectura Qdrant F02 |
-| 219 | `docs/SIGCT_MEMORY_F03_QUERY_ARCHITECTURE.md` | `docs/ai/SIGCT_MEMORY_F03_QUERY_ARCHITECTURE.md` | MOVE | Arquitectura consulta F03 |
-| 220 | `docs/SIGCT_MEMORY_F04_DOMAIN_MODEL.md` | `docs/ai/SIGCT_MEMORY_F04_DOMAIN_MODEL.md` | MOVE | Modelo dominio F04 |
-| 221 | `docs/SIGCT_MEMORY_F05_API_ARCHITECTURE.md` | `docs/ai/SIGCT_MEMORY_F05_API_ARCHITECTURE.md` | MOVE | Arquitectura API F05 |
-| 222 | `docs/SIGCT_MEMORY_F06_5_STAGING_MODEL.md` | `docs/ai/SIGCT_MEMORY_F06_5_STAGING_MODEL.md` | MOVE | Modelo staging F06.5 |
-| 223 | `docs/SIGCT_MEMORY_F06_IMPLEMENTATION_PLAN.md` | `docs/ai/SIGCT_MEMORY_F06_IMPLEMENTATION_PLAN.md` | MOVE | Plan implementación F06 |
-| 224 | `docs/SIGCT_MEMORY_IMPLEMENTATION_01.md` | `docs/ai/SIGCT_MEMORY_IMPLEMENTATION_01.md` | MOVE | Implementación memoria 01 |
-| 225 | `docs/SIGCT_MEMORY_IMPLEMENTATION_READINESS_REPORT.md` | `docs/ai/SIGCT_MEMORY_IMPLEMENTATION_READINESS_REPORT.md` | MOVE | Reporte alistamiento implementación memoria |
-| 226 | `docs/SIGCT_MEMORY_M0_DECISION_ACTA.md` | `docs/ai/SIGCT_MEMORY_M0_DECISION_ACTA.md` | MOVE | Acta decisión M0 memoria |
-| 227 | `docs/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md` | `docs/ai/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md` | MOVE | Masterplan ejecución memoria V1 |
+| 217 | `docs/SIGCT_MEMORY_F01_EMBEDDING_STRATEGY.md` | `docs/memory/SIGCT_MEMORY_F01_EMBEDDING_STRATEGY.md` | MOVE | Estrategia embedding F01 |
+| 218 | `docs/SIGCT_MEMORY_F02_QDRANT_ARCHITECTURE.md` | `docs/memory/SIGCT_MEMORY_F02_QDRANT_ARCHITECTURE.md` | MOVE | Arquitectura Qdrant F02 |
+| 219 | `docs/SIGCT_MEMORY_F03_QUERY_ARCHITECTURE.md` | `docs/memory/SIGCT_MEMORY_F03_QUERY_ARCHITECTURE.md` | MOVE | Arquitectura consulta F03 |
+| 220 | `docs/SIGCT_MEMORY_F04_DOMAIN_MODEL.md` | `docs/memory/SIGCT_MEMORY_F04_DOMAIN_MODEL.md` | MOVE | Modelo dominio F04 |
+| 221 | `docs/SIGCT_MEMORY_F05_API_ARCHITECTURE.md` | `docs/memory/SIGCT_MEMORY_F05_API_ARCHITECTURE.md` | MOVE | Arquitectura API F05 |
+| 222 | `docs/SIGCT_MEMORY_F06_5_STAGING_MODEL.md` | `docs/memory/SIGCT_MEMORY_F06_5_STAGING_MODEL.md` | MOVE | Modelo staging F06.5 |
+| 223 | `docs/SIGCT_MEMORY_F06_IMPLEMENTATION_PLAN.md` | `docs/memory/SIGCT_MEMORY_F06_IMPLEMENTATION_PLAN.md` | MOVE | Plan implementación F06 |
+| 224 | `docs/SIGCT_MEMORY_IMPLEMENTATION_01.md` | `docs/memory/SIGCT_MEMORY_IMPLEMENTATION_01.md` | MOVE | Implementación memoria 01 |
+| 225 | `docs/SIGCT_MEMORY_IMPLEMENTATION_READINESS_REPORT.md` | `docs/memory/SIGCT_MEMORY_IMPLEMENTATION_READINESS_REPORT.md` | MOVE | Reporte alistamiento implementación memoria |
+| 226 | `docs/SIGCT_MEMORY_M0_DECISION_ACTA.md` | `docs/memory/SIGCT_MEMORY_M0_DECISION_ACTA.md` | MOVE | Acta decisión M0 memoria |
+| 227 | `docs/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md` | `docs/memory/SIGCT_MEMORY_V1_EXECUTION_MASTERPLAN.md` | MOVE | Masterplan ejecución memoria V1 |
 | 228 | `docs/SIGCTIARUAL_DESIGN_PARITY_AUDIT.md` | `docs/ai/SIGCTIARUAL_DESIGN_PARITY_AUDIT.md` | MOVE | Auditoría paridad diseño |
 | 229 | `docs/SIGCTIARUAL_HARDWARE_DETAIL_LAYER.md` | `docs/ai/SIGCTIARUAL_HARDWARE_DETAIL_LAYER.md` | MOVE | Capa detalle hardware |
 | 230 | `docs/SIGCTIARUAL_U2_3_DEVICE_MAP.md` | `docs/ai/SIGCTIARUAL_U2_3_DEVICE_MAP.md` | MOVE | Mapa dispositivo U2.3 |
@@ -286,15 +324,15 @@
 |---|---|---|---|---|
 | 246 | `Documentacion/Arquitectura/CMSC_CANONICAL_STATE_v1.md` | `docs/state/CMSC_CANONICAL_STATE_v1.md` | MOVE | Estado canónico CMSC, único en Documentacion/ |
 | 247 | `Documentacion/Arquitectura/CMSC_CANONICAL_STATES_APPENDIX_V1.md` | `docs/state/CMSC_CANONICAL_STATES_APPENDIX_V1.md` | MOVE | Apéndice estados canónicos CMSC |
-| 248 | `Documentacion/Arquitectura/CMSC_MASTERPLAN_v1.md` | `docs/bounded-contexts/cmsc/CMSC_MASTERPLAN_v1.md` | MOVE | Masterplan CMSC |
-| 249 | `Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md` | `docs/bounded-contexts/cmsc/CMSC_ORCHESTRATION_V2_DESIGN.md` | MOVE | Diseño orquestación V2 CMSC |
-| 250 | `Documentacion/Arquitectura/CMSC_SIGNAL_MAP_v1.md` | `docs/bounded-contexts/cmsc/CMSC_SIGNAL_MAP_v1.md` | MOVE | Mapa de señales CMSC |
-| 251 | `Documentacion/Arquitectura/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | `docs/bounded-contexts/cmsc/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | MOVE | Inventario activos ecosistema CMSC |
-| 252 | `Documentacion/Arquitectura/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | `docs/bounded-contexts/cmsc/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | MOVE | Procedimiento snapshot implementación CMSC |
-| 253 | `Documentacion/Arquitectura/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | `docs/bounded-contexts/cmsc/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | MOVE | Procedimiento operativo registro de señales |
+| 248 | `Documentacion/Arquitectura/CMSC_MASTERPLAN_v1.md` | `docs/cmsc/CMSC_MASTERPLAN_v1.md` | MOVE | Masterplan CMSC |
+| 249 | `Documentacion/Arquitectura/CMSC_ORCHESTRATION_V2_DESIGN.md` | `docs/cmsc/CMSC_ORCHESTRATION_V2_DESIGN.md` | MOVE | Diseño orquestación V2 CMSC |
+| 250 | `Documentacion/Arquitectura/CMSC_SIGNAL_MAP_v1.md` | `docs/cmsc/CMSC_SIGNAL_MAP_v1.md` | MOVE | Mapa de señales CMSC |
+| 251 | `Documentacion/Arquitectura/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | `docs/cmsc/CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | MOVE | Inventario activos ecosistema CMSC |
+| 252 | `Documentacion/Arquitectura/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | `docs/cmsc/CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | MOVE | Procedimiento snapshot implementación CMSC |
+| 253 | `Documentacion/Arquitectura/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | `docs/cmsc/SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | MOVE | Procedimiento operativo registro de señales |
 | 254 | `Documentacion/Arquitectura/SIGCTIARURAL_ECOSYSTEM_FORENSIC_AUDIT_v1.md` | `docs/historical/SIGCTIARURAL_ECOSYSTEM_FORENSIC_AUDIT_v1.md` | MOVE | Auditoría forense ecosistema (único en Documentacion/) |
 | 255 | `Documentacion/Arquitectura/FRONTEND_EXECUTION_STRATEGY.md` | `docs/deployment/FRONTEND_EXECUTION_STRATEGY.md` | MOVE | Estrategia ejecución frontend |
-| 256 | `Documentacion/Arquitectura/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | `docs/bounded-contexts/cmsc/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | MOVE | Revisión alistamiento implementación CMSC |
+| 256 | `Documentacion/Arquitectura/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | `docs/cmsc/CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | MOVE | Revisión alistamiento implementación CMSC |
 | 257 | `Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md` | `docs/bounded-contexts/ai-runtime/ESTADO_ACTUAL_BENCHMARKS.md` | MOVE | Estado actual benchmarks (único en Documentacion/IA/) |
 | 258 | `Documentacion/IA/Benchmark_M1_MobileNetV2/CORRECCIONES_PARA_M2.md` | `docs/bounded-contexts/ai-runtime/benchmark-m1-m2/CORRECCIONES_PARA_M2.md` | MOVE | Correcciones para M2 |
 | 259 | `Documentacion/IA/Benchmark_M1_MobileNetV2/EVIDENCIA_EJECUCION_M1.md` | `docs/bounded-contexts/ai-runtime/benchmark-m1-m2/EVIDENCIA_EJECUCION_M1.md` | MOVE | Evidencia ejecución M1 |
@@ -314,15 +352,15 @@ Los siguientes 22 documentos existen **únicamente** en `Documentacion/` y no ti
 |---|---|---|---|
 | 1 | `CMSC_CANONICAL_STATE_v1.md` | Estado canónico CMSC | `docs/state/` |
 | 2 | `CMSC_CANONICAL_STATES_APPENDIX_V1.md` | Apéndice estados CMSC | `docs/state/` |
-| 3 | `CMSC_MASTERPLAN_v1.md` | Masterplan CMSC | `docs/bounded-contexts/cmsc/` |
-| 4 | `CMSC_ORCHESTRATION_V2_DESIGN.md` | Diseño orquestación V2 | `docs/bounded-contexts/cmsc/` |
-| 5 | `CMSC_SIGNAL_MAP_v1.md` | Mapa señales CMSC | `docs/bounded-contexts/cmsc/` |
-| 6 | `CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | Inventario activos CMSC | `docs/bounded-contexts/cmsc/` |
-| 7 | `CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | Procedimiento snapshot | `docs/bounded-contexts/cmsc/` |
-| 8 | `SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | Procedimiento registro señales | `docs/bounded-contexts/cmsc/` |
+| 3 | `CMSC_MASTERPLAN_v1.md` | Masterplan CMSC | `docs/cmsc/` |
+| 4 | `CMSC_ORCHESTRATION_V2_DESIGN.md` | Diseño orquestación V2 | `docs/cmsc/` |
+| 5 | `CMSC_SIGNAL_MAP_v1.md` | Mapa señales CMSC | `docs/cmsc/` |
+| 6 | `CMSC_ECOSYSTEM_ASSET_INVENTORY_v1.md` | Inventario activos CMSC | `docs/cmsc/` |
+| 7 | `CMSC_IMPLEMENTATION_SNAPSHOT_PROCEDURE.md` | Procedimiento snapshot | `docs/cmsc/` |
+| 8 | `SIGNAL_REGISTRY_V1_OPERATIONAL_PROCEDURE.md` | Procedimiento registro señales | `docs/cmsc/` |
 | 9 | `SIGCTIARURAL_ECOSYSTEM_FORENSIC_AUDIT_v1.md` | Auditoría forense ecosistema | `docs/historical/` |
 | 10 | `FRONTEND_EXECUTION_STRATEGY.md` | Estrategia frontend | `docs/deployment/` |
-| 11 | `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | Alistamiento implementación CMSC | `docs/bounded-contexts/cmsc/` |
+| 11 | `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | Alistamiento implementación CMSC | `docs/cmsc/` |
 | 12 | `ESTADO_ACTUAL_BENCHMARKS.md` | Estado actual benchmarks | `docs/bounded-contexts/ai-runtime/` |
 | 13-22 | `Benchmark_M1_MobileNetV2/*` (10 archivos) | Benchmark M1/M2 detallado | `docs/bounded-contexts/ai-runtime/benchmark-m1-m2/` |
 | 23 | `AUDITORIA_BENCHMARK_SRC_FALLBACK.md` | Auditoría fallback fuente | `docs/bounded-contexts/ai-runtime/` |
@@ -339,8 +377,10 @@ Los siguientes 22 documentos existen **únicamente** en `Documentacion/` y no ti
 | MERGE | 0 (pendiente de revisión de duplicados temáticos) |
 | DELETE_CANDIDATE | 1 (`Documentacion/` directorio raíz vacío después de migración) |
 
+> **Nota de reconciliación (2026-11-18):** las familias `SIGCT_MEMORY_*` (11), `SIGCTIARURAL_RESEARCH_*` (3) y `CMSC_*` (4) ya fueron publicadas por LOTE-1 y sus destinos canónicos son `docs/memory/`, `docs/research/` y `docs/cmsc/`. Los conteos anteriores son del plan original; el destino `docs/bounded-contexts/cmsc/` quedó eliminado (nunca materializado).
+
 ---
 
 **Archivo generado:** `docs/DOCUMENTATION_MIGRATION_MATRIX.md`
 
-Sin ejecutar acciones. Sin mover archivos. Sin modificar repositorio. Sin acciones Git.
+Sin ejecutar acciones. Sin mover archivos. Sin modificar repositorio. Sin acciones Git. Las familias reconciliadas por LOTE-1 ya están publicadas; el resto permanece como planificación.
