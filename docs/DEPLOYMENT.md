@@ -59,7 +59,7 @@ remedio, no reiniciar el contenedor.
 
 - `5173` = frontend dockerizado (referencia estable).
 - `5174` = Vite dev server (laboratorio activo de desarrollo).
-Referencia canónica: `Documentacion/Arquitectura/FRONTEND_EXECUTION_STRATEGY.md`.
+Referencia: memoria técnica especializada TOSHIBA — `Documentacion/Arquitectura/FRONTEND_EXECUTION_STRATEGY.md` (estado G-02: ACTIVE). Fuente de verdad del proyecto: `docs/` (D-001).
 
 ---
 

@@ -2,6 +2,7 @@
 **Fecha de generación:** 2026-11-09
 **Fuente:** Estado extraído de commits, tags, documentación canónica y consensos de sesión.
 **HEAD:** 004deb8 | **Rama:** feature/cmsc-f3c-v1-implementation | **Tag:** PRE_PUSH_VALIDATED_20261103
+**Última revisión:** R1–R3 (G-03 · 2026-11-17) — reconciliación de gobernanza documental (CR-A/B/C/D). Referencias de `Documentacion/` reclasificadas a memoria técnica especializada TOSHIBA (ACTIVE CMSC REFERENCE); estado del benchmark actualizado a CERRADO (2026-10-14). Sin cambios de contenido histórico.
 
 ## 1. ESTADO EJECUTIVO DEL PROYECTO
 
@@ -26,8 +27,8 @@
 | CMSC_DISCLOSURE_ALIGNMENT | CERRADA | AC-L6/AC-L8 cerrados; V-17/V-18 PASS; ModelPredictCell alineado | `CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` |
 | Docker R1-R4 | EJECUTADO | Remediaciones aplicadas; readiness conditional validada | `DOCKER_READY_R1_R4_EXECUTION_PLAN.md` |
 | H5_CLOSED | CERRADA | Governanza H5 definida y cerrada | `H5_AI_GOVERNANCE_CLOSURE_REPORT.md` |
-| M2_RECOVERED | EJECUTADO OFICIAL | EfficientNet-B0 entrenado en Colab T4. Result: macro-F1 0.9937 · balanced acc 0.9943 · ECE 0.0332 · weighted-F1 0.9956 · epoch 32 · ~4.66 h. Artefactos `runs/M2_efficientnet_b0/` | `ESTADO_ACTUAL_BENCHMARKS.md` |
-| M1_BASELINE_M2_CHALLENGER | CONGELADO/DECISIÓN PENDIENTE | M1 = baseline oficial congelado. M2 = challenger validado. Decisión M1 vs M2 pendiente por diseño. | `ESTADO_ACTUAL_BENCHMARKS.md` §: "Decisión benchmark final PENDIENTE" |
+| M2_RECOVERED | EJECUTADO OFICIAL | EfficientNet-B0 entrenado en Colab T4. Result: macro-F1 0.9937 · balanced acc 0.9943 · ECE 0.0332 · weighted-F1 0.9956 · epoch 32 · ~4.66 h. Artefactos `runs/M2_efficientnet_b0/` | `M1_M2_GOVERNANCE_CLOSURE_REPORT.md` |
+| M1_BASELINE_M2_CHALLENGER | **CERRADO (2026-10-14)** | M1 = baseline oficial congelado. M2 = challenger validado. Evaluación cerrada; la promoción de M2 **no procede** (no supera el discriminador primario ECE). Gate M1↔M2 cerrado. | `M1_M2_GOVERNANCE_CLOSURE_REPORT.md` |
 | AI_CANON_HYBRID | ESTRATEGIA DEFINIDA | Estrategia híbrida dataset acústico (External + Local + Gobernanza SIGCT-Rural) en `AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md` | `AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md` |
 | L1-L6 | VERIFICADO | Runtime disclosure + verification cerradas; suite logger 76/76; selftest 21/21 | `L1_L6_RUNTIME_VERIFICATION_REPORT.md` |
 
@@ -167,7 +168,7 @@
 | class_space | 9 clases + RUIDO DESCONOCIDO (OOD bucket) | `ruido_desconocido` = bucket OOD, no se captura a demanda. |
 | ONNX | No exportado | Ni M1 ni M2 tienen versión ONNX/onnxruntime-web. `ml-v1-tabular` (HistGB/LogReg) reservado a V2. |
 | Holdout | Dataset V2+ split 15.741/3.373/3.374 seed 42 | 22.488 imgs/16 clases/3 especies. `holdout/real_world_holdout_v1/` reservado. 0 muestras en vivo. |
-| Riesgos científicos abiertos | 5 pendientes | 1) Decisión benchmark M1/M2. 2) Captura masiva dataset acústico (G-DS-2). 3) `window_schema` dimensión S81 sin decidir (OBS-09). 4) Estructura misión vs A.7 (OBS-01/02). 5) Remuestreo no declarado (OBS-06). |
+| Riesgos científicos abiertos | 4 pendientes | 1) Captura masiva dataset acústico (G-DS-2). 2) `window_schema` dimensión S81 sin decidir (OBS-09). 3) Estructura misión vs A.7 (OBS-01/02). 4) Remuestreo no declarado (OBS-06). *(La decisión benchmark M1/M2 quedó **CERRADA** el 2026-10-14.)* |
 
 ## 7. DOCKER
 
@@ -202,10 +203,19 @@ El **Mapa Maestro** es el documento canónico de **navegación** del ecosistema.
 | `CARTA_GOBERNANZA_IA_SIGCT_RURAL_V1.md` | **Gobernanza de IA** (reglas de actuación de toda inteligencia) | Nivel ecosistema; subordinado a la Constitución; no altera D-003 |
 | `MAPA_MAESTRO_ECOSISTEMA_SIGCT_RURAL_V1.md` | **Navegación** (componentes · capas · actores · flujos · dominios · roadmap) | Nivel ecosistema; descriptivo; sin gobernanza nueva |
 | `AGENTS.md` | Identidad, estado git, decisiones, cadencias | Nivel proyecto general |
-| `CMSC_CANONICAL_STATE_v1.md` | Punto único entrada CMSC | Arquitectura, labs, filosofía |
 | `AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` | Gobernancia dataset acústico | S30/S81/S82, features, splits, gates G-DS-1..6 |
 | `DOCUMENTATION_GOVERNANCE_REVIEW.md` | Clasificación KEEP/MERGE/ARCHIVE/OBSOLETE | L1-L6 + Docker-ready |
-| `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | Verificación preparación implementación | 6 condiciones bloqueantes, veredicto SÍ condicionado |
+
+> **Punto único de entrada oficial: `docs/`** (D-001). `Documentacion/` es **memoria técnica especializada TOSHIBA**; no es punto de entrada ni fuente normativa.
+
+### Referencias legacy activas (memoria técnica especializada TOSHIBA — `Documentacion/`)
+
+Documentos preservados de `Documentacion/` con valor operativo **no normativo**. Estado G-02: `ACTIVE` (ver D-006). Categoría de referencia: **ACTIVE CMSC REFERENCE**. No son punto de entrada, no son documentos canónicos y no son históricos.
+
+| Documento | Estado | Rol |
+|---|---|---|
+| `CMSC_CANONICAL_STATE_v1.md` | ACTIVE CMSC REFERENCE | Arquitectura, labs, filosofía (memoria técnica especializada TOSHIBA) |
+| `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | ACTIVE CMSC REFERENCE | Verificación de preparación; 6 condiciones bloqueantes, veredicto SÍ condicionado |
 
 ### Documentos secundarios (priority 2)
 
@@ -229,18 +239,15 @@ El **Mapa Maestro** es el documento canónico de **navegación** del ecosistema.
 
 **Consulta temática:**
 
-6. CMSC general: `CMSC_CANONICAL_STATE_v1.md`
+6. CMSC general: `CMSC_CANONICAL_STATE_v1.md` (memoria técnica especializada TOSHIBA — ACTIVE CMSC REFERENCE)
 7. Dataset acústico: `AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` → `AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md`
 8. Docker readiness: `DOCUMENTATION_GOVERNANCE_REVIEW.md` §7 + `DEPLOYMENT.md` L-5
 9. Documentación clasificada: `DOCUMENTATION_CONSOLIDATION_PLAN.md` (tabla completa)
-10. Implementación CMSC: `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` (6 condiciones) + `CMSC_F3A_INTERCONNECTION_BLUEPRINT_v1.md`
+10. Implementación CMSC: `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` (memoria técnica especializada TOSHIBA — ACTIVE CMSC REFERENCE) + `CMSC_F3A_INTERCONNECTION_BLUEPRINT_v1.md`
 
 ## 9. SIGUIENTE MISIÓN RECOMENDADA (por prioridad)
 
-1. **M1/M2 benchmark decisión definitiva** (CRÍTICO)
-   - Cerrar debate M1 baseline vs M2 challenger
-   - Documentar veredicto antes nuevo entrenamiento
-   - **Dependencia:** Autorización Bernardo explícita
+1. ~~**M1/M2 benchmark decisión definitiva**~~ **CERRADA (2026-10-14)** — M1 permanece baseline oficial congelado; M2 permanece challenger; la promoción de M2 **no procede** (no supera el discriminador primario ECE). Evidencia: `M1_M2_GOVERNANCE_CLOSURE_REPORT.md`.
 
 2. **Tramo C - Captura masiva dataset acústico** (CRÍTICO)
    - Handoff CLI→Dataset contrato PCM S30

@@ -63,7 +63,7 @@ SIGCT-Rural es un **ecosistema vivo de conocimiento verificable** —no una plat
 | Señales reales persistentes | `REAL` (×2) + `REAL-LOCAL` (micrófono) | `SensorReading` V3 (temp/hum) · `RobotTelemetry` (cliente ROTO) · mic S30 |
 | Dataset agrícola | `REF` (congelado) | Dataset V2+ 22.488 imgs / 16 clases / 3 especies; split 15.741/3.373/3.374 seed 42 |
 | Dataset acústico propio | `CAPTADO_INICIAL` | `sigct_rural_acoustic/v1` (fuera de git), 1 muestra `accepted` |
-| Modelos IA | `REF` (baseline/challenger) | M1 MobileNetV2 `CONGELADO` · M2 EfficientNet-B0 `VALIDADO`; decisión PENDIENTE |
+| Modelos IA | `REF` (baseline/challenger) | M1 MobileNetV2 `CONGELADO` · M2 EfficientNet-B0 `VALIDADO`; decisión **CERRADA 2026-10-14** (promoción no procede) |
 | Modelo productivo en servicio | `ROTO` | `plant_disease_mbv2.h5` (doble normalización `fastapi_app.py:192`) |
 | S81 / S82 | `DISENO` | Inteligencia acústica y detector de anomalías |
 | Evidence Ledger | `DISENO` | Bifurcación controlada documentada |
@@ -264,7 +264,7 @@ Los laboratorios son **espacios de exploración**; producen evidencia, no conten
 | **M2** EfficientNet-B0 (challenger) | `VALIDADO` | macro-F1 0.9937 · balanced_acc 0.9943 · ECE 0.0332 · weighted-F1 0.9956 · epoch 32 · ~4.66 h | `runs/M2_efficientnet_b0/` |
 | **`plant_disease_mbv2.h5`** (servicio) | `ROTO` | Doble normalización | Descalificado (`fastapi_app.py:192`) |
 
-**Decisión M1 vs M2: PENDIENTE por diseño.** Mientras tanto, M1 es baseline oficial y M2 es challenger; no se infla resultado ni se declara ganador.
+**Decisión M1 vs M2: CERRADA (2026-10-14).** M1 permanece baseline oficial congelado y M2 permanece challenger; la promoción de M2 no procede (no supera el discriminador primario ECE). Gate M1↔M2 cerrado — `docs/M1_M2_GOVERNANCE_CLOSURE_REPORT.md`.
 
 ### 5.2 Datos
 
@@ -429,7 +429,7 @@ Clasificación de temas a **elevar a rango constitucional** en una futura `CONST
 | Dataset agrícola | Congelado | 22.488 imgs / 16 clases |
 | Dataset acústico (C0) | `CAPTADO_INICIAL` | 1 muestra; G-DS-1 `FAIL` |
 | Modelo baseline M1 | `CONGELADO` | Sin artefactos en disco |
-| Modelo challenger M2 | `VALIDADO` | Decisión M1/M2 PENDIENTE |
+| Modelo challenger M2 | `VALIDADO` | Decisión M1/M2 **CERRADA 2026-10-14** (promoción no procede) |
 | Modelo en servicio | `ROTO` | `.h5` descalificado |
 | S81 / S82 | `DISENO` | Requieren gates |
 | Evidence Ledger | `DISENO` | Sin escritura ad-hoc |

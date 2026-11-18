@@ -18,7 +18,7 @@ SOURCE OF TRUTH
 
 docs/
 
-Justificación: docs/ es el repositorio Git principal del proyecto con 269+ archivos, el que utilizan los desarrolladores y el sistema CI/CD. Contiene documentación operativa, de gobernanza, estado canónico, arquitectura vigente y decisiones. Es la fuente única para resolver conflictos documentales y consultas operacionales. CANONICAL_PROJECT_STATE_20261109.md §12.1 declara explícitamente que este es el "punto único de entrada para retomar la iniciativa CMSC sin volver a investigar nada".
+Justificación: docs/ es el repositorio Git principal del proyecto con 269+ archivos, el que utilizan los desarrolladores y el sistema CI/CD. Contiene documentación operativa, de gobernanza, estado canónico, arquitectura vigente y decisiones. Es la fuente única para resolver conflictos documentales y consultas operacionales, y el **punto único de entrada oficial** del proyecto (ver `CANONICAL_PROJECT_STATE_20261109.md` §8, sección «Gobernanza»). El repositorio `Documentacion/` (memoria técnica especializada TOSHIBA) se conserva y se referencia, pero **no** constituye un segundo punto de entrada.
 
 ## Decision D-002
 
@@ -100,6 +100,20 @@ Documentos prioridad crítica.
 - CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md
 - FRONTEND_EXECUTION_STRATEGY.md
 - ESTADO_ACTUAL_BENCHMARKS.md
+
+**Alcance (aclaración R1 · cierre CR-A).** Los documentos CMSC listados tienen **prioridad de preservación**. **NO implican autoridad normativa.** **NO sustituyen D-001, D-002 ni D-003.** Su autoridad depende del **estado vigente** determinado por la reconciliación **G-02**:
+
+| Documento | Estado (G-02) |
+|---|---|
+| `CMSC_MASTERPLAN_v1.md` | HISTORICAL |
+| `CMSC_UI_ARCHITECTURE_v1.md` | HISTORICAL |
+| `ESTADO_ACTUAL_BENCHMARKS.md` | SUPERSEDED |
+| `CMSC_SIGNAL_MAP_v1.md` | REFERENCE |
+| `CMSC_CANONICAL_STATE_v1.md` | ACTIVE |
+| `CMSC_IMPLEMENTATION_READINESS_REVIEW_v1.md` | ACTIVE |
+| `FRONTEND_EXECUTION_STRATEGY.md` | ACTIVE |
+
+Ningún documento listado se elimina. La prohibición de D-004 sobre `CMSC_MASTERPLAN_v1.md` para decisiones de governance **permanece vigente**.
 
 ## Decision D-007
 
