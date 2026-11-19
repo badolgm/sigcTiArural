@@ -21,6 +21,8 @@
 > **Nota de reconciliación UNCLASSIFIED-5 (2026-11-18):** 5 documentos previamente sin clasificar quedaron clasificados (D-007) y reubicados mediante `git mv` (**sin commit**): `TOSHIBA_CLOSURE_REPORT_20261117.md`, `DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md`, `PRE_COMMIT_CLASSIFICATION.md` y `PRE_COMMIT_FORENSIC_REVIEW.md` → `docs/historical/` (HISTORICAL); `DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` → `docs/reports/` (KEEP). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución.
 >
 > **Nota de reconciliación LOTE-4A (2026-11-18):** 12 documentos clasificados **ARCHIVE** con destino explícito `docs/historical/` en FASE 4 fueron **trasladados** de `docs/` a `docs/historical/` mediante `git mv` (**sin commit**). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución. `ECOSYSTEM_IDENTITY.md` queda **excluido** (pendiente de la misión `ECOSYSTEM_IDENTITY_RECONCILIATION`).
+>
+> **Nota de reconciliación CAPTURE_PILOT_MERGE (2026-11-18):** el plan raíz `CAPTURE_PILOT_V1.md` (pre-merge, untracked) fue **fusionado** en el documento canónico `docs/CAPTURE_PILOT_V1.md` (absorción de su contenido de gobernanza, sin pérdida). El original se **preserva** en `docs/historical/CAPTURE_PILOT_V1_PRE_MERGE.md` (D-007). Modelo oficial de captura: **10 sesiones × 8 clips = 80 clips** (`PILOT_01..PILOT_10` / `PLACE_A/B/C`).
 
 ### Raíz `docs/` — 296 archivos `.md`
 

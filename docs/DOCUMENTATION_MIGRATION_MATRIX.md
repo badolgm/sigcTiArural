@@ -133,6 +133,23 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 
 ---
 
+## Reconciliación CAPTURE_PILOT_MERGE (2026-11-18)
+
+**Decisión de gobernanza:** el plan raíz `CAPTURE_PILOT_V1.md` (pre-merge, untracked) queda **fusionado** en el documento canónico `docs/CAPTURE_PILOT_V1.md` (fusión, no reclasificación), según **D-007**. El original se **preserva** sin pérdida en `docs/historical/CAPTURE_PILOT_V1_PRE_MERGE.md` (NADA DESAPARECE). Modelo oficial de captura (decisión de Bernardo): **10 sesiones × 8 clips = 80 clips**, nomenclatura `PILOT_01..PILOT_10` / `PLACE_A/B/C`.
+
+| # | Documento | Ubicación canónica | Acción | Origen |
+|---|---|---|---|---|
+| 1 | `CAPTURE_PILOT_V1.md` | `docs/CAPTURE_PILOT_V1.md` | MERGE | raíz |
+| 2 | `CAPTURE_PILOT_V1.md` | `docs/historical/CAPTURE_PILOT_V1_PRE_MERGE.md` | PRESERVE | raíz |
+
+**D-004.6 (metadatos):** línea de fusión añadida a la cabecera de `docs/CAPTURE_PILOT_V1.md`; cabecera de migración añadida a `docs/historical/CAPTURE_PILOT_V1_PRE_MERGE.md` (origen raíz, destino gobernado).
+
+**D-005 (referencias):** reconciliadas en `AGENTS.md` (bullet `CAPTURE_PILOT_MERGE_EXECUTION` + fila de la tabla «Fase 2 — KEEP»), esta matriz y `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`. Sin referencias colgantes.
+
+**D-007 (registro):** fusión y preservación registradas en esta matriz (2 filas nuevas) y en `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+---
+
 ## Matriz completa de migración
 
 | # | Archivo actual | Ubicación destino | Acción | Justificación |
@@ -426,6 +443,7 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 | 266 | `docs/L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | `docs/historical/L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | ARCHIVE | Plan de divulgación runtime L1-L6 completado |
 | 267 | `docs/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | `docs/historical/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | ARCHIVE | Validación visual pre-Docker completada |
 | 268 | `docs/VISUAL_VALIDATION_FINAL_REPORT.md` | `docs/historical/VISUAL_VALIDATION_FINAL_REPORT.md` | ARCHIVE | Validación visual final completada |
+| 269 | `CAPTURE_PILOT_V1.md` | `docs/CAPTURE_PILOT_V1.md` | MERGE | Plan operativo pilot (fusión 2026-11-18; original pre-merge en `docs/historical/CAPTURE_PILOT_V1_PRE_MERGE.md`) |
 
 ---
 
