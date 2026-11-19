@@ -150,6 +150,28 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 
 ---
 
+## Reconciliación INTEGRATION-5 (2026-11-18)
+
+**Decisión de gobernanza:** los **5 documentos pendientes auditados** quedan **integrados** conforme a la clasificación de Bernardo, según **D-007**. Ninguno se reclasifica fuera de este conjunto.
+
+| # | Documento | Ubicación canónica | Acción | Origen |
+|---|---|---|---|---|
+| 1 | `AI_ACOUSTIC_INTEGRATION_PATH.md` | `docs/` | KEEP | `docs/` |
+| 2 | `AI_ACOUSTIC_STATE_AUDIT.md` | `docs/` | KEEP | `docs/` |
+| 3 | `ASUS_INTEGRATION_EXECUTION_PLAN.md` | `docs/historical/` | HISTORICAL | `docs/` |
+| 4 | `ASUS_TOSHIBA_INTEGRATION_FILE_ROUTING.md` | `docs/historical/` | HISTORICAL | `docs/` |
+| 5 | `SECURITY_SPRINT_01_REPORT.md` | `docs/reports/` | REPORT | `docs/` |
+
+**KEEP vigentes:** `AI_ACOUSTIC_INTEGRATION_PATH.md` y `AI_ACOUSTIC_STATE_AUDIT.md` permanecen en `docs/` como **KEEP vigentes**, pendientes de una futura consolidación del bounded context acústico (`docs/bounded-contexts/acoustic-dataset/`, aún no materializado). **No** se crea ninguna carpeta nueva.
+
+**D-004.6 (metadatos):** cabecera de migración añadida a los **5 documentos** (autor · timestamp · origen · destino gobernado).
+
+**D-005 (referencias):** reconciliadas en `AGENTS.md` (bullet `INTEGRATION-5`), esta matriz y `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`. Sin referencias colgantes.
+
+**D-007 (registro):** integración registrada en esta matriz (5 filas nuevas) y en `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+---
+
 ## Matriz completa de migración
 
 | # | Archivo actual | Ubicación destino | Acción | Justificación |
@@ -444,6 +466,11 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 | 267 | `docs/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | `docs/historical/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | ARCHIVE | Validación visual pre-Docker completada |
 | 268 | `docs/VISUAL_VALIDATION_FINAL_REPORT.md` | `docs/historical/VISUAL_VALIDATION_FINAL_REPORT.md` | ARCHIVE | Validación visual final completada |
 | 269 | `CAPTURE_PILOT_V1.md` | `docs/CAPTURE_PILOT_V1.md` | MERGE | Plan operativo pilot (fusión 2026-11-18; original pre-merge en `docs/historical/CAPTURE_PILOT_V1_PRE_MERGE.md`) |
+| 270 | `docs/AI_ACOUSTIC_INTEGRATION_PATH.md` | `docs/AI_ACOUSTIC_INTEGRATION_PATH.md` | KEEP | Camino de integración acústica (INTEGRATION-5; KEEP vigente, sin movimiento) |
+| 271 | `docs/AI_ACOUSTIC_STATE_AUDIT.md` | `docs/AI_ACOUSTIC_STATE_AUDIT.md` | KEEP | Auditoría de estado real acústico (INTEGRATION-5; KEEP vigente, sin movimiento) |
+| 272 | `docs/ASUS_INTEGRATION_EXECUTION_PLAN.md` | `docs/historical/ASUS_INTEGRATION_EXECUTION_PLAN.md` | HISTORICAL | Plan de ejecución integración ASUS↔Toshiba (INTEGRATION-5) |
+| 273 | `docs/ASUS_TOSHIBA_INTEGRATION_FILE_ROUTING.md` | `docs/historical/ASUS_TOSHIBA_INTEGRATION_FILE_ROUTING.md` | HISTORICAL | Enrutado de archivos integración ASUS↔Toshiba (INTEGRATION-5) |
+| 274 | `docs/SECURITY_SPRINT_01_REPORT.md` | `docs/reports/SECURITY_SPRINT_01_REPORT.md` | REPORT | Auditoría de dependencias y plan priorizado SECURITY-SPRINT-01 (INTEGRATION-5) |
 
 ---
 

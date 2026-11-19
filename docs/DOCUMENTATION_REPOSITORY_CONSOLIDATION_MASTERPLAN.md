@@ -23,6 +23,8 @@
 > **Nota de reconciliación LOTE-4A (2026-11-18):** 12 documentos clasificados **ARCHIVE** con destino explícito `docs/historical/` en FASE 4 fueron **trasladados** de `docs/` a `docs/historical/` mediante `git mv` (**sin commit**). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución. `ECOSYSTEM_IDENTITY.md` queda **excluido** (pendiente de la misión `ECOSYSTEM_IDENTITY_RECONCILIATION`).
 >
 > **Nota de reconciliación CAPTURE_PILOT_MERGE (2026-11-18):** el plan raíz `CAPTURE_PILOT_V1.md` (pre-merge, untracked) fue **fusionado** en el documento canónico `docs/CAPTURE_PILOT_V1.md` (absorción de su contenido de gobernanza, sin pérdida). El original se **preserva** en `docs/historical/CAPTURE_PILOT_V1_PRE_MERGE.md` (D-007). Modelo oficial de captura: **10 sesiones × 8 clips = 80 clips** (`PILOT_01..PILOT_10` / `PLACE_A/B/C`).
+>
+> **Nota de reconciliación INTEGRATION-5 (2026-11-18):** los **5 documentos pendientes auditados** quedan integrados conforme a la clasificación de Bernardo (D-007). **KEEP (sin movimiento, en `docs/`):** `AI_ACOUSTIC_INTEGRATION_PATH.md` y `AI_ACOUSTIC_STATE_AUDIT.md` (KEEP vigentes, pendientes de una futura consolidación del bounded context acústico; **no** se creó ninguna carpeta nueva). **HISTORICAL:** `ASUS_INTEGRATION_EXECUTION_PLAN.md` y `ASUS_TOSHIBA_INTEGRATION_FILE_ROUTING.md` → `docs/historical/`. **REPORT:** `SECURITY_SPRINT_01_REPORT.md` → `docs/reports/`. Cabecera **D-004.6** aplicada a los 5; referencias **D-005** reconciliadas en `AGENTS.md`, la matriz y este masterplan. Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
 
 ### Raíz `docs/` — 296 archivos `.md`
 
@@ -563,6 +565,22 @@ Los **12 documentos clasificados ARCHIVE** con destino explícito `docs/historic
 | `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | `docs/` | `docs/historical/` | ARCHIVE |
 
 Cabecera **D-004.6** añadida a 6 documentos y destino actualizado en los otros 6; **D-005** aplicado en **modo registro** (`AGENTS.md`, matriz, este masterplan y `CANONICAL_PROJECT_STATE_20261109.md`; sin tocar `src/ai_models/model_identity.py` ni referencias distribuidas en documentos canónicos); movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación LOTE-4A* (con 4 filas nuevas). **Excluido:** `ECOSYSTEM_IDENTITY.md` (pendiente `ECOSYSTEM_IDENTITY_RECONCILIATION`). El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+### INTEGRATION-5 ejecutado (2026-11-18) — 5 documentos pendientes auditados
+
+Los **5 documentos pendientes auditados** quedan integrados conforme a la clasificación de Bernardo (**sin commit**):
+
+| Documento | Origen | Destino final | Acción |
+|---|---|---|---|
+| `AI_ACOUSTIC_INTEGRATION_PATH.md` | `docs/` | `docs/` (sin movimiento) | KEEP |
+| `AI_ACOUSTIC_STATE_AUDIT.md` | `docs/` | `docs/` (sin movimiento) | KEEP |
+| `ASUS_INTEGRATION_EXECUTION_PLAN.md` | `docs/` | `docs/historical/` | HISTORICAL |
+| `ASUS_TOSHIBA_INTEGRATION_FILE_ROUTING.md` | `docs/` | `docs/historical/` | HISTORICAL |
+| `SECURITY_SPRINT_01_REPORT.md` | `docs/` | `docs/reports/` | REPORT |
+
+**KEEP vigentes:** `AI_ACOUSTIC_INTEGRATION_PATH.md` y `AI_ACOUSTIC_STATE_AUDIT.md` permanecen en `docs/`, pendientes de una futura consolidación del bounded context acústico (`docs/bounded-contexts/acoustic-dataset/`, aún no materializado). **No** se creó ninguna carpeta nueva.
+
+Cabecera **D-004.6** añadida a los 5 documentos (autor · timestamp · origen · destino gobernado); **D-005** reconciliado en `AGENTS.md`, la matriz y este masterplan; movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación INTEGRATION-5* (con 5 filas nuevas). El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
 
 ---
 
