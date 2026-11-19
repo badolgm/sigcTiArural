@@ -123,7 +123,7 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 | 11 | `TOSHIBA_EXPORT_MANIFEST.md` | `docs/historical/` | ARCHIVE | `docs/` |
 | 12 | `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | `docs/historical/` | ARCHIVE | `docs/` |
 
-**Excluido (D-1, 2026-11-18):** `ECOSYSTEM_IDENTITY.md` **no** se mueve en LOTE-4A. La matriz lo lista como ARCHIVE (fila 85) mientras FASE 1 lo marca REFERENCE; existe contradicción de clasificación y presenta ~74 referencias activas como documento de identidad del ecosistema. Se registra como pendiente para la misión futura `ECOSYSTEM_IDENTITY_RECONCILIATION`.
+**Excluido (D-1, 2026-11-18):** `ECOSYSTEM_IDENTITY.md` **no** se movió en LOTE-4A. La matriz lo listaba como ARCHIVE (fila 85) mientras FASE 1 lo marca REFERENCE; existía contradicción de clasificación y presenta ~74 referencias activas como documento de identidad del ecosistema. **Resuelto (2026-11-19)** por la misión `ECOSYSTEM_IDENTITY_RECONCILIATION`: la clasificación `ARCHIVE` (fila 85) fue corregida a `REFERENCE` y el documento permanece en `docs/`. Ver § *Reconciliación ECOSYSTEM_IDENTITY_RECONCILIATION*.
 
 **D-004.6 (metadatos):** cabecera de migración añadida a los **6 documentos** que carecían de ella (`DEPLOYMENT.md`, `INDICE_PROYECTO.md`, `L1_L6_EXECUTION_PLAN.md`, `L1_L6_RUNTIME_DISCLOSURE_PLAN.md`, `PRE_DOCKER_VISUAL_VALIDATION_REPORT.md`, `VISUAL_VALIDATION_FINAL_REPORT.md`) y **destino actualizado** (`docs/` → `docs/historical/`) en los **6 documentos** que ya la tenían (`DOCUMENTATION_LANGUAGE_NORMALIZATION.md`, `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md`, `TOSHIBA_AUDIT_SPRINT_CLOSURE.md`, `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md`, `TOSHIBA_EXPORT_MANIFEST.md`, `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md`).
 
@@ -169,6 +169,24 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 **D-005 (referencias):** reconciliadas en `AGENTS.md` (bullet `INTEGRATION-5`), esta matriz y `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`. Sin referencias colgantes.
 
 **D-007 (registro):** integración registrada en esta matriz (5 filas nuevas) y en `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+---
+
+## Reconciliación ECOSYSTEM_IDENTITY_RECONCILIATION (2026-11-19)
+
+**Decisión de gobernanza:** se elimina la contradicción documental sobre `docs/ECOSYSTEM_IDENTITY.md`. FASE 1 lo clasificaba `REFERENCE`; FASE 4 y la fila 85 de esta matriz lo clasificaban `ARCHIVE` (heredado de un `OBSOLETE` que `docs/historical/OBSOLETE_VALIDATION.md` ya había corregido a `OUTDATED`). **Clasificación final: `REFERENCE` (fundacional).** El documento **no se mueve** y permanece en `docs/ECOSYSTEM_IDENTITY.md`.
+
+| # | Documento | Ubicación canónica | Acción | Origen |
+|---|---|---|---|---|
+| 1 | `ECOSYSTEM_IDENTITY.md` | `docs/ECOSYSTEM_IDENTITY.md` | REFERENCE | `docs/` |
+
+**Corrección aplicada:** fila 85 de la matriz completa (`docs/historical/ECOSYSTEM_IDENTITY.md` · ARCHIVE → `docs/ECOSYSTEM_IDENTITY.md` · REFERENCE) y tabla de migración FASE 4 del masterplan. La nota de exclusión de LOTE-4A quedó resuelta.
+
+**D-004.6 (metadatos):** cabecera de migración añadida a `docs/ECOSYSTEM_IDENTITY.md`, con la clasificación explícita `REFERENCE`, la declaración de vigencia en principios y los documentos que lo operacionalizan (`SIGCTIARURAL_VISION_ALIGNMENT.md`, `SIGCTIARURAL_CANONICAL_PHILOSOPHY_EVOLUTION_v1.md`, `CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md`).
+
+**D-005 (referencias):** ninguna referencia entrante requiere reconciliación (el documento **no se mueve**): las 35 referencias activas y el puntero de `README.md` / `SIGCT_RURAL_SYSTEM_BOOT.md` permanecen válidos sin cambios. Registro en `AGENTS.md`, esta matriz y `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`.
+
+**D-007 (registro):** `ECOSYSTEM_IDENTITY.md` se incorpora a la lista D-007 (documentos que jamás deben perderse) en `DOCUMENTATION_ARCHITECTURE_DECISION_V1.md`; reconciliación registrada en esta matriz y en `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md`. Sin movimiento físico; **sin commit** hasta orden explícita de Bernardo.
 
 ---
 
@@ -260,7 +278,7 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 | 82 | `docs/project_knowledge_base/KB-006-PENDING-CHANGES-AUDIT.md` | `docs/project-knowledge-base/KB-006-PENDING-CHANGES-AUDIT.md` | MOVE | KB-006 auditoría cambios pendientes |
 | 83 | `docs/DEPLOYMENT.md` | `docs/historical/DEPLOYMENT.md` | ARCHIVE | Obsoleto (61 líneas, 21/08/2026) |
 | 84 | `docs/INDICE_PROYECTO.md` | `docs/historical/INDICE_PROYECTO.md` | ARCHIVE | Índice estático desactualizado |
-| 85 | `docs/ECOSYSTEM_IDENTITY.md` | `docs/historical/ECOSYSTEM_IDENTITY.md` | ARCHIVE | Superseded por VISION_ALIGNMENT |
+| 85 | `docs/ECOSYSTEM_IDENTITY.md` | `docs/ECOSYSTEM_IDENTITY.md` | REFERENCE | Documento fundacional de identidad; vigente en principios, operacionalizado por VISION_ALIGNMENT / PHILOSOPHY_EVOLUTION / CONSTITUCIÓN (reconciliación `ECOSYSTEM_IDENTITY_RECONCILIATION`, 2026-11-19) |
 | 86 | `docs/DOCKER_READY_CONDITIONAL_DECISION_REPORT.md` | `docs/historical/DOCKER_READY_CONDITIONAL_DECISION_REPORT.md` | ARCHIVE | Superseded por decisión final |
 | 87 | `docs/DOCKER_BLOCKERS_EXECUTIVE_REVIEW_REPORT.md` | `docs/historical/DOCKER_BLOCKERS_EXECUTIVE_REVIEW_REPORT.md` | ARCHIVE | Bloqueadores resueltos |
 | 88 | `docs/DOCKER_OFFICIAL_EXECUTION_PLAN.md` | `docs/historical/DOCKER_OFFICIAL_EXECUTION_PLAN.md` | ARCHIVE | Plan ejecutado |

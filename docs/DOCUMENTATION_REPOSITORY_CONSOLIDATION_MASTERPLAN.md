@@ -20,11 +20,13 @@
 >
 > **Nota de reconciliación UNCLASSIFIED-5 (2026-11-18):** 5 documentos previamente sin clasificar quedaron clasificados (D-007) y reubicados mediante `git mv` (**sin commit**): `TOSHIBA_CLOSURE_REPORT_20261117.md`, `DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md`, `PRE_COMMIT_CLASSIFICATION.md` y `PRE_COMMIT_FORENSIC_REVIEW.md` → `docs/historical/` (HISTORICAL); `DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` → `docs/reports/` (KEEP). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución.
 >
-> **Nota de reconciliación LOTE-4A (2026-11-18):** 12 documentos clasificados **ARCHIVE** con destino explícito `docs/historical/` en FASE 4 fueron **trasladados** de `docs/` a `docs/historical/` mediante `git mv` (**sin commit**). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución. `ECOSYSTEM_IDENTITY.md` queda **excluido** (pendiente de la misión `ECOSYSTEM_IDENTITY_RECONCILIATION`).
+> **Nota de reconciliación LOTE-4A (2026-11-18):** 12 documentos clasificados **ARCHIVE** con destino explícito `docs/historical/` en FASE 4 fueron **trasladados** de `docs/` a `docs/historical/` mediante `git mv` (**sin commit**). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución. `ECOSYSTEM_IDENTITY.md` quedó **excluido** de LOTE-4A; **resuelto (2026-11-19)** por `ECOSYSTEM_IDENTITY_RECONCILIATION` como `REFERENCE` (fundacional), sin movimiento.
 >
 > **Nota de reconciliación CAPTURE_PILOT_MERGE (2026-11-18):** el plan raíz `CAPTURE_PILOT_V1.md` (pre-merge, untracked) fue **fusionado** en el documento canónico `docs/CAPTURE_PILOT_V1.md` (absorción de su contenido de gobernanza, sin pérdida). El original se **preserva** en `docs/historical/CAPTURE_PILOT_V1_PRE_MERGE.md` (D-007). Modelo oficial de captura: **10 sesiones × 8 clips = 80 clips** (`PILOT_01..PILOT_10` / `PLACE_A/B/C`).
 >
 > **Nota de reconciliación INTEGRATION-5 (2026-11-18):** los **5 documentos pendientes auditados** quedan integrados conforme a la clasificación de Bernardo (D-007). **KEEP (sin movimiento, en `docs/`):** `AI_ACOUSTIC_INTEGRATION_PATH.md` y `AI_ACOUSTIC_STATE_AUDIT.md` (KEEP vigentes, pendientes de una futura consolidación del bounded context acústico; **no** se creó ninguna carpeta nueva). **HISTORICAL:** `ASUS_INTEGRATION_EXECUTION_PLAN.md` y `ASUS_TOSHIBA_INTEGRATION_FILE_ROUTING.md` → `docs/historical/`. **REPORT:** `SECURITY_SPRINT_01_REPORT.md` → `docs/reports/`. Cabecera **D-004.6** aplicada a los 5; referencias **D-005** reconciliadas en `AGENTS.md`, la matriz y este masterplan. Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+>
+> **Nota de reconciliación ECOSYSTEM_IDENTITY_RECONCILIATION (2026-11-19):** se elimina la contradicción de clasificación sobre `docs/ECOSYSTEM_IDENTITY.md`. FASE 1 lo marca `REFERENCE` (inventario, línea 92); FASE 4 lo marcaba `ARCHIVE` (tabla de migración). **Clasificación final: `REFERENCE` (fundacional); el documento permanece en `docs/` (sin movimiento).** La tabla de migración de FASE 4 se corrige de `docs/historical/` · ARCHIVE a `docs/ECOSYSTEM_IDENTITY.md` · REFERENCE. Cabecera **D-004.6** añadida con la clasificación explícita y los documentos que lo operacionalizan (`SIGCTIARURAL_VISION_ALIGNMENT.md`, `SIGCTIARURAL_CANONICAL_PHILOSOPHY_EVOLUTION_v1.md`, `CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md`). Referencias **D-005** sin cambios (el documento no se mueve). Registro **D-007** en `DOCUMENTATION_ARCHITECTURE_DECISION_V1.md` (lista de documentos que jamás deben perderse), la matriz y este masterplan. **Sin commit** hasta orden explícita de Bernardo.
 
 ### Raíz `docs/` — 296 archivos `.md`
 
@@ -497,7 +499,7 @@ docs/
 | `Documentacion/IA/AUDITORIA_BENCHMARK_SRC_FALLBACK.md` | `docs/bounded-contexts/ai-runtime/AUDITORIA_BENCHMARK_SRC_FALLBACK.md` | MOVE (desde `Documentacion/IA/`) |
 | `docs/DEPLOYMENT.md` | `docs/historical/DEPLOYMENT.md` | ARCHIVE |
 | `docs/INDICE_PROYECTO.md` | `docs/historical/INDICE_PROYECTO.md` | ARCHIVE |
-| `docs/ECOSYSTEM_IDENTITY.md` | `docs/historical/ECOSYSTEM_IDENTITY.md` | ARCHIVE |
+| `docs/ECOSYSTEM_IDENTITY.md` | `docs/ECOSYSTEM_IDENTITY.md` | REFERENCE |
 | `docs/DOCKER_READY_CONDITIONAL_DECISION_REPORT.md` | `docs/historical/DOCKER_READY_CONDITIONAL_DECISION_REPORT.md` | ARCHIVE |
 | `docs/DOCKER_BLOCKERS_EXECUTIVE_REVIEW_REPORT.md` | `docs/historical/DOCKER_BLOCKERS_EXECUTIVE_REVIEW_REPORT.md` | ARCHIVE |
 | `docs/DOCKER_OFFICIAL_EXECUTION_PLAN.md` | `docs/historical/DOCKER_OFFICIAL_EXECUTION_PLAN.md` | ARCHIVE |
@@ -581,6 +583,18 @@ Los **5 documentos pendientes auditados** quedan integrados conforme a la clasif
 **KEEP vigentes:** `AI_ACOUSTIC_INTEGRATION_PATH.md` y `AI_ACOUSTIC_STATE_AUDIT.md` permanecen en `docs/`, pendientes de una futura consolidación del bounded context acústico (`docs/bounded-contexts/acoustic-dataset/`, aún no materializado). **No** se creó ninguna carpeta nueva.
 
 Cabecera **D-004.6** añadida a los 5 documentos (autor · timestamp · origen · destino gobernado); **D-005** reconciliado en `AGENTS.md`, la matriz y este masterplan; movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación INTEGRATION-5* (con 5 filas nuevas). El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+### ECOSYSTEM_IDENTITY_RECONCILIATION ejecutado (2026-11-19) — corrección ARCHIVE → REFERENCE
+
+Se elimina la contradicción de clasificación sobre `docs/ECOSYSTEM_IDENTITY.md`. **No se mueve, no se archiva, no se altera su contenido fundacional.**
+
+| Documento | Clasificación previa (FASE 4) | Clasificación final | Ubicación |
+|---|---|---|---|
+| `ECOSYSTEM_IDENTITY.md` | ARCHIVE → `docs/historical/` | **REFERENCE (fundacional)** | `docs/ECOSYSTEM_IDENTITY.md` (sin movimiento) |
+
+**Fundamento:** FASE 1 lo clasifica `REFERENCE`; `docs/historical/OBSOLETE_VALIDATION.md` corrigió su estado a `OUTDATED` (no `OBSOLETE`); `docs/CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md` lo declara fuente histórica y fundacional vigente en sus principios. Es citado activamente como vértice de identidad por `README.md`, `SIGCT_RURAL_SYSTEM_BOOT.md`, onboarding y documentos canónicos (~35 referencias activas).
+
+Cabecera **D-004.6** añadida con clasificación explícita `REFERENCE` y documentos que lo operacionalizan (`SIGCTIARURAL_VISION_ALIGNMENT.md`, `SIGCTIARURAL_CANONICAL_PHILOSOPHY_EVOLUTION_v1.md`, `CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md`); **D-005** sin cambios (el documento no se mueve); **D-007** registrado en `DOCUMENTATION_ARCHITECTURE_DECISION_V1.md`, la matriz y este masterplan. **Sin commit** hasta orden explícita de Bernardo.
 
 ---
 

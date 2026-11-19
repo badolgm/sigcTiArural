@@ -1,5 +1,24 @@
 # SIGCT-Rural — Identidad del Ecosistema (Documento Canónico)
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-19T11:56:30-05:00
+> - Origen: docs/ECOSYSTEM_IDENTITY.md
+> - Destino: docs/ECOSYSTEM_IDENTITY.md (REFERENCE; sin movimiento)
+>
+> **Documento fundacional de identidad.**
+>
+> **Clasificación: `REFERENCE`**
+>
+> **Vigente en principios.**
+>
+> **Operacionalizado por:**
+> - `docs/SIGCTIARURAL_VISION_ALIGNMENT.md`
+> - `Documentacion/Arquitectura/SIGCTIARURAL_CANONICAL_PHILOSOPHY_EVOLUTION_v1.md`
+> - `docs/CONSTITUCION_ECOSISTEMA_SIGCT_RURAL_V1.md`
+>
+> **No es `ARCHIVE`:** sus principios fundacionales siguen vigentes y es citado activamente como vértice de identidad (`README.md`, `SIGCT_RURAL_SYSTEM_BOOT.md`, onboarding y documentos canónicos). Clasificación `OUTDATED` (no `OBSOLETE`) según `docs/historical/OBSOLETE_VALIDATION.md`. Reconciliación `ECOSYSTEM_IDENTITY_RECONCILIATION` (2026-11-19).
+
 **Autor:** Bernardo Adolfo Gómez Montoya
 **Fecha:** 20 de julio de 2026
 **Estatus:** Documento vigente de identidad. Supera y reconcilia las definiciones previas en `EIARC_MISSION.md`, `EIARC_SCOPE.md`, `EIARC_VISION.md` (marco de gobierno arquitectónico abstracto) y las secciones de `PLAN_MAESTRO.md`/`MASTERDOC.md` sobre "EIARC — Ecosistema de Inteligencia Artificial y Robótica para el Campo" (expansión agropecuaria). Esos documentos no se eliminan del disco — quedan marcados como históricos.
