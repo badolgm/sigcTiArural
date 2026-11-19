@@ -7,6 +7,12 @@
 
 # Despliegue — Desarrollo Local y Opciones Cloud
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T20:34:31-05:00
+> - Origen: docs/DEPLOYMENT.md
+> - Destino: docs/historical/DEPLOYMENT.md
+
 > ## ⚠️ ESTADO CANÓNICO (2026-10-30)
 >
 > **Esta sección prevalece sobre el resto del documento.** Lo que sigue bajo el

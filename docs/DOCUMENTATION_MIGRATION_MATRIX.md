@@ -104,6 +104,35 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 
 ---
 
+## Reconciliación LOTE-4A (2026-11-18)
+
+**Decisión de gobernanza:** los **12 documentos clasificados ARCHIVE** con destino explícito `docs/historical/` en FASE 4 del masterplan quedan **reubicados** por esta reconciliación, según **D-007**. Solo se incluyen documentos cuyo destino en FASE 4 es literalmente `docs/historical/`; quedan fuera KEEP, CANONICAL, GOVERNANCE y REPORTS, así como los protegidos por D-003.
+
+| # | Documento | Ubicación canónica | Acción | Origen |
+|---|---|---|---|---|
+| 1 | `DEPLOYMENT.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 2 | `INDICE_PROYECTO.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 3 | `L1_L6_EXECUTION_PLAN.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 4 | `L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 5 | `PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 6 | `VISUAL_VALIDATION_FINAL_REPORT.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 7 | `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 8 | `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 9 | `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 10 | `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 11 | `TOSHIBA_EXPORT_MANIFEST.md` | `docs/historical/` | ARCHIVE | `docs/` |
+| 12 | `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | `docs/historical/` | ARCHIVE | `docs/` |
+
+**Excluido (D-1, 2026-11-18):** `ECOSYSTEM_IDENTITY.md` **no** se mueve en LOTE-4A. La matriz lo lista como ARCHIVE (fila 85) mientras FASE 1 lo marca REFERENCE; existe contradicción de clasificación y presenta ~74 referencias activas como documento de identidad del ecosistema. Se registra como pendiente para la misión futura `ECOSYSTEM_IDENTITY_RECONCILIATION`.
+
+**D-004.6 (metadatos):** cabecera de migración añadida a los **6 documentos** que carecían de ella (`DEPLOYMENT.md`, `INDICE_PROYECTO.md`, `L1_L6_EXECUTION_PLAN.md`, `L1_L6_RUNTIME_DISCLOSURE_PLAN.md`, `PRE_DOCKER_VISUAL_VALIDATION_REPORT.md`, `VISUAL_VALIDATION_FINAL_REPORT.md`) y **destino actualizado** (`docs/` → `docs/historical/`) en los **6 documentos** que ya la tenían (`DOCUMENTATION_LANGUAGE_NORMALIZATION.md`, `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md`, `TOSHIBA_AUDIT_SPRINT_CLOSURE.md`, `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md`, `TOSHIBA_EXPORT_MANIFEST.md`, `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md`).
+
+**D-005 (referencias · modo registro):** limitado a `AGENTS.md`, esta matriz, `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` y `CANONICAL_PROJECT_STATE_20261109.md`. **No** se tocan `src/ai_models/model_identity.py` ni las referencias distribuidas en documentos canónicos (README, SYSTEM_BOOT, CONSTITUCIÓN, UBTN, eiarc, etc.). Las referencias entrantes a los 12 documentos en otros documentos canónicos permanecen por diseño.
+
+**D-007 (registro):** movimiento registrado en esta matriz (4 filas nuevas: `L1_L6_EXECUTION_PLAN`, `L1_L6_RUNTIME_DISCLOSURE_PLAN`, `PRE_DOCKER_VISUAL_VALIDATION_REPORT`, `VISUAL_VALIDATION_FINAL_REPORT`) y en `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` (FASE 1 + FASE 4). El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+---
+
 ## Matriz completa de migración
 
 | # | Archivo actual | Ubicación destino | Acción | Justificación |
@@ -393,6 +422,10 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 | 262 | `Documentacion/IA/Benchmark_M1_MobileNetV2/README.md` | `docs/bounded-contexts/ai-runtime/benchmark-m1-m2/README.md` | MOVE | README benchmark M1 |
 | 263 | `Documentacion/IA/Benchmark_M1_MobileNetV2/TABLA_COMPARATIVA_M1_M5.md` | `docs/bounded-contexts/ai-runtime/benchmark-m1-m2/TABLA_COMPARATIVA_M1_M5.md` | MOVE | Tabla comparativa M1-M5 |
 | 264 | `Documentacion/IA/AUDITORIA_BENCHMARK_SRC_FALLBACK.md` | `docs/bounded-contexts/ai-runtime/AUDITORIA_BENCHMARK_SRC_FALLBACK.md` | MOVE | Auditoría fallback fuente benchmark |
+| 265 | `docs/L1_L6_EXECUTION_PLAN.md` | `docs/historical/L1_L6_EXECUTION_PLAN.md` | ARCHIVE | Plan de ejecución L1-L6 completado |
+| 266 | `docs/L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | `docs/historical/L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | ARCHIVE | Plan de divulgación runtime L1-L6 completado |
+| 267 | `docs/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | `docs/historical/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | ARCHIVE | Validación visual pre-Docker completada |
+| 268 | `docs/VISUAL_VALIDATION_FINAL_REPORT.md` | `docs/historical/VISUAL_VALIDATION_FINAL_REPORT.md` | ARCHIVE | Validación visual final completada |
 
 ---
 

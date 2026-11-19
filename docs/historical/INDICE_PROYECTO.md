@@ -1,4 +1,10 @@
 # MAPA DE NAVEGACIÓN Y ACCIÓN (SIGC&T RURAL)
+
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T20:34:31-05:00
+> - Origen: docs/INDICE_PROYECTO.md
+> - Destino: docs/historical/INDICE_PROYECTO.md
 Este archivo es el índice operativo del proyecto. Sirve para retomar el trabajo con contexto y sin improvisar.
 
 ## 1. Documentos maestros

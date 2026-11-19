@@ -1,5 +1,11 @@
 # VISUAL_VALIDATION_FINAL_REPORT
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T20:34:31-05:00
+> - Origen: docs/VISUAL_VALIDATION_FINAL_REPORT.md
+> - Destino: docs/historical/VISUAL_VALIDATION_FINAL_REPORT.md
+
 **Misión:** `PROJECT_RESUME_AND_VISUAL_VALIDATION`
 **Fecha:** 2026-10-30
 **Rama:** `feature/cmsc-f3c-v1-implementation`

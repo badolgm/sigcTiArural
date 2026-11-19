@@ -1,5 +1,11 @@
 # L1_L6_RUNTIME_DISCLOSURE_PLAN
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T20:34:31-05:00
+> - Origen: docs/L1_L6_RUNTIME_DISCLOSURE_PLAN.md
+> - Destino: docs/historical/L1_L6_RUNTIME_DISCLOSURE_PLAN.md
+
 **Misión:** `L1_L6_HISTORICAL_RUNTIME_DISCLOSURE_PLAN`
 **Fecha:** 2026-10-30
 **Rama:** `feature/cmsc-f3c-v1-implementation` · **HEAD:** `d930a34`

@@ -1,5 +1,11 @@
 # L1_L6_EXECUTION_PLAN
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T20:34:31-05:00
+> - Origen: docs/L1_L6_EXECUTION_PLAN.md
+> - Destino: docs/historical/L1_L6_EXECUTION_PLAN.md
+
 **Misión:** `L1_L6_EXECUTION_PLAN`
 **Base:** `docs/L1_L6_RUNTIME_DISCLOSURE_PLAN.md` (`READY_FOR_L1_L6`)
 **Fecha:** 2026-10-30

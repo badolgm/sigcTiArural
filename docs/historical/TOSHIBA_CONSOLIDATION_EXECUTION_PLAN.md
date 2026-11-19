@@ -4,7 +4,7 @@
 > - Autor: Bernardo Adolfo Gómez Montoya
 > - Timestamp: 2026-11-17T22:45:56-05:00
 > - Origen: TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md
-> - Destino: docs/TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md
+> - Destino: docs/historical/TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md
 
 **Rama:** `toshiba/architecture-audit`  
 **Fecha:** 2026-11-04  

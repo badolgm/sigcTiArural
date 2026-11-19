@@ -1,5 +1,11 @@
 # PRE_DOCKER_VISUAL_VALIDATION_REPORT
 
+> **Metadatos de migración — D-004.6**
+> - Autor: Bernardo Adolfo Gómez Montoya
+> - Timestamp: 2026-11-18T20:34:31-05:00
+> - Origen: docs/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md
+> - Destino: docs/historical/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md
+
 **Misión:** `PRE_DOCKER_VISUAL_VALIDATION`
 **Proyecto:** SIGCT-Rural · **Rama:** `feature/cmsc-f3c-v1-implementation` · **HEAD:** `415ee2b`
 **Fecha:** 2026-10-13

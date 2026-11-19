@@ -4,7 +4,7 @@
 > - Autor: Bernardo Adolfo Gómez Montoya
 > - Timestamp: 2026-11-17T22:45:56-05:00
 > - Origen: TOSHIBA_AUDIT_SPRINT_CLOSURE.md
-> - Destino: docs/TOSHIBA_AUDIT_SPRINT_CLOSURE.md
+> - Destino: docs/historical/TOSHIBA_AUDIT_SPRINT_CLOSURE.md
 
 **Repositorio:** sigcTiArural  
 **Rama:** `toshiba/architecture-audit`  

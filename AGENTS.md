@@ -233,12 +233,12 @@ El Mapa Maestro **no modifica** la Constitución, la Carta IA ni D-003. En confl
 | 3 | `ARCHITECTURE_ACTION_REVIEW.md` | raíz | `docs/architecture/ARCHITECTURE_ACTION_REVIEW.md` |
 | 4 | `C02_EXECUTION_PACKAGE.md` | raíz | `docs/architecture/C02_EXECUTION_PACKAGE.md` |
 | 5 | `ARCHITECTURE_AUDIT.md` | raíz | `docs/architecture/ARCHITECTURE_AUDIT.md` |
-| 6 | `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | raíz | `docs/TOSHIBA_AUDIT_SPRINT_CLOSURE.md` |
-| 7 | `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | raíz | `docs/TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` |
-| 8 | `TOSHIBA_EXPORT_MANIFEST.md` | raíz | `docs/TOSHIBA_EXPORT_MANIFEST.md` |
-| 9 | `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | raíz | `docs/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` |
-| 10 | `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | raíz | `docs/DOCUMENTATION_LANGUAGE_NORMALIZATION.md` |
-| 11 | `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | raíz | `docs/DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` |
+| 6 | `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | raíz | `docs/historical/TOSHIBA_AUDIT_SPRINT_CLOSURE.md` |
+| 7 | `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | raíz | `docs/historical/TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` |
+| 8 | `TOSHIBA_EXPORT_MANIFEST.md` | raíz | `docs/historical/TOSHIBA_EXPORT_MANIFEST.md` |
+| 9 | `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | raíz | `docs/historical/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` |
+| 10 | `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | raíz | `docs/historical/DOCUMENTATION_LANGUAGE_NORMALIZATION.md` |
+| 11 | `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | raíz | `docs/historical/DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` |
 | 12 | `DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` | `docs/` | `docs/DOCUMENTATION_REPOSITORY_CONSOLIDATION_MASTERPLAN.md` (sin movimiento) |
 | 13 | `REALITY_RECONSTRUCTION_AUDIT_V1.md` | `docs/` | `docs/REALITY_RECONSTRUCTION_AUDIT_V1.md` (sin movimiento) |
 | 14 | `TOSHIBA_FINAL_RECONCILIATION_REPORT.md` | `docs/` | `docs/TOSHIBA_FINAL_RECONCILIATION_REPORT.md` (sin movimiento) |
@@ -268,3 +268,26 @@ Los **5 documentos previamente sin clasificar** del cierre Toshiba y de la audit
 | 5 | `PRE_COMMIT_FORENSIC_REVIEW.md` | `docs/` | `docs/historical/PRE_COMMIT_FORENSIC_REVIEW.md` | HISTORICAL |
 
 D-004.6 añadido/actualizado en los 5; D-005 reconciliado en `AGENTS.md` y en los propios documentos; movimiento físico **sin commit** hasta orden explícita de Bernardo.
+
+**Fase 4 — LOTE-4A-HISTORICAL (2026-11-18, ejecutada sin commit):**
+
+Los **12 documentos ARCHIVE** con destino explícito `docs/historical/` en FASE 4 del masterplan quedan reubicados mediante `git mv` (**sin commit**). Solo se mueven documentos con destino `docs/historical/` literal; quedan fuera KEEP, CANONICAL, GOVERNANCE, REPORTS y los protegidos por D-003.
+
+| # | Documento | Origen | Destino final | Acción |
+|---|---|---|---|---|
+| 1 | `DEPLOYMENT.md` | `docs/` | `docs/historical/DEPLOYMENT.md` | ARCHIVE |
+| 2 | `INDICE_PROYECTO.md` | `docs/` | `docs/historical/INDICE_PROYECTO.md` | ARCHIVE |
+| 3 | `L1_L6_EXECUTION_PLAN.md` | `docs/` | `docs/historical/L1_L6_EXECUTION_PLAN.md` | ARCHIVE |
+| 4 | `L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | `docs/` | `docs/historical/L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | ARCHIVE |
+| 5 | `PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | `docs/` | `docs/historical/PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | ARCHIVE |
+| 6 | `VISUAL_VALIDATION_FINAL_REPORT.md` | `docs/` | `docs/historical/VISUAL_VALIDATION_FINAL_REPORT.md` | ARCHIVE |
+| 7 | `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | `docs/` | `docs/historical/DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | ARCHIVE |
+| 8 | `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | `docs/` | `docs/historical/DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | ARCHIVE |
+| 9 | `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | `docs/` | `docs/historical/TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | ARCHIVE |
+| 10 | `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | `docs/` | `docs/historical/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | ARCHIVE |
+| 11 | `TOSHIBA_EXPORT_MANIFEST.md` | `docs/` | `docs/historical/TOSHIBA_EXPORT_MANIFEST.md` | ARCHIVE |
+| 12 | `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | `docs/` | `docs/historical/TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | ARCHIVE |
+
+**Excluido (D-1):** `ECOSYSTEM_IDENTITY.md` no se mueve (contradicción FASE 1 REFERENCE vs FASE 4 ARCHIVE + ~74 referencias activas); pendiente de la misión `ECOSYSTEM_IDENTITY_RECONCILIATION`.
+
+D-004.6 añadido a 6 documentos y destino actualizado en los otros 6; D-005 en **modo registro** (solo `AGENTS.md`, matriz, masterplan y `CANONICAL_PROJECT_STATE_20261109.md`; no se toca `model_identity.py` ni referencias distribuidas); D-007 registrado en la matriz (4 filas nuevas) y en el masterplan. Movimiento físico **sin commit** hasta orden explícita de Bernardo.

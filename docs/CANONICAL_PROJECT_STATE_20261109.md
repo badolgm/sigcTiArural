@@ -86,12 +86,14 @@
 | Documento | Ruta | Rol |
 |---|---|---|
 | `ARCHITECTURE_AUDIT.md` | `docs/architecture/ARCHITECTURE_AUDIT.md` | Auditoría completada — evidencia histórica |
-| `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | `docs/TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | Cierre administrativo sprint |
-| `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | `docs/DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | Normalización lenguaje completada |
-| `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | `docs/DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | Remediación lenguaje completada |
-| `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | `docs/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | Revisión consolidación sprint |
-| `TOSHIBA_EXPORT_MANIFEST.md` | `docs/TOSHIBA_EXPORT_MANIFEST.md` | Manifiesto paquetes exportados sprint |
-| `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | `docs/TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | Plan ejecución consolidación |
+| `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | `docs/historical/TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | Cierre administrativo sprint |
+| `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | `docs/historical/DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | Normalización lenguaje completada |
+| `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | `docs/historical/DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | Remediación lenguaje completada |
+| `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | `docs/historical/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | Revisión consolidación sprint |
+| `TOSHIBA_EXPORT_MANIFEST.md` | `docs/historical/TOSHIBA_EXPORT_MANIFEST.md` | Manifiesto paquetes exportados sprint |
+| `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | `docs/historical/TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | Plan ejecución consolidación |
+
+> **Nota de reconciliación LOTE-4A (2026-11-18):** 6 de estos documentos ARCHIVE fueron reubicados de `docs/` a `docs/historical/` mediante `git mv` (**sin commit**); `ARCHITECTURE_AUDIT.md` permanece en `docs/architecture/`. `ECOSYSTEM_IDENTITY.md` queda **excluido** de LOTE-4A (pendiente de `ECOSYSTEM_IDENTITY_RECONCILIATION`).
 
 ### LOCAL_EVIDENCE_ONLY (1 documento)
 

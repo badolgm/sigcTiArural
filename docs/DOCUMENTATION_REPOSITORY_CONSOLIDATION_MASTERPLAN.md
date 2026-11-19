@@ -19,6 +19,8 @@
 > **Nota de reconciliación LOTE-3 (2026-11-18):** 17 documentos de la familia de gobernanza IA y benchmark (`AI_R1_*`…`AI_R5_*`, `M1_*`, `M1_M2_*`, `M2_*`, `H5_AI_GOVERNANCE_CLOSURE_REPORT`, `R5_AI_SERVING_STRATEGY_REPORT`) fueron **trasladados** de `docs/` a `docs/ai/` mediante `git mv` (**sin commit**). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución.
 >
 > **Nota de reconciliación UNCLASSIFIED-5 (2026-11-18):** 5 documentos previamente sin clasificar quedaron clasificados (D-007) y reubicados mediante `git mv` (**sin commit**): `TOSHIBA_CLOSURE_REPORT_20261117.md`, `DOCUMENTATION_DECISION_ALIGNMENT_REPORT.md`, `PRE_COMMIT_CLASSIFICATION.md` y `PRE_COMMIT_FORENSIC_REVIEW.md` → `docs/historical/` (HISTORICAL); `DOCUMENTATION_DECISION_ALIGNMENT_REPORT_V1.md` → `docs/reports/` (KEEP). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución.
+>
+> **Nota de reconciliación LOTE-4A (2026-11-18):** 12 documentos clasificados **ARCHIVE** con destino explícito `docs/historical/` en FASE 4 fueron **trasladados** de `docs/` a `docs/historical/` mediante `git mv` (**sin commit**). Las filas de este inventario que aún los muestran en `docs/` se conservan como snapshot del estado previo a la ejecución. `ECOSYSTEM_IDENTITY.md` queda **excluido** (pendiente de la misión `ECOSYSTEM_IDENTITY_RECONCILIATION`).
 
 ### Raíz `docs/` — 296 archivos `.md`
 
@@ -538,6 +540,27 @@ Los **5 documentos previamente sin clasificar** del cierre Toshiba y de la audit
 | `PRE_COMMIT_FORENSIC_REVIEW.md` | `docs/` | `docs/historical/` | HISTORICAL |
 
 Cabecera **D-004.6** añadida/actualizada en los 5; referencias **D-005** reconciliadas en `AGENTS.md` y en los propios documentos; movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación UNCLASSIFIED-5*. El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+
+### LOTE-4A ejecutado (2026-11-18) — 12 documentos ARCHIVE → `docs/historical/`
+
+Los **12 documentos clasificados ARCHIVE** con destino explícito `docs/historical/` en FASE 4 quedan reubicados por `LOTE-4A` mediante `git mv` (**sin commit**):
+
+| Documento | Origen | Destino final | Acción |
+|---|---|---|---|
+| `DEPLOYMENT.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `INDICE_PROYECTO.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `L1_L6_EXECUTION_PLAN.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `L1_L6_RUNTIME_DISCLOSURE_PLAN.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `PRE_DOCKER_VISUAL_VALIDATION_REPORT.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `VISUAL_VALIDATION_FINAL_REPORT.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `TOSHIBA_EXPORT_MANIFEST.md` | `docs/` | `docs/historical/` | ARCHIVE |
+| `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | `docs/` | `docs/historical/` | ARCHIVE |
+
+Cabecera **D-004.6** añadida a 6 documentos y destino actualizado en los otros 6; **D-005** aplicado en **modo registro** (`AGENTS.md`, matriz, este masterplan y `CANONICAL_PROJECT_STATE_20261109.md`; sin tocar `src/ai_models/model_identity.py` ni referencias distribuidas en documentos canónicos); movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación LOTE-4A* (con 4 filas nuevas). **Excluido:** `ECOSYSTEM_IDENTITY.md` (pendiente `ECOSYSTEM_IDENTITY_RECONCILIATION`). El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
 
 ---
 

@@ -4,7 +4,7 @@
 > - Autor: Bernardo Adolfo Gómez Montoya
 > - Timestamp: 2026-11-17T22:45:56-05:00
 > - Origen: TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md
-> - Destino: docs/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md
+> - Destino: docs/historical/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md
 
 **Rama:** `toshiba/architecture-audit`  
 **Fecha:** 2026-11-04  
