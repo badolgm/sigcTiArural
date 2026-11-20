@@ -27,7 +27,8 @@ import {
 // que docLoader.js usa para docs/*.md. Sin backend, sin endpoints, sin fetch en runtime.
 // El valor embebido refleja el fichero `acoustic_features_v2.csv` en el momento del build.
 
-const TARGET_SAMPLE = 'ac_20261006_215109_000';
+// null = seleccionar la ultima fila del CSV (sample mas reciente del dataset real).
+const TARGET_SAMPLE = null;
 
 // Desde src/frontend/src/pages/cmsc/orchestration/, la raíz del repo está 6 niveles
 // arriba (orchestration -> cmsc -> pages -> src -> frontend -> src -> repo root).
@@ -49,10 +50,10 @@ function parseRow(raw, sampleId) {
   const header = lines[0].split(',');
   const idx = header.indexOf('sample_id');
   if (idx === -1) return null;
-  const line = lines
-    .slice(1)
-    .map((l) => l.split(','))
-    .find((cells) => cells[idx] === sampleId);
+  const dataLines = lines.slice(1).map((l) => l.split(','));
+  const line = sampleId
+    ? dataLines.find((cells) => cells[idx] === sampleId)
+    : dataLines[dataLines.length - 1];
   if (!line) return null;
   const obj = {};
   header.forEach((h, i) => {
@@ -67,9 +68,10 @@ function buildVector(row, columnNames) {
   return vector;
 }
 
-const AcousticFirstResultCard = () => {
+const AcousticFirstResultCard = ({ liveRow = null, quickMode = false }) => {
   const state = useMemo(() => {
-    const row = parseRow(csvRaw, TARGET_SAMPLE);
+    // quickMode: fila leida en vivo por el bridge. Modo experto: snapshot de build (intacto).
+    const row = liveRow ?? parseRow(csvRaw, TARGET_SAMPLE);
     if (!row) return NO_DATA;
     const vector = buildVector(row, RULES_V0_COLUMN_NAMES);
     if (!vector) {
@@ -84,13 +86,15 @@ const AcousticFirstResultCard = () => {
     } catch (err) {
       return { kind: 'invalid', detail: err.message };
     }
-  }, []);
+  }, [liveRow]);
 
   const header = (
     <div className="flex items-start justify-between gap-2">
       <div>
         <h3 className="text-sm font-bold text-gray-200">Primer resultado acústico visible</h3>
-        <p className="text-[10px] text-gray-500 font-mono">rules-v0 · S81 preview · E5</p>
+        <p className="text-[10px] text-gray-500 font-mono">
+          {quickMode ? 'Resultado de la grabación' : 'rules-v0 · S81 preview · E5'}
+        </p>
       </div>
       {state.kind === 'result' ? (
         <HonestyBadge estado="SIM" confidence={state.result.confidence} />
@@ -119,6 +123,11 @@ const AcousticFirstResultCard = () => {
 
   const { row, result } = state;
   const dims = result.featureMeta.windowDims;
+  // La clase conservada internamente sigue siendo RUIDO DESCONOCIDO; solo se cambia
+  // el texto visible en modo rápido cuando ninguna regla viva disparó.
+  const sinRegla = /^ninguna regla viva disparo/i.test(result.note || '');
+  const titulo = quickMode && sinRegla ? 'Todavía no se reconoce el sonido' : result.label;
+  const nota = quickMode && sinRegla ? null : result.note;
 
   return (
     <section className="rounded-xl border border-gray-800/70 bg-gray-900/25 p-3 flex flex-col gap-2.5">
@@ -129,8 +138,8 @@ const AcousticFirstResultCard = () => {
           <span className="text-[10px] uppercase tracking-widest text-gray-500">class_id</span>
           <span className="text-[10px] text-gray-600 font-mono">S81 · preview</span>
         </div>
-        <p className="text-lg font-bold text-gray-100 leading-tight">{result.label}</p>
-        <p className="text-[10px] text-gray-500 leading-snug mt-0.5">{result.note}</p>
+        <p className="text-lg font-bold text-gray-100 leading-tight" data-clase-interna={result.label}>{titulo}</p>
+        {nota && <p className="text-[10px] text-gray-500 leading-snug mt-0.5">{nota}</p>}
       </div>
 
       <dl className="grid grid-cols-2 gap-1.5">
@@ -151,7 +160,9 @@ const AcousticFirstResultCard = () => {
       <div className="text-[10px] text-gray-500 leading-snug space-y-0.5">
         <p className="font-mono">{row.sample_id}</p>
         <p>
-          Valores embebidos en build desde <span className="font-mono">acoustic_features_v2.csv</span> · heurística
+          {quickMode && liveRow
+            ? 'Valores leídos en vivo del dataset'
+            : <>Valores embebidos en build desde <span className="font-mono">acoustic_features_v2.csv</span></>} · heurística
           determinista <span className="font-mono">({result.method})</span>, no es un modelo entrenado.
         </p>
       </div>

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AcousticFlowStepper from './AcousticFlowStepper.jsx';
+import AcousticQuickCapture from './AcousticQuickCapture.jsx';
 import AcousticLoggerPanel from './AcousticLoggerPanel.jsx';
 import AcousticDatasetPanel from './AcousticDatasetPanel.jsx';
 import AcousticConsumersStrip from './AcousticConsumersStrip.jsx';
@@ -33,6 +34,8 @@ import AcpCell from '../AcpCell.jsx';
 //   ModelPredictCell · LabDoors · BenchmarkCell · accesos a KH / Roadmap / Gobernanza
 
 const OrchestrationZoneV2 = ({ pcmTapRef }) => {
+  // RÁPIDO es el modo por defecto. EXPERTO conserva la interfaz original sin cambios.
+  const [mode, setMode] = useState('rapido');
 
   return (
     <section className="space-y-2" aria-label="Zona de Orquestación Científica V2">
@@ -43,22 +46,50 @@ const OrchestrationZoneV2 = ({ pcmTapRef }) => {
         <span className="text-[10px] text-gray-600">Logger en reposo · Dataset CAPTADO_INICIAL · conteos en vivo vía puente local</span>
       </div>
 
+      {/* Interruptor de modo · RÁPIDO por defecto · EXPERTO = UI original intacta */}
+      <div className="flex items-center gap-1.5" role="group" aria-label="Modo de captura acústica">
+        {[
+          { id: 'rapido', label: 'MODO RÁPIDO' },
+          { id: 'experto', label: 'MODO EXPERTO' }
+        ].map((m) => (
+          <button
+            key={m.id}
+            type="button"
+            aria-pressed={mode === m.id}
+            onClick={() => setMode(m.id)}
+            className={`px-2.5 py-1 rounded-md border text-[10px] font-bold tracking-widest transition-colors ${
+              mode === m.id
+                ? 'border-cyan-600 bg-cyan-950/40 text-cyan-200'
+                : 'border-gray-800 bg-gray-900/40 text-gray-500 hover:text-gray-300'
+            }`}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+
       {/* Franja A · siempre visible */}
       <AcousticFlowStepper />
 
-      {/* Franja B · dos columnas. min-w-0 en ambos lados para que flex-1 no reviente el grid de 12 */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-        <div className="lg:col-span-7 min-w-0">
-          <AcousticLoggerPanel pcmTapRef={pcmTapRef} />
-        </div>
-        <div className="lg:col-span-5 min-w-0">
-          <AcousticDatasetPanel />
-        </div>
-      </div>
+      {mode === 'rapido' ? (
+        <AcousticQuickCapture />
+      ) : (
+        <>
+          {/* Franja B · dos columnas. min-w-0 en ambos lados para que flex-1 no reviente el grid de 12 */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+            <div className="lg:col-span-7 min-w-0">
+              <AcousticLoggerPanel pcmTapRef={pcmTapRef} />
+            </div>
+            <div className="lg:col-span-5 min-w-0">
+              <AcousticDatasetPanel />
+            </div>
+          </div>
 
-      {/* Franja B2 · primer resultado acústico visible (E5, ADITIVO). Preview de S81:
-          clasifica la ÚNICA muestra real del dataset con rules-v0; no promueve S81/S82. */}
-      <AcousticFirstResultCard />
+          {/* Franja B2 · primer resultado acústico visible (E5, ADITIVO). Preview de S81:
+              clasifica la ÚNICA muestra real del dataset con rules-v0; no promueve S81/S82. */}
+          <AcousticFirstResultCard />
+        </>
+      )}
 
       {/* Franja C · consumidores, siempre resumidos */}
       <div className="space-y-1">
