@@ -78,7 +78,7 @@ Clasificación de los documentos del alcance. Sin nueva documentación: las etiq
 | `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | **ARCHIVE** | Gobernanza (7 preservados) |
 | `TOSHIBA_EXPORT_MANIFEST.md` | **ARCHIVE** | Gobernanza (7 preservados) |
 | `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | **ARCHIVE** | Gobernanza (7 preservados) |
-| `TOSHIBA_EXECUTIVE_MATRIX.md` | **ARCHIVE** | Matriz ejecutiva de sprint cerrado |
+| `TOSHIBA_EXECUTIVE_MATRIX.md` | **NO MATERIALIZADO** | Referencia declarada sin archivo en disco ni en Git; contenido cubierto por `docs/historical/TOSHIBA_CLOSURE_REPORT_20261117.md` y `docs/historical/TOSHIBA_EXPORT_MANIFEST.md` (referencia canónica válida). No se creó ningún archivo. |
 | `TOSHIBA_ALIGNMENT_REPORT_V1.md` | **ARCHIVE** | Superado por la corrección ya aplicada en `cli.js` |
 | `DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | **ARCHIVE** | Gobernanza (7 preservados) |
 | `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | **ARCHIVE** | Gobernanza (7 preservados) |

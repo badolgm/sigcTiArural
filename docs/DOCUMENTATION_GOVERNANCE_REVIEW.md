@@ -46,9 +46,9 @@
 
 | Documento | Motivo |
 |---|---|
-| `docs/CONTINUITY_RUNBOOK.md` (2.5 KB) | Runbook genérico, superseded por `CONTINUITY_MASTER.md`. |
+| `docs/CONTINUITY_RUNBOOK.md` (2.5 KB) | Runbook operativo complementario de `CONTINUITY_MASTER.md`; procedimiento vigente, estado verificado stale. Clasificación corregida a `OUTDATED` (no `OBSOLETE`) por `docs/historical/OBSOLETE_VALIDATION.md`. |
 | `docs/INDICE_PROYECTO.md` (1.4 KB) | Índice estático desactualizado; el índice real es el Knowledge Hub (51 docs). |
-| `docs/ECOSYSTEM_IDENTITY.md` | Superseded por `SIGCTIARURAL_VISION_ALIGNMENT.md` y `SIGCTIARURAL_CANONICAL_PHILOSOPHY_EVOLUTION_v1.md`. |
+| `docs/ECOSYSTEM_IDENTITY.md` | Principios fundacionales vigentes; formulación **evolucionada** (no reemplazada) por `SIGCTIARURAL_VISION_ALIGNMENT.md` y `SIGCTIARURAL_CANONICAL_PHILOSOPHY_EVOLUTION_v1.md`. Clasificación final `REFERENCE` (reconciliación 2026-11-19, publicada en `dbd9e45`). |
 | `docs/SIGCTIARURAL_ESTADO_SESION_2026-09-14.md` | Bitácora de sesión, valor histórico solo. |
 | `docs/STAGE_FREEZE_20261013.txt` | Nota de freeze, sin valor permanente. |
 
@@ -76,9 +76,9 @@
 | `ARCHITECTURE_EVIDENCE_FREEZE_REPORT.md` | **ARCHIVE** |
 | `CANONICAL_DOCUMENTATION_ALIGNMENT.md` | **KEEP** |
 | `DEPLOYMENT.md` | **OBSOLETE** (reescribir en O-3) |
-| `CONTINUITY_RUNBOOK.md` | **OBSOLETE** |
+| `CONTINUITY_RUNBOOK.md` | **OUTDATED** (no `OBSOLETE`); procedimiento vigente, estado verificado stale — ver `docs/historical/OBSOLETE_VALIDATION.md`. |
 | `INDICE_PROYECTO.md` | **OBSOLETE** |
-| `ECOSYSTEM_IDENTITY.md` | **OBSOLETE** |
+| `ECOSYSTEM_IDENTITY.md` | **REFERENCE** (fundacional); reconciliado 2026-11-19 y publicado en `dbd9e45`. No `OBSOLETE`. |
 | `SIGCTIARURAL_ESTADO_SESION_2026-09-14.md` | **OBSOLETE** |
 | `STAGE_FREEZE_20261013.txt` | **OBSOLETE** |
 

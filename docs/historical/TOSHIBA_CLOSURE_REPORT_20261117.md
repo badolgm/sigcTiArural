@@ -177,7 +177,7 @@ Los 12 archivos siguientes no están versionados. Ninguno es fuente de verdad y 
 |---|---|---|
 | `C02_BACKLOG_CLOSEOUT.md` | HISTÓRICO · conocimiento residual administrativo (snapshot 12/1 de backlog) | `docs/historical/` + D-004.6 |
 | `TOSHIBA_ALIGNMENT_REPORT_V1.md` | HISTÓRICO · evidencia del «antes» de la divergencia TOSHIBA↔ASUS (superada por la corrección aplicada) | `docs/historical/` + D-004.6 |
-| `TOSHIBA_EXECUTIVE_MATRIX.md` | HISTÓRICO · redundante con `docs/TOSHIBA_EXPORT_MANIFEST.md` | `docs/historical/` + D-004.6 |
+| `TOSHIBA_EXECUTIVE_MATRIX.md` | HISTÓRICO · redundante con `docs/TOSHIBA_EXPORT_MANIFEST.md` · **no materializado** (sin archivo en disco ni en Git; no se creó) | `docs/historical/TOSHIBA_CLOSURE_REPORT_20261117.md` + `docs/historical/TOSHIBA_EXPORT_MANIFEST.md` (referencia canónica válida) |
 
 Base del destino, ya escrita y no nueva: `DOCUMENTATION_MIGRATION_MATRIX.md` filas 103-122 y masterplan FASE 4 envían los ARCHIVE a `docs/historical/`. Esa carpeta existe y está des-ignorada en `.gitignore` (líneas 195-196), por lo que no requiere `git add -f`.
 

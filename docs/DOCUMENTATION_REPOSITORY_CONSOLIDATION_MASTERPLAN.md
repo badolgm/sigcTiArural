@@ -73,7 +73,7 @@
 | `docs/` | `CMSC_DISCLOSURE_ALIGNMENT_REPORT.md` | CANONICAL |
 | `docs/` | `CMSC_PROJECT_STATUS_2026_10_05.md` | HISTORICAL |
 | `docs/` | `CONTINUITY_MASTER.md` | CANONICAL |
-| `docs/` | `CONTINUITY_RUNBOOK.md` | ACTIVE |
+| `docs/` | `CONTINUITY_RUNBOOK.md` | OUTDATED |
 | `docs/` | `DATASET_C0_EXECUTION_PLAN_v1.md` | UNKNOWN |
 | `docs/` | `DATASET_STATUS_REPORT.md` | CANONICAL |
 | `docs/` | `DEPLOYMENT.md` | OBSOLETE |
@@ -377,7 +377,7 @@
 |---|---|---|---|
 | `docs/CANONICAL_PROJECT_STATE_20261109.md` | `Documentacion/Arquitectura/CMSC_CANONICAL_STATE_v1.md` | SOLAPAMIENTO_TEMATICO | Ambos documentan estado canónico del proyecto; uno es la versión oficial vigente (2026-11-09), el otro es diseño previo sin estado operativo. |
 | `docs/DOCUMENTATION_GOVERNANCE_REVIEW.md` | `Documentacion/Arquitectura/CMSC_DOCUMENTATION_RELEASE_NOTE_v1.md` | SOLAPAMIENTO_TEMATICO | Ambos tratan gobernanza documental y liberación de documentos; uno es la revisión vigente, el otro es nota de liberación histórica. |
-| `docs/CONTINUITY_MASTER.md` | `docs/CONTINUITY_RUNBOOK.md` | COMPLEMENTARIO | No son duplicados; uno es la maestría, el otro el runbook operativo. |
+| `docs/CONTINUITY_MASTER.md` | `docs/CONTINUITY_RUNBOOK.md` | COMPLEMENTARIO | No son duplicados; uno es la maestría, el otro el runbook operativo. `COMPLEMENTARIO` describe la **relación**, no la clasificación: la clasificación vigente del runbook es `OUTDATED` (no `OBSOLETE`), según `docs/historical/OBSOLETE_VALIDATION.md`. |
 | `docs/MASTERDOC.md` | `Documentacion/Arquitectura/CMSC_MASTERPLAN_v1.md` | SOLAPAMIENTO_TEMATICO | Ambos cubren plan maestro; `MASTERDOC.md` es el documento canónico vigente, `CMSC_MASTERPLAN_v1.md` es diseño de workbench. |
 | `docs/ESTADO_ACTUAL_BENCHMARKS.md` | `Documentacion/IA/ESTADO_ACTUAL_BENCHMARKS.md` | DUPLICADO_EXACTO | Mismo nombre y contenido equivalente en ambas raíces. |
 | `docs/REALITY_RECONSTRUCTION_AUDIT_V1.md` | `Documentacion/Arquitectura/SIGCTIARURAL_ECOSYSTEM_FORENSIC_AUDIT_v1.md` | SOLAPAMIENTO_TEMATICO | Ambos tratan auditoría forense del ecosistema; uno es reconstrucción de realidad, el otro es arqueología forense. |
@@ -394,7 +394,7 @@
 - `docs/INITIAL_CAPTURE_EVIDENCE.md` — evidencia inicial ejecutada (HISTORICAL)
 
 **Runbooks repetidos:**
-- `docs/CONTINUITY_MASTER.md` y `docs/CONTINUITY_RUNBOOK.md` — complementarios, no repetidos.
+- `docs/CONTINUITY_MASTER.md` y `docs/CONTINUITY_RUNBOOK.md` - complementarios, no repetidos; clasificación vigente del runbook: `OUTDATED` (procedimiento vigente, estado verificado stale), no `OBSOLETE`.
 
 ---
 
@@ -457,7 +457,7 @@ docs/
 | `docs/CANONICAL_PROJECT_STATE_20261109.md` | `docs/state/CANONICAL_PROJECT_STATE_20261109.md` | KEEP |
 | `docs/MASTERDOC.md` | `docs/state/MASTERDOC.md` | KEEP |
 | `docs/CONTINUITY_MASTER.md` | `docs/runbooks/CONTINUITY_MASTER.md` | KEEP |
-| `docs/CONTINUITY_RUNBOOK.md` | `docs/runbooks/CONTINUITY_RUNBOOK.md` | KEEP |
+| `docs/CONTINUITY_RUNBOOK.md` | `docs/CONTINUITY_RUNBOOK.md` | KEEP |
 | `docs/DOCUMENTATION_GOVERNANCE_REVIEW.md` | `docs/governance/DOCUMENTATION_GOVERNANCE_REVIEW.md` | KEEP |
 | `docs/GOVERNANCE_RULES.md` | `docs/governance/GOVERNANCE_RULES.md` | KEEP |
 | `docs/HEXAGONAL_REFACTOR_PLAN.md` | `docs/architecture/hexagonal/HEXAGONAL_REFACTOR_PLAN.md` | KEEP |
@@ -566,7 +566,7 @@ Los **12 documentos clasificados ARCHIVE** con destino explícito `docs/historic
 | `TOSHIBA_EXPORT_MANIFEST.md` | `docs/` | `docs/historical/` | ARCHIVE |
 | `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md` | `docs/` | `docs/historical/` | ARCHIVE |
 
-Cabecera **D-004.6** añadida a 6 documentos y destino actualizado en los otros 6; **D-005** aplicado en **modo registro** (`AGENTS.md`, matriz, este masterplan y `CANONICAL_PROJECT_STATE_20261109.md`; sin tocar `src/ai_models/model_identity.py` ni referencias distribuidas en documentos canónicos); movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación LOTE-4A* (con 4 filas nuevas). **Excluido:** `ECOSYSTEM_IDENTITY.md` (pendiente `ECOSYSTEM_IDENTITY_RECONCILIATION`). El movimiento físico permanece **sin commit** hasta orden explícita de Bernardo.
+Cabecera **D-004.6** añadida a 6 documentos y destino actualizado en los otros 6; **D-005** aplicado en **modo registro** (`AGENTS.md`, matriz, este masterplan y `CANONICAL_PROJECT_STATE_20261109.md`; sin tocar `src/ai_models/model_identity.py` ni referencias distribuidas en documentos canónicos); movimiento registrado en `DOCUMENTATION_MIGRATION_MATRIX.md` § *Reconciliación LOTE-4A* (con 4 filas nuevas). **Excluido de LOTE-4A:** `ECOSYSTEM_IDENTITY.md` — **resuelto (2026-11-19)** por `ECOSYSTEM_IDENTITY_RECONCILIATION` como `REFERENCE` (fundacional), sin movimiento, y **publicado** en `dbd9e45`. El movimiento físico de los 12 documentos LOTE-4A quedó registrado en la serie de commits `1eaa537` → `dbd9e45`; ya no está pendiente de commit.
 
 ### INTEGRATION-5 ejecutado (2026-11-18) — 5 documentos pendientes auditados
 
@@ -763,7 +763,7 @@ La lista es una lectura del estado por archivo ya registrado en FASE 1; **no rec
 
 ### 6. Documentos históricos
 
-El origen coincide con la clasificación ya recogida en FASE 1 y FASE 4: los 7 documentos **ARCHIVE** del sprint Toshiba (`ARCHITECTURE_AUDIT.md`, `TOSHIBA_AUDIT_SPRINT_CLOSURE.md`, `DOCUMENTATION_LANGUAGE_NORMALIZATION.md`, `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md`, `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md`, `TOSHIBA_EXPORT_MANIFEST.md`, `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md`), las carpetas históricas (`docs/historical/`, `docs/sena_artifacts/`, `docs/session_plans/_archive/`) y los documentos de punto en el tiempo (`DOCUMENTATION_FREEZE_COMPLETION_PLAN.md`, `DOCUMENTATION_FREEZE_EXECUTION_REPORT.md`, `CMSC_SESSION_CLOSEOUT_2026_10_02.md` —ubicado en `Documentacion/Arquitectura/`—, `SIGCTIARURAL_ESTADO_SESION_2026-09-14.md`, `STAGE_FREEZE_20261013.txt`, `TOSHIBA_EXECUTIVE_MATRIX.md`).
+El origen coincide con la clasificación ya recogida en FASE 1 y FASE 4: los 7 documentos **ARCHIVE** del sprint Toshiba (`ARCHITECTURE_AUDIT.md`, `TOSHIBA_AUDIT_SPRINT_CLOSURE.md`, `DOCUMENTATION_LANGUAGE_NORMALIZATION.md`, `DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md`, `TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md`, `TOSHIBA_EXPORT_MANIFEST.md`, `TOSHIBA_CONSOLIDATION_EXECUTION_PLAN.md`), las carpetas históricas (`docs/historical/`, `docs/sena_artifacts/`, `docs/session_plans/_archive/`) y los documentos de punto en el tiempo (`DOCUMENTATION_FREEZE_COMPLETION_PLAN.md`, `DOCUMENTATION_FREEZE_EXECUTION_REPORT.md`, `CMSC_SESSION_CLOSEOUT_2026_10_02.md` —ubicado en `Documentacion/Arquitectura/`—, `SIGCTIARURAL_ESTADO_SESION_2026-09-14.md`, `STAGE_FREEZE_20261013.txt`). `TOSHIBA_EXECUTIVE_MATRIX.md` se retira de esta lista: no existe en disco ni en Git; su contenido queda cubierto por `docs/historical/TOSHIBA_CLOSURE_REPORT_20261117.md` y `docs/historical/TOSHIBA_EXPORT_MANIFEST.md` (referencias canónicas válidas). No se creó ningún archivo nuevo.
 
 ### 7. Reglas de arquitectura documental
 

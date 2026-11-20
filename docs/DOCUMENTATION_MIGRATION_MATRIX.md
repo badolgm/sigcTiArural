@@ -197,12 +197,12 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 | 1 | `docs/CANONICAL_PROJECT_STATE_20261109.md` | `docs/state/CANONICAL_PROJECT_STATE_20261109.md` | KEEP | Fuente de verdad canónica del proyecto |
 | 2 | `docs/MASTERDOC.md` | `docs/state/MASTERDOC.md` | KEEP | Documento maestro del ecosistema |
 | 3 | `docs/CONTINUITY_MASTER.md` | `docs/runbooks/CONTINUITY_MASTER.md` | KEEP | Runbook de continuidad operativa |
-| 4 | `docs/CONTINUITY_RUNBOOK.md` | `docs/runbooks/CONTINUITY_RUNBOOK.md` | KEEP | Runbook operativo |
+| 4 | `docs/CONTINUITY_RUNBOOK.md` | `docs/CONTINUITY_RUNBOOK.md` | KEEP | Runbook operativo; clasificación vigente `OUTDATED` (procedimiento vigente, estado verificado stale), no `OBSOLETE` — `docs/historical/OBSOLETE_VALIDATION.md` |
 | 5 | `docs/DOCUMENTATION_GOVERNANCE_REVIEW.md` | `docs/governance/DOCUMENTATION_GOVERNANCE_REVIEW.md` | KEEP | Clasificación KEEP/MERGE/ARCHIVE/OBSOLETE |
 | 6 | `docs/GOVERNANCE_RULES.md` | `docs/governance/GOVERNANCE_RULES.md` | KEEP | Reglas de gobernanza |
 | 7 | `docs/HEXAGONAL_REFACTOR_PLAN.md` | `docs/architecture/hexagonal/HEXAGONAL_REFACTOR_PLAN.md` | KEEP | Plan de refactor hexagonal |
-| 8 | `docs/ARCHITECTURE_ACTION_MATRIX.md` | `docs/decisions/ARCHITECTURE_ACTION_MATRIX.md` | KEEP | Matriz de acciones de arquitectura |
-| 9 | `docs/ARCHITECTURE_ACTION_REVIEW.md` | `docs/decisions/ARCHITECTURE_ACTION_REVIEW.md` | KEEP | Registro de decisiones de ingeniería |
+| 8 | `docs/ARCHITECTURE_ACTION_MATRIX.md` | `docs/architecture/ARCHITECTURE_ACTION_MATRIX.md` | KEEP | Matriz de acciones de arquitectura |
+| 9 | `docs/ARCHITECTURE_ACTION_REVIEW.md` | `docs/architecture/ARCHITECTURE_ACTION_REVIEW.md` | KEEP | Registro de decisiones de ingeniería |
 | 10 | `docs/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` | `docs/bounded-contexts/acoustic-dataset/AI_ACOUSTIC_DATASET_GOVERNANCE_V1.md` | KEEP | Gobernanza dataset acústico |
 | 11 | `docs/AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md` | `docs/bounded-contexts/acoustic-dataset/AI_ACOUSTIC_HYBRID_DATASET_STRATEGY_V1.md` | KEEP | Estrategia híbrida dataset acústico |
 | 12 | `docs/AI_ACOUSTIC_REFERENCE_LAYER_ARCHITECTURE_V1.md` | `docs/bounded-contexts/acoustic-dataset/AI_ACOUSTIC_REFERENCE_LAYER_ARCHITECTURE_V1.md` | KEEP | Arquitectura capa referencia |
@@ -287,11 +287,11 @@ Los documentos 15, 16 y 18 no figuraban en la matriz original y se incorporan aq
 | 91 | `docs/DOCKER_READY_R1_R4_REPORT.md` | `docs/historical/DOCKER_READY_R1_R4_REPORT.md` | ARCHIVE | Reporte R1-R4 ejecutado |
 | 92 | `docs/DOCKER_READY_REMEDIATION_PLAN.md` | `docs/historical/DOCKER_READY_REMEDIATION_PLAN.md` | ARCHIVE | Plan remediación ejecutado |
 | 93 | `docs/DOCKER_RUNTIME_AND_DATABASE_VALIDATION_REPORT.md` | `docs/historical/DOCKER_RUNTIME_AND_DATABASE_VALIDATION_REPORT.md` | MOVE | Reporte validación runtime Docker |
-| 94 | `docs/DOCUMENTATION_FREEZE_COMPLETION_PLAN.md` | `docs/historical/DOCUMENTATION_FREEZE_COMPLETION_PLAN.md` | ARCHIVE | Plan freeze documentación |
-| 95 | `docs/DOCUMENTATION_FREEZE_EXECUTION_REPORT.md` | `docs/historical/DOCUMENTATION_FREEZE_EXECUTION_REPORT.md` | ARCHIVE | Reporte ejecución freeze |
+| 94 | `docs/DOCUMENTATION_FREEZE_COMPLETION_PLAN.md` | `docs/DOCUMENTATION_FREEZE_COMPLETION_PLAN.md` | HISTORICAL | Plan freeze documentación; registro punto-en-tiempo, sin movimiento |
+| 95 | `docs/DOCUMENTATION_FREEZE_EXECUTION_REPORT.md` | `docs/DOCUMENTATION_FREEZE_EXECUTION_REPORT.md` | HISTORICAL | Reporte ejecución freeze; registro punto-en-tiempo, sin movimiento |
 | 96 | `docs/DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | `docs/historical/DOCUMENTATION_LANGUAGE_NORMALIZATION.md` | ARCHIVE | Normalización completada |
 | 97 | `docs/DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | `docs/historical/DOCUMENTATION_LANGUAGE_REMEDIATION_REPORT.md` | ARCHIVE | Remediación completada |
-| 98 | `docs/ARCHITECTURE_AUDIT.md` | `docs/historical/ARCHITECTURE_AUDIT.md` | ARCHIVE | Auditoría completada |
+| 98 | `docs/ARCHITECTURE_AUDIT.md` | `docs/architecture/ARCHITECTURE_AUDIT.md` | ARCHIVE | Auditoría completada; ubicación real confirmada en `docs/architecture/` (FASE 4) |
 | 99 | `docs/TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | `docs/historical/TOSHIBA_AUDIT_SPRINT_CLOSURE.md` | ARCHIVE | Cierre sprint Toshiba |
 | 100 | `docs/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | `docs/historical/TOSHIBA_KNOWLEDGE_CONSOLIDATION_REVIEW.md` | ARCHIVE | Revisión consolidación Toshiba |
 | 101 | `docs/TOSHIBA_EXPORT_MANIFEST.md` | `docs/historical/TOSHIBA_EXPORT_MANIFEST.md` | ARCHIVE | Manifiesto exportación Toshiba |
