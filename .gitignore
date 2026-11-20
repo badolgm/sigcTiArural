@@ -195,6 +195,11 @@ docs/sena_artifacts/PnatallasReadme_Vistas.docx
 !docs/historical/
 !docs/historical/**
 
+# Acoustic Governance V2 (taxonomía, etiquetado, universales, OOD, anotación y roadmap)
+# Misión SIGCTIARURAL_ACOUSTIC_GOVERNANCE_PROMOTION_V1 — mismo patrón que docs/ai/, docs/reports/, docs/historical/
+!docs/acoustic/
+!docs/acoustic/**
+
 # Diagram archive (FASE 6B — archivos retirados de docs/diagrams/ sin equivalente V8)
 # docs/diagrams/ no tenía excepción previa (solo visible por archivos ya trackeados);
 # git no permite re-incluir una ruta si su directorio padre sigue excluido, por eso
