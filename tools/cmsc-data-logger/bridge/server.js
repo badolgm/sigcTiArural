@@ -24,9 +24,9 @@ import http from 'node:http';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { DatasetPaths, defaultDatasetRoot } from '../src/dataset.js';
+import { DatasetPaths, defaultDatasetRoot, loadFeatures } from '../src/dataset.js';
 import { ingestWav } from '../src/ingest.js';
-import { ALL_CLASSES, LOGGER_VERSION, MISSION } from '../src/constants.js';
+import { ALL_CLASSES, DEFAULT_FEATURE_SCHEMA_ID, LOGGER_VERSION, MISSION } from '../src/constants.js';
 import { datasetStats } from '../src/stats.js';
 
 const HOST = '127.0.0.1';
@@ -107,6 +107,22 @@ function handleHealth(res, origin) {
 function handleStats(res, origin) {
   const root = process.env.BRIDGE_DATASET || defaultDatasetRoot();
   send(res, 200, { ok: true, ...datasetStats(root) }, origin);
+}
+
+// Solo lectura: ultima fila real de acoustic_features_v2.csv (ordenada por sample_id).
+// La UI de captura rapida la usa para mostrar el resultado de la muestra recien guardada.
+function handleLastFeatures(res, origin) {
+  const root = process.env.BRIDGE_DATASET || defaultDatasetRoot();
+  const paths = new DatasetPaths(root);
+  try {
+    const map = loadFeatures(paths, DEFAULT_FEATURE_SCHEMA_ID);
+    const ids = [...map.keys()];
+    const sampleId = ids.length ? ids[ids.length - 1] : null;
+    const row = sampleId ? map.get(sampleId) : null;
+    send(res, 200, { ok: true, sample_id: sampleId, row: row ?? null }, origin);
+  } catch (e) {
+    send(res, 200, { ok: true, sample_id: null, row: null, error: e.message }, origin);
+  }
 }
 
 function handleIngest(req, res, body, origin) {
@@ -239,6 +255,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') return send(res, 204, null, origin);
   if (req.method === 'GET' && route === '/health') return handleHealth(res, origin);
   if (req.method === 'GET' && route === '/stats') return handleStats(res, origin);
+  if (req.method === 'GET' && route === '/features/last') return handleLastFeatures(res, origin);
   if (req.method === 'POST' && route === '/ingest') {
     let body;
     try {

@@ -86,3 +86,10 @@ export async function getStats() {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
+
+/** Última fila real del CSV de features, leída por el bridge desde el disco. */
+export async function getLastFeatures() {
+  const res = await fetch(`${BRIDGE_URL}/features/last`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
