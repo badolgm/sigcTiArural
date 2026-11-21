@@ -200,6 +200,21 @@ docs/sena_artifacts/PnatallasReadme_Vistas.docx
 !docs/acoustic/
 !docs/acoustic/**
 
+# Multimodal Governance V1 (entidad observation/asset/event — padre de audio, imagen y telemetría)
+# Misión SIGCTIARURAL_MULTIMODAL_GOVERNANCE_V1 — mismo patrón que docs/acoustic/, docs/ai/, docs/reports/
+!docs/governance/
+!docs/governance/**
+
+# Vision Governance V1 (imagen y video: taxonomía, etiquetado, OOD y roadmap)
+# Misión SIGCTIARURAL_VISION_GOVERNANCE_V1 — mismo patrón que docs/acoustic/, docs/governance/
+!docs/vision/
+!docs/vision/**
+
+# Telemetry Governance V1 (métricas, unidades, NO_DATA, calibración y OOD telemétrico)
+# Misión SIGCTIARURAL_TELEMETRY_GOVERNANCE_V1 — mismo patrón que docs/acoustic/, docs/vision/
+!docs/telemetry/
+!docs/telemetry/**
+
 # Diagram archive (FASE 6B — archivos retirados de docs/diagrams/ sin equivalente V8)
 # docs/diagrams/ no tenía excepción previa (solo visible por archivos ya trackeados);
 # git no permite re-incluir una ruta si su directorio padre sigue excluido, por eso
