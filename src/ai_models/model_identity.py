@@ -66,6 +66,30 @@ _METADATA_FILENAME = "model_metadata.json"
 # ---------------------------------------------------------------------------
 # Clave = sha256 en minusculas del contenido binario del artefacto.
 # Un artefacto nuevo (hash desconocido) => NO_DECLARADO. Sin excepciones.
+# `role` es aditivo (AI-R3/D-A): NO cambia el vocabulario cerrado de
+# MODEL_STATUS_VALUES. "CANONICO + role=challenger_validado" significa "artefacto
+# canonico del modo de servicio v2", NO promocion sobre M1 (servir != promover).
+
+M2_ARTIFACT_SHA256 = "4bd657b363407d4012f013589a5469dca57b9c5e347a9ea54e1f6e57a3274ec3"
+
+M2_CLASS_LABELS: List[str] = [
+    "corn__cercospora_gray_leaf_spot",
+    "corn__common_rust",
+    "corn__healthy",
+    "corn__northern_leaf_blight",
+    "potato__early_blight",
+    "potato__healthy",
+    "potato__late_blight",
+    "tomato__bacterial_spot",
+    "tomato__early_blight",
+    "tomato__healthy",
+    "tomato__late_blight",
+    "tomato__leaf_mold",
+    "tomato__mosaic_virus",
+    "tomato__septoria_leaf_spot",
+    "tomato__target_spot",
+    "tomato__yellow_leaf_curl_virus",
+]
 
 KNOWN_ARTIFACTS: Dict[str, Dict[str, Any]] = {
     "77b0efecd602f95fd31846c3058b4d45e41289155438fbd22738bce0640219c0": {
@@ -79,6 +103,21 @@ KNOWN_ARTIFACTS: Dict[str, Dict[str, Any]] = {
         "reason": (
             "Clasificador binario enferma/sana. Sin holdout de campo (G-3b). "
             "No identifica especie ni enfermedad especifica."
+        ),
+    },
+    M2_ARTIFACT_SHA256: {
+        "model_status": STATUS_CANONICO,
+        "role": "challenger_validado",
+        "scientific_scope": "agriculture_multiclass16",
+        "class_space": 16,
+        "class_labels": list(M2_CLASS_LABELS),
+        "superseded_by": None,
+        "declared_at": "2026-11-22",
+        "expires_on": None,
+        "reason": (
+            "Export ONNX de M2 EfficientNet-B0 (run M2_efficientnet_b0_001). "
+            "Challenger validado, NO promovido sobre M1: ECE 0.0332 > 0.0313. "
+            "Servir != promover."
         ),
     },
 }
@@ -178,6 +217,7 @@ def _empty_identity(status: str = STATUS_NO_DISPONIBLE) -> Dict[str, Any]:
         "model_bytes": None,
         "model_mtime": None,
         "model_status": status,
+        "role": None,
         "artifact_id": None,
         "identity_source": IDENTITY_SOURCE_NONE,
         "class_space": None,
@@ -280,6 +320,7 @@ def compute_identity(
     identity.update(
         {
             "model_status": normalize_status(declared.get("model_status")),
+            "role": declared.get("role"),
             "identity_source": IDENTITY_SOURCE_REGISTRY,
             "class_space": declared_space,
             "class_labels": declared.get("class_labels") or metadata["class_labels"],

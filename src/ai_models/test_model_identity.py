@@ -20,6 +20,12 @@ PRODUCTION_DIR = Path(__file__).resolve().parent / "production_models"
 REAL_ARTIFACT = PRODUCTION_DIR / "plant_disease_mbv2.h5"
 EXPECTED_SHA256 = "77b0efecd602f95fd31846c3058b4d45e41289155438fbd22738bce0640219c0"
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+M2_ARTIFACT = (
+    REPO_ROOT / "benchmark" / "runs" / "M2_efficientnet_b0" / "exports" / "model.onnx"
+)
+M2_SHA256 = "4bd657b363407d4012f013589a5469dca57b9c5e347a9ea54e1f6e57a3274ec3"
+
 
 class RealArtifactTests(unittest.TestCase):
     """Identidad del artefacto realmente presente en el repositorio."""
@@ -61,6 +67,58 @@ class RealArtifactTests(unittest.TestCase):
 
     def test_mtime_is_iso_utc(self):
         self.assertRegex(self.identity["model_mtime"], r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+
+
+class M2OnnxArtifactTests(unittest.TestCase):
+    """Identidad del ONNX de M2 servido por AI_MODEL_PATH (AI-R3/D-A)."""
+
+    @classmethod
+    def setUpClass(cls):
+        if not M2_ARTIFACT.is_file():
+            raise unittest.SkipTest("ONNX de M2 ausente (artefacto local ignorado por Git)")
+        mi.reset_cache()
+        cls.identity = mi.compute_identity(
+            M2_ARTIFACT.parent, output_dim=16, include_onnx=True, explicit_path=M2_ARTIFACT
+        )
+
+    def test_hash_is_registered(self):
+        self.assertEqual(mi.hash_file(M2_ARTIFACT), M2_SHA256)
+        self.assertIn(M2_SHA256, mi.KNOWN_ARTIFACTS)
+
+    def test_status_is_canonico(self):
+        self.assertEqual(self.identity["model_status"], mi.STATUS_CANONICO)
+
+    def test_role_is_challenger_validado(self):
+        self.assertEqual(self.identity["role"], "challenger_validado")
+
+    def test_class_space_is_sixteen(self):
+        self.assertEqual(self.identity["class_space"], 16)
+        self.assertEqual(len(self.identity["class_labels"]), 16)
+
+    def test_class_labels_are_the_exported_map(self):
+        self.assertEqual(self.identity["class_labels"], mi.M2_CLASS_LABELS)
+
+    def test_not_superseded_and_scope(self):
+        self.assertIsNone(self.identity["superseded_by"])
+        self.assertEqual(self.identity["scientific_scope"], "agriculture_multiclass16")
+
+    def test_identity_source_is_registry(self):
+        self.assertEqual(self.identity["identity_source"], mi.IDENTITY_SOURCE_REGISTRY)
+
+    def test_artifact_id(self):
+        self.assertEqual(self.identity["artifact_id"], "model@4bd657b3")
+
+    def test_wrong_output_dim_is_inconsistente(self):
+        identity = mi.compute_identity(
+            M2_ARTIFACT.parent, output_dim=2, include_onnx=True, explicit_path=M2_ARTIFACT
+        )
+        self.assertEqual(identity["model_status"], mi.STATUS_INCONSISTENTE)
+
+    def test_historical_entry_is_unchanged(self):
+        historico = mi.KNOWN_ARTIFACTS[EXPECTED_SHA256]
+        self.assertEqual(historico["model_status"], mi.STATUS_HISTORICO)
+        self.assertEqual(historico["superseded_by"], "M2_efficientnet_b0_001")
+        self.assertIsNone(historico.get("role"))
 
 
 class FailClosedTests(unittest.TestCase):

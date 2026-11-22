@@ -28,8 +28,10 @@ import requests
 # mismo directorio que este archivo. Se importa fuera del try de TensorFlow a
 # proposito: saber QUE archivo hay no depende de poder cargarlo.
 from model_identity import (
+    KNOWN_ARTIFACTS,
     SEMANTIC_CONTRACT_VERSION,
     STATUS_NO_DISPONIBLE,
+    hash_file,
     refresh_model_identity,
 )
 
@@ -253,11 +255,27 @@ def _load_onnx_model():
     if len(candidates) > 1:
         print(f"⚠️ Varios .onnx; se usa el primero por orden estable: {candidates[0].name}")
     target = candidates[0]
+
+    # Hash guard (AI-R3/D-D): un .onnx cuyo SHA-256 no este en el registro de
+    # ejecucion NO se carga. Fail-closed, nunca NO_DECLARADO servido.
+    try:
+        artifact_sha256 = hash_file(target)
+    except OSError as exc:
+        print(f"❌ No se pudo hashear el artefacto ONNX: {exc}")
+        return None
+    if artifact_sha256 not in KNOWN_ARTIFACTS:
+        print(
+            f"❌ Artefacto ONNX NO_DECLARADO (sha256={artifact_sha256}); "
+            "se rechaza la carga (fail-closed)."
+        )
+        return None
+
     if model_backend != "onnx" or model_name != target.name:
         try:
             model = ort.InferenceSession(str(target), providers=["CPUExecutionProvider"])
             model_name = target.name
             model_backend = "onnx"
+            print(f"✅ ONNX cargado con hash registrado: {artifact_sha256[:8]}")
         except Exception as e:
             print(f"❌ Error cargando modelo ONNX: {e}")
     return model_name
