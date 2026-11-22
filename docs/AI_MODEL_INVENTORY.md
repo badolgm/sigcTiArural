@@ -2,12 +2,12 @@
 
 **Misión:** CMSC_AI_ACOUSTIC_V1 · **FASE 3 · Recuperación de modelos**
 **Fecha:** 2026-10-02 · **HEAD verificado:** `83b6089` · **Método:** solo lectura (rutas y tamaños en disco)
-**Actualización:** 2026-10-06 — integración de evidencia M2 en esta rama (`1665bd1` = original `ef892f5`, `a125a66` = `c79aba7`): §2 y §7 corregidos.
+**Actualización:** 2026-11-21 — corrección de snapshot: artefactos M2 verificados en disco (§1.2, §2); integración previa de evidencia M2 en esta rama (`1665bd1` = original `ef892f5`, `a125a66` = `c79aba7`).
 **Propósito:** saber qué IA existe realmente antes de construir el clasificador acústico S81.
 
 > **Veredicto central:** el repositorio tiene gobernanza de ML de nivel industrial y **exactamente un
 > peso de red neuronal materializado — que está científicamente descalificado**. Los modelos oficiales
-> del benchmark (M1/M2) **no existen en disco**. El activo más sólido es el **dataset** (22.488 imágenes),
+> del benchmark: M2 **sí existe en disco** (`benchmark/runs/M2_efficientnet_b0/`, incluido `exports/model.onnx`); M1 permanece sin artefactos materializados (solo evidencia en notebook). El activo más sólido sigue siendo el **dataset** (22.488 imágenes),
 > pero está **fuera de git**.
 
 ---
@@ -51,13 +51,13 @@ runs/<run_id>/report/                   ← directorio vacío
 
 Estado real en disco:
 - `benchmark/runs/M1_mobilenetv2_001/` → **3 directorios vacíos** (checkpoints, plots, report).
-- `benchmark/runs/M2_efficientnet_b0/` → **NO existe**.
+- `benchmark/runs/M2_efficientnet_b0/` → **EXISTE Y ESTÁ COMPLETO**: `checkpoints/best.pth` (48 MB), `checkpoints/last.pth` (16 MB), `exports/model.onnx` (16 MB), `exports/export_record.json`, `exports/golden_set.json`, `exports/parity_report.json`, `report/validation_metrics.json`, `report/M2_VS_M1.{json,md}`, `metrics.csv` y 6 PNG. Fuera de git por `.gitignore:20`.
 - `benchmark/requirements.lock` (citado en README) → **no existe**.
 - `.gitignore:20` ignora `benchmark/runs/` → los pesos **nunca pudieron versionarse por diseño**.
 
 ### 1.3 Barrido de extensiones de modelo (todo el repo, sin `.git`/`node_modules`/`.venv`)
 
-`.h5` **1** · `.keras` 0 · `.pth` 0 · `.pt` 0 · `.ckpt` 0 · `.onnx` 0 · `.tflite` 0 · `.pb` 0 · `.safetensors` 0 · `.pkl` 0 · `.joblib` 0 · `.bin` 0
+`.h5` **1** · `.keras` 0 · `.pth` 2 · `.pt` 0 · `.ckpt` 0 · `.onnx` 1 · `.tflite` 0 · `.pb` 0 · `.safetensors` 0 · `.pkl` 0 · `.joblib` 0 · `.bin` 0
 
 - `src/embedded/bbb_02_ia_edge/tflite_api.py` → **0 bytes** (`DISENO`).
 - Exports edge exigidos por manifiesto (`tflite_float16`, `tflite_int8`) → **REFERENCIADOS-AUSENTES**.
@@ -75,7 +75,7 @@ Estado real en disco:
 - M1 (macro-F1 0.9899 · ECE 0.0313) está respaldado por **outputs del notebook**; el `.pth` nunca se recogió.
 - M2 (macro-F1 0.9937 · balanced 0.9943 · ECE 0.0332 · best epoch 32 · ≈4.66 h) está respaldado por
   **18 celdas con outputs** desde la integración del 2026-10-06 (`1665bd1`, original `ef892f5`); los
-  artefactos (`.pth`, `metrics.csv`, PNG) viven en **Google Drive** (`runs/M2_efficientnet_b0/`), no en git.
+  artefactos (`.pth`, `metrics.csv`, PNG, `model.onnx`) viven en **`benchmark/runs/M2_efficientnet_b0/`** (fuera de git por `.gitignore:20`), no en Google Drive.
 - M1 y M2 documentan el **sesgo de laboratorio** (9 coincidencias PlantVillage, 26 `leaf` en M1).
 
 ---

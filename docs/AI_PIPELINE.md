@@ -11,15 +11,15 @@ Este documento resume un flujo gratuito y replicable para **entrenar** y **servi
 - **Dataset**: PlantVillage (y otros), disponible en GitHub/Kaggle.
 - **Almacenamiento**: Local, IPFS (Kubo), o MinIO (S3-compatible).
 - **Entrenamiento**: TensorFlow/Keras; notebooks en `src/ai_models/notebooks`.
-- **Inferencia**: Microservicio FastAPI (`src/backend/ai_service/fastapi_app.py`).
+- **Inferencia**: Microservicio FastAPI (`src/ai_models/fastapi_app.py`).
 - **Frontend**: Página de prueba `AIPredictiva` para enviar imágenes y ver resultados.
 
 ## Cómo ejecutar inferencia local
-1. Instalar dependencias en `src/backend/requirements.txt` (FastAPI + TensorFlow CPU opcional).
+1. Instalar dependencias en `src/ai_models/requirements.txt` (FastAPI + TensorFlow CPU opcional).
 2. Colocar un modelo entrenado `.h5` o `.keras` en `src/ai_models/production_models/`.
 3. Ejecutar el servicio:
    ```bash
-   cd src/backend/ai_service
+   cd src/ai_models
    python fastapi_app.py
    ```
 4. Probar desde el frontend `http://localhost:5174/` → "Agricultura + IA" → "🧪 Abrir Diagnóstico IA".
