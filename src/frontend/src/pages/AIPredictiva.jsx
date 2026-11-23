@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import UsbFrameProbePanel from './cmsc/orchestration/UsbFrameProbePanel.jsx';
 
 const AI_INFERENCE_URL = import.meta.env.VITE_AI_INFERENCE_URL?.trim() || '/api/v3/ai/inference/';
 
@@ -781,6 +782,18 @@ const AIPredictiva = () => {
 
         </div>
       </div>
+
+      {/* DEV-only: camara real + carga flexible; solo prueba de transporte, no aparece en produccion. */}
+      {import.meta.env.DEV && (
+        <details open className="mt-10 rounded-xl border border-gray-800 bg-gray-900/30">
+          <summary className="cursor-pointer list-none px-4 py-3 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-gray-200">
+            Cámara real + clip en memoria + cargar imagen · autorización explícita · solo desarrollo
+          </summary>
+          <div className="px-4 pb-4">
+            <UsbFrameProbePanel />
+          </div>
+        </details>
+      )}
     </div>
   );
 };
