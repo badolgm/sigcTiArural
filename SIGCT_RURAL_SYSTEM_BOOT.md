@@ -1,29 +1,18 @@
 # SIGCT_RURAL_SYSTEM_BOOT
 
-> **⚠️ DOCUMENTO PARCIALMENTE SUPERADO (21-jul-2026):** el estado
-> operativo inmediato de este documento fue reemplazado por
-> `CLAUDE.md`, `PLAN_20_DIAS.md` y `RECOVERY_BOOT_MASTER.md`. En
-> particular: el incidente del AI Service (Secciones 8, 11, 13) está
-> resuelto — verificado en vivo el 21-jul-2026, sin evidencia del
-> problema descrito. El Knowledge Hub (Sección 12) está implementado
-> y operativo (49/49 documentos). El modelo de identidad de la
-> Sección 1 (SIGCT-Rural como subconjunto de EIARC) fue invertido —
-> ver `docs/ECOSYSTEM_IDENTITY.md`. Ver tabla de vigencia sección por
-> sección abajo. El checklist de cierre de sesión (Sección 16) y las
-> reglas de precedencia documental (Sección 18, puntos 8-9) SIGUEN
-> VIGENTES — también extraídas en `docs/GOVERNANCE_RULES.md`. Este
-> documento se conserva íntegro como referencia histórica, no como
-> fuente de verdad operativa.
+> **ESTADO VIGENTE (2026-11-23).** Este archivo se conserva como guía de arranque y continuidad histórica. La fuente de verdad operativa es `docs/` (en particular `docs/MASTERDOC.md` y `docs/PLAN_MAESTRO.md` v8.6). El Knowledge Hub está **implementado y operativo** con **51 documentos en 6 categorías** en `knowledgeRegistry.generated.json`, con rutas `/knowledge` y `/knowledge/doc/:docId` (ver `KNOWLEDGE_HUB_ARCHITECTURE.md`). Los antiguos incidentes del AI Service están cerrados y se conservan como registro forense. La definición de identidad vigente está en `docs/ECOSYSTEM_IDENTITY.md`. El checklist de cierre de sesión (Sección 16) y las reglas de precedencia documental (Sección 18, puntos 8-9) **SIGUEN VIGENTES**, también extraídas en `docs/GOVERNANCE_RULES.md`. El contenido íntegro de la versión original se preserva en `.local_backups/02_arquitectura_y_gobernanza/SIGCT_RURAL_SYSTEM_BOOT_ORIGINAL_RESPALDO_2026_11_23.md`.
 
-## Tabla de vigencia sección por sección (auditoría 21-jul-2026)
+## Registro histórico de vigencia (auditoría 21-jul-2026 — cerrada)
 
-| # | Sección | Veredicto |
+Los veredictos `Superado` describen el estado en esa fecha y **no son instrucciones vigentes**. Para el estado operativo vigente, usa la cabecera de este documento y `docs/`.
+
+| # | Sección | Veredicto (2026-07-21) |
 |---|---|---|
-| — | Encabezado (fecha, propósito) | Parcialmente superado — el rol de "fuente de verdad de estado operativo inmediato" lo cumplen hoy `CLAUDE.md`/`PLAN_20_DIAS.md`/`RECOVERY_BOOT_MASTER.md`. |
+| — | Encabezado (fecha, propósito) | Parcialmente superado — el rol de "fuente de verdad de estado operativo inmediato" lo cumplen hoy `docs/MASTERDOC.md` y `docs/PLAN_MAESTRO.md` v8.6. |
 | 1 | Qué es SIGCT-Rural | Superado — contradicción de identidad, no solo de dato. Ver `docs/ECOSYSTEM_IDENTITY.md`, definición vigente. |
 | 2 | Estado actual consolidado | Superado en 3 de 4 puntos (Knowledge Hub, Telemetry V3, AI Service). |
 | 3 | Documentos canónicos obligatorios | Válido como mapa — los 15 archivos existen físicamente (verificado). La cadena de "verdad arquitectónica" que citan depende en parte de `EIARC_MISSION/SCOPE/VISION.md`, ya marcados como superados en Día 2. |
-| 4 | Orden exacto de lectura | Parcialmente superado — la "Fase 4: Incidente crítico vigente" ya no describe nada vigente. |
+| 4 | Orden exacto de lectura | Parcialmente superado — la antigua "Fase 4: Incidente crítico vigente" fue retirada del flujo de lectura; el registro forense permanece en documentos históricos. |
 | 5 | Arquitectura documental (Niveles 1-6) | Válido — taxonomía de carpetas, no depende de estado operativo. |
 | 6 | Arquitectura técnica | Superado en la sub-sección "Contextos EIARC" — lista 7 contextos (incluye IoT, Deployment) que contradicen la lista reconciliada en Día 6-7 (`Labs, Telemetry, AI, Knowledge, Identity, EIARC`). Estado de madurez de Labs/Telemetry desactualizado. |
 | 7 | Problemas resueltos | Válido — registro histórico de diseño/diagnóstico ya cerrado, no reabierto. |
@@ -31,9 +20,9 @@
 | 9 | Estado actual de Dashboard | Válido — sin evidencia de cambio. |
 | 10 | Estado actual de Telemetry | Superado — necesita reescritura, no parche. V3 tenía 0 tests hasta el 20-jul y un bug de producción real (naive vs. aware datetime) sin detectar hasta esta sesión. |
 | 11 | Estado actual de AI Service | Superado — verificado en vivo 21-jul-2026, sin evidencia del incidente descrito. |
-| 12 | Estado actual de Knowledge Hub | Superado — implementado y operativo (49/49 documentos) desde Día 3-5. |
+| 12 | Estado actual de Knowledge Hub | Superado — implementado y operativo (51 documentos / 6 categorías) desde Día 3-5. |
 | 13 | Próxima acción obligatoria | Superado — no hay nada que recuperar en el AI Service. |
-| 14 | Acciones prohibidas | Válido, mayormente — compatible en espíritu con las reglas de oro de `CLAUDE.md`. Puntos 5-6 (AI Service) sin objeto hoy. |
+| 14 | Acciones prohibidas | Válido, mayormente — compatible en espíritu con las reglas vigentes de gobernanza de `docs/`. Puntos 5-6 (AI Service) sin objeto hoy. |
 | 15 | Checklist de inicio de sesión | Válido, con un paso huérfano — el paso 2 ("confirmar incidente activo actual") no tiene respuesta fija hoy. |
 | 16 | Checklist de cierre de sesión | **Válido — vigente, también extraído en `docs/GOVERNANCE_RULES.md`.** |
 | 17 | Mapa de continuidad del proyecto | Parcialmente superado — el mapa de documentos existe, pero "entrar por AI Service" ya no aplica. |
@@ -86,17 +75,17 @@ El estado consolidado del repositorio es el siguiente:
 
 - existe una línea documental amplia y ya formalizada en raíz, `docs/eiarc/`, `docs/project_knowledge_base/` y `docs/sena_artifacts/`
 - existe un baseline arquitectónico EIARC ya definido
-- existe un plan completo del Knowledge Hub, pero **todavía no implementado**
+- el Knowledge Hub está **implementado y operativo**: 51 documentos / 6 categorías, rutas `/knowledge` y `/knowledge/doc/:docId` (ver `KNOWLEDGE_HUB_ARCHITECTURE.md`)
 - `Dashboard` y `Telemetry` quedaron funcionalmente encaminados y Telemetry V3 fue recuperado operacionalmente
-- el `AI Service` tiene una incidencia crítica abierta: la imagen local quedó corrupta a nivel de dependencias Python
+- el `AI Service` conserva un registro forense de incidencia local cerrada por dependencias corruptas; no describe el estado arquitectónico vigente
 - el proyecto ya dispone de artefactos de cierre académico SENA materializados
 
 Lectura de estado global:
 
 - la continuidad documental está fuerte
 - la continuidad arquitectónica está fuerte
-- la continuidad operacional está parcial
-- el principal bloqueo técnico activo es el `AI Service`
+- la continuidad operacional es estable; no hay bloqueo técnico activo
+- los incidentes históricos del `AI Service` se conservan como registro forense, no como estado vigente
 
 ---
 
@@ -120,7 +109,7 @@ Los documentos canónicos que una nueva IA debe considerar obligatorios son esto
 12. `docs/reports/AI_SERVICE_EXECUTION_READINESS.md` — determina si el proyecto está listo para ejecutar la recuperación real del AI Service; se lee junto con los tres documentos anteriores como una sola familia de incidente
 13. `docs/MASTERDOC.md`
 14. `docs/PLAN_MAESTRO.md`
-15. `docs/INDICE_PROYECTO.md`
+15. `docs/historical/INDICE_PROYECTO.md`
 16. `docs/ADSO_GUIA_TECNICA_REFACTORIZACION_HEXAGONAL_SIGCTIARURAL.md` — **documentación operativa oficial** (guía de continuidad, backlog técnico detallado y estructura objetivo de contextos para la refactorización hexagonal; ver regla de precedencia REGLA 4 en SECCIÓN 18)
 
 Documentos de soporte de alta prioridad:
@@ -137,32 +126,32 @@ Documentos de soporte de alta prioridad:
 
 Línea UBTN (telemetría biológica — **diseño cerrado el 2026-09-13, sin código nuevo**, no debe confundirse con implementación):
 
-- `docs/UBTN_INDEX.md` — índice general de la familia UBTN (entrada obligatoria): árbol documental, matriz de trazabilidad y verificación de cobertura.
-- `docs/UBTN_ARCHITECTURE.md` — análisis del Telemetry Context, subdominio DDD `BiologicalTelemetry` (bounded context hermano; `SensorReading`/`sensor_reading` intactos por mandato), hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs 01-06.
-- `docs/UBTN_ADR_INDEX.md` — registro central de decisiones (ADRs 01-16).
-- `docs/UBTN_DOMAIN_MODEL.md` — DDD táctico completo (entities, VOs, eventos, agregados, repositorios, context map).
-- `docs/UBTN_USE_CASES.md` — casos de uso por especie (8 líneas: bovinos, caninos, felinos, equinos, caprinos, ovinos, apicultura, piscicultura).
-- `docs/UBTN_SENSOR_CATALOG.md` — comparativa técnica de sensores y enlaces (ESP32, ADS1292R, MAX30102, MPU6050, MAX86150, LoRa, BLE, BBB Rev C).
-- `docs/UBTN_DATA_CONTRACTS.md` — contratos JSON de diseño (`reading`, `burst`, `status`, `alert`, `link`) — NO implementar.
-- `docs/UBTN_EDGE_AI_STRATEGY.md` — edge-first, MQTT, offline-first, TinyML e IA predictiva.
-- `docs/UBTN_BBB_EDGE_GATEWAY.md` — BBB-01 como gateway UBTN (bridge MQTT→HTTPS, store-and-forward, seguridad).
-- `docs/UBTN_RISK_ANALYSIS.md` — registro de riesgos (técnicos, regulatorios, hardware, rural, energía, sensores, interoperabilidad).
-- `docs/UBTN_LAB_INTEGRATION.md` — integración con Robótica, Telecomunicaciones, Electrónica, IA, Agricultura y el piso STEM.
-- `docs/UBTN_RESEARCH_BACKLOG.md` — 18 líneas de investigación priorizadas (P0/P1/P2).
-- `docs/UBTN_ROADMAP.md` — fases U0-U7 (U0 cerrada; U1-U7 planificadas al 0%).
-- `docs/UBTN_CONTEXT_MAP.md` — Context Map DDD (upstream/downstream, ACL, CUI, Published Language).
-- `docs/UBTN_AGGREGATE_DESIGN.md` — diseño de agregados y límites de consistencia.
-- `docs/UBTN_EVENT_STORMING.md` — Big Picture y hot-spots (provisioning/umbral).
-- `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md` — ADR-17: evolución dual-track sin migración retroactiva.
-- `docs/UBTN_MQTT_ARCHITECTURE.md` — broker, tópicos, QoS/RETAIN, LWT y bridge store-and-forward.
-- `docs/UBTN_DATABASE_EVOLUTION.md` — ADR-18: persistencia B/C/D y umbrales de escalado.
-- `docs/UBTN_HARDWARE_ROADMAP.md` — variantes V1-V4, costos y autonomía.
-- `docs/UBTN_FRONTEND_UX_STRATEGY.md` — ADR-20: UX por perfil, sin estado duplicado.
-- `docs/UBTN_SECURITY_MODEL.md` — ADR-19: TLS, identidad, RBAC y privacidad.
-- `docs/UBTN_OPERATIONS_RUNBOOK.md` — playbooks OPR/RR y políticas de operación.
-- `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md` — escenarios de campo y SOP de puesta en marcha.
-- `docs/UBTN_RESEARCH_GAPS.md` — gaps físicos/biológicos y anti-patterns.
-- `docs/UBTN_AUDIT_REVIEW.md` — auditoría crítica de la familia (hallazgos A-1..A-8 y reconciliación).
+- `docs/UBTN/UBTN_INDEX.md` — índice general de la familia UBTN (entrada obligatoria): árbol documental, matriz de trazabilidad y verificación de cobertura.
+- `docs/UBTN/UBTN_ARCHITECTURE.md` — análisis del Telemetry Context, subdominio DDD `BiologicalTelemetry` (bounded context hermano; `SensorReading`/`sensor_reading` intactos por mandato), hardware (ESP32/ADS1292R/MAX30102/MPU6050/MQTT), IA predictiva y ADRs 01-06.
+- `docs/UBTN/UBTN_ADR_INDEX.md` — registro central de decisiones (ADRs 01-16).
+- `docs/UBTN/UBTN_DOMAIN_MODEL.md` — DDD táctico completo (entities, VOs, eventos, agregados, repositorios, context map).
+- `docs/UBTN/UBTN_USE_CASES.md` — casos de uso por especie (8 líneas: bovinos, caninos, felinos, equinos, caprinos, ovinos, apicultura, piscicultura).
+- `docs/UBTN/UBTN_SENSOR_CATALOG.md` — comparativa técnica de sensores y enlaces (ESP32, ADS1292R, MAX30102, MPU6050, MAX86150, LoRa, BLE, BBB Rev C).
+- `docs/UBTN/UBTN_DATA_CONTRACTS.md` — contratos JSON de diseño (`reading`, `burst`, `status`, `alert`, `link`) — NO implementar.
+- `docs/UBTN/UBTN_EDGE_AI_STRATEGY.md` — edge-first, MQTT, offline-first, TinyML e IA predictiva.
+- `docs/UBTN/UBTN_BBB_EDGE_GATEWAY.md` — BBB-01 como gateway UBTN (bridge MQTT→HTTPS, store-and-forward, seguridad).
+- `docs/UBTN/UBTN_RISK_ANALYSIS.md` — registro de riesgos (técnicos, regulatorios, hardware, rural, energía, sensores, interoperabilidad).
+- `docs/UBTN/UBTN_LAB_INTEGRATION.md` — integración con Robótica, Telecomunicaciones, Electrónica, IA, Agricultura y el piso STEM.
+- `docs/UBTN/UBTN_RESEARCH_BACKLOG.md` — 18 líneas de investigación priorizadas (P0/P1/P2).
+- `docs/UBTN/UBTN_ROADMAP.md` — fases U0-U7 (U0 cerrada; U1-U7 planificadas al 0%).
+- `docs/UBTN/UBTN_CONTEXT_MAP.md` — Context Map DDD (upstream/downstream, ACL, CUI, Published Language).
+- `docs/UBTN/UBTN_AGGREGATE_DESIGN.md` — diseño de agregados y límites de consistencia.
+- `docs/UBTN/UBTN_EVENT_STORMING.md` — Big Picture y hot-spots (provisioning/umbral).
+- `docs/UBTN/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md` — ADR-17: evolución dual-track sin migración retroactiva.
+- `docs/UBTN/UBTN_MQTT_ARCHITECTURE.md` — broker, tópicos, QoS/RETAIN, LWT y bridge store-and-forward.
+- `docs/UBTN/UBTN_DATABASE_EVOLUTION.md` — ADR-18: persistencia B/C/D y umbrales de escalado.
+- `docs/UBTN/UBTN_HARDWARE_ROADMAP.md` — variantes V1-V4, costos y autonomía.
+- `docs/UBTN/UBTN_FRONTEND_UX_STRATEGY.md` — ADR-20: UX por perfil, sin estado duplicado.
+- `docs/UBTN/UBTN_SECURITY_MODEL.md` — ADR-19: TLS, identidad, RBAC y privacidad.
+- `docs/UBTN/UBTN_OPERATIONS_RUNBOOK.md` — playbooks OPR/RR y políticas de operación.
+- `docs/UBTN/UBTN_FIELD_DEPLOYMENT_GUIDE.md` — escenarios de campo y SOP de puesta en marcha.
+- `docs/UBTN/UBTN_RESEARCH_GAPS.md` — gaps físicos/biológicos y anti-patterns.
+- `docs/UBTN/UBTN_AUDIT_REVIEW.md` — auditoría crítica de la familia (hallazgos A-1..A-8 y reconciliación).
 
 > **Regla UBTN para agentes IA:** cualquier trabajo futuro sobre UBTN debe leer primero `UBTN_INDEX.md` y luego los documentos relevantes de la familia **antes** de tocar código, y está **prohibido** modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías ni romper la compatibilidad del Telemetry Context, según ADR-UBTN-01..20. La auditoría critica (`UBTN_AUDIT_REVIEW.md`) y el hallazgo A-7 (variable del MVP) deben consultarse **antes** de decidir compra de hardware o arranque de U1.
 
@@ -227,7 +216,7 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 
 1. `SIGCT_RURAL_SYSTEM_BOOT.md`
 2. `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
-3. `docs/INDICE_PROYECTO.md`
+3. `docs/historical/INDICE_PROYECTO.md`
 
 ### Fase 2. Verdad arquitectónica
 
@@ -241,14 +230,9 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 8. `docs/KNOWLEDGE_HUB_IMPLEMENTATION_SPEC.md`
 9. `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`
 
-### Fase 4. Incidente crítico vigente
+> **Bloque retirado (2026-11-23):** la antigua "Fase 4. Incidente crítico vigente" (ítems 10-13) ya no forma parte del orden de lectura vigente. Los documentos forenses se conservan y se leen solo como registro histórico. La numeración original se mantiene para no romper referencias; el texto íntegro del bloque está disponible en el respaldo indicado en la cabecera.
 
-10. `AI_SERVICE_FORENSIC_AUDIT.md`
-11. `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`
-12. `AI_SERVICE_RECOVERY_PLAN.md`
-13. `docs/reports/AI_SERVICE_EXECUTION_READINESS.md`
-
-### Fase 5. Contexto general del proyecto
+### Fase 5. Contexto general del proyecto (numeración histórica)
 
 13. `docs/MASTERDOC.md`
 14. `docs/PLAN_MAESTRO.md`
@@ -257,32 +241,32 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 
 ### Fase 6. Líneas de dominio en diseño (solo lectura — no implementar)
 
-17. `docs/UBTN_INDEX.md` (índice general de la familia UBTN — entrada obligatoria)
-18. `docs/UBTN_ARCHITECTURE.md`
-19. `docs/UBTN_ADR_INDEX.md`
-20. `docs/UBTN_DOMAIN_MODEL.md`
-21. `docs/UBTN_USE_CASES.md`
-22. `docs/UBTN_SENSOR_CATALOG.md`
-23. `docs/UBTN_DATA_CONTRACTS.md`
-24. `docs/UBTN_EDGE_AI_STRATEGY.md`
-25. `docs/UBTN_BBB_EDGE_GATEWAY.md`
-26. `docs/UBTN_RISK_ANALYSIS.md`
-27. `docs/UBTN_LAB_INTEGRATION.md`
-28. `docs/UBTN_RESEARCH_BACKLOG.md`
-29. `docs/UBTN_ROADMAP.md`
-30. `docs/UBTN_CONTEXT_MAP.md`
-31. `docs/UBTN_AGGREGATE_DESIGN.md`
-32. `docs/UBTN_EVENT_STORMING.md`
-33. `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md`
-34. `docs/UBTN_MQTT_ARCHITECTURE.md`
-35. `docs/UBTN_DATABASE_EVOLUTION.md`
-36. `docs/UBTN_HARDWARE_ROADMAP.md`
-37. `docs/UBTN_FRONTEND_UX_STRATEGY.md`
-38. `docs/UBTN_SECURITY_MODEL.md`
-39. `docs/UBTN_OPERATIONS_RUNBOOK.md`
-40. `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md`
-41. `docs/UBTN_RESEARCH_GAPS.md`
-42. `docs/UBTN_AUDIT_REVIEW.md`
+17. `docs/UBTN/UBTN_INDEX.md` (índice general de la familia UBTN — entrada obligatoria)
+18. `docs/UBTN/UBTN_ARCHITECTURE.md`
+19. `docs/UBTN/UBTN_ADR_INDEX.md`
+20. `docs/UBTN/UBTN_DOMAIN_MODEL.md`
+21. `docs/UBTN/UBTN_USE_CASES.md`
+22. `docs/UBTN/UBTN_SENSOR_CATALOG.md`
+23. `docs/UBTN/UBTN_DATA_CONTRACTS.md`
+24. `docs/UBTN/UBTN_EDGE_AI_STRATEGY.md`
+25. `docs/UBTN/UBTN_BBB_EDGE_GATEWAY.md`
+26. `docs/UBTN/UBTN_RISK_ANALYSIS.md`
+27. `docs/UBTN/UBTN_LAB_INTEGRATION.md`
+28. `docs/UBTN/UBTN_RESEARCH_BACKLOG.md`
+29. `docs/UBTN/UBTN_ROADMAP.md`
+30. `docs/UBTN/UBTN_CONTEXT_MAP.md`
+31. `docs/UBTN/UBTN_AGGREGATE_DESIGN.md`
+32. `docs/UBTN/UBTN_EVENT_STORMING.md`
+33. `docs/UBTN/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md`
+34. `docs/UBTN/UBTN_MQTT_ARCHITECTURE.md`
+35. `docs/UBTN/UBTN_DATABASE_EVOLUTION.md`
+36. `docs/UBTN/UBTN_HARDWARE_ROADMAP.md`
+37. `docs/UBTN/UBTN_FRONTEND_UX_STRATEGY.md`
+38. `docs/UBTN/UBTN_SECURITY_MODEL.md`
+39. `docs/UBTN/UBTN_OPERATIONS_RUNBOOK.md`
+40. `docs/UBTN/UBTN_FIELD_DEPLOYMENT_GUIDE.md`
+41. `docs/UBTN/UBTN_RESEARCH_GAPS.md`
+42. `docs/UBTN/UBTN_AUDIT_REVIEW.md`
 43. `docs/SIGCTIARURAL_VISION_ALIGNMENT.md` (identidad de la refactorización global)
 44. `docs/SIGCTIARURAL_LAB_CONNECTIVITY_MODEL.md`
 45. `docs/SIGCTIARURAL_HARDWARE_LEARNING_MODEL.md`
@@ -313,7 +297,7 @@ Una IA nueva no debe leer el repositorio de forma caótica. Debe seguir este ord
 
 Regla operacional:
 
-- no saltar directamente a implementación sin haber leído al menos hasta la Fase 4
+- no saltar directamente a implementación sin haber leído al menos hasta la Fase 3 y el estado vigente de `docs/`
 
 ---
 
@@ -334,7 +318,7 @@ Ubicación principal:
 - `docs/MASTERDOC.md`
 - `docs/PLAN_MAESTRO.md`
 - `docs/API_REFERENCE.md`
-- `docs/DEPLOYMENT.md`
+- `docs/historical/DEPLOYMENT.md`
 - `docs/EDGE_SETUP.md`
 - `docs/AI_PIPELINE.md`
 
@@ -528,7 +512,9 @@ Conclusión cerrada:
 
 ## Incidentes abiertos
 
-Los incidentes que siguen abiertos y no deben darse por cerrados son estos:
+> **Registro histórico (2026-07-16).** Los cuatro incidentes listados a continuación están cerrados o superados. Se conservan íntegramente como bitácora; el estado vigente se describe en la cabecera de este documento y en `docs/`.
+
+Los incidentes que seguían abiertos en esa fecha y no debían darse por cerrados eran estos:
 
 ### 1. AI Service no operativo en el estado local actual
 
@@ -642,7 +628,9 @@ Conclusión operativa:
 
 ## Estado actual de AI Service
 
-Estado consolidado:
+> **Registro histórico (2026-07-16).** El diagnóstico siguiente corresponde a un incidente local cerrado. No describe el estado arquitectónico vigente.
+
+Estado consolidado en esa fecha:
 
 - **crítico**
 
@@ -673,7 +661,9 @@ Conclusión operativa:
 
 ## Estado actual de Knowledge Hub
 
-Estado consolidado:
+> **Estado vigente (2026-11-23): implementado y operativo.** 51 documentos en 6 categorías en `knowledgeRegistry.generated.json`, carga local vía `import.meta.glob` y render con `marked` + `mermaid`. Rutas: `/knowledge` y `/knowledge/doc/:docId`. Ver `KNOWLEDGE_HUB_ARCHITECTURE.md`. El texto siguiente es el registro histórico de 2026-07-16.
+
+Estado consolidado en esa fecha:
 
 - **diseñado y especificado, pero no implementado**
 
@@ -701,7 +691,9 @@ Conclusión operativa:
 
 ## Próxima acción obligatoria
 
-La próxima acción obligatoria del proyecto es:
+> **Registro histórico (2026-07-16).** Esta acción ya fue ejecutada y cerrada. Las prioridades vigentes se describen en `docs/PLAN_MAESTRO.md` v8.6.
+
+La próxima acción obligatoria del proyecto era:
 
 - **ejecutar recuperación controlada del `AI Service` siguiendo `AI_SERVICE_RECOVERY_PLAN.md`, precedida por las validaciones adicionales definidas en `AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`**
 
@@ -735,7 +727,7 @@ Las siguientes acciones quedan prohibidas para futuras IA salvo autorización ex
 10. introducir nuevas arquitecturas paralelas no solicitadas
 11. confundir documentos históricos con fuente de verdad vigente
 12. reiniciar trabajo ya cerrado solo por pérdida de contexto conversacional
-13. modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías, ni romper la compatibilidad del Telemetry Context al trabajar la línea UBTN (regla ADR-UBTN-01..20, ver `docs/UBTN_ADR_INDEX.md`)
+13. modificar `SensorReading`, reutilizar la señal `sensor_reading` para biometrías, ni romper la compatibilidad del Telemetry Context al trabajar la línea UBTN (regla ADR-UBTN-01..20, ver `docs/UBTN/UBTN_ADR_INDEX.md`)
 
 ---
 
@@ -788,7 +780,7 @@ El mapa de continuidad operativo es este:
 ### Continuidad global
 
 - `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `docs/INDICE_PROYECTO.md`
+- `docs/historical/INDICE_PROYECTO.md`
 
 ### Continuidad arquitectónica
 
@@ -816,32 +808,32 @@ El mapa de continuidad operativo es este:
 
 ### Continuidad UBTN (telemetría biológica — diseño)
 
-- `docs/UBTN_INDEX.md` (índice general, árbol y trazabilidad)
-- `docs/UBTN_ARCHITECTURE.md`
-- `docs/UBTN_ADR_INDEX.md`
-- `docs/UBTN_DOMAIN_MODEL.md`
-- `docs/UBTN_USE_CASES.md`
-- `docs/UBTN_SENSOR_CATALOG.md`
-- `docs/UBTN_DATA_CONTRACTS.md`
-- `docs/UBTN_EDGE_AI_STRATEGY.md`
-- `docs/UBTN_BBB_EDGE_GATEWAY.md`
-- `docs/UBTN_RISK_ANALYSIS.md`
-- `docs/UBTN_LAB_INTEGRATION.md`
-- `docs/UBTN_RESEARCH_BACKLOG.md`
-- `docs/UBTN_ROADMAP.md`
-- `docs/UBTN_CONTEXT_MAP.md`
-- `docs/UBTN_AGGREGATE_DESIGN.md`
-- `docs/UBTN_EVENT_STORMING.md`
-- `docs/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md`
-- `docs/UBTN_MQTT_ARCHITECTURE.md`
-- `docs/UBTN_DATABASE_EVOLUTION.md`
-- `docs/UBTN_HARDWARE_ROADMAP.md`
-- `docs/UBTN_FRONTEND_UX_STRATEGY.md`
-- `docs/UBTN_SECURITY_MODEL.md`
-- `docs/UBTN_OPERATIONS_RUNBOOK.md`
-- `docs/UBTN_FIELD_DEPLOYMENT_GUIDE.md`
-- `docs/UBTN_RESEARCH_GAPS.md`
-- `docs/UBTN_AUDIT_REVIEW.md`
+- `docs/UBTN/UBTN_INDEX.md` (índice general, árbol y trazabilidad)
+- `docs/UBTN/UBTN_ARCHITECTURE.md`
+- `docs/UBTN/UBTN_ADR_INDEX.md`
+- `docs/UBTN/UBTN_DOMAIN_MODEL.md`
+- `docs/UBTN/UBTN_USE_CASES.md`
+- `docs/UBTN/UBTN_SENSOR_CATALOG.md`
+- `docs/UBTN/UBTN_DATA_CONTRACTS.md`
+- `docs/UBTN/UBTN_EDGE_AI_STRATEGY.md`
+- `docs/UBTN/UBTN_BBB_EDGE_GATEWAY.md`
+- `docs/UBTN/UBTN_RISK_ANALYSIS.md`
+- `docs/UBTN/UBTN_LAB_INTEGRATION.md`
+- `docs/UBTN/UBTN_RESEARCH_BACKLOG.md`
+- `docs/UBTN/UBTN_ROADMAP.md`
+- `docs/UBTN/UBTN_CONTEXT_MAP.md`
+- `docs/UBTN/UBTN_AGGREGATE_DESIGN.md`
+- `docs/UBTN/UBTN_EVENT_STORMING.md`
+- `docs/UBTN/UBTN_TELEMETRY_EVOLUTION_STRATEGY.md`
+- `docs/UBTN/UBTN_MQTT_ARCHITECTURE.md`
+- `docs/UBTN/UBTN_DATABASE_EVOLUTION.md`
+- `docs/UBTN/UBTN_HARDWARE_ROADMAP.md`
+- `docs/UBTN/UBTN_FRONTEND_UX_STRATEGY.md`
+- `docs/UBTN/UBTN_SECURITY_MODEL.md`
+- `docs/UBTN/UBTN_OPERATIONS_RUNBOOK.md`
+- `docs/UBTN/UBTN_FIELD_DEPLOYMENT_GUIDE.md`
+- `docs/UBTN/UBTN_RESEARCH_GAPS.md`
+- `docs/UBTN/UBTN_AUDIT_REVIEW.md`
 
 ### Continuidad Refactorización Global (Gate U0.5 — diseño de identidad/frontend)
 
@@ -880,7 +872,7 @@ Lectura sintética del mapa:
 - si la tarea es de arquitectura, entrar por `docs/eiarc/`
 - si la tarea es documental, entrar por `Knowledge Hub`
 - si la tarea es operativa crítica, entrar por `AI Service`
-- si la tarea es de telemetría biológica/UBTN, entrar por `docs/UBTN_*` (diseño, sin implementación)
+- si la tarea es de telemetría biológica/UBTN, entrar por `docs/UBTN/UBTN_*` (diseño, sin implementación)
 - si la tarea es de identidad/navegación/dashboard, entrar por `docs/SIGCTIARURAL_*` (diseño U0.5, sin implementación)
 - si la tarea es de preservación (qué no se toca, qué está listo, qué sigue vivo), entrar por `docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md` + `docs/SIGCTIARURAL_PRESERVATION_AUDIT.md`
 
@@ -967,6 +959,6 @@ Si una IA nueva entra mañana sin contexto, debe asumir esto:
 
 1. el proyecto ya tiene arquitectura, inventario y línea documental consolidados
 2. no debe reiniciar trabajos de diagnóstico ya cerrados
-3. el incidente activo principal es el `AI Service`
-4. el siguiente frente mayor, una vez estabilizado el AI Service, es la implementación controlada del `Knowledge Hub`
+3. no hay incidente activo principal; los registros forenses del `AI Service` están cerrados
+4. el Knowledge Hub ya está implementado; su evolución continúa bajo `docs/PLAN_MAESTRO.md` v8.6 y `KNOWLEDGE_HUB_ARCHITECTURE.md`
 5. la continuidad del proyecto ya no depende de memoria conversacional, sino de esta cadena documental canónica

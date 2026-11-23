@@ -96,8 +96,8 @@ export function researchBoard() {
   if (m1 && m2 && m1.confianza && m2.confianza) {
     conclusions.push({
       id: 'c-benchmark',
-      frase: `Dos modelos fueron validados sobre el mismo dataset congelado: el challenger alcanza F1 ${m2.confianza}, por encima del baseline ${m1.confianza}.`,
-      veredicto: 'PENDIENTE',
+      frase: `M1 es el baseline oficial congelado (macro-F1 ${m1.confianza}, ECE 0.0313); M2 es el challenger validado (macro-F1 ${m2.confianza}, ECE 0.0332). La promoción no procede: el ECE de M2 no mejora al de M1.`,
+      veredicto: 'REF',
       ancla: ['S72', 'S73'],
       docCount: getDocs('S72').length + getDocs('S73').length
     });
@@ -106,8 +106,8 @@ export function researchBoard() {
   if (m1 && m2) {
     uncertainties.push({
       id: 'u-benchmark',
-      frase: 'Aún no se decide cuál de los dos modelos se convierte en el estándar oficial del ecosistema.',
-      veredicto: 'PENDIENTE',
+      frase: 'La decisión M1/M2 está cerrada por acta de gobernanza: M1 sigue siendo el estándar oficial y M2 el challenger validado. Servir tráfico no equivale a promoverlo; queda pendiente sólo la activación operativa de ONNX (AI-R3 / AI-R4).',
+      veredicto: 'REF',
       ancla: ['S72', 'S73']
     });
   }
@@ -166,8 +166,8 @@ export function researchBoard() {
 
   nextSteps.push({
     id: 'n-benchmark',
-    frase: 'Decidir el estándar oficial de IA entre M1 y M2 con acta de gobernanza.',
-    veredicto: 'PENDIENTE',
+    frase: 'Mantener el acta de gobernanza M1/M2: M1 baseline oficial congelado, M2 challenger validado sin promoción. No reabrir la decisión; el único paso operativo es activar ONNX (AI-R3 / AI-R4).',
+    veredicto: 'REF',
     ancla: ['S72', 'S73']
   });
 

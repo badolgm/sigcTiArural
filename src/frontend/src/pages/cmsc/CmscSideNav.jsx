@@ -2,6 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import HonestyBadge from './HonestyBadge.jsx';
 import { NEON } from './honesty.js';
+import { categorySummary, totalDocs } from '../../services/docsBySignal.js';
+
+// Conteo derivado del catálogo (fuente única docsBySignal.js), nunca un literal fijo.
+const KH_NOTE = `${totalDocs()} docs, ${categorySummary().length} categorías`;
 
 const NAV_ITEMS = [
   { label: 'Centro CMSC', route: null, action: 'overview', estado: 'REAL', note: 'escena científica' },
@@ -14,7 +18,7 @@ const NAV_ITEMS = [
   { label: 'Robótica', route: '/labs/robotics', estado: 'ROTO', note: 'cliente localhost:8000' },
   { label: 'Sistemas Embebidos', route: '/lab-embedded', estado: 'DISENO', note: 'Wokwi/Pyodide REF' },
   { label: 'IA / Machine Learning', route: '/ai-predictive', estado: 'REAL', note: 'clasificación binaria' },
-  { label: 'Knowledge Hub', route: '/knowledge', estado: 'REAL', note: '51 docs, 6 categorías' }
+  { label: 'Knowledge Hub', route: '/knowledge', estado: 'REAL', note: KH_NOTE }
 ];
 
 const CmscSideNav = ({ view, onNav }) => {

@@ -7,7 +7,7 @@
 
 [![Proyecto Productivo SENA](https://img.shields.io/badge/Proyecto%20Productivo-SENA-2e8b57?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyMmMxLjEgMCAyLS45IDItMlYxMmMwLTEuMS0uOS0yLTItMkg0Yy0xLjEgMC0yIC45LTIgMnY4YzAgMS4xLjkgMiAyIDJoOHoiLz48cGF0aCBkPSJNMjAgMTJjMC0xLjEtLjktMi0yLTJoLTR2NGg0YzEuMSAwIDItLjkgMi0yeiIvPjwvc3ZnPg==)](https://www.sena.edu.co/)
 [![Estado](https://img.shields.io/badge/Estado-En%20Desarrollo%20Activo-00d4ff?style=for-the-badge&logo=StatusPage&logoColor=white)](https://github.com/badolgm/sigcTiArural)
-[![Versión](https://img.shields.io/badge/Versión-7.0-7c3aed?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/badolgm/sigcTiArural/releases)
+[![Versión](https://img.shields.io/badge/Versión-v8.6-7c3aed?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/badolgm/sigcTiArural/releases)
 [![Arquitectura](https://img.shields.io/badge/Arquitectura-En%20Transición%20V1→V3-ff6f00?style=for-the-badge&logo=hexo&logoColor=white)](docs/HEXAGONAL_REFACTOR_PLAN.md)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-fbbf24?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
@@ -25,7 +25,7 @@
 
 **Ecosistema autónomo y agnóstico de hardware/software que integra IoT, Inteligencia Artificial, laboratorios interconectados y educación técnica para impulsar la agricultura sostenible y la inclusión tecnológica en zonas rurales de Colombia.**
 
-📚 [Documentación Completa (MASTERDOC)](docs/MASTERDOC.md) • 🧭 [Punto de Entrada del Proyecto (SYSTEM BOOT)](SIGCT_RURAL_SYSTEM_BOOT.md) • 🚀 [Plan Maestro](docs/PLAN_MAESTRO.md) • 🩺 [Runbook de Continuidad](docs/CONTINUITY_RUNBOOK.md) • 🐞 [Reportar Bug](https://github.com/badolgm/sigcTiArural/issues) • 💡 [Solicitar Mejora](https://github.com/badolgm/sigcTiArural/issues/new)
+📚 [Documentación Completa (MASTERDOC)](docs/MASTERDOC.md) • 🧭 [Arranque y continuidad (SYSTEM BOOT)](SIGCT_RURAL_SYSTEM_BOOT.md) • 🚀 [Plan Maestro v8.6](docs/PLAN_MAESTRO.md) • 🩺 [Runbook de Continuidad](docs/CONTINUITY_RUNBOOK.md) • 🐞 [Reportar Bug](https://github.com/badolgm/sigcTiArural/issues) • 💡 [Solicitar Mejora](https://github.com/badolgm/sigcTiArural/issues/new)
 
 </div>
 
@@ -82,8 +82,9 @@ Combina procesamiento en la nube (Cloud) con computación en el borde (Edge), pe
 <td width="50%">
 
 #### 🤖 IA en Evolución
-- **Estado actual:** clasificación binaria (sano/enfermo) implementada
-- **En diseño:** arquitectura multimodal V2 (ver [Inteligencia Artificial](#-inteligencia-artificial))
+- **Modelo operativo:** clasificación binaria (sano/enfermo) implementada
+- **Gobernanza de benchmark:** M1 = baseline oficial congelado · M2 = challenger validado; promoción no procede por ECE (ver [Inteligencia Artificial](#-inteligencia-artificial))
+- **En diseño:** arquitectura multimodal V2
 
 </td>
 </tr>
@@ -108,7 +109,7 @@ Alineado con los **Objetivos de Desarrollo Sostenible (ODS)** de la ONU: Hambre 
 | ID | Objetivo | Descripción | Estado |
 |:--:|----------|-------------|:------:|
 | **O-01** | Dashboard Centralizado | Visualización web de datos de sensores en tiempo real | ✅ Completado |
-| **O-02** | Modelo de IA | Clasificación binaria de estado de planta (sano/enfermo) implementada; evolución a clasificación multiclase en planificación (ver [Agriculture AI V2](#-inteligencia-artificial)) | 🟡 En Progreso |
+| **O-02** | Modelo de IA | Clasificación binaria implementada; M1 baseline oficial congelado y M2 challenger validado sin promoción (ver [Inteligencia Artificial](#-inteligencia-artificial)) | 🟡 En Progreso |
 | **O-03** | Laboratorio Hardware | Clúster de 3 BeagleBone Black (arquitectura de referencia definida, integración física en progreso) | 🟡 En Progreso |
 | **O-04** | Biblioteca Educativa | Repositorio de recursos curados | 🟡 En Progreso |
 | **O-05** | Cumplimiento ADSO | Entregables de cierre generados (ver [Entregables Académicos SENA](#-entregables-académicos-sena)) | 🟡 En Progreso |
@@ -128,14 +129,14 @@ Este proyecto está en desarrollo activo, con componentes en distintos niveles d
 - Base de datos PostgreSQL (esquema y migraciones definidos)
 - Telemetry Context — documentado y auditado como el contexto con mayor evidencia de implementación (ver [`TELEMETRY_DATABASE_DIAGNOSTIC.md`](docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md))
 - Laboratorios técnicos (Robótica, Matemáticas, Ciencia de Datos)
-- **Knowledge Hub** (portal documental local) — implementado y operativo: 49/49 documentos indexados en `knowledgeRegistry.generated.json`, verificado en vivo hoy navegando `/knowledge/doc/*`. Ver [`KNOWLEDGE_HUB_ARCHITECTURE.md`](KNOWLEDGE_HUB_ARCHITECTURE.md).
+- **Knowledge Hub** (portal documental local) — implementado y operativo: **51 documentos en 6 categorías** indexados en `knowledgeRegistry.generated.json`, con rutas `/knowledge` y `/knowledge/doc/:docId`. Ver [`KNOWLEDGE_HUB_ARCHITECTURE.md`](KNOWLEDGE_HUB_ARCHITECTURE.md).
 
-### 🔴 Incidente conocido: AI Service
-El contenedor Docker local `ai_service` puede fallar al iniciar. La causa diagnosticada es una imagen local con archivos de dependencias Python corruptos (0 bytes), **no** un defecto en `fastapi_app.py`. Este incidente está acotado al microservicio de IA — no afecta Dashboard, Backend, Frontend ni Telemetry.
+### 🧠 Servicio de IA (FastAPI)
+El servicio de inferencia está implementado en `src/ai_models/fastapi_app.py` y se expone en el puerto `8081`. El resto de la plataforma —dashboard, backend, base de datos y telemetría— no depende de él para funcionar. Las notas de incidentes de builds locales se conservan como registro forense; no describen el estado arquitectónico vigente.
 
-- Diagnóstico forense: [`AI_SERVICE_FORENSIC_AUDIT.md`](AI_SERVICE_FORENSIC_AUDIT.md)
-- Causa raíz probable: [`AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`](AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md)
-- Plan de recuperación: [`AI_SERVICE_RECOVERY_PLAN.md`](AI_SERVICE_RECOVERY_PLAN.md)
+- Diagnóstico forense (registro histórico): [`AI_SERVICE_FORENSIC_AUDIT.md`](AI_SERVICE_FORENSIC_AUDIT.md)
+- Causa raíz probable (registro histórico): [`AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md`](AI_SERVICE_BUILD_ROOT_CAUSE_ANALYSIS.md)
+- Plan de recuperación (registro histórico): [`AI_SERVICE_RECOVERY_PLAN.md`](AI_SERVICE_RECOVERY_PLAN.md)
 
 ### 🟡 Componentes diseñados pero no implementados
 - Integración física completa del clúster BeagleBone Black
@@ -169,7 +170,7 @@ mindmap
       🔷 Investigación
       🔷 Recursos Académicos / Documentación
     🟢🔷 AI Context
-      🟢 Clasificador binario MobileNetV2
+      🟢 Clasificador binario · M1 baseline · M2 challenger
       🟢 Semantic Resolution Layer
       🔷 Pipeline multi-modal V2 imagen-audio-telemetria-series
       🔷 Recommendation Engine / Knowledge AI Layer
@@ -180,16 +181,16 @@ mindmap
       🔷 UBTN — telemetría biológica (BiologicalTelemetry, diseño)
       ⚪ Fuente real hoy generador simulado
     🟢 Knowledge Hub
-      🟢 Implementado
-      🔷 Puente con AI Context
-      ⚪ Vectorización búsqueda semántica asistente
+      🟢 Implementado · 51 docs / 6 categorías
+      🟢 Capas de estudio y apéndice de auditorías
+      ⚪ Vectorización, búsqueda semántica y asistente
     🟢🔷 Contextos Productivos
       🟢 Agricultura Electrónica Robótica Telecom
       🔷 Ganadería Porcicultura Apicultura Piscicultura Invernaderos
       🔷 Investigación transversal
     🟢🔷 EIARC
       🟢 Gobernanza parcial implementada
-      🔷 Expansión productiva Fase 9 sin avance
+      🔷 Expansión productiva Fase 9 planificada (sin ejecución)
 ```
 
 **Leyenda:** 🟢 Implementado en el repositorio · 🔷 Objetivo oficial (diseñado, aún no completamente implementado) · ⚪ Especulativo / ilustrativo
@@ -231,7 +232,7 @@ flowchart TB
         ARC["🔷 Academic &amp; Research Community<br/>Cursos · Biblioteca Educativa · Documentación"]
         PRODCTX["🟢🔷 Contextos Productivos<br/>Agricultura/Electrónica/Robótica/Telecom implementados<br/>Ganadería/Apicultura/Piscicultura/Invernaderos diseñados"]
         RESEARCH["🔷 Investigación<br/>dominio transversal, no un contexto más"]
-        KHUB["🔷 Knowledge Hub<br/>diseñado, no implementado"]
+        KHUB["🟢 Knowledge Hub<br/>implementado · 51 docs / 6 categorías"]
         EIARC["🟢🔷 EIARC<br/>Gobernanza (parcial) + Expansión productiva (Fase 9)"]
     end
 
@@ -254,7 +255,7 @@ flowchart TB
     style EIARC fill:#052e16,stroke:#4ade80
     style ARC fill:#1e3a8a,stroke:#60a5fa
     style RESEARCH fill:#1e3a8a,stroke:#60a5fa
-    style KHUB fill:#1e3a8a,stroke:#60a5fa
+    style KHUB fill:#052e16,stroke:#4ade80
 ```
 
 ### ⚙️ Nivel 3: Arquitectura Backend — Estado Real de Migración
@@ -311,8 +312,8 @@ flowchart TB
             API["🐍 Django API<br/>DRF<br/>Puerto: 8010"]
         end
 
-        subgraph ai["🧠 AI Service Layer ⚠️"]
-            AIS["🤖 TensorFlow Server<br/>FastAPI<br/>Puerto: 8081<br/>(incidente conocido, ver §2)"]
+        subgraph ai["🧠 AI Service Layer"]
+            AIS["🤖 Servicio de IA<br/>FastAPI<br/>Puerto: 8081"]
         end
 
         subgraph db["🗄️ Database Layer"]
@@ -335,7 +336,7 @@ flowchart TB
 
     style cloud fill:#1e293b,stroke:#8b5cf6,stroke-width:2px
     style edge fill:#0f172a,stroke:#10b981,stroke-width:2px
-    style ai fill:#7c2d12,stroke:#f97316
+    style ai fill:#1e293b,stroke:#8b5cf6
 ```
 
 > 📖 **Diagramas Completos:** Consulta [MASTERDOC.md](docs/MASTERDOC.md) para vistas ampliadas de Componentes, Despliegue y Diagramas Entidad-Relación (ERD).
@@ -345,16 +346,16 @@ flowchart TB
 <a name="-eiarc--evolución-arquitectónica"></a>
 ## 🌐 EIARC — Evolución Arquitectónica
 
-SIGC&T Rural evoluciona dentro de una línea arquitectónica más amplia llamada **EIARC**. El nombre se usa en la documentación del proyecto con **dos significados distintos** que deben leerse por separado:
+SIGC&T Rural evoluciona dentro de una línea arquitectónica más amplia llamada **EIARC**. El nombre se usa en la documentación del proyecto con **dos significados distintos** que deben leerse por separado. La definición canónica de identidad está en [`docs/ECOSYSTEM_IDENTITY.md`](docs/ECOSYSTEM_IDENTITY.md):
 
 ### A) EIARC como marco arquitectónico y de gobernanza *(vigente, parcialmente implementado)*
 
 Documentado en [`docs/eiarc/`](docs/eiarc/). Define:
 - Contratos semánticos de IA — la resolución binaria `prediction_code` / `health_state` está implementada en [`semantic_prediction_resolver.py`](src/backend/infrastructure/external/ai_service/semantic_prediction_resolver.py)
-- Contextos delimitados: `Telemetry`, `AI`, `Labs`, `Knowledge`, `Identity`, `IoT`, `Deployment`
+- Contextos delimitados del marco documental: `Telemetry`, `AI`, `Labs`, `Knowledge`, `Identity`, `IoT`, `Deployment`. La topología de runtime vigente se resume en el [Plan Maestro](docs/PLAN_MAESTRO.md) y en la sección de arquitectura de este README.
 - Reglas de gobernanza documental y de precedencia entre fuentes
 
-Según la autoevaluación documentada en [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md), la madurez relativa por contexto es: **Telemetry** (más avanzado) > **AI** (con incidente activo) > **Knowledge** (fuerte en documentación, sin implementar) > **Labs** (heterogéneo) > **Identity / IoT / Deployment** (incompletos frente a la visión objetivo). Esta clasificación es una autoevaluación del propio proyecto, no una medición externa independiente.
+La evolución prioriza **Telemetry** (contexto con mayor evidencia), **Labs** (motor Strategy/Factory real) y **AI** (contratos y gobernanza de benchmark). **Knowledge Hub** ya está implementado como portal documental local; **Identity / IoT / Deployment** permanecen incompletos frente a la visión objetivo. Esta lectura es una autoevaluación documental, no una medición externa independiente.
 
 → Entrada: [`docs/eiarc/01_FOUNDATION/EIARC_VISION.md`](docs/eiarc/01_FOUNDATION/EIARC_VISION.md)
 
@@ -406,7 +407,7 @@ Esta fase es explícitamente posterior al cierre de las Fases 7–8 del refactor
 - **Framework:** TensorFlow 2.15+
 - **Edge Inference:** TensorFlow Lite (arquitectura de referencia — no implementado en código, ver [Edge Computing](#-edge-computing))
 - **API Service:** FastAPI + Uvicorn
-- **Modelo actual:** MobileNetV2 (binario)
+- **Modelo operativo:** MobileNetV2 binario (`plant_disease_mbv2.h5`) · M1 baseline oficial congelado · M2 EfficientNet-B0 challenger validado (sin promoción)
 - **Datasets:** PlantVillage (Kaggle)
 - **Audio:** Pydub, SpeechRecognition, gTTS
 - **Visión (planificado):** OpenCV (cv2) — previsto para el nodo Edge de adquisición, no integrado hoy en el microservicio de IA cloud
@@ -474,32 +475,41 @@ Esta fase es explícitamente posterior al cierre de las Fases 7–8 del refactor
 <a name="-inteligencia-artificial"></a>
 ## 🤖 Inteligencia Artificial
 
-La IA de SIGC&T Rural se documenta en tres niveles distintos, que **no deben confundirse entre sí**: lo que está implementado hoy, la arquitectura objetivo conceptual, y un plan de ejecución concreto todavía sin entrenar.
+La IA de SIGC&T Rural se documenta en cuatro niveles que **no deben confundirse entre sí**: lo implementado, los benchmarks gobernados, la arquitectura objetivo y el plan original de investigación.
 
-### 8.1 Estado Actual de IA *(implementado en el repositorio)*
+### 8.1 Modelo operativo *(implementado en el repositorio)*
 
 - **Modelo:** `plant_disease_mbv2.h5` — MobileNetV2, clasificación **binaria**
 - **Clases:** `enferma` / `sana` (no diagnostica enfermedades específicas)
-- **Servicio:** implementado (código verificado en `src/ai_models/fastapi_app.py`); sujeto al incidente descrito en [Estado Operativo Actual](#-estado-operativo-actual)
+- **Servicio:** implementado en `src/ai_models/fastapi_app.py` y expuesto en el puerto `8081`
 - **Asistente de voz conversacional:** reconocimiento de voz (SpeechRecognition), memoria contextual de sesión, síntesis por voz con **gTTS** (Google Text-to-Speech — requiere conexión a internet, no es síntesis local), consulta datos de telemetría en PostgreSQL (sujeto a que las migraciones de la tabla de sensores estén aplicadas — ver Telemetry Context en §2)
 
 > 📖 **Notebooks de Entrenamiento:** Disponibles en `src/ai_models/notebooks/`
 
-### 8.2 AI Context V2 *(arquitectura objetivo — conceptual, no implementada)*
+### 8.2 Gobernanza de benchmarks (M1 / M2)
+
+| Modelo | Rol oficial | Evidencia verificable |
+|---|---|---|
+| **M1 · MobileNetV2** | Baseline oficial congelado | macro-F1 `0.9899` · ECE `0.0313` |
+| **M2 · EfficientNet-B0** | Challenger validado | macro-F1 `0.9937` · ECE `0.0332` |
+
+El gate M1↔M2 está cerrado: M2 no supera el discriminador primario (ECE `0.0332 > 0.0313`), por lo que **la promoción no procede**. Servir tráfico o activar ONNX no cambia el baseline. → Ver [`M1_M2_GOVERNANCE_CLOSURE_REPORT.md`](docs/ai/M1_M2_GOVERNANCE_CLOSURE_REPORT.md).
+
+### 8.3 AI Context V2 *(arquitectura objetivo — conceptual, no implementada)*
 
 Diseño de una plataforma de IA multimodal en ocho bloques coordinados (Agriculture, Animal Health, Telemetry, Feature Engineering, Computer Vision, Time Series, Recommendation Engine, Knowledge AI). **Este es un diseño arquitectónico: no implica cambios de código, entrenamiento de modelos ni descarga de datasets.**
 
 → Ver [`docs/ai/research_v2/AI_CONTEXT_V2_ARCHITECTURE.md`](docs/ai/research_v2/AI_CONTEXT_V2_ARCHITECTURE.md)
 
-### 8.3 Agriculture AI V2 *(plan concreto de evolución — no entrenado, no desplegado)*
+### 8.4 Agriculture AI V2 *(plan original de evolución multiclase)*
 
-Plan de ejecución para un baseline multiclase de agricultura (tomate, papa, maíz): 16 clases sobre un subconjunto auditado de 21,160 imágenes RGB (PlantVillage), con `EfficientNet-B0` como arquitectura candidata y benchmark contra `MobileNetV3-Large`, `ResNet50` y `ConvNeXt-Tiny`, usando `macro-F1` como métrica principal. **Explícitamente sin entrenar y sin pipelines implementados.**
+Plan original para un baseline multiclase de agricultura (tomate, papa, maíz): 16 clases sobre un subconjunto auditado de 21,160 imágenes RGB (PlantVillage), con `EfficientNet-B0` como arquitectura candidata y benchmark contra `MobileNetV3-Large`, `ResNet50` y `ConvNeXt-Tiny`, usando `macro-F1` como métrica principal. **Estado actual:** la línea fue ejecutada y cerrada como M1/M2 (§8.2); este plan se conserva como registro de la decisión original, no como trabajo pendiente.
 
 → Ver [`docs/ai/research_v2/AGRICULTURE_AI_V2_EXECUTION_PLAN.md`](docs/ai/research_v2/AGRICULTURE_AI_V2_EXECUTION_PLAN.md)
 
-### 8.4 AI Research Program V2 *(programa rector de I+D — diseño, no implementación)*
+### 8.5 AI Research Program V2 *(programa rector de I+D — diseño, no implementación)*
 
-`docs/ai/research_v2/` reúne el programa completo de investigación aplicada de IA para SIGC&T Rural V2: arquitectura multimodal, estrategia y auditoría de datasets, gobierno científico/MLOps, validación de predicción, corrección científica y el plan de entrenamiento — incluyendo la línea Agriculture AI V2 de las secciones 8.2 y 8.3 como su primera línea de ejecución. **Este programa no entrena, no implementa código y no descarga datasets: solo diseña la hoja de ruta científica.** Está pensado para converger con EIARC a medida que cada línea madure, pero hoy es un track de I+D independiente y paralelo a `docs/eiarc/`.
+`docs/ai/research_v2/` reúne el programa de investigación aplicada de IA para SIGC&T Rural V2: arquitectura multimodal, estrategia y auditoría de datasets, gobierno científico/MLOps, validación de predicción, corrección científica y el plan de entrenamiento — incluyendo la línea Agriculture AI V2 de las secciones 8.3 y 8.4 como su primera línea de ejecución. **Este programa no entrena, no implementa código y no descarga datasets: solo diseña la hoja de ruta científica.** Está pensado para converger con EIARC a medida que cada línea madure, pero hoy es un track de I+D independiente y paralelo a `docs/eiarc/`.
 
 → Punto de entrada: [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md)
 
@@ -508,7 +518,7 @@ Plan de ejecución para un baseline multiclase de agricultura (tomate, papa, ma�
 <a name="-edge-computing"></a>
 ## 🧩 Edge Computing
 
-> **Estado:** arquitectura de referencia de laboratorio. Las direcciones IP y roles descritos a continuación corresponden a la configuración objetivo, no a un despliegue productivo activo — la integración física completa está marcada 🟡 En Progreso (ver [Roadmap](#-estado-del-proyecto-y-roadmap)). La telemetría biológica UBTN se integra en este mismo clúster (BBB-01 como gateway MQTT de collares inteligentes) — diseño en [docs/UBTN_ARCHITECTURE.md](docs/UBTN_ARCHITECTURE.md) y [docs/UBTN_BBB_EDGE_GATEWAY.md](docs/UBTN_BBB_EDGE_GATEWAY.md).
+> **Estado:** arquitectura de referencia de laboratorio. Las direcciones IP y roles descritos a continuación corresponden a la configuración objetivo, no a un despliegue productivo activo — la integración física completa está marcada 🟡 En Progreso (ver [Roadmap](#-estado-del-proyecto-y-roadmap)). La telemetría biológica UBTN se integra en este mismo clúster (BBB-01 como gateway MQTT de collares inteligentes) — diseño en [docs/UBTN/UBTN_ARCHITECTURE.md](docs/UBTN/UBTN_ARCHITECTURE.md) y [docs/UBTN/UBTN_BBB_EDGE_GATEWAY.md](docs/UBTN/UBTN_BBB_EDGE_GATEWAY.md).
 
 ### 🔌 Arquitectura de Referencia del Clúster BeagleBone Black
 
@@ -600,7 +610,7 @@ flowchart LR
   - Python 3.10+ (para desarrollo local)
   - Node.js 18+ y npm 9+ (para desarrollo local)
 
-> ⚠️ **Antes de empezar:** el contenedor `ai_service` tiene un incidente conocido en el entorno Docker local actual (ver [Estado Operativo Actual](#-estado-operativo-actual)). El resto de la plataforma (backend, frontend, base de datos) no se ve afectado — puedes continuar la instalación con normalidad.
+> ℹ️ **Servicio de IA opcional:** el contenedor `ai_service` puede requerir reconstrucción en entornos locales. El resto de la plataforma (backend, frontend, base de datos) opera de forma independiente, por lo que puedes continuar la instalación con normalidad. El registro forense se conserva en los documentos enlazados en [Estado Operativo Actual](#-estado-operativo-actual).
 
 ---
 
@@ -646,7 +656,7 @@ docker-compose up -d --build
 
 # 4. Verificar que los contenedores estén corriendo
 docker-compose ps
-# Nota: ai_service puede fallar al iniciar por el incidente conocido — ver §2 y AI_SERVICE_RECOVERY_PLAN.md
+# Nota: ai_service es opcional; si falla, revisa el registro forense de §2
 
 # 5. CONFIGURACIÓN INICIAL DE BASE DE DATOS (Solo la primera vez)
 docker exec -it sigct_backend python manage.py migrate
@@ -660,7 +670,7 @@ docker exec -it sigct_backend python manage.py createsuperuser
 | **Frontend** | http://localhost:5173 | Interfaz de usuario principal |
 | **Backend API** | http://localhost:8010 | API RESTful (Django) — puerto publicado por defecto (BACKEND_PORT); 8000 es el puerto interno del contenedor |
 | **API Docs** | _No implementado_ | No existe endpoint de documentación interactiva (Swagger/ReDoc) en `api/urls.py` hoy; planificado |
-| **AI Service** | http://localhost:8081 | Servicio de IA (⚠️ ver incidente conocido) |
+| **AI Service** | http://localhost:8081 | Servicio de inferencia FastAPI (opcional; ver §2) |
 | **Admin Django** | http://localhost:8010/admin/ | Panel de administración |
 
 ### 🔧 Detener y Limpiar Servicios
@@ -706,7 +716,7 @@ echo "VITE_API_URL=http://localhost:8000" > .env.local
 npm run dev
 ```
 
-#### 🤖 Paso 3: Servicio de IA (FastAPI) — Opcional, sujeto al incidente conocido
+#### 🤖 Paso 3: Servicio de IA (FastAPI) — Opcional
 
 ```bash
 cd src/ai_models
@@ -746,7 +756,7 @@ pip install -r requirements.txt
 <details>
 <summary><b>❌ AI Service no inicia / falla el contenedor</b></summary>
 
-Este es el incidente conocido descrito en [Estado Operativo Actual](#-estado-operativo-actual). Consulta [`AI_SERVICE_RECOVERY_PLAN.md`](AI_SERVICE_RECOVERY_PLAN.md) antes de intentar rebuilds manuales repetidos.
+Si el servicio local de IA no inicia, consulta el registro forense de [Estado Operativo Actual](#-estado-operativo-actual) y [`AI_SERVICE_RECOVERY_PLAN.md`](AI_SERVICE_RECOVERY_PLAN.md) antes de intentar reconstrucciones manuales repetidas. El resto de la pila no depende de él.
 </details>
 
 <details>
@@ -835,7 +845,7 @@ sigcTiArural/
 - Núcleo hexagonal V3 real (`core/domain`, `core/ports`, `infrastructure/`) — cobertura parcial
 - Frontend React responsive
 - PostgreSQL 15 como motor de base de datos (aplicación de migraciones sujeta a verificación por entorno — ver Telemetry Context)
-- Clasificación binaria de IA (sano/enfermo) implementada (sujeta al incidente del AI Service, ver §2)
+- Clasificación binaria de IA (sano/enfermo) implementada; benchmarks M1/M2 gobernados (ver §8)
 - Asistente de voz conversacional
 - Dashboard con visualización 3D
 - Integración Docker Compose
@@ -845,23 +855,23 @@ sigcTiArural/
 
 ### 🟡 En Progreso
 
-- Recuperación del AI Service (incidente conocido, ver §2)
+- Activación operativa de ONNX y contrato v2 (`AI-R3` / `AI-R4`) sin cambiar el baseline M1
 - Migración hexagonal completa (fases 0–8, ver `HEXAGONAL_REFACTOR_PLAN.md`)
-- Implementación controlada del Knowledge Hub (diseño cerrado, código pendiente)
+- Evolución del Knowledge Hub implementado: capas de estudio, apéndice de auditorías y trazabilidad
 - Integración física del clúster BeagleBone Black
 - Sistema de alertas en tiempo real (WebSockets)
 - Consolidación completa de los 7 contextos EIARC en código
 
 ### 🔵 Próximos Pasos
 
-1. Ejecutar recuperación del AI Service siguiendo `AI_SERVICE_RECOVERY_PLAN.md`
-2. Iniciar implementación del Knowledge Hub (Fase 0 de `docs/KNOWLEDGE_HUB_MIGRATION_PLAN.md`)
-3. Continuar fases 0–8 del refactor hexagonal antes de abordar EIARC como expansión productiva
-4. Ejecutar el baseline de entrenamiento de Agriculture AI V2 (aún no iniciado)
+1. Mantener el acta M1/M2 y avanzar `AI-R3` / `AI-R4` sin promover M2
+2. Consolidar el Knowledge Hub implementado (51 docs / 6 categorías) sin editar el registry a mano
+3. Continuar Fases 7–8 del Plan Maestro antes de abordar EIARC como expansión productiva
+4. Preservar el plan Agriculture AI V2 como registro histórico; no reabrir el gate M1/M2
 
 ### 🔷 En Diseño (sin implementar)
 
-- **UBTN (Universal Biological Telemetry Node)** — telemetría biológica de collares inteligentes/wearables veterinarios y nodos in situ (apícola/piscícola): familia documental de 26 documentos (arquitectura, ADRs 01-20, riesgos, sensores, casos de uso, contratos, edge/IA, integración, investigación, arquitectura profunda y auditoría crítica), Fase U0 cerrada en diseño y auditada. Ver [`docs/UBTN_INDEX.md`](docs/UBTN_INDEX.md) y [`docs/UBTN_AUDIT_REVIEW.md`](docs/UBTN_AUDIT_REVIEW.md).
+- **UBTN (Universal Biological Telemetry Node)** — telemetría biológica de collares inteligentes/wearables veterinarios y nodos in situ (apícola/piscícola): familia documental de 26 documentos (arquitectura, ADRs 01-20, riesgos, sensores, casos de uso, contratos, edge/IA, integración, investigación, arquitectura profunda y auditoría crítica), Fase U0 cerrada en diseño y auditada. Ver [`docs/UBTN/UBTN_INDEX.md`](docs/UBTN/UBTN_INDEX.md) y [`docs/UBTN/UBTN_AUDIT_REVIEW.md`](docs/UBTN/UBTN_AUDIT_REVIEW.md).
 - **Refactorización Global (Gate U0.5)** — diseño de identidad y dashboard (capacidades ≠ hardware, cadena de conocimiento, navegación por persona) para preservar el corazón educativo/científico del ecosistema durante la refactorización. Familia de 8 documentos de diseño sin código. Ver [`docs/SIGCTIARURAL_VISION_ALIGNMENT.md`](docs/SIGCTIARURAL_VISION_ALIGNMENT.md) y [`docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`](docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md).
 - **Preservación y Expansión (Misión Crítica)** — Regla suprema: **NADA DESAPARECE**; la evolución es por **ampliación**, no por sustitución. Garantiza que BBB-01/02/03, Dashboard, Telemetría, IA, Laboratorios, Conocimiento, Hardware, Proyectos, contextos, `Telemetry`, `RobotTelemetry`, `SensorReading` y el conocimiento histórico se preservan, inventarían y conectan en la v2. Familia de 6 documentos. Ver [`docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md`](docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md) y [`docs/SIGCTIARURAL_PRESERVATION_AUDIT.md`](docs/SIGCTIARURAL_PRESERVATION_AUDIT.md).
 - **Transición a la Dashboard Ganadora (MISIÓN CRÍTICA)** — plan de migración del frontend hacia la Dashboard Ganadora (`SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`, única referencia de diseño). 8 documentos: plan por fases, matriz de componentes (PRESERVAR/AMPLIAR/MOVER/DEPRECAR/NO TOCAR), mapa de páginas, análisis de brechas, evolución de rutas, plan del Hardware Catalog (preserva BBB), preservación de laboratorios por área y auditoría de migración. Sin código. Ver [`docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md`](docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md) y [`docs/SIGCTIARURAL_MIGRATION_AUDIT.md`](docs/SIGCTIARURAL_MIGRATION_AUDIT.md).
@@ -874,7 +884,7 @@ sigcTiArural/
 <a name="️-mapa-documental"></a>
 ## 🗺️ Mapa Documental
 
-> 🧭 **Punto de entrada principal para orientación completa del proyecto — humanos e IA:** [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md)
+> 🧭 **Orden de lectura histórico y continuidad:** [`SIGCT_RURAL_SYSTEM_BOOT.md`](SIGCT_RURAL_SYSTEM_BOOT.md). Para el estado y las decisiones vigentes, usa `docs/` y el [Plan Maestro](docs/PLAN_MAESTRO.md).
 
 Este README es un documento de entrada público, **no** un reemplazo de la documentación técnica extensa del proyecto. La documentación está organizada en niveles:
 
@@ -889,13 +899,13 @@ Este README es un documento de entrada público, **no** un reemplazo de la docum
 | 6. Respaldo, archivo y retención | Manifiestos de backup, política de retención | `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`, `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md` |
 | 7. Documentación histórica | Bitácoras secundarias de sesiones de trabajo, no canónicas (ver regla de precedencia en `SIGCT_RURAL_SYSTEM_BOOT.md` §18.9); incluye auditorías TRAE y README Reality Check ya absorbidas por `docs/project_knowledge_base/` | `docs/historical/` (`INFORME_ANALISIS_Y_PLAN_DE_ACCION.md`, `TRAE_INDEPENDENT_REPOSITORY_AUDIT.md`, `TRAE_AI_INTEGRATION_AUDIT.md`, `README_REALITY_CHECK.md`) |
 | 8. Programa de I+D — IA V2 | Arquitectura multimodal, estrategia de datasets, MLOps, línea Agriculture AI V2 (planificado, converge con EIARC) | [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md) |
-| 9. UBTN — Telemetría biológica (diseño, no implementado) | Familia documental completa (26 docs): arquitectura y DDD `BiologicalTelemetry`, ADRs 01-20, riesgos, sensores, casos de uso, contratos JSON, edge/IA, integración, roadmap faseado y auditoría crítica | [`docs/UBTN_INDEX.md`](docs/UBTN_INDEX.md) (acceso a toda la familia) · [`docs/UBTN_ARCHITECTURE.md`](docs/UBTN_ARCHITECTURE.md) · [`docs/UBTN_ROADMAP.md`](docs/UBTN_ROADMAP.md) · [`docs/UBTN_AUDIT_REVIEW.md`](docs/UBTN_AUDIT_REVIEW.md) |
+| 9. UBTN — Telemetría biológica (diseño, no implementado) | Familia documental completa (26 docs): arquitectura y DDD `BiologicalTelemetry`, ADRs 01-20, riesgos, sensores, casos de uso, contratos JSON, edge/IA, integración, roadmap faseado y auditoría crítica | [`docs/UBTN/UBTN_INDEX.md`](docs/UBTN/UBTN_INDEX.md) (acceso a toda la familia) · [`docs/UBTN/UBTN_ARCHITECTURE.md`](docs/UBTN/UBTN_ARCHITECTURE.md) · [`docs/UBTN/UBTN_ROADMAP.md`](docs/UBTN/UBTN_ROADMAP.md) · [`docs/UBTN/UBTN_AUDIT_REVIEW.md`](docs/UBTN/UBTN_AUDIT_REVIEW.md) |
 | 10. Refactorización Global (diseño, no implementado) | 8 documentos de diseño U0.5: identidad, mapa de laboratorios, modelo de hardware, navegación por persona, capacidades vs hardware, guardarraíles, dashboard reimaginado y auditoría crítica | [`docs/SIGCTIARURAL_VISION_ALIGNMENT.md`](docs/SIGCTIARURAL_VISION_ALIGNMENT.md) · [`docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md`](docs/SIGCTIARURAL_DASHBOARD_REIMAGINED_V2.md) · [`docs/SIGCTIARURAL_REFACTORING_AUDIT.md`](docs/SIGCTIARURAL_REFACTORING_AUDIT.md) |
 | 11. Preservación y Expansión (diseño, no implementado) | 6 documentos de la Misión Crítica: estrategia de preservación (NADA DESAPARECE), inventario verificado del filesystem, matriz de evolución por módulo, navegación aditiva, readiness con checklist U1 y auditoría de preservación | [`docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md`](docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md) · [`docs/SIGCTIARURAL_COMPONENT_MAP.md`](docs/SIGCTIARURAL_COMPONENT_MAP.md) · [`docs/SIGCTIARURAL_PRESERVATION_AUDIT.md`](docs/SIGCTIARURAL_PRESERVATION_AUDIT.md) |
 | 12. Transición a la Dashboard Ganadora (diseño, no implementado) | 8 documentos de la MISIÓN CRÍTICA de migración: plan en 7 fases (feature flags/rollback), matriz de componentes (PRESERVAR/AMPLIAR/MOVER/DEPRECAR/NO TOCAR), mapa de páginas, brechas del Dashboard vs Ganadora, evolución de rutas (14 congeladas + 2 nuevas), plan del Hardware Catalog (preserva BBB), preservación de laboratorios por área y auditoría de migración | [`docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md`](docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md) · [`docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md`](docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md) · [`docs/SIGCTIARURAL_MIGRATION_AUDIT.md`](docs/SIGCTIARURAL_MIGRATION_AUDIT.md) |
 | 13. Preparación de U1 (diseño, no implementado) | Cierre del NO GO: auditoría final del gate (NO GO documentado), resolución de los 6 bloqueantes (D-A latente, D-B relabel honesto en U1.3, D-C diferido, D-D módulo `catalog-data.js`, D-A-7 temperatura DS18B20, R-13 instancia aditiva de `Telemetry3DScene`) → GO CON CONDICIONES, y plan de ejecución U1.1-U1.4 con snapshot, pruebas manuales y rollback por fase | [`docs/SIGCTIARURAL_U1_GO_NO_GO.md`](docs/SIGCTIARURAL_U1_GO_NO_GO.md) · [`docs/SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md`](docs/SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md) · [`docs/SIGCTIARURAL_U1_BOOTSTRAP.md`](docs/SIGCTIARURAL_U1_BOOTSTRAP.md) |
 
-Si tu objetivo es entender el estado real del proyecto en profundidad —o continuar el trabajo como colaborador o como IA sin contexto previo— empieza siempre por `SIGCT_RURAL_SYSTEM_BOOT.md`; ese documento define el orden de lectura obligatorio y la fuente de verdad vigente por categoría.
+Si tu objetivo es entender el estado real del proyecto en profundidad —o continuar el trabajo como colaborador o como IA sin contexto previo— empieza por `docs/MASTERDOC.md` y `docs/PLAN_MAESTRO.md`. `SIGCT_RURAL_SYSTEM_BOOT.md` se conserva como guía de arranque y continuidad, no como fuente de verdad vigente.
 
 ---
 

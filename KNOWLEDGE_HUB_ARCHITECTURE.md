@@ -1,643 +1,148 @@
-# KNOWLEDGE HUB ARCHITECTURE
+# Knowledge Hub — Arquitectura vigente
 
-## Fecha
+| Campo | Valor |
+|---|---|
+| Estado | **Implementado y operativo** en el frontend de evolución |
+| Ruta | `/knowledge` y `/knowledge/doc/:docId` |
+| Última revisión | 2026-11-23 |
+| Responsable | Bernardo Adolfo Gómez Montoya |
+| Fuente de verdad documental | [`docs/`](docs/MASTERDOC.md) |
+| Registro canónico del Hub | [`knowledgeRegistry.generated.json`](src/frontend/src/knowledge-hub/registry/knowledgeRegistry.generated.json) |
 
-2026-07-16
-
-## Objetivo
-
-Diseñar la arquitectura definitiva del Portal de Conocimiento de SIGCT-Rural como un Knowledge Hub permanente, totalmente local, capaz de sostener continuidad técnica durante años sin depender de `raw.githubusercontent.com`, con render nativo de Markdown, soporte Mermaid, navegación estructurada, búsqueda documental, trazabilidad y capacidad de servir como portal de continuidad para futuras IA.
-
-## Principio rector
-
-La documentación en SIGCT-Rural debe tratarse como parte del sistema y no como un artefacto secundario. Por tanto, el portal documental no debe ser una colección de páginas sueltas, sino una capa de producto con:
-
-- fuente local de contenido
-- modelo documental explícito
-- navegación semántica
-- render confiable
-- descubrimiento de relaciones
-- trazabilidad histórica y técnica
+> **Alcance.** Este documento describe la arquitectura **ya implementada** del portal documental local de SIGC&T Rural. No es un plan pendiente. La propuesta original de 2026-07-16 — redactada cuando el portal aún no existía — se conserva íntegramente en `.local_backups/02_arquitectura_y_gobernanza/KNOWLEDGE_HUB_ARCHITECTURE_ORIGINAL_RESPALDO_2026_11_23.md`.
 
 ---
 
-## 1. Causa raíz del fallo actual
+## 1. Propósito
 
-### 1.1 Causa raíz principal
+El Knowledge Hub convierte la documentación del repositorio en una capa de producto: fuente local, catálogo explícito, navegación semántica, lectura confiable y trazabilidad. Sirve a tres audiencias: personas que se incorporan al proyecto, mantenedores que necesitan continuidad y sistemas de IA que requieren contexto verificable.
 
-El sistema documental actual no está construido como un portal de conocimiento local, sino como un conjunto de páginas React independientes que intentan obtener contenido remoto desde GitHub Raw y CDNs.
+**Principios operativos**
 
-### 1.2 Evidencia técnica del fallo
-
-#### Dependencia de GitHub Raw
-
-Las páginas documentales actuales cargan contenido desde `raw.githubusercontent.com`:
-
-- `src/frontend/src/pages/DocsReadme.jsx`
-- `src/frontend/src/pages/DocsPlanMaestro.jsx`
-- `src/frontend/src/pages/DocsApiReference.jsx`
-- `src/frontend/src/pages/DocsEdgeSetup.jsx`
-- `src/frontend/src/pages/DocsMasterdoc.jsx`
-
-Evidencia específica:
-
-- `DocsReadme.jsx` usa `https://raw.githubusercontent.com/.../README.md`
-- `DocsPlanMaestro.jsx` usa `https://raw.githubusercontent.com/.../docs/PLAN_MAESTRO_v4.2.md`
-- `DocsMasterdoc.jsx` usa `https://raw.githubusercontent.com/.../docs/MASTERDOC.md`
-- `DocsMasterdoc.jsx` también usa `iframe` contra `https://raw.githubusercontent.com/.../docs/MASTERDOC.html`
-
-#### Dependencia de CDNs externos
-
-El render documental no es local:
-
-- `marked` se importa desde `https://cdn.jsdelivr.net/npm/marked/+esm`
-- Mermaid se importa desde `https://cdn.jsdelivr.net/npm/mermaid/+esm`
-- el estilo de Markdown se inyecta desde `cdnjs.cloudflare.com`
-
-#### Rutas y etiquetas documentales obsoletas
-
-Existen referencias duras a versiones viejas:
-
-- `MASTERDOC v4.3`
-- `Plan Maestro v4.2`
-
-Evidencia:
-
-- `src/frontend/src/pages/DocsMasterdoc.jsx`
-- `src/frontend/src/pages/DocsPlanMaestro.jsx`
-- `src/frontend/src/data/lab-data.js`
-
-#### Integración documental incompleta
-
-El sistema actual sólo expone cinco documentos:
-
-- `/docs/masterdoc`
-- `/docs/readme`
-- `/docs/plan`
-- `/docs/api`
-- `/docs/edge-setup`
-
-No existe integración en navegación para:
-
-- `docs/eiarc/`
-- `docs/project_knowledge_base/`
-- `docs/sena_artifacts/`
-- `docs/architect_master/`
-- `docs/reports/`
-- `docs/database/`
-- `docs/diagrams/`
-- `docs/uml/`
-
-#### Acoplamiento documento-ruta
-
-Cada documento tiene una página React propia. El portal no descubre contenido; lo tiene hardcodeado.
-
-### 1.3 Fallos estructurales derivados
-
-1. Si GitHub Raw falla, la documentación falla.
-2. Si cambia el nombre de un archivo, la ruta React queda obsoleta.
-3. Si se agregan documentos nuevos, no aparecen automáticamente.
-4. No existe catálogo documental central.
-5. No existe búsqueda local.
-6. No existe clasificación por niveles o audiencias.
-7. No existe trazabilidad entre documentos.
+- La documentación se sirve desde el propio build; no depende de GitHub Raw ni de CDNs.
+- `docs/` es la fuente única de verdad; el Hub lee, nunca escribe.
+- Nada se elimina: lo que deja de ser relevante se reclasifica y se mantiene accesible.
+- Cada documento declara su procedencia y su estado con el canon del ecosistema (`REAL`, `REAL-LOCAL`, `REF`, `SIM`, `DISENO`, `ROTO`, `HUERFANO`).
+- La presentación es académica y sobria; las etiquetas de estado informan, no publicitan.
 
 ---
 
-## 2. Arquitectura recomendada
-
-### 2.1 Enfoque recomendado
-
-La arquitectura recomendada es un **Knowledge Hub local, compilado en frontend, basado en catálogo documental y render semántico**, no en fetchs remotos.
-
-### 2.2 Patrón general
+## 2. Topología implementada
 
 ```mermaid
 flowchart LR
-    A[Repositorio local docs + raiz documental] --> B[Catalogador documental]
-    B --> C[Registry JSON del Knowledge Hub]
-    C --> D[Router documental React]
-    C --> E[Buscador local]
-    C --> F[Panel de relaciones]
-    D --> G[Markdown Renderer local]
-    D --> H[Mermaid Renderer local]
-    D --> I[Diagram Viewer]
-    D --> J[Timeline / Continuity Portal]
+    MD["Markdown versionado<br/>README · docs/**"] --> REG["knowledgeRegistry.generated.json<br/>51 documentos · 6 categorías"]
+    REG --> LOAD["docLoader.js<br/>import.meta.glob (?raw, eager)"]
+    LOAD --> VIEW["MarkdownDocumentView.jsx<br/>marked + mermaid + TOC"]
+    REG --> MAP["knowledgeStudyMap.js<br/>5 capas de estudio + apéndice"]
+    MAP --> LAYOUT["KnowledgeHubLayout.jsx<br/>Estudio / Índice completo"]
+    VIEW --> LAYOUT
+    LAYOUT --> ROUTE["/knowledge<br/>/knowledge/doc/:docId"]
 ```
 
-### 2.3 Capas propuestas
+### 2.1 Fuentes y registro
 
-#### Capa 1: Content Sources
+El catálogo se genera en [`knowledgeRegistry.generated.json`](src/frontend/src/knowledge-hub/registry/knowledgeRegistry.generated.json) (`generated_at: 2026-07-19T12:43:05.824Z`, `source_version: local-workspace-mvp-expanded`). Cada entrada declara:
 
-Fuentes documentales locales:
+`id` · `title` · `canonical_path` · `route` · `category` · `level` · `document_type` · `format` · `visibility` · `status` · `source_of_truth` · `tags`.
 
-- `README.md`
-- `docs/INDICE_PROYECTO.md`
-- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
-- `docs/**/*.md`
-- `docs/**/*.mmd`
-- `docs/**/*.svg`
-- `docs/**/*.png`
-- `docs/**/*.html`
+| Categoría | Documentos | Papel |
+|---|---:|---|
+| `project-core` | 7 | Identidad, arranque, arquitectura y API del proyecto |
+| `eiarc-foundation` | 3 | Fundamentos y misión del ecosistema |
+| `eiarc-architecture` | 13 | Contextos, contratos y modelos canónicos |
+| `research-v2` | 18 | Programa de I+D, datasets y gobernanza científica |
+| `knowledge-base` | 6 | KB de auditoría y contexto histórico |
+| `historical` | 4 | Evidencia de sesiones superadas, conservada |
+| **Total** | **51** | **6 categorías** |
 
-#### Capa 2: Knowledge Registry
+La ruta de cada documento es derivada del `id` (`/knowledge/doc/<id>`) y la ruta canónica del `canonical_path`. No existen páginas React por documento: el router es único.
 
-Un registro documental local debe describir cada artefacto con metadatos:
+### 2.2 Carga local
 
-- `id`
-- `title`
-- `canonical_path`
-- `category`
-- `level`
-- `visibility`
-- `document_type`
-- `tags`
-- `version_label`
-- `source_of_truth`
-- `related_documents`
-- `status`
-- `audience`
-- `timeline_date`
+[`docLoader.js`](src/frontend/src/knowledge-hub/services/docLoader.js) resuelve `canonical_path` contra un índice construido con `import.meta.glob(..., { query: '?raw', import: 'default', eager: true })` sobre `README.md`, `SIGCT_RURAL_SYSTEM_BOOT.md`, `docs/MASTERDOC.md`, `docs/PLAN_MAESTRO.md`, la guía técnica de refactorización, `docs/EDGE_SETUP.md`, `docs/API_REFERENCE.md` y los árboles `docs/eiarc/**`, `docs/project_knowledge_base/*`, `docs/historical/*` y `docs/ai/research_v2/*`.
 
-#### Capa 3: Rendering Engine
+- Sin `fetch` a `raw.githubusercontent.com` ni a ningún CDN.
+- `loadDocument(docId)` falla con un mensaje explícito si el `id` no está en el registry o si el patrón `glob` no cubre su ruta canónica.
+- `isKnownDocument(docId)` permite validar referencias antes de renderizar.
 
-El portal debe renderizar localmente:
+### 2.3 Renderizado
 
-- Markdown
-- Mermaid
-- SVG
-- PNG
-- HTML report embebido controlado
+[`MarkdownDocumentView.jsx`](src/frontend/src/knowledge-hub/components/MarkdownDocumentView.jsx) usa `marked` y `mermaid` como dependencias reales de npm (`marked ^18`, `mermaid ^11`). [`markdownRenderUtils.js`](src/frontend/src/knowledge-hub/services/markdownRenderUtils.js) reutiliza la lógica de anclas, tabla de contenidos y bloques Mermaid ya presente en el visor histórico, sin reescribirla.
 
-#### Capa 4: Experience Layer
-
-La experiencia documental debe incluir:
-
-- árbol navegable
-- breadcrumbs
-- vista por categorías
-- búsqueda
-- panel de relaciones
-- línea de tiempo
-- vista de continuidad
-- badges de visibilidad y criticidad
-
-#### Capa 5: Governance Layer
-
-Debe existir un modelo explícito de:
-
-- documento público
-- documento restringido
-- documento histórico
-- documento canónico
-- documento operativo
+El render incluye: tabla de contenidos generada desde encabezados, anclas estables (sin acentos), bloques Mermaid convertidos a contenedores y ejecutados en tema oscuro, y un estado de error visible cuando el documento local no puede cargarse.
 
 ---
 
-## 3. Experiencia visual recomendada
+## 3. Experiencia de estudio
 
-### 3.1 Dirección visual
+[`knowledgeStudyMap.js`](src/frontend/src/knowledge-hub/catalog/knowledgeStudyMap.js) organiza la lectura sin tocar el registry. Define un punto de partida, cinco capas didácticas y un apéndice plegable.
 
-La experiencia visual recomendada es un **Knowledge Cockpit** futurista, sobrio y técnico. No debe parecer un blog ni un simple visor Markdown.
+| Capa | Enfoque |
+|---|---|
+| 01 · Captura y señales | Qué se mide, quién lo produce y bajo qué contrato entra |
+| 02 · Transporte y telemetría | Cómo la señal llega al backend y al dashboard |
+| 03 · Datos y gobernanza | Esquemas, datasets, honestidad de estado y preservación |
+| 04 · Modelos e inferencia | M1/M2, puertos de IA y contratos de inferencia |
+| 05 · Validación y trazabilidad | Gates, evidencia y retorno al conocimiento |
 
-### 3.2 Rasgos visuales
+Cada capa declara preguntas, resultados de aprendizaje, entidades, módulos, contratos y prerrequisitos, usando solo `docIds` existentes. El modo **Estudio** muestra la capa activa con filtro por categoría; el modo **Índice completo** expone los 51 documentos agrupados.
 
-- layout tipo consola de conocimiento
-- navegación lateral persistente
-- panel principal de lectura
-- panel contextual derecho para relaciones y metadatos
-- breadcrumbs superiores
-- paleta oscura con identidad SIGCT-Rural
-- neón moderado, no invasivo
-- badges de categoría, criticidad y visibilidad
-
-### 3.3 Vistas principales recomendadas
-
-1. **Home del Knowledge Hub**
-   - resumen del proyecto
-   - accesos rápidos
-   - documentos canónicos
-   - actividad reciente documental
-
-2. **Doc Reader**
-   - lectura principal
-   - tabla de contenidos automática
-   - navegación por encabezados
-   - Mermaid inline
-
-3. **Doc Explorer**
-   - árbol por categorías y niveles
-   - filtros por audiencia, tipo y estado
-
-4. **Traceability View**
-   - documento actual
-   - documentos relacionados
-   - fuentes de verdad
-   - documentos derivados
-
-5. **Project Timeline**
-   - secuencia documental del proyecto
-   - auditorías
-   - EIARC
-   - ADSO
-   - cierres
-
-6. **Continuity Portal**
-   - runbooks
-   - deployment
-   - API
-   - knowledge base crítica
-
-### 3.4 Estilo UX
-
-- lectura cómoda
-- fuerte escaneabilidad
-- navegación consistente
-- cero dependencia de conectividad externa
-- tiempo de acceso inmediato a documentos críticos
+Los 9 `docIds` de ruido de herramienta (6 fichas KB y 3 duplicados históricos) no se eliminan: se excluyen de la ruta principal y se muestran en el **Apéndice de auditorías**. Esta decisión materializa la regla NADA DESAPARECE sin penalizar la lectura principal.
 
 ---
 
-## 4. Componentes React implicados
+## 4. Gobernanza de la información
 
-### 4.1 Componentes existentes impactados
-
-El rediseño afecta conceptualmente a:
-
-- `src/frontend/src/App.jsx`
-- `src/frontend/src/components/TopNav.jsx`
-- `src/frontend/src/pages/DocsMasterdoc.jsx`
-- `src/frontend/src/pages/DocsReadme.jsx`
-- `src/frontend/src/pages/DocsPlanMaestro.jsx`
-- `src/frontend/src/pages/DocsApiReference.jsx`
-- `src/frontend/src/pages/DocsEdgeSetup.jsx`
-- `src/frontend/src/data/lab-data.js`
-
-### 4.2 Componentes nuevos recomendados
-
-#### Shell y layout
-
-- `KnowledgeHubLayout`
-- `KnowledgeHubHome`
-- `KnowledgeHubRoute`
-- `KnowledgeHubHeader`
-- `KnowledgeHubSidebar`
-- `KnowledgeHubRightPanel`
-
-#### Navegación y descubrimiento
-
-- `DocTree`
-- `DocCategoryTabs`
-- `DocBreadcrumbs`
-- `DocSearchCommand`
-- `DocLevelSwitcher`
-- `DocTimeline`
-
-#### Render documental
-
-- `DocRenderer`
-- `MarkdownDocumentView`
-- `MermaidBlock`
-- `DiagramAssetViewer`
-- `HtmlReportViewer`
-- `DocTableOfContents`
-
-#### Relación y trazabilidad
-
-- `RelatedDocsPanel`
-- `DocMetadataCard`
-- `SourceOfTruthBadge`
-- `VisibilityBadge`
-- `TraceabilityGraph`
-
-#### Continuidad
-
-- `ContinuityHub`
-- `OperationsShelf`
-- `CriticalDocsRail`
-
-### 4.3 Servicios frontend recomendados
-
-- `knowledgeRegistry.js`
-- `knowledgeIndex.js`
-- `docLoader.js`
-- `docRelationshipEngine.js`
-- `docVisibilityPolicy.js`
+- **Visibilidad y criticidad:** los campos `visibility`, `status` y `source_of_truth` del registry son la única fuente de estas etiquetas; la interfaz no las inventa.
+- **Preservación:** los documentos históricos y las auditorías siguen accesibles. La depuración reorganiza, nunca borra.
+- **Coherencia:** cuando un documento canónico cambia de estado, se actualiza su definición en el documento canónico correspondiente y luego se regenera el registry; no se parchea la vista.
+- **Límites del Hub:** el portal no escribe en `docs/`, no ejecuta laboratorios, no decide gobernanza y no promueve modelos. Es lector y organizador de evidencia.
 
 ---
 
-## 5. Diseño de navegación
+## 5. Estructura de archivos
 
-### 5.1 Regla general
-
-La navegación no debe basarse en páginas aisladas, sino en un **árbol documental canónico**.
-
-### 5.2 Estructura mínima pedida
-
-#### Nivel 1: Proyecto
-
-- `README`
-- `MASTERDOC`
-- `PLAN_MAESTRO`
-- `INDICE_PROYECTO`
-
-#### Nivel 2: EIARC
-
-- `FOUNDATION`
-- `ARCHITECTURE`
-- `DIAGRAMS`
-
-#### Nivel 3: Knowledge Base
-
-- `KB-001`
-- `KB-002`
-- `KB-003`
-- `KB-004`
-- `KB-005`
-- `KB-006`
-
-#### Nivel 4: Proyecto ADSO
-
-- `PROYECTO_FORMATIVO_FINAL`
-- `EVIDENCIAS_ADSO_MASTER`
-- `PRESENTACION_SUSTENTACION`
-- `DEPLOYMENT_FINAL`
-- `API_DELIVERY_PACKAGE`
-
-#### Nivel 5: Operación
-
-- `API`
-- `Deployment`
-- `Runbooks`
-- `Continuidad`
-
-### 5.3 Navegación recomendada por vistas
-
-#### Navegación primaria
-
-- `Knowledge Hub`
-- `Proyecto`
-- `EIARC`
-- `Knowledge Base`
-- `ADSO`
-- `Operación`
-- `Timeline`
-
-#### Navegación secundaria contextual
-
-Dentro de cada documento:
-
-- resumen
-- tabla de contenidos
-- relacionados
-- versiones/documentos derivados
-- documento anterior/siguiente
-
-### 5.4 Navegación transversal
-
-El usuario debe poder descubrir un documento por:
-
-- categoría
-- nombre
-- nivel
-- etiqueta
-- fecha
-- criticidad
-- audiencia
+| Archivo | Responsabilidad |
+|---|---|
+| `src/frontend/src/App.jsx` | Declara las rutas `/knowledge` y `/knowledge/doc/:docId` |
+| `src/frontend/src/knowledge-hub/pages/KnowledgeHubLayout.jsx` | Shell, modos Estudio/Índice, navegación y apéndice |
+| `src/frontend/src/knowledge-hub/catalog/knowledgeStudyMap.js` | Capas didácticas, categorías, nodos y reglas de ruido |
+| `src/frontend/src/knowledge-hub/registry/knowledgeRegistry.generated.json` | Catálogo generado: 51 documentos / 6 categorías |
+| `src/frontend/src/knowledge-hub/services/docLoader.js` | Resolución local de `canonical_path` |
+| `src/frontend/src/knowledge-hub/services/markdownRenderUtils.js` | Anclas, TOC y bloques Mermaid |
+| `src/frontend/src/knowledge-hub/components/MarkdownDocumentView.jsx` | Render Markdown/Mermaid y manejo de errores |
 
 ---
 
-## 6. Organización documental recomendada
+## 6. Fuera de alcance (estado `DISENO`)
 
-### 6.1 Taxonomía documental
+Las siguientes capacidades son objetivos declarados, **no funcionalidad instalada**:
 
-Cada documento debe clasificarse en una taxonomía estable:
+- búsqueda semántica / vectorización y puente con un asistente de IA;
+- grafo de trazabilidad interactivo entre documentos;
+- línea de tiempo documental y panel de continuidad automatizado;
+- control de acceso por audiencia más allá de las etiquetas del registry.
 
-- `project-core`
-- `eiarc-foundation`
-- `eiarc-architecture`
-- `eiarc-diagrams`
-- `knowledge-base`
-- `sena-deliverables`
-- `operations`
-- `deployment`
-- `api`
-- `reports`
-- `historical`
-
-### 6.2 Tipos documentales
-
-- documento canónico
-- documento operativo
-- auditoría
-- evidencia
-- entregable académico
-- diagrama
-- reporte
-- histórico
-
-### 6.3 Modelo de relaciones
-
-Todo documento debe poder declarar:
-
-- `source_of_truth`
-- `derived_from`
-- `related_to`
-- `supersedes`
-- `supports_deliverable`
-- `audience`
-
-### 6.4 Núcleo documental recomendado
-
-#### Canónicos
-
-- `README.md`
-- `docs/MASTERDOC.md`
-- `docs/PLAN_MAESTRO.md`
-- `docs/INDICE_PROYECTO.md`
-
-#### Arquitectura y gobierno
-
-- `docs/architect_master/*`
-- `docs/eiarc/*`
-- `docs/project_knowledge_base/*`
-
-#### Entrega ADSO
-
-- `docs/sena_artifacts/*`
-
-#### Operación
-
-- `docs/API_REFERENCE.md`
-- `docs/DEPLOYMENT.md`
-- `docs/CONTINUITY_RUNBOOK.md`
-- `docs/EDGE_SETUP.md`
-- `docs/reports/*`
+Deben entrar por una misión explícita, con gate propio y sin presentarse hoy como parte del Hub implementado.
 
 ---
 
-## 7. Ruta de implementación por fases
+## 7. Criterios de verificación
 
-### Fase 1: Foundation del Hub
-
-Objetivo:
-
-- reemplazar el fetch remoto por carga local
-- dejar un router documental único
-- crear el registry documental base
-
-Resultado esperado:
-
-- Knowledge Hub navegable localmente
-- eliminación de dependencia de GitHub Raw para docs críticas
-
-### Fase 2: Render nativo
-
-Objetivo:
-
-- render Markdown local
-- soporte Mermaid local
-- soporte para diagramas `.svg`, `.png`, `.mmd`
-
-Resultado esperado:
-
-- lectura consistente sin CDNs externos
-
-### Fase 3: Organización semántica
-
-Objetivo:
-
-- categorizar documentos por niveles 1 a 5
-- integrar `docs/sena_artifacts/`
-- integrar `docs/eiarc/`
-- integrar `docs/project_knowledge_base/`
-
-Resultado esperado:
-
-- navegación por dominios documentales y no por páginas sueltas
-
-### Fase 4: Descubrimiento y continuidad
-
-Objetivo:
-
-- búsqueda documental
-- relaciones entre documentos
-- panel de trazabilidad
-- timeline del proyecto
-
-Resultado esperado:
-
-- portal de continuidad real
-
-### Fase 5: Gobernanza y acceso
-
-Objetivo:
-
-- clasificar documentación pública vs restringida
-- aplicar capas de visibilidad
-- consolidar el portal como Knowledge Hub permanente
-
-Resultado esperado:
-
-- portal apto para años de continuidad y trabajo con futuras IA
+1. El registry carga 51 documentos en 6 categorías y todas las rutas `/knowledge/doc/<id>` resuelven.
+2. Todos los `docIds` usados por el mapa de estudio existen en el registry.
+3. No aparece `raw.githubusercontent.com` ni imports desde CDN en `src/frontend/src/knowledge-hub/`.
+4. `node --check` pasa en los módulos `.js` del Hub y el build de Vite compila.
+5. Los 9 documentos de auditoría siguen accesibles desde el apéndice.
+6. Ningún documento se elimina ni se duplica al reorganizar la navegación.
 
 ---
 
-## 8. Qué documentación debe verse públicamente
+## 8. Continuidad
 
-### 8.1 Pública por defecto
-
-Debe estar visible públicamente la documentación que describe identidad, arquitectura general, entrega académica y uso institucional:
-
-- `README.md`
-- `docs/MASTERDOC.md`
-- `docs/PLAN_MAESTRO.md`
-- `docs/INDICE_PROYECTO.md`
-- `docs/API_REFERENCE.md`
-- `docs/DEPLOYMENT.md`
-- `docs/EDGE_SETUP.md`
-- `docs/AI_PIPELINE.md`
-- `docs/eiarc/01_FOUNDATION/*`
-- `docs/eiarc/02_ARCHITECTURE/EIARC_CONTEXTS.md`
-- `docs/eiarc/02_ARCHITECTURE/EIARC_IMPLEMENTATION_BLUEPRINT.md`
-- `docs/eiarc/02_ARCHITECTURE/EIARC_CANONICAL_DATA_MODEL.md`
-- `docs/sena_artifacts/PROYECTO_FORMATIVO_FINAL.md`
-- `docs/sena_artifacts/EVIDENCIAS_ADSO_MASTER.md`
-- `docs/sena_artifacts/PRESENTACION_SUSTENTACION.md`
-- `docs/sena_artifacts/DEPLOYMENT_FINAL.md`
-- `docs/sena_artifacts/API_DELIVERY_PACKAGE.md`
-- diagramas y ERD de soporte que no expongan información sensible
-
-### 8.2 Pública condicionada
-
-Puede mostrarse públicamente, pero con etiqueta de histórico o auditoría:
-
-- `docs/project_knowledge_base/KB-*`
-- `docs/architect_master/05_FINAL_ARCHITECTURE_BASELINE.md`
-- `docs/project_knowledge_base/governance/MASTER_PROJECT_INVENTORY_AUDIT.md`
-- `docs/sena_artifacts/SENA_GRADUATION_READINESS_AUDIT.md`
+La arquitectura descrita sustituye el enfoque de "páginas Docs" por un único portal local sin destruir su historia: el contenido anterior, incluidas las propuestas no ejecutadas, permanece en el respaldo indicado al inicio y en la documentación histórica versionada. Toda evolución futura debe preservar esas tres reglas: fuente local, catálogo único y nada desaparece.
 
 ---
 
-## 9. Qué documentación debe requerir acceso restringido
-
-### 9.1 Restringida por operación interna
-
-Debe quedar con acceso restringido la documentación que expone continuidad interna, diagnóstico operativo, rutas de cierre o información sensible de operación:
-
-- `HANDOFF_TRAE_sigcTiArual.md`
-- `docs/reports/continuity_status.md`
-- `docs/ai/debug-ai-model-loader.md`
-- `docs/project_knowledge_base/governance/PROJECT_ARCHIVE_MANIFEST.md`
-- `docs/project_knowledge_base/governance/PROJECT_RECORDS_REGISTER.md`
-- `docs/project_knowledge_base/governance/DOCUMENT_RETENTION_POLICY.md`
-- `docs/project_knowledge_base/governance/PROJECT_STRUCTURE_SNAPSHOT.md`
-- `docs/project_knowledge_base/governance/PROJECT_BACKUP_MANIFEST.md`
-- `docs/project_knowledge_base/governance/BACKUP_CONTENT_INDEX.md`
-- `docs/project_knowledge_base/governance/BACKUP_VERIFICATION_REPORT.md`
-
-### 9.2 Restringida por auditoría técnica interna
-
-- `docs/eiarc/*CODE_REVIEW.md`
-- `docs/eiarc/02_ARCHITECTURE/TELEMETRY_DATABASE_DIAGNOSTIC.md`
-- `docs/architect_master/03_DOCUMENT_TRUTH_MATRIX.md`
-- `docs/architect_master/06_EVIDENCE_STATUS_MATRIX.md`
-- `docs/architect_master/08_DEVELOPMENT_ROADMAP.md` si se usa como documento interno de trabajo
-
-### 9.3 Criterio de restricción
-
-La restricción no debe depender solo de la carpeta, sino de la función documental:
-
-- operativo interno
-- evidencia de auditoría sensible
-- continuidad restringida
-- snapshot/backup/archivo
-
----
-
-## Arquitectura final recomendada
-
-### Decisión central
-
-SIGCT-Rural debe reemplazar el actual conjunto de páginas Docs v5.0 por un **Knowledge Hub local unificado**, montado sobre un registry documental y un router semántico, con render nativo, Mermaid local y navegación estructurada por conocimiento.
-
-### Resultado esperado
-
-El sistema dejaría de ser:
-
-- un visor parcial
-- dependiente de GitHub Raw
-- amarrado a versiones viejas
-- incapaz de integrar nuevos documentos
-
-Y pasaría a ser:
-
-- un portal documental de continuidad
-- una biblioteca técnica navegable
-- una memoria institucional del proyecto
-- un entorno de trabajo válido para futuras IA y futuros mantenedores
-
-## Conclusión
-
-La falla actual no es un bug aislado de `/docs/masterdoc`. Es un síntoma de que la documentación aún no está tratada como un subsistema del producto. La arquitectura recomendada convierte esa documentación en una capa viva, local, durable y navegable, capaz de integrar el proyecto, EIARC, la knowledge base, los entregables ADSO y la operación continua en un único Portal de Conocimiento SIGCT-Rural.
+**SIGC&T Rural · Knowledge Hub · Arquitectura vigente · 2026-11-23**
