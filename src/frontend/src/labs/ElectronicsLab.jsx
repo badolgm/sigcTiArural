@@ -489,9 +489,10 @@ res
 };
 
 const ElectronicsLab = ({ onNavigate }) => {
-  // Conexión al Store Global (Federated State) - CON FALLBACK SEGURO
-  const setElectronicsSignal = useLabStore ? useLabStore((state) => state.setElectronicsSignal) : () => {};
-  const setSimulationResults = useLabStore ? useLabStore((state) => state.setSimulationResults) : () => {};
+  // Conexión al Store Global (Federated State): el hook se invoca siempre para
+  // mantener un orden de hooks estable; el store expone ambos setters.
+  const setElectronicsSignal = useLabStore((state) => state.setElectronicsSignal);
+  const setSimulationResults = useLabStore((state) => state.setSimulationResults);
 
   // -- LOGICA PYODIDE CENTRALIZADA --
   const [pyReady, setPyReady] = useState(false);

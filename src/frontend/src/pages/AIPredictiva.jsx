@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import UsbFrameProbePanel from './cmsc/orchestration/UsbFrameProbePanel.jsx';
+import { useLabStore } from '../stores/useLabStore.js';
+import { useVisionEvidence } from '../services/visionEvidence.js';
+import { buildTaxonomyView } from '../services/aiTaxonomy.js';
 
 const AI_INFERENCE_URL = import.meta.env.VITE_AI_INFERENCE_URL?.trim() || '/api/v3/ai/inference/';
 
@@ -72,10 +75,12 @@ const getClassificationLabel = (rawClassIndex, prediction) => {
   const contract = String(prediction?.semantic_contract_version || '').toLowerCase();
   const canonicalClassId = prediction?.canonical_class_id;
   if (contract === 'v2' || canonicalClassId) {
-    const species = SPECIES_LABELS[String(prediction?.plant_species || '').toLowerCase()]
+    const view = buildTaxonomyView(prediction);
+    const species = view?.display?.speciesLabel
+      || SPECIES_LABELS[String(prediction?.plant_species || '').toLowerCase()]
       || prediction?.plant_species
       || 'Cultivo no determinado';
-    const condition = prediction?.condition_name || 'no determinada';
+    const condition = view?.display?.conditionLabel || prediction?.condition_name || 'no determinada';
     return `Clasificacion multiclase (16): ${species} - ${condition}`;
   }
   if (Number(rawClassIndex) === 0) return 'Clasificacion binaria del modelo: enferma';
@@ -293,6 +298,9 @@ const buildInfoFromOfficialResponse = (data) => {
     // AI-R4: trazabilidad multiclase (null en modo v1).
     canonicalClassId: prediction?.canonical_class_id || null,
     taxonomyVersion: prediction?.taxonomy_version || null,
+    // Espejo de solo lectura del binding canónico: null en v1 o si el id del
+    // backend no está declarado. Nunca sustituye al campo declarado por él.
+    taxonomy: buildTaxonomyView(prediction),
     modelContractVersion: trace?.model_contract_version || null,
     // L-2/L-3a: procedencia del artefacto y resultado real de la peticion.
     // Fail-closed: sin campo => NO_DECLARADO; sin declaracion => no ejecutada.
@@ -332,6 +340,154 @@ const buildDemoInfo = (scenario, mode) => {
   };
 };
 
+// --- Evaluación reactiva de la señal viva S35 -------------------------------
+// Esta capa NO es inferencia de imagen ni sustituye al diagnóstico fitosanitario
+// del modelo. Lee el snapshot que publica MmcMathematicsCore en useLabStore y
+// produce indicadores derivados EXCLUSIVAMENTE de los datos disponibles. Si no
+// hay datos publicados, el veredicto es NO_DATA: nunca se rellena una curva ni
+// se eleva SIM/LOCAL a una medición real.
+const LIVE_STATE_COLOR = {
+  'REAL-LOCAL': '#39FF14',
+  LOCAL: '#FFD32A',
+  SIM: '#00FFFF',
+  ROTO: '#FF3131',
+  NO_DATA: '#94A3B8',
+};
+
+const LIVE_STATES = new Set(Object.keys(LIVE_STATE_COLOR));
+
+const finiteOrNull = (value) => (Number.isFinite(value) ? Number(value) : null);
+
+const liveRecommendation = (estado, { rmse, range, crest }) => {
+  if (estado === 'NO_DATA') {
+    return 'Sin señal publicada: cargar una envolvente, WAV local o CSV en el núcleo antes de emitir juicio. Esta vista no es evidencia.';
+  }
+  if (estado === 'ROTO') {
+    return 'Señal inválida: corregir la expresión o la fuente y volver a publicar; no usar para inspección.';
+  }
+  if (estado === 'SIM') {
+    return 'Serie simulada: solo ensayo de hipótesis y contraste visual; no reportar lectura real ni planificar campo.';
+  }
+  if (estado === 'LOCAL') {
+    return 'CSV sin proveniencia verificada: validar origen, unidades y calibración; contrastar con captura propia antes de decidir visita.';
+  }
+  if (rmse !== null && range !== null && range > 0) {
+    const relation = (rmse / range) * 100;
+    return `REAL-LOCAL · RMSE ${relation.toFixed(1)} % del rango${
+      crest !== null && crest > 3 ? ' · transitorios marcados (cresta/RMS alto)' : ''
+    }. Revisar la ventana de mayor error, conservar metadata y confirmar en sitio antes de escalar.`;
+  }
+  return 'REAL-LOCAL sin métrica de contraste: registrar metadata y repetir la medición en el mismo punto antes de decidir.';
+};
+
+const evaluateLiveSignal = (signal, { bridgeDeclaredConnected, electronicsActive }) => {
+  const published = Boolean(signal?.published);
+  const declared = LIVE_STATES.has(signal?.estado) ? signal.estado : 'NO_DATA';
+  const estado = !published ? 'NO_DATA' : declared;
+
+  const min = finiteOrNull(signal?.min);
+  const max = finiteOrNull(signal?.max);
+  const rms = finiteOrNull(signal?.rms);
+  const sampleCount = finiteOrNull(signal?.sampleCount);
+  const fs = finiteOrNull(signal?.fs);
+  const modelFs = finiteOrNull(signal?.modelFs);
+  const metrics = signal?.metrics && typeof signal.metrics === 'object' ? signal.metrics : null;
+  const rmse = finiteOrNull(metrics?.rmse);
+  const maxError = finiteOrNull(metrics?.maxError);
+  const range = min !== null && max !== null ? max - min : null;
+  const peak = min !== null && max !== null ? Math.max(Math.abs(min), Math.abs(max)) : null;
+  const crest = rms !== null && rms > 0 && peak !== null ? peak / rms : null;
+  const duration = sampleCount !== null && fs !== null && fs > 0 ? sampleCount / fs : null;
+
+  // Confianza de la EVALUACIÓN (no precisión del modelo, no softmax): mide cuántos
+  // campos verificables están disponibles. Cada campo aporta una fracción fija y
+  // la ausencia de datos baja el índice en lugar de inventar un valor favorable.
+  const checks = [
+    published && sampleCount !== null && sampleCount > 0,
+    fs !== null && fs > 0,
+    min !== null && max !== null && range !== null && range >= 0,
+    rms !== null,
+    sampleCount !== null && sampleCount >= 16,
+    rmse !== null,
+  ];
+  const confidenceIndex = checks.filter(Boolean).length / checks.length;
+
+  let riskLevel = 'NO_DATA';
+  let riskDetail = 'Sin señal publicada: riesgo no calculable.';
+  if (estado === 'ROTO') {
+    riskLevel = 'ROTO';
+    riskDetail = 'Snapshot inválido: riesgo no estimable.';
+  } else if (estado === 'SIM') {
+    riskLevel = 'NO APLICABLE';
+    riskDetail = 'Serie simulada: riesgo de campo no aplicable.';
+  } else if (estado === 'LOCAL') {
+    riskLevel = 'INDETERMINADO';
+    riskDetail = 'Proveniencia no verificada: riesgo indeterminado sin contraste.';
+  } else if (estado === 'REAL-LOCAL') {
+    if (rmse !== null && range !== null && range > 0) {
+      const relation = rmse / range;
+      riskLevel = relation < 0.05 ? 'BAJO' : relation < 0.15 ? 'MEDIO' : 'ALTO';
+      riskDetail = `RMSE ${rmse} / rango ${range} = ${(relation * 100).toFixed(1)} % del rango.`;
+    } else {
+      riskLevel = 'INDETERMINADO';
+      riskDetail = 'Falta RMSE o rango válido: riesgo indeterminado.';
+    }
+    if (crest !== null && crest > 3) {
+      riskDetail += ` Cresta/RMS ${crest.toFixed(2)}: revisar transitorios.`;
+    }
+  }
+
+  const evaluation = {
+    estado,
+    published,
+    sourceLabel: signal?.sourceLabel || '—',
+    sourceKind: signal?.sourceKind ?? '—',
+    claseSenal: signal?.clase_senal || '—',
+    updatedAt: signal?.updatedAt || null,
+    expression: signal?.expression || '—',
+    min,
+    max,
+    rms,
+    range,
+    crest,
+    sampleCount,
+    fs,
+    modelFs,
+    duration,
+    rmse,
+    maxError,
+    metricSamples: finiteOrNull(metrics?.n),
+    confidenceIndex,
+    riskLevel,
+    riskDetail,
+    recommendation: liveRecommendation(estado, { rmse, range, crest }),
+    bridgeDeclaredConnected,
+    electronicsActive,
+  };
+
+  // El snapshot por defecto del store conserva valores del escenario base para
+  // que el Hero tenga fallback, pero NO está publicado. Mostrarlos aquí sería
+  // presentar una lectura inexistente como disponible: se enmascaran todos.
+  if (!published) {
+    return {
+      ...evaluation,
+      min: null,
+      max: null,
+      rms: null,
+      range: null,
+      crest: null,
+      sampleCount: null,
+      fs: null,
+      modelFs: null,
+      duration: null,
+      rmse: null,
+      maxError: null,
+      metricSamples: null,
+    };
+  }
+  return evaluation;
+};
+
 const AIPredictiva = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -340,6 +496,24 @@ const AIPredictiva = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [analysisMode, setAnalysisMode] = useState('real');
+
+  // Suscripción selectiva al store: esta vista reacciona a cada publicación de
+  // S35 sin sondear ni copiar los arrays completos de la señal.
+  const mathLiveSignal = useLabStore((state) => state.mathLiveSignal);
+  const bridgeDeclaredConnected = useLabStore((state) => state.bridgeStatus?.connected === true);
+  const electronicsActive = useLabStore((state) => state.electronicsData?.active === true);
+
+  const live = useMemo(
+    () => evaluateLiveSignal(mathLiveSignal, { bridgeDeclaredConnected, electronicsActive }),
+    [mathLiveSignal, bridgeDeclaredConnected, electronicsActive]
+  );
+  const liveColor = LIVE_STATE_COLOR[live.estado] || LIVE_STATE_COLOR.NO_DATA;
+
+  // Canal de evidencia de visión: se suscribe al store externo en memoria que
+  // publica la sonda de cámara. Solo lectura; no altera el resultado del modelo
+  // ni los 7 exports nombrados de este módulo.
+  const vision = useVisionEvidence();
+
   const statusPresentation = detailedInfo ? getStatusPresentation(detailedInfo.status) : null;
   const modePresentation = getModePresentation(detailedInfo?.mode || analysisMode);
   const provenancePresentation = detailedInfo ? getProvenancePresentation(detailedInfo) : null;
@@ -488,7 +662,9 @@ const AIPredictiva = () => {
                 </h1>
                 <div className="flex items-center gap-3 text-gray-400 font-mono text-sm">
                     <span className="px-2 py-0.5 rounded bg-gray-800 border border-gray-700">MODULO: FITOSANITARIO</span>
-                    <span className="text-[#39FF14]">● SISTEMA ONLINE</span>
+                    <span style={{ color: liveColor }}>
+                        {live.published ? '●' : '○'} S35 {live.estado}
+                    </span>
                 </div>
             </div>
 
@@ -513,6 +689,92 @@ const AIPredictiva = () => {
                 </button>
             </div>
         </header>
+
+        {/* EVALUACIÓN DINÁMICA DE SEÑAL VIVA · S35 (no es inferencia de imagen) */}
+        <section
+          className="mb-8 rounded-xl border bg-[#0F0F0F] p-6"
+          style={{ borderColor: `${liveColor}66` }}
+          aria-label="Evaluación dinámica de la señal viva S35"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+            <div>
+              <h2 className="text-lg font-bold uppercase tracking-widest" style={{ color: liveColor }}>
+                Evaluación dinámica de señal viva · S35
+              </h2>
+              <p className="mt-1 text-xs font-mono text-gray-500">
+                Derivada del snapshot publicado por el núcleo MMC. NO es inferencia fitosanitaria ni precisión validada.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-3 py-1 rounded border font-mono text-xs" style={{ color: liveColor, borderColor: liveColor }}>
+                {live.estado}
+              </span>
+              <span className="px-3 py-1 rounded border border-gray-700 font-mono text-xs text-gray-400">
+                {live.claseSenal}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-xs">
+            {[
+              ['muestras', live.sampleCount],
+              ['fs (Hz)', live.fs],
+              ['duración (s)', live.duration],
+              ['min', live.min],
+              ['max', live.max],
+              ['rms', live.rms],
+              ['rango', live.range],
+              ['cresta/rms', live.crest],
+              ['RMSE', live.rmse],
+              ['max error', live.maxError],
+              ['n métrica', live.metricSamples],
+              ['model fs', live.modelFs],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded border border-gray-800 bg-black/40 p-3">
+                <p className="text-gray-500 uppercase tracking-wider">{label}</p>
+                <p className="text-gray-200 break-all">{value === null || value === undefined ? '—' : value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded border border-gray-800 bg-black/40 p-4">
+              <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">Confianza de la evaluación</p>
+              <div className="flex items-center justify-between font-mono text-sm">
+                <span className="text-gray-300">{(live.confidenceIndex * 100).toFixed(0)} %</span>
+                <span className="text-gray-500">campos verificables</span>
+              </div>
+              <div className="mt-2 h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+                <div className="h-full transition-all duration-500" style={{ width: `${live.confidenceIndex * 100}%`, backgroundColor: liveColor }} />
+              </div>
+              <p className="mt-2 text-[11px] text-gray-500 font-mono">
+                Índice de completitud de metadata. No es softmax, no es precisión de modelo y no habilita una afirmación de campo.
+              </p>
+            </div>
+            <div className="rounded border border-gray-800 bg-black/40 p-4">
+              <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">Riesgo operativo derivado</p>
+              <p className="font-mono text-sm mb-2" style={{ color: liveColor }}>{live.riskLevel}</p>
+              <p className="text-[11px] text-gray-400 font-mono leading-relaxed">{live.riskDetail}</p>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded border border-gray-800 bg-black/40 p-4">
+            <p className="text-xs uppercase tracking-widest text-yellow-400 mb-2">Recomendación operativa · campo / inspección</p>
+            <p className="text-sm text-gray-300 leading-relaxed">{live.recommendation}</p>
+          </div>
+
+          <details className="mt-4 font-mono text-[11px] text-gray-500">
+            <summary className="cursor-pointer uppercase tracking-widest hover:text-gray-300">Trazabilidad de la evaluación</summary>
+            <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 break-all">
+              <p><b>fuente:</b> {live.sourceLabel}</p>
+              <p><b>source_kind:</b> {String(live.sourceKind)}</p>
+              <p><b>expresión/modelo:</b> {live.expression}</p>
+              <p><b>actualizado:</b> {live.updatedAt || '—'}</p>
+              <p><b>bridge (declarado en store):</b> {String(live.bridgeDeclaredConnected)}</p>
+              <p><b>electrónica activa:</b> {String(live.electronicsActive)}</p>
+            </div>
+          </details>
+        </section>
 
         {/* MAIN GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -716,6 +978,23 @@ const AIPredictiva = () => {
                                         <p className="text-gray-500 uppercase text-xs">taxonomy_version</p>
                                         <p className="text-gray-200">{detailedInfo.taxonomyVersion || '—'}</p>
                                     </div>
+                                    {detailedInfo.taxonomy?.display && (
+                                        <>
+                                            <div>
+                                                <p className="text-gray-500 uppercase text-xs">condición (binding v2)</p>
+                                                <p className="text-gray-200">
+                                                    {detailedInfo.taxonomy.display.speciesLabel} · {detailedInfo.taxonomy.display.conditionLabel}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-gray-500 uppercase text-xs">health_state</p>
+                                                <p className="text-gray-200">{detailedInfo.taxonomy.display.healthState}</p>
+                                            </div>
+                                            <p className="text-[10px] leading-snug text-gray-500 col-span-1">
+                                                Etiqueta resuelta desde el binding canónico de 16 clases (research). No es un diagnóstico de campo ni promueve M2 sobre M1.
+                                            </p>
+                                        </>
+                                    )}
                                     <div>
                                         <p className="text-gray-500 uppercase text-xs">confidence</p>
                                         <p className="text-gray-200">{Number(detailedInfo.confidence).toFixed(4)}</p>
@@ -774,7 +1053,7 @@ const AIPredictiva = () => {
                         </div>
                         <h3 className="text-xl font-bold text-gray-500 uppercase tracking-widest mb-2">Sistema en Espera</h3>
                         <p className="text-gray-600 text-sm text-center max-w-md">
-                            Seleccione análisis con modelo, simulación o robot demo para iniciar el análisis.
+                            Seleccionar modo (análisis con modelo, simulación o robot demo) para iniciar.
                         </p>
                     </div>
                 )}
@@ -782,6 +1061,116 @@ const AIPredictiva = () => {
 
         </div>
       </div>
+
+      {/* Puente de evidencia aditivo: captura autorizada + inferencia oficial + S35.
+          Determinista local, sin LLM y sin inferencia nueva. Nunca emite REAL. */}
+      <section
+        className="mt-8 rounded-xl border border-gray-800 bg-gray-900/30 p-4"
+        aria-label="Evidencia de visión y trazabilidad"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <div>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-gray-300">
+              Evidencia de visión · trazabilidad
+            </h2>
+            <p className="mt-1 text-[11px] text-gray-500">
+              Une la captura autorizada, la respuesta del servicio y la señal viva del núcleo MMC.
+              No sustituye al modelo ni genera diagnósticos.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className="rounded border px-2 py-1 text-[11px] font-mono font-bold"
+              style={{ borderColor: vision.statusColor, color: vision.statusColor }}
+            >
+              {vision.status}
+            </span>
+            <span className="rounded border border-gray-700 px-2 py-1 text-[10px] font-mono text-gray-400">
+              {vision.analysisKind} · llmUsed={String(vision.llmUsed)}
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-3 grid gap-3 text-[11px] md:grid-cols-3">
+          <div className="rounded-lg border border-gray-800 bg-black/25 p-3">
+            <p className="text-[10px] uppercase tracking-wider text-gray-500">Captura</p>
+            <p className="mt-1 font-mono text-gray-200">
+              {vision.capture ? `${vision.capture.kind} · ${vision.capture.status}` : 'sin captura'}
+            </p>
+            <p className="mt-1 leading-snug text-gray-500">{vision.capture?.origin || 'Sin origen declarado.'}</p>
+            {vision.capture?.clipBytes != null && (
+              <p className="mt-1 font-mono text-[10px] text-gray-500">
+                clip {vision.capture.clipBytes} bytes · no enviado
+              </p>
+            )}
+          </div>
+          <div className="rounded-lg border border-gray-800 bg-black/25 p-3">
+            <p className="text-[10px] uppercase tracking-wider text-gray-500">Inferencia del servicio</p>
+            <p className="mt-1 font-mono text-gray-200">
+              executed={String(vision.inference?.executed ?? false)} · {vision.inference?.modelStatus || 'NO_DECLARADO'}
+            </p>
+            <p className="mt-1 font-mono text-[10px] text-gray-500">
+              {vision.inference?.modelId || '—'} · {vision.inference?.modelSha256 || '—'}
+            </p>
+            <p className="mt-1 text-[10px] text-gray-500">
+              confidence {vision.inference ? vision.inference.confidence.toFixed(4) : '—'} · esta muestra, no campo
+            </p>
+          </div>
+          <div className="rounded-lg border border-gray-800 bg-black/25 p-3">
+            <p className="text-[10px] uppercase tracking-wider text-gray-500">Señal viva S35</p>
+            <p className="mt-1 font-mono text-gray-200">
+              {vision.signal?.published ? vision.signal.estado : 'NO_DATA'}
+            </p>
+            <p className="mt-1 leading-snug text-gray-500">
+              {vision.signal?.published ? vision.signal.sourceLabel || '—' : 'Sin señal publicada en esta sesión.'}
+            </p>
+          </div>
+          <div className="rounded-lg border border-gray-800 bg-black/25 p-3">
+            <p className="text-[10px] uppercase tracking-wider text-gray-500">Clip local · multi-frame</p>
+            <p className="mt-1 font-mono text-gray-200">
+              {vision.clip?.status === 'LOCAL'
+                ? `${vision.clip.analyzedFrames} frames · LOCAL`
+                : (vision.clip?.status === 'ROTO' ? 'ROTO' : 'sin clip')}
+            </p>
+            <p className="mt-1 font-mono text-[10px] text-gray-500 break-all">
+              {vision.clip?.sha256 ? `${vision.clip.sha256.slice(0, 16)}…` : '—'} ·{' '}
+              {vision.clip?.durationSec != null ? `${vision.clip.durationEstimated ? '≈' : ''}${vision.clip.durationSec} s` : '—'} ·{' '}
+              {vision.clip?.bytes != null ? `${vision.clip.bytes} bytes` : '—'}
+            </p>
+            <p className="mt-1 font-mono text-[10px] text-gray-500">
+              delta {vision.clip?.meanFrameDelta ?? '—'} / {vision.clip?.maxFrameDelta ?? '—'} · var{' '}
+              {vision.clip?.temporalVariation ?? '—'} · tendencia {vision.clip?.lumaTrend || '—'} · bordes{' '}
+              {vision.clip?.meanEdgeEnergy ?? '—'}
+            </p>
+            <p className="mt-1 text-[10px] leading-snug text-gray-500">
+              {vision.clip?.frameInferences
+                ? `${vision.clip.frameInferences.executedFrames}/${vision.clip.frameInferences.requestedFrames} frames con autorización · una inferencia por frame, no diagnóstico del clip.`
+                : 'Sin inferencia sobre frames: solo métricas temporales locales.'}
+            </p>
+          </div>
+        </div>
+
+        {vision.observations.length > 0 && (
+          <ul className="mt-3 grid gap-1 border-t border-gray-800 pt-3 text-[11px] leading-snug md:grid-cols-2">
+            {vision.observations.map((observation, index) => (
+              <li key={`${observation.code}-${index}`} className="text-gray-400">
+                <span className="font-mono font-bold text-cyan-500">{observation.code}</span> · {observation.detail}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <p className="mt-3 text-[11px] leading-snug text-gray-300">
+          <span className="font-bold uppercase tracking-wider text-gray-500">Veredicto · </span>
+          {vision.recommendation}
+        </p>
+        {!import.meta.env.DEV && vision.status === 'NO_DATA' && (
+          <p className="mt-2 text-[10px] text-gray-500">
+            La sonda de captura está disponible solo en desarrollo; en esta compilación no se puede originar
+            evidencia de visión desde esta vista.
+          </p>
+        )}
+      </section>
 
       {/* DEV-only: camara real + carga flexible; solo prueba de transporte, no aparece en produccion. */}
       {import.meta.env.DEV && (

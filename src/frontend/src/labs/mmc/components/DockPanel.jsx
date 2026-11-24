@@ -73,7 +73,7 @@ const DockPanelFourier = () => (
       Los componentes ya existen en el laboratorio. Este Dock es SOLO un ancla visual.
     </div>
     <Row k="Espectro discreto" v="SignalsInteractive · buildSpec()" mono />
-    <Row k="FFT cliente (real)" v="RealSignalAnalysis · calculateFFT()" mono />
+    <Row k="FFT cliente (SIM · CIRCUITO)" v="RealSignalAnalysis · calculateFFT()" mono />
     <Row k="Armónicos" v="ventana Hann · K hasta 100 bins" mono />
     <Row k="Bode / H(s)" v="RealSignalAnalysis · 2 nodos · dB clamp ±20/-60" mono />
     <div className="mmc-dock-anchors">
@@ -81,7 +81,7 @@ const DockPanelFourier = () => (
         ⤵ Abrir panel Fourier (Serie de Fourier simple)
       </a>
       <a href="#section-real-signal" className="mmc-dock-anchor">
-        ⤵ Abrir panel Señal Real (FFT + Bode)
+        ⤵ Abrir panel Señal Simulada (FFT + Bode · SIM · CIRCUITO)
       </a>
     </div>
   </div>

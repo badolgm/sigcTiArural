@@ -69,7 +69,10 @@ const AcpCell = () => {
               </span>
             ))}
             <span className="ml-auto text-[10px] text-gray-500">
-              intérprete: <span className="text-gray-300">fallback determinista</span>
+              intérprete:{' '}
+              <span className="text-gray-300">
+                {voice.mode === 'LLM' ? 'LLM configurado' : 'fallback determinista'}
+              </span>
             </span>
           </div>
 

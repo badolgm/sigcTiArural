@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import HonestyBadge from './HonestyBadge.jsx';
-import { NEON } from './honesty.js';
+import { NEON, honestyMeta } from './honesty.js';
 import { SIGNAL_CATALOG } from './signalCatalog.js';
+import { useLabStore } from '../../stores/useLabStore.js';
 import { IntegralsInteractive, EigenvaluesInteractive, DiffEqInteractive, SignalsInteractive } from '../../labs/AdvancedMathLabV2.jsx';
 
 const S35 = SIGNAL_CATALOG.find((s) => s.signal_id === 'S35');
+
+const fmtNum = (v) => (Number.isFinite(v) ? (Math.abs(v) >= 1000 ? v.toFixed(0) : v.toFixed(4)) : '—');
 
 // Ficha de cada instrumento. Todo el copy es verificable contra el código de
 // AdvancedMathLabV2.jsx: los valores de referencia corresponden a los valores
@@ -41,7 +44,7 @@ const MODULES = {
   },
   simulacion: {
     code: 'M03',
-    label: 'Optimización',
+    label: 'Ecuaciones Diferenciales (EDO)',
     icon: '∂',
     sistema: 'EDO lineal de primer orden',
     ecuacion: 'dy/dx + y = eˣ',
@@ -91,6 +94,9 @@ const SENALES_PENDIENTES = ['FM', 'Ruido', 'Impulso', 'Escalón'];
 const CADENA = ['Teoría', 'Simulación', 'Implementación', 'Medición real', 'Conocimiento'];
 
 const MathModelingCell = () => {
+  const live = useLabStore((s) => s.mathLiveSignal);
+  const liveOn = Boolean(live?.published);
+  const badgeEstado = liveOn ? live.estado : S35?.estado;
   const [tab, setTab] = useState('calculo');
   // Incrementa para remontar el instrumento y devolver los controles a su estado inicial.
   const [run, setRun] = useState(0);
@@ -201,7 +207,7 @@ const MathModelingCell = () => {
         <h3 className="text-[11px] font-bold tracking-[.1em] uppercase text-gray-300">
           Motor de Modelado Científico <span className="text-cyan-700 font-mono">S35</span>
         </h3>
-        {S35 && <HonestyBadge estado={S35.estado} confidence={S35.confianza} showConfidence={false} />}
+        {S35 && <HonestyBadge estado={badgeEstado} confidence={S35.confianza} showConfidence={false} />}
       </div>
 
       {/* A · Módulos (prioridad visual 1) */}
@@ -290,16 +296,48 @@ const MathModelingCell = () => {
           <div className="text-[10px] text-cyan-300 leading-tight">{active.resultado}</div>
         </div>
         <div className="mmc-zone">
-          <div className="mmc-zone-h">Señal producida</div>
-          <div
-            className="text-[11px] font-bold font-mono leading-tight"
-            style={{ color: active.emiteSenal ? '#00ffff' : '#6b7280' }}
-          >
-            {active.senalTipo}
+          <div className="mmc-zone-h">
+            Señal producida · S35 {liveOn ? 'en vivo' : 'catálogo'}
           </div>
-          <div className="text-[8px] text-gray-600 leading-tight mt-0.5">
-            no impl.: {SENALES_PENDIENTES.join(' · ')}
-          </div>
+          {liveOn ? (
+            <>
+              <div
+                className="text-[10px] font-bold font-mono leading-tight truncate"
+                style={{ color: live.estado === 'SIM' ? '#22d3ee' : '#39ff14' }}
+                title={live.expression}
+              >
+                {live.expression}
+              </div>
+              <div className="text-[9px] text-gray-500 leading-tight mt-0.5">
+                fs {fmtNum(live.fs)} Hz · N {live.sampleCount} · {live.clase_senal} · {live.dominio}
+              </div>
+              <div className="text-[9px] text-gray-600 leading-tight truncate" title={live.sourceLabel}>
+                {live.sourceLabel}
+              </div>
+              {(Number.isFinite(live.min) || Number.isFinite(live.rms)) && (
+                <div className="text-[9px] font-mono text-cyan-700 leading-tight mt-0.5">
+                  min {fmtNum(live.min)} · max {fmtNum(live.max)} · rms {fmtNum(live.rms)}
+                </div>
+              )}
+              {live.metrics && (
+                <div className="text-[9px] font-mono text-green-600 leading-tight">
+                  RMSE {fmtNum(live.metrics.rmse)} · N={live.metrics.n}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div
+                className="text-[11px] font-bold font-mono leading-tight"
+                style={{ color: active.emiteSenal ? '#00ffff' : '#6b7280' }}
+              >
+                {active.senalTipo}
+              </div>
+              <div className="text-[8px] text-gray-600 leading-tight mt-0.5">
+                no impl.: {SENALES_PENDIENTES.join(' · ')}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -361,7 +399,7 @@ const MathModelingCell = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-1.5 text-gray-400">
-            Instrumento S35 · <span style={{ color: '#FFB300' }}>SIM</span>: modelos matemáticos,
+            Instrumento S35 · <span style={{ color: honestyMeta(badgeEstado).color }}>{badgeEstado}</span>: modelos matemáticos,
             simulaciones controladas y señales sintéticas que alimentan el ecosistema CMSC, permitiendo validar
             diferencias entre teoría, simulación y comportamiento real.
           </div>

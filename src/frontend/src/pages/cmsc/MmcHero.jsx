@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import HonestyBadge from './HonestyBadge.jsx';
 import { NEON, honestyMeta } from './honesty.js';
 import { SIGNAL_CATALOG } from './signalCatalog.js';
+import { useLabStore } from '../../stores/useLabStore.js';
 import { VISUAL_ENGINE } from '../../labs/mmc/engines.js';
 
 const S35 = SIGNAL_CATALOG.find((s) => s.signal_id === 'S35');
@@ -45,7 +46,7 @@ const DESTINOS = [
   { label: 'Knowledge Hub', to: '/knowledge', estado: 'REAL' }
 ];
 
-const SPARK = (() => {
+const SPARK_STATIC = (() => {
   const w = 300;
   const h = 96;
   const amp = 2;
@@ -67,11 +68,55 @@ const SPARK = (() => {
   return { w, h, mid, line, area };
 })();
 
+// Sparkline derivado de las muestras acotadas publicadas por el MMC. Si no hay
+// snapshot publicado se usa SPARK_STATIC, declarado como escenario SIM, no vivo.
+const sparkFromSamples = (samples) => {
+  if (!Array.isArray(samples) || samples.length < 2) return null;
+  const vals = samples
+    .map((s) => (Array.isArray(s) ? Number(s[1]) : Number(s?.value)))
+    .filter(Number.isFinite);
+  if (vals.length < 2) return null;
+  const w = 300;
+  const h = 96;
+  const top = 10;
+  const bottom = h - 10;
+  const mid = h / 2;
+  let min = Math.min(...vals);
+  let max = Math.max(...vals);
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+  const span = max - min || 1;
+  const scale = (bottom - top) / span;
+  const pts = vals.map((v, i) => {
+    const x = (i / (vals.length - 1)) * w;
+    const y = bottom - (v - min) * scale;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const line = pts.join(' ');
+  return { w, h, mid, line, area: `0,${mid} ${line} ${w},${mid}` };
+};
+
+const fmtNum = (v) => (Number.isFinite(v) ? (Math.abs(v) >= 1000 ? v.toFixed(0) : v.toFixed(4)) : '—');
+
+const formatUpdated = (iso) => {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? '—' : d.toLocaleTimeString();
+};
+
 const engineColor = (state) =>
   state === 'LISTO' ? '#39FF14' : state === 'ROTO' ? '#FF3131' : '#FFB300';
 
 const MmcHero = () => {
   const [engine, setEngine] = useState('CARGANDO');
+  const live = useLabStore((s) => s.mathLiveSignal);
+  const liveOn = Boolean(live?.published);
+  const estado = liveOn ? live.estado : 'SIM';
+  const expr = liveOn ? live.expression : ACTIVE_SIGNAL.expr;
+  const fs = liveOn ? live.fs : ACTIVE_SIGNAL.fs;
+  const n = liveOn ? live.sampleCount : ACTIVE_SIGNAL.N;
+  const clase = liveOn ? live.clase_senal : ACTIVE_SIGNAL.clase;
+  const dominio = liveOn ? live.dominio : ACTIVE_SIGNAL.dominio;
+  const spark = (liveOn && sparkFromSamples(live.samples)) || SPARK_STATIC;
   const version = VISUAL_ENGINE?.version ?? '1.13.3';
   const license = VISUAL_ENGINE?.licenseBranch ?? 'MIT';
 
@@ -131,7 +176,7 @@ const MmcHero = () => {
           <span className="text-[10px] font-mono text-gray-500">
             jsxgraph {version} · {license}
           </span>
-          <HonestyBadge estado="SIM" confidence={null} showConfidence={false} />
+          <HonestyBadge estado={estado} confidence={null} showConfidence={false} />
         </div>
       </div>
 
@@ -139,20 +184,39 @@ const MmcHero = () => {
         <div className="lg:col-span-5 rounded-lg border border-cyan-900/50 bg-gray-950/50 px-3 py-2 flex flex-col">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] font-bold tracking-[.14em] uppercase text-cyan-400/80">
-              Señal activa · {ACTIVE_SIGNAL.id}
+              Señal activa · {S35?.signal_id ?? ACTIVE_SIGNAL.id} {liveOn ? '· en vivo' : ''}
             </span>
-            {S35 && <HonestyBadge estado={S35.estado} confidence={S35.confianza} showConfidence={false} />}
+            {S35 && <HonestyBadge estado={estado} confidence={S35.confianza} showConfidence={false} />}
           </div>
-          <div className="font-mono text-lg text-cyan-300 leading-tight">{ACTIVE_SIGNAL.expr}</div>
+          <div className="font-mono text-lg text-cyan-300 leading-tight">{expr}</div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] font-mono text-gray-400">
-            <span>fs {ACTIVE_SIGNAL.fs} Hz</span>
-            <span>N {ACTIVE_SIGNAL.N}</span>
-            <span>clase {ACTIVE_SIGNAL.clase}</span>
-            <span>dominio {ACTIVE_SIGNAL.dominio}</span>
+            <span>fs {fs} Hz</span>
+            <span>N {n}</span>
+            <span>clase {clase}</span>
+            <span>dominio {dominio}</span>
           </div>
-          <div className="text-[9px] text-gray-600 mt-0.5">
-            escenario SIM por defecto (no vivo)
+          {liveOn && (Number.isFinite(live.min) || Number.isFinite(live.rms)) && (
+            <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-[9px] font-mono text-cyan-700">
+              <span>min {fmtNum(live.min)}</span>
+              <span>max {fmtNum(live.max)}</span>
+              <span>rms {fmtNum(live.rms)}</span>
+              {live.metrics && <span>RMSE {fmtNum(live.metrics.rmse)}</span>}
+            </div>
+          )}
+          <div className="text-[9px] text-gray-600 mt-0.5 truncate" title={liveOn ? live.sourceLabel : ''}>
+            {liveOn
+              ? `${live.sourceLabel} · publicado ${formatUpdated(live.updatedAt)}`
+              : 'escenario SIM por defecto (no vivo)'}
           </div>
+          <svg
+            viewBox={`0 0 ${spark.w} ${spark.h}`}
+            preserveAspectRatio="none"
+            className="mt-2 w-full h-10"
+            aria-hidden="true"
+          >
+            <polygon points={spark.area} fill="rgba(0,255,255,0.08)" />
+            <polyline points={spark.line} fill="none" stroke="#22d3ee" strokeWidth="1.5" />
+          </svg>
         </div>
 
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-2">

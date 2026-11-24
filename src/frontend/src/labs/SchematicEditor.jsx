@@ -16,6 +16,11 @@ import 'reactflow/dist/style.css';
 import { useLabStore } from '../stores/useLabStore';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+// El cluster externo de 12 nodos ya no está disponible en el editor legado.
+// Se conserva la rama del mensaje con un valor explícito para evitar un
+// ReferenceError si se alcanza esa ruta; el comportamiento normal no cambia.
+const LEGACY_CLUSTER_ENABLED = false;
+
 // --- SVG SYMBOLS ---
 // Helper for handle rotation
 const getRotatedPosition = (pos, rotation, mirrored) => {
@@ -464,8 +469,8 @@ const ShiftRegisterNode = ({ data, selected }) => {
 
         // 15. Karnaugh Map (Visual Tool)
         const KarnaughMapNode = ({ id, data, selected }) => {
-            if (!data) return null;
             const { setNodes, setEdges } = useReactFlow();
+            if (!data) return null;
             const values = data?.values || Array(16).fill(0);
 
             const toggleCell = (idx) => {
@@ -1752,7 +1757,7 @@ c.solve_transient()
               setSimResult(null);
           } else {
               setSimData(chartData);
-              setSimResult(useCluster ? "Simulación completada en Cluster (12 Nodos) 🚀" : "Simulación completada.");
+              setSimResult(LEGACY_CLUSTER_ENABLED ? "Simulación completada en Cluster (12 Nodos) 🚀" : "Simulación completada.");
           }
 
       } catch (e) {

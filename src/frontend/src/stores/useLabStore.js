@@ -7,6 +7,33 @@ import {
 } from '../pages/cmsc/signalCatalog.js';
 
 /**
+ * Snapshot por defecto de S35. NO publicado: es el mismo escenario SIM que el
+ * Hero mostraba antes de la conexión, conservado como fallback honesto cuando
+ * el núcleo MMC no está montado. `published:false` impide presentarlo como vivo.
+ * El estado usa el canon de 7 estados; `LOCAL` es una clase de señal, no estado.
+ */
+const DEFAULT_MATH_LIVE_SIGNAL = {
+  published: false,
+  id: 'S35',
+  expression: 'y(t)=2*sin(2*pi*100*t)',
+  sourceLabel: 'Escenario base del MMC (no publicado)',
+  sourceKind: null,
+  fs: 2000,
+  sampleCount: 41,
+  t0: 0,
+  t1: 0.02,
+  estado: 'SIM',
+  clase_senal: 'GENERADA',
+  dominio: 'Matemático',
+  min: null,
+  max: null,
+  rms: null,
+  metrics: null,
+  samples: [],
+  updatedAt: null
+};
+
+/**
  * useLabStore
  * -----------
  * Store global (Federated State) para la integración v3.0 de los laboratorios.
@@ -124,6 +151,21 @@ export const useLabStore = create((set) => ({
     sane: SANE_ENTRIES,
     huerfano: HUERFANO_ENTRY
   },
+
+  // RAMA VIVA S35 — snapshot publicado por MmcMathematicsCore. No sustituye al
+  // signalRegistry (catálogo declarativo): es la señal activa que el laboratorio
+  // matemático produce en tiempo real. Solo lectura para los consumidores.
+  mathLiveSignal: DEFAULT_MATH_LIVE_SIGNAL,
+
+  setMathLiveSignal: (snapshot) => set((state) => ({
+    mathLiveSignal: {
+      ...state.mathLiveSignal,
+      ...snapshot,
+      id: 'S35',
+      published: snapshot?.published !== false,
+      updatedAt: new Date().toISOString()
+    }
+  })),
 
   reset: () => set({ electronicsData: { active: false, signals: {}, params: {}, lastUpdate: null } })
 }));

@@ -3,12 +3,32 @@
 // - la vista previa en vivo NO captura NI envía nada por sí sola;
 // - hace falta marcar una casilla explícita y pulsar «Autorizar capturar y ENVIAR frame ahora»
 //   o «Autorizar y grabar clip»; el clip vive SOLO en memoria (MediaRecorder + Blob);
-// - el origen de la prueba se declara en pantalla (por defecto terraza real con plantas);
+// - el origen se declara en pantalla con etiquetas técnicas de escena local;
 // - NO escribe en data/, NO etiqueta, NO anota y NO cambia el modelo servido
-//   (M1 baseline oficial congelado / M2 challenger validado: servir != promover).
+//   (M1 baseline oficial congelado / M2 challenger validado: servir != promover);
+// - el WebM de .local_backups/ se lee SOLO en modo local: métricas multi-frame
+//   deterministas en el navegador y frames al endpoint oficial SOLO con autorización
+//   explícita. Un clip local se reporta LOCAL, nunca REAL-LOCAL.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AI_INFERENCE_URL, buildInfoFromOfficialResponse } from '../../AIPredictiva.jsx';
 import { NEON } from '../honesty.js';
+import { useLabStore } from '../../../stores/useLabStore.js';
+import {
+  analyzeVisionContext,
+  clearVisionEvidence,
+  describeCapture,
+  publishVisionEvidence,
+  useVisionEvidence,
+} from '../../../services/visionEvidence.js';
+import {
+  BACKUP_CLIP_FILE_NAME,
+  BACKUP_CLIP_PATH,
+  analyzeClip,
+  clipDigestLabel,
+  fetchDeclaredClip,
+  pickRepresentativeFrames,
+  summarizeFrameInferences,
+} from '../../../services/clipEvidence.js';
 
 const FRAME_FILE_RE = /^image_\d{8}_\d{6}_\d{3}(?:\.jpe?g)?$/i;
 const VIDEO_ID_RE = /^video_\d{8}_\d{6}_\d{3}(?:\.mp4)?$/i;
@@ -16,10 +36,12 @@ const IMAGE_EXT_RE = /\.(jpe?g|png|webp|gif|bmp|avif)$/i;
 const CLIENT_CONTEXT = 'usb_frame_contract_v1';
 
 const TEST_ORIGINS = [
-  'Prueba real en terraza · plantas domésticas en vivo',
-  'Prueba real en campo abierto · cultivo no curado (fuera de dominio del dataset)',
-  'Prueba controlada de escritorio · escena general (no agrícola)',
+  'TERRAZA · PLANTAS DOMÉSTICAS (NO CULTIVO)',
+  'CAMPO · CULTIVO NO CURADO (FUERA DE DOMINIO)',
+  'ESCRITORIO · ESCENA GENERAL (NO AGRÍCOLA)',
 ];
+
+const LOCAL_CLIP_ORIGIN = 'Clip local declarado en .local_backups/ · origen LOCAL (no cámara, NO campo)';
 
 const CLIP_MIME_CANDIDATES = [
   'video/webm;codecs=vp9',
@@ -53,6 +75,11 @@ const UsbFrameProbePanel = () => {
   const clipUrlRef = useRef(null);
   const recorderRef = useRef(null);
   const chunksRef = useRef([]);
+  // Clip local de respaldo: frames en memoria (nunca en disco) y descriptor
+  // reutilizable para republicar el resumen cuando cambia la señal S35.
+  const localClipFramesRef = useRef([]);
+  const localClipCaptureRef = useRef(null);
+  const clipPayloadRef = useRef(null);
 
   const [videoDevices, setVideoDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState('');
@@ -70,6 +97,14 @@ const UsbFrameProbePanel = () => {
   const [clipMimeType, setClipMimeType] = useState('');
   const [clipError, setClipError] = useState(null);
 
+  // WebM local de respaldo: análisis multi-frame y envío autorizado de frames.
+  const [clipSummary, setClipSummary] = useState(null);
+  const [clipFrameInferences, setClipFrameInferences] = useState(null);
+  const [clipLoading, setClipLoading] = useState(false);
+  const [clipFramesLoading, setClipFramesLoading] = useState(false);
+  const [clipFrameAuthorized, setClipFrameAuthorized] = useState(false);
+  const [localClipError, setLocalClipError] = useState(null);
+
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [originalName, setOriginalName] = useState('');
@@ -81,6 +116,47 @@ const UsbFrameProbePanel = () => {
   const [loading, setLoading] = useState(false);
   const [raw, setRaw] = useState(null);
   const [info, setInfo] = useState(null);
+
+  // Canal de evidencia ADITIVO. Lee S35 del store canónico sin escribirlo y
+  // publica en un store externo en memoria. Si cambia la señal viva, se
+  // recalcula el mismo análisis con la señal vigente (nunca con datos inventados).
+  const mathLiveSignal = useLabStore((state) => state.mathLiveSignal);
+  const mathLiveSignalRef = useRef(mathLiveSignal);
+  mathLiveSignalRef.current = mathLiveSignal;
+  const lastEvidenceInputRef = useRef(null);
+  const vision = useVisionEvidence();
+
+  const publishContext = useCallback((input) => {
+    // El resumen multi-frame del clip local se conserva aditivamente aunque la
+    // captura/inferencia cambie: se republica con la señal S35 vigente.
+    const payload = clipPayloadRef.current
+      ? { ...input, clip: clipPayloadRef.current }
+      : input;
+    lastEvidenceInputRef.current = payload;
+    publishVisionEvidence(analyzeVisionContext({ ...payload, liveSignal: mathLiveSignalRef.current }));
+  }, []);
+
+  useEffect(() => {
+    if (!lastEvidenceInputRef.current) return;
+    publishVisionEvidence(analyzeVisionContext({
+      ...lastEvidenceInputRef.current,
+      liveSignal: mathLiveSignal,
+    }));
+  }, [mathLiveSignal]);
+
+  // Reinicia el clip local: un fallo de lectura no debe dejar métricas previas
+  // visibles junto a un error (estado contradictorio en pantalla).
+  const clearLocalClip = useCallback(() => {
+    setClipSummary(null);
+    setClipFrameInferences(null);
+    setClipFrameAuthorized(false);
+    setLocalClipError(null);
+    localClipFramesRef.current = [];
+    localClipCaptureRef.current = null;
+    clipPayloadRef.current = null;
+    lastEvidenceInputRef.current = null;
+    clearVisionEvidence();
+  }, []);
 
   // Detiene el MediaRecorder sin tocar estado de React: también se usa en el unmount.
   const stopRecorderOnly = useCallback(() => {
@@ -112,6 +188,8 @@ const UsbFrameProbePanel = () => {
     setCameraLoading(false);
     // La autorización es por sesión de cámara: al detenerla queda revocada.
     setCaptureAuthorized(false);
+    lastEvidenceInputRef.current = null;
+    clearVisionEvidence();
   }, [releaseStream]);
 
   const refreshDevices = useCallback(async () => {
@@ -193,6 +271,10 @@ const UsbFrameProbePanel = () => {
         clipUrlRef.current = null;
       }
       chunksRef.current = [];
+      localClipFramesRef.current = [];
+      clipPayloadRef.current = null;
+      lastEvidenceInputRef.current = null;
+      clearVisionEvidence();
     };
   }, [refreshDevices, releaseStream]);
 
@@ -225,6 +307,8 @@ const UsbFrameProbePanel = () => {
     setCaptureAuthorized(false);
     setLastAuthorizedAction('Archivo local preparado · pendiente de envío manual');
     clearResult();
+    lastEvidenceInputRef.current = null;
+    clearVisionEvidence();
     if (previewUrlRef.current) {
       URL.revokeObjectURL(previewUrlRef.current);
       previewUrlRef.current = null;
@@ -234,7 +318,14 @@ const UsbFrameProbePanel = () => {
 
     const mimeOk = typeof selected.type === 'string' && selected.type.startsWith('image/');
     if (!mimeOk && !IMAGE_EXT_RE.test(selected.name)) {
-      setFileError('Selecciona un archivo de imagen real (image/*). No se valida ni exige su nombre.');
+      const message = 'Selecciona un archivo de imagen real (image/*). No se valida ni exige su nombre.';
+      setFileError(message);
+      publishContext({
+        capture: describeCapture({ kind: 'none', error: message }),
+        data: null,
+        built: null,
+        error: message,
+      });
       return;
     }
 
@@ -246,6 +337,17 @@ const UsbFrameProbePanel = () => {
         lastModified: selected.lastModified || Date.now(),
       });
     acceptImage(normalized, selected.name, 'Archivo local · origen declarado por el usuario');
+    publishContext({
+      capture: describeCapture({
+        kind: 'local-file',
+        origin: 'Archivo local · origen declarado por el usuario',
+        fileName: selected.name,
+        derivedFrom: derivedFrom.trim(),
+      }),
+      data: null,
+      built: null,
+      error: null,
+    });
   };
 
   const declaredDerivedFrom = derivedFrom.trim();
@@ -254,11 +356,14 @@ const UsbFrameProbePanel = () => {
     : null;
   const blocked = Boolean(fileError || derivedError || !file || loading);
 
-  const submitFrame = async (imageFile, originalFileName, source) => {
+  const submitFrame = async (imageFile, originalFileName, source, capture) => {
     if (derivedError) return;
     acceptImage(imageFile, originalFileName, source);
     setLoading(true);
     clearResult();
+    // Publica primero la captura sin inferencia: el veredicto NO_DATA impide
+    // que la sola existencia del frame se lea como evidencia.
+    publishContext({ capture, data: null, built: null, error: null });
     const formData = new FormData();
     formData.append('file', imageFile);
     formData.append('client_context', CLIENT_CONTEXT);
@@ -277,10 +382,14 @@ const UsbFrameProbePanel = () => {
           data?.error?.message || data?.error?.detail || 'No fue posible completar la petición oficial.'
         );
       }
+      const built = buildInfoFromOfficialResponse(data);
       setRaw(data);
-      setInfo(buildInfoFromOfficialResponse(data));
+      setInfo(built);
+      publishContext({ capture, data, built, error: null });
     } catch (err) {
-      setRequestError(err.message || 'No fue posible completar la petición oficial.');
+      const message = err.message || 'No fue posible completar la petición oficial.';
+      setRequestError(message);
+      publishContext({ capture, data: null, built: null, error: message });
     } finally {
       setLoading(false);
     }
@@ -289,7 +398,13 @@ const UsbFrameProbePanel = () => {
   const send = () => {
     if (!file || derivedError) return;
     setLastAuthorizedAction('Frame manual enviado · botón «ENVIAR FRAME»');
-    void submitFrame(file, originalName || fileName, sourceLabel || 'Archivo local');
+    const capture = describeCapture({
+      kind: 'local-file',
+      origin: sourceLabel || 'Archivo local · origen declarado por el usuario',
+      fileName: originalName || fileName,
+      derivedFrom: declaredDerivedFrom,
+    });
+    void submitFrame(file, originalName || fileName, sourceLabel || 'Archivo local', capture);
   };
 
   const captureFrame = () => {
@@ -328,7 +443,14 @@ const UsbFrameProbePanel = () => {
         lastModified: Date.now(),
       });
       setLastAuthorizedAction(`Frame capturado y enviado · ${testOrigin}`);
-      void submitFrame(frame, 'captura en vivo · cámara real', testOrigin);
+      const capture = describeCapture({
+        kind: 'camera-frame',
+        authorized: true,
+        origin: testOrigin,
+        fileName: frame.name,
+        derivedFrom: declaredDerivedFrom,
+      });
+      void submitFrame(frame, 'captura en vivo · cámara real', testOrigin, capture);
     }, 'image/jpeg', 0.92);
   };
 
@@ -368,7 +490,14 @@ const UsbFrameProbePanel = () => {
         ? new window.MediaRecorder(streamRef.current, { mimeType })
         : new window.MediaRecorder(streamRef.current);
     } catch (err) {
-      setClipError(err?.message || 'No fue posible iniciar MediaRecorder.');
+      const message = err?.message || 'No fue posible iniciar MediaRecorder.';
+      setClipError(message);
+      publishContext({
+        capture: describeCapture({ kind: 'clip-recording', authorized: true, origin: testOrigin, error: message }),
+        data: null,
+        built: null,
+        error: message,
+      });
       return;
     }
 
@@ -392,20 +521,47 @@ const UsbFrameProbePanel = () => {
       setClipBlob(blob);
       setClipMimeType(blob.type || 'video/webm');
       setLastAuthorizedAction(`Clip en memoria · ${testOrigin}`);
+      publishContext({
+        capture: describeCapture({
+          kind: 'clip-recording',
+          authorized: true,
+          origin: testOrigin,
+          derivedFrom: derivedFrom.trim(),
+          clipBytes: blob.size,
+          clipMimeType: blob.type || 'video/webm',
+        }),
+        data: null,
+        built: null,
+        error: null,
+      });
     };
     recorder.onerror = () => {
       recorderRef.current = null;
       if (!mountedRef.current) return;
       chunksRef.current = [];
       setRecordingClip(false);
-      setClipError('MediaRecorder informó un error durante la grabación.');
+      const message = 'MediaRecorder informó un error durante la grabación.';
+      setClipError(message);
+      publishContext({
+        capture: describeCapture({ kind: 'clip-recording', authorized: true, origin: testOrigin, error: message }),
+        data: null,
+        built: null,
+        error: message,
+      });
     };
 
     try {
       recorder.start(250);
     } catch (err) {
       recorderRef.current = null;
-      setClipError(err?.message || 'No fue posible iniciar la grabación.');
+      const message = err?.message || 'No fue posible iniciar la grabación.';
+      setClipError(message);
+      publishContext({
+        capture: describeCapture({ kind: 'clip-recording', authorized: true, origin: testOrigin, error: message }),
+        data: null,
+        built: null,
+        error: message,
+      });
       return;
     }
     recorderRef.current = recorder;
@@ -449,12 +605,154 @@ const UsbFrameProbePanel = () => {
         lastModified: Date.now(),
       });
       setLastAuthorizedAction(`Frame extraído del clip en memoria @ ${seconds.toFixed(2)}s · ${testOrigin}`);
+      const capture = describeCapture({
+        kind: 'clip-frame',
+        authorized: true,
+        origin: `${testOrigin} · clip local en memoria`,
+        fileName: frame.name,
+        derivedFrom: declaredDerivedFrom,
+        clipBytes: clipBlob.size,
+        clipMimeType: clipBlob.type || clipMimeType,
+      });
       void submitFrame(
         frame,
         `clip en memoria @ ${seconds.toFixed(2)}s`,
-        `${testOrigin} · clip local en memoria`
+        `${testOrigin} · clip local en memoria`,
+        capture
       );
     }, 'image/jpeg', 0.92);
+  };
+
+  // === WebM local de respaldo · métricas multi-frame sin copiar el archivo ===
+  const analyzeLocalClip = async (blob, declaredPath, fileName) => {
+    setClipLoading(true);
+    clearLocalClip();
+    try {
+      const { summary, frames } = await analyzeClip({ blob, declaredPath, fileName, frameCount: 8 });
+      localClipFramesRef.current = frames;
+      const capture = describeCapture({
+        kind: 'local-clip',
+        origin: LOCAL_CLIP_ORIGIN,
+        declaredPath,
+        fileName,
+        clipBytes: blob.size,
+        clipMimeType: blob.type || 'video/webm',
+        sha256: summary.source.sha256,
+      });
+      localClipCaptureRef.current = capture;
+      clipPayloadRef.current = { summary, frameInferences: null, error: null };
+      setClipSummary(summary);
+      setLastAuthorizedAction(`Clip local analizado · ${declaredPath} · ${summary.sampling.analyzedFrames} frames · sin envío`);
+      publishContext({ capture, data: null, built: null, error: null });
+    } catch (err) {
+      const message = err?.message || 'No fue posible analizar el clip local.';
+      setLocalClipError(message);
+      localClipCaptureRef.current = null;
+      clipPayloadRef.current = { summary: null, frameInferences: null, error: message };
+      publishContext({
+        capture: describeCapture({ kind: 'local-clip', error: message, declaredPath }),
+        data: null,
+        built: null,
+        error: message,
+      });
+    } finally {
+      if (mountedRef.current) setClipLoading(false);
+    }
+  };
+
+  const loadDeclaredClip = async () => {
+    clearLocalClip();
+    setClipLoading(true);
+    setLastAuthorizedAction('Clip declarado · lectura en curso (solo lectura)');
+    try {
+      const blob = await fetchDeclaredClip(BACKUP_CLIP_PATH);
+      await analyzeLocalClip(blob, BACKUP_CLIP_PATH, BACKUP_CLIP_FILE_NAME);
+    } catch (err) {
+      const message = err?.message || 'No fue posible leer la ruta declarada.';
+      if (mountedRef.current) {
+        setClipLoading(false);
+        setLocalClipError(message);
+        setLastAuthorizedAction('Clip declarado · sin resultado');
+      }
+    }
+  };
+
+  const handleLocalClipFile = (event) => {
+    const selected = event.target.files?.[0] || null;
+    event.target.value = '';
+    if (!selected) return;
+    void analyzeLocalClip(
+      selected,
+      `Archivo WebM local seleccionado: ${selected.name}`,
+      selected.name
+    );
+  };
+
+  const sendClipFrames = async () => {
+    const frames = pickRepresentativeFrames(localClipFramesRef.current, 3);
+    const capture = localClipCaptureRef.current
+      || describeCapture({ kind: 'local-clip', origin: LOCAL_CLIP_ORIGIN });
+    if (!clipFrameAuthorized || !frames.length || !clipSummary) {
+      setLocalClipError('Marca la autorización y analiza un clip antes de enviar frames.');
+      return;
+    }
+    setClipFramesLoading(true);
+    setLocalClipError(null);
+    const results = [];
+    let lastData = null;
+    let lastBuilt = null;
+    try {
+      // Secuencial y acotado: máximo 3 frames representativos al endpoint oficial.
+      for (const frame of frames) {
+        const image = new File([frame.blob], contractFileName(), {
+          type: 'image/jpeg',
+          lastModified: Date.now(),
+        });
+        const formData = new FormData();
+        formData.append('file', image);
+        formData.append('client_context', CLIENT_CONTEXT);
+        const response = await fetch(AI_INFERENCE_URL, { method: 'POST', body: formData });
+        let data = null;
+        try {
+          data = await response.json();
+        } catch {
+          throw new Error('La respuesta oficial de IA no es válida.');
+        }
+        if (!response.ok || data?.error) {
+          throw new Error(data?.error?.message || data?.error?.detail || 'No fue posible completar la inferencia del frame.');
+        }
+        const built = buildInfoFromOfficialResponse(data);
+        lastData = data;
+        lastBuilt = built;
+        const framePrediction = data?.prediction || {};
+        results.push({
+          index: frame.index,
+          timeSec: frame.timeSec,
+          executed: built.inferenceExecuted === true,
+          confidence: built.confidence,
+          label: framePrediction.prediction_label || framePrediction.prediction_code || built.disease || 'sin etiqueta',
+          modelStatus: built.modelStatus,
+        });
+      }
+      const frameInferences = summarizeFrameInferences(results);
+      setClipFrameInferences(frameInferences);
+      setRaw(lastData);
+      setInfo(lastBuilt);
+      setLastAuthorizedAction(`${results.length} frames del clip local enviados con autorización · veredicto LOCAL`);
+      clipPayloadRef.current = { summary: clipSummary, frameInferences, error: null };
+      publishContext({ capture, data: lastData, built: lastBuilt, error: null });
+    } catch (err) {
+      const message = err?.message || 'No fue posible enviar los frames del clip.';
+      setLocalClipError(message);
+      clipPayloadRef.current = { summary: clipSummary, frameInferences: null, error: message };
+      publishContext({ capture, data: null, built: null, error: message });
+    } finally {
+      if (mountedRef.current) {
+        setClipFramesLoading(false);
+        // Cada envío exige renovar la autorización en pantalla.
+        setClipFrameAuthorized(false);
+      }
+    }
   };
 
   const handleDeviceChange = (event) => {
@@ -474,12 +772,10 @@ const UsbFrameProbePanel = () => {
       >
         <p className="font-bold uppercase tracking-widest">Prueba de transporte · autorización explícita · no validación semántica</p>
         <p className="mt-1">
-          La cámara permanece apagada hasta tu orden. Con la vista previa encendida NO se captura ni se envía
-          nada automáticamente: hace falta marcar la autorización y pulsar el botón correspondiente. El origen
-          declarado es una escena real abierta (terraza/plantas domésticas por defecto): <strong>NO</strong> es un
-          cultivo productivo cerrado ni el dataset curado PlantVillage. La escena de cámara general está fuera del
-          dominio agrícola entrenado; el clasificador servido no la valida. M1 sigue siendo el baseline oficial
-          congelado; M2 continúa como challenger validado sin promoción (<span className="font-mono">servir != promover</span>).
+          Cámara apagada hasta activación manual; vista previa sin captura ni envío. Se requiere autorización
+          y disparo explícito. Origen: escena local no agrícola, fuera del dominio del dataset; la inferencia
+          no valida la escena. M1 baseline congelado · M2 challenger sin promoción (
+          <span className="font-mono">servir != promover</span>).
         </p>
       </div>
 
@@ -523,7 +819,7 @@ const UsbFrameProbePanel = () => {
         </div>
 
         <label className="mt-2 block text-[10px] uppercase tracking-wider text-gray-500" htmlFor="usb-frame-origin">
-          Origen honesto de la prueba
+          Origen declarado de la captura
           <select
             id="usb-frame-origin"
             value={testOrigin}
@@ -535,8 +831,8 @@ const UsbFrameProbePanel = () => {
         </label>
 
         <p className="mt-2 text-[10px] leading-snug text-gray-500">
-          La cámara requiere permiso del navegador y HTTPS o localhost. Al detenerla o salir de la vista se
-          liberan todos los <span className="font-mono">MediaStreamTrack</span>. La vista previa es solo video en vivo.
+          Requiere permiso del navegador (HTTPS o localhost). Al detener o salir se liberan los{' '}
+          <span className="font-mono">MediaStreamTrack</span>. Vista previa = video en vivo.
         </p>
 
         <div className="mt-2 overflow-hidden rounded-lg border border-gray-800 bg-black/60">
@@ -574,14 +870,12 @@ const UsbFrameProbePanel = () => {
               className="mt-0.5 h-3.5 w-3.5 accent-cyan-400 disabled:opacity-40"
             />
             <span>
-              Ya ubiqué el portátil frente a las plantas y <strong>autorizo capturar/grabar ahora</strong>.
-              Marca esta casilla solo cuando estés listo: sin ella no se dispara nada.
+              Autorización explícita de captura/grabación. Sin esta marca no se emite ninguna petición.
             </span>
           </label>
           <p className="mt-2 text-[10px] leading-snug text-gray-400">
-            Origen declarado para esta sesión: <span className="font-mono text-gray-200">{testOrigin}</span>.
-            Se registra junto a la respuesta; no se presenta como evidencia de cultivo productivo ni como muestra
-            del dataset curado.
+            Origen: <span className="font-mono text-gray-200">{testOrigin}</span> · se registra con la respuesta;
+            no es muestra del dataset ni evidencia de cultivo productivo.
           </p>
 
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
@@ -635,10 +929,126 @@ const UsbFrameProbePanel = () => {
             Autorizar extracción de frame del clip y enviar
           </button>
           <p className="mt-1 text-[10px] leading-snug text-gray-500">
-            Busca el segundo deseado en el reproductor y pulsa el botón: la extracción NO ocurre al detener la grabación.
+            Seleccionar el segundo en el reproductor: la extracción solo ocurre al pulsar el botón.
           </p>
         </div>
       )}
+
+      {/* WebM local de respaldo: solo lectura, métricas multi-frame deterministas. */}
+      <div className="rounded-lg border border-cyan-900/60 bg-gray-900/50 px-3 py-2 space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+          <p className="text-[10px] uppercase tracking-widest text-cyan-400 font-bold">
+            Clip local de respaldo · métricas multi-frame (LOCAL)
+          </p>
+          <span className="text-[10px] font-mono text-gray-500">solo lectura · sin copia ni escritura</span>
+        </div>
+        <p className="text-[10px] leading-snug text-gray-500">
+          Ruta: <span className="font-mono text-gray-300">{BACKUP_CLIP_PATH}</span> · lectura local, sin copia ni
+          escritura en <span className="font-mono">data/</span> · estado siempre{' '}
+          <span className="font-mono">LOCAL</span>.
+        </p>
+
+        <div className="grid gap-2 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={loadDeclaredClip}
+            disabled={clipLoading || clipFramesLoading || loading}
+            className="py-2 rounded-md text-[11px] font-bold uppercase tracking-widest border border-cyan-700 text-cyan-200 hover:border-cyan-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {clipLoading ? 'ANALIZANDO CLIP...' : 'Analizar clip declarado (.local_backups)'}
+          </button>
+          <label
+            htmlFor="usb-local-clip-file"
+            className="flex items-center justify-center py-2 rounded-md text-[11px] font-bold uppercase tracking-widest border border-gray-700 text-gray-300 hover:border-cyan-600 hover:text-white cursor-pointer"
+          >
+            {clipSummary ? clipSummary.source.fileName : 'Cargar WebM manualmente (alternativa)'}
+          </label>
+          <input
+            id="usb-local-clip-file"
+            type="file"
+            accept="video/webm,video/*"
+            onChange={handleLocalClipFile}
+            className="hidden"
+          />
+        </div>
+
+        {localClipError && (
+          <p className="text-[11px] font-semibold" style={{ color: NEON.alert }}>{localClipError}</p>
+        )}
+
+        {clipSummary && (
+          <>
+            <div className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
+              <HintRow label="sha256" value={clipDigestLabel(clipSummary.source.sha256)} mono />
+              <HintRow
+                label="duración / tamaño"
+                value={`${clipSummary.source.durationEstimated ? '≈' : ''}${clipSummary.source.durationSec} s · ${clipSummary.source.bytes} bytes`}
+                mono
+              />
+              <HintRow label="dimensiones" value={`${clipSummary.source.width}x${clipSummary.source.height}`} mono />
+              <HintRow
+                label="frames analizados"
+                value={`${clipSummary.sampling.analyzedFrames} · var temporal ${clipSummary.metrics.temporalVariation}`}
+                mono
+              />
+              <HintRow
+                label="delta medio / máx"
+                value={`${clipSummary.metrics.meanFrameDelta} / ${clipSummary.metrics.maxFrameDelta}`}
+                mono
+              />
+              <HintRow
+                label="tendencia luminancia"
+                value={`${clipSummary.metrics.lumaTrend} · bordes ${clipSummary.metrics.meanEdgeEnergy}`}
+                mono
+              />
+            </div>
+
+            <div className="rounded border border-gray-800 bg-black/30 px-2 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-amber-300">
+                Paso 2 · autorización para enviar frames representativos
+              </p>
+              <label className="mt-1 flex items-start gap-2 text-[10px] leading-snug text-gray-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={clipFrameAuthorized}
+                  onChange={(event) => {
+                    setClipFrameAuthorized(event.target.checked);
+                    setLastAuthorizedAction(event.target.checked
+                      ? 'Autorización de frames del clip marcada · esperando disparo manual'
+                      : 'Autorización de frames del clip revocada');
+                  }}
+                  disabled={clipFramesLoading}
+                  className="mt-0.5 h-3.5 w-3.5 accent-cyan-400 disabled:opacity-40"
+                />
+                <span>
+                  Autorizo enviar hasta <strong>3 frames representativos</strong> de este clip local al endpoint
+                  oficial. Cada inferencia describe solo ese frame; NO se emite un diagnóstico del clip completo.
+                </span>
+              </label>
+              <button
+                type="button"
+                onClick={sendClipFrames}
+                disabled={!clipFrameAuthorized || clipFramesLoading || loading}
+                className="mt-2 w-full py-2 rounded-md text-[11px] font-bold uppercase tracking-widest border border-cyan-700 text-cyan-200 hover:border-cyan-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {clipFramesLoading ? 'ENVIANDO FRAMES...' : 'Autorizar y ENVIAR frames del clip local'}
+              </button>
+              {clipFrameInferences && (
+                <p className="mt-2 text-[10px] leading-snug text-gray-400">
+                  Inferencias: {clipFrameInferences.executedFrames}/{clipFrameInferences.requestedFrames} frames ·
+                  etiquetas {clipFrameInferences.distinctLabels.join(', ') || 'sin etiqueta'} · confianza{' '}
+                  {clipFrameInferences.confidenceMin ?? '—'}–{clipFrameInferences.confidenceMax ?? '—'} · veredicto{' '}
+                  <span className="font-mono">LOCAL</span>.
+                </p>
+              )}
+            </div>
+            <p className="text-[10px] leading-snug text-gray-500">
+              Original intacto en <span className="font-mono">.local_backups/</span> · frames solo en memoria,
+              descartados al salir.
+            </p>
+          </>
+        )}
+      </div>
 
       <div className="rounded-lg border border-gray-800 bg-gray-900/50 px-3 py-2">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -721,7 +1131,7 @@ const UsbFrameProbePanel = () => {
         />
         <HintRow label="confidence" value={Number(info?.confidence ?? 0).toFixed(4)} mono />
         <HintRow label="inference_origin" value={String(trace.inference_origin ?? '—')} mono />
-        <HintRow label="origen de prueba (local)" value={sourceLabel || testOrigin} />
+        <HintRow label="origen declarado (local)" value={sourceLabel || testOrigin} />
         <HintRow label="autorización (local)" value={lastAuthorizedAction} />
         <HintRow
           label="derived_from (local, no enviado)"
@@ -732,6 +1142,102 @@ const UsbFrameProbePanel = () => {
           Estos valores describen la petición y el artefacto servido. Una confianza alta no valida la escena de
           cámara ni sustituye un diagnóstico agrícola. M2 es challenger validado: servir != promover.
         </p>
+      </div>
+
+      {/* Canal aditivo: une captura autorizada + inferencia REAL + señal viva S35.
+          Es determinista local (NO LLM, NO inferencia nueva) y nunca emite REAL. */}
+      <div className="rounded-lg border border-gray-800 bg-black/30 px-3 py-2 space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+          <p className="text-[10px] uppercase tracking-widest text-cyan-400 font-bold">
+            Evidencia de visión · trazabilidad
+          </p>
+          <span
+            className="rounded border px-2 py-0.5 text-[10px] font-mono font-bold"
+            style={{ borderColor: vision.statusColor, color: vision.statusColor }}
+          >
+            {vision.status}
+          </span>
+        </div>
+        <p className="text-[10px] leading-snug text-gray-500">
+          Análisis <span className="font-mono">{vision.analysisKind}</span> · sin LLM (
+          <span className="font-mono">llmUsed={String(vision.llmUsed)}</span>) · veredicto calculado solo con
+          captura autorizada, respuesta del servicio y señal publicada. Nunca se emite <span className="font-mono">REAL</span>.
+        </p>
+
+        <div className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
+          <HintRow label="captura" value={vision.capture ? `${vision.capture.kind} · ${vision.capture.status}` : 'sin captura'} mono />
+          <HintRow label="origen declarado" value={vision.capture?.origin || '—'} />
+          <HintRow label="archivo (memoria)" value={vision.capture?.fileName || '—'} mono />
+          <HintRow label="derived_from (no interpretado)" value={vision.capture?.derivedFrom || '—'} mono />
+          {vision.capture?.clipBytes != null && (
+            <HintRow
+              label="clip en memoria"
+              value={`${vision.capture.clipBytes} bytes · ${vision.capture.clipMimeType || 'video/webm'} · no enviado`}
+              mono
+            />
+          )}
+          {vision.clip?.status === 'LOCAL' && (
+            <>
+              <HintRow
+                label="clip local"
+                value={`${vision.clip.declaredPath || '—'} · ${vision.clip.analyzedFrames} frames`}
+                mono
+              />
+              <HintRow
+                label="clip sha256"
+                value={vision.clip.sha256 ? `${vision.clip.sha256.slice(0, 16)}…` : '—'}
+                mono
+              />
+              <HintRow
+                label="variación temporal"
+                value={`${vision.clip.temporalVariation} · tendencia ${vision.clip.lumaTrend}`}
+                mono
+              />
+              <HintRow
+                label="inferencias en frames"
+                value={vision.clip.frameInferences
+                  ? `${vision.clip.frameInferences.executedFrames}/${vision.clip.frameInferences.requestedFrames}`
+                  : 'sin envío'}
+                mono
+              />
+            </>
+          )}
+          {vision.clip?.status === 'ROTO' && (
+            <HintRow label="clip local" value="ROTO · ver observaciones" mono />
+          )}
+          <HintRow label="S35" value={vision.signal?.published ? `${vision.signal.estado} · ${vision.signal.sourceLabel || '—'}` : 'NO_DATA · sin señal publicada'} />
+        </div>
+
+        <div className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
+          <HintRow label="inference_executed" value={String(vision.inference?.executed ?? false)} mono />
+          <HintRow label="model_status" value={vision.inference?.modelStatus || 'NO_DECLARADO'} mono />
+          <HintRow label="model_id / sha" value={vision.inference ? `${vision.inference.modelId || '—'} · ${vision.inference.modelSha256 || '—'}` : '—'} mono />
+          <HintRow label="source_mode / contrato" value={vision.inference ? `${vision.inference.sourceMode || '—'} · ${vision.inference.semanticContractVersion || vision.inference.contractVersion || '—'}` : '—'} mono />
+          <HintRow label="confidence (esta muestra)" value={vision.inference ? vision.inference.confidence.toFixed(4) : '—'} mono />
+          <HintRow label="actualizado" value={vision.updatedAt || '—'} mono />
+        </div>
+
+        {vision.observations.length > 0 && (
+          <ul className="space-y-1 border-t border-gray-800 pt-2">
+            {vision.observations.map((observation, index) => (
+              <li key={`${observation.code}-${index}`} className="text-[10px] leading-snug text-gray-400">
+                <span className="font-mono font-bold text-cyan-500">{observation.code}</span> · {observation.detail}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <p className="text-[10px] leading-snug text-gray-300">
+          <span className="font-bold uppercase tracking-wider text-gray-500">Recomendación · </span>
+          {vision.recommendation}
+        </p>
+        {vision.limitations.length > 0 && (
+          <ul className="space-y-0.5 border-t border-gray-800 pt-2">
+            {vision.limitations.map((limitation) => (
+              <li key={limitation} className="text-[10px] leading-snug text-gray-500">· {limitation}</li>
+            ))}
+          </ul>
+        )}
       </div>
     </section>
   );
