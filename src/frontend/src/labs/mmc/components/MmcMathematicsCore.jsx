@@ -16,6 +16,18 @@ import { VISUAL_ENGINE } from '../engines.js';
 import { compileEquation, equationToTex } from '../parse/equationParser.js';
 import { MODEL_ESTADO, MODEL_INTEGRATION_POINTS, buildWorkspaceModel } from '../workspace/modelContract.js';
 import { useLabStore } from '../../../stores/useLabStore.js';
+import {
+  CALCULUS_VERSION,
+  analyzeRealSeries,
+  computeDerivative,
+  computeIntegral,
+  computeVectorCalculus
+} from '../numerical/realSeriesCalculus.js';
+import {
+  computeRealSeries,
+  loadEnvelopeCatalog,
+  loadEnvelopeSample
+} from '../../../services/realSeriesService.js';
 
 // MMC — Núcleo matemático visual: el pilar del laboratorio.
 //
@@ -98,6 +110,24 @@ const boundedSnapshotSamples = (time, values, limit = MAX_SNAPSHOT_SAMPLES) => {
   const out = [];
   for (let i = 0; i < n; i += stride) {
     out.push([roundStat(time[i]), roundStat(values[i])]);
+  }
+  return out;
+};
+
+// Muestreo gobernado SOLO para dibujar: los cálculos se hacen con la serie
+// completa, nunca con esta versión diezmada.
+const MAX_CURVE_POINTS = 512;
+const downsampleCurve = (time, values, limit = MAX_CURVE_POINTS) => {
+  const srcTime = Array.from(time ?? [], Number);
+  const srcValues = Array.from(values ?? [], Number);
+  const n = Math.min(srcTime.length, srcValues.length);
+  if (!n) return { time: [], values: [] };
+  const stride = Math.max(1, Math.ceil(n / limit));
+  const out = { time: [], values: [] };
+  for (let i = 0; i < n; i += stride) {
+    if (!Number.isFinite(srcTime[i]) || !Number.isFinite(srcValues[i])) continue;
+    out.time.push(srcTime[i]);
+    out.values.push(srcValues[i]);
   }
   return out;
 };
@@ -232,6 +262,11 @@ const MmcMathematicsCore = () => {
   const [envelopeCatalog, setEnvelopeCatalog] = useState(null);
   const [envelopeName, setEnvelopeName] = useState('');
   const [envelopeId, setEnvelopeId] = useState('');
+  const [backendCatalog, setBackendCatalog] = useState(null);
+  const [backendCatalogId, setBackendCatalogId] = useState('');
+  const [catalogBusy, setCatalogBusy] = useState(false);
+  const [catalogError, setCatalogError] = useState(null);
+  const [backendAnalysis, setBackendAnalysis] = useState(null);
   const [engineState, setEngineState] = useState('CARGANDO');
   const [activeTab, setActiveTab] = useState('2d');
   const inputRef = useRef(null);
@@ -303,6 +338,97 @@ const MmcMathematicsCore = () => {
     };
   }, [realSeries, compiled, realStats, realRange]);
 
+  // ---------------------------------------------------------------------------
+  // CÁLCULO NUMÉRICO SOBRE LA SERIE REAL. La procedencia se declara aquí, antes
+  // de cualquier operador: si el dato es CSV no se inventa que es C0; si es
+  // envolvente del dataset propio se declara C0/REAL-LOCAL. El operador solo
+  // transforma y jamás eleva el estado.
+  // ---------------------------------------------------------------------------
+  const calculusSource = useMemo(() => {
+    if (!realSeries) return null;
+    const isCsv = realKind === 'csv';
+    return {
+      time: Array.from(realSeries.time, Number),
+      values: Array.from(realSeries.values, Number),
+      estado: isCsv ? 'LOCAL' : 'REAL-LOCAL',
+      layer: isCsv ? 'LOCAL' : 'C0',
+      sourceKind: realKind,
+      sourceLabel: realName || 'serie local'
+    };
+  }, [realSeries, realKind, realName]);
+
+  const calculus = useMemo(() => {
+    if (!calculusSource) return null;
+    const analysis = analyzeRealSeries(calculusSource);
+    if (!analysis.ok) return { ok: false, error: analysis.error, code: analysis.code };
+    const first = computeDerivative(calculusSource);
+    const integral = computeIntegral(calculusSource);
+    const vector = computeVectorCalculus(calculusSource);
+    const phaseStride = Math.max(1, Math.ceil(vector.phaseVectors.length / MAX_SNAPSHOT_SAMPLES));
+    return {
+      ok: true,
+      analysis,
+      derivativeCurve: downsampleCurve(first.time, first.d1),
+      cumulativeCurve: downsampleCurve(integral.time, integral.cumulative),
+      energyCurve: downsampleCurve(integral.time, integral.cumulativeEnergy),
+      criticalPoints: analysis.differential.criticalPoints,
+      jumps: analysis.differential.jumps,
+      phaseSamples: vector.phaseVectors
+        .filter((_, i) => i % phaseStride === 0)
+        .map((point) => point.map(roundStat))
+    };
+  }, [calculusSource]);
+
+  const calculusBoundingbox = useMemo(() => {
+    if (!calculus?.ok) return [-1, 1, 1, -1];
+    const values = [...calculus.cumulativeCurve.values, ...calculus.energyCurve.values];
+    if (!values.length) return [-1, 1, 1, -1];
+    const lo = Math.min(...values);
+    const hi = Math.max(...values);
+    const pad = Math.max((hi - lo) * 0.1, 1e-6);
+    const firstT = calculus.cumulativeCurve.time[0] ?? 0;
+    const lastT = calculus.cumulativeCurve.time[calculus.cumulativeCurve.time.length - 1] ?? firstT + 1;
+    return [firstT, hi + pad, lastT > firstT ? lastT : firstT + 1, lo - pad];
+  }, [calculus]);
+
+  // Verificación extremo a extremo contra el backend. Si no responde se dice
+  // NO_DATA: el cálculo local sigue siendo válido y jamás se inventa una
+  // confirmación del servidor.
+  useEffect(() => {
+    let cancelled = false;
+    setBackendAnalysis(null);
+    if (!calculusSource) return () => { cancelled = true; };
+    computeRealSeries({ series: calculusSource, options: { minSamples: 3 }, order: 1, method: 'auto' })
+      .then((payload) => {
+        if (!cancelled && payload?.ok) setBackendAnalysis({ status: 'ok', result: payload });
+      })
+      .catch((err) => {
+        if (!cancelled) setBackendAnalysis({ status: 'error', error: err.message });
+      });
+    return () => { cancelled = true; };
+  }, [calculusSource]);
+
+  // Catálogo C0 del backend (GET /api/v3/cmsc/acoustic-envelopes/). Es solo
+  // lectura: el dataset vive fuera de git y aquí nunca se escribe. Si el
+  // backend no está disponible se dice NO_DATA, no se inventa un catálogo.
+  useEffect(() => {
+    let cancelled = false;
+    setCatalogBusy(true);
+    loadEnvelopeCatalog()
+      .then((payload) => {
+        if (cancelled) return;
+        setBackendCatalog(payload);
+        setCatalogError(null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setBackendCatalog(null);
+        setCatalogError(err.message);
+      })
+      .finally(() => { if (!cancelled) setCatalogBusy(false); });
+    return () => { cancelled = true; };
+  }, []);
+
   // Huella del contenido, no solo del nombre: recargar el mismo archivo con
   // otros valores debe redibujar aunque coincidan nombre y número de filas.
   const realFingerprint = useMemo(() => {
@@ -371,7 +497,7 @@ const MmcMathematicsCore = () => {
 
   // El rebuild necesita la función vigente sin capturarla en el deps del board.
   const modelRef = useRef(null);
-  modelRef.current = { compiled, boundingbox, t0, t1, realSeries };
+  modelRef.current = { compiled, boundingbox, t0, t1, realSeries, calculus, calculusBoundingbox };
 
   const buildBoard = useCallback((board, ctx) => {
     const { compiled: c, boundingbox: bbox } = modelRef.current;
@@ -385,6 +511,18 @@ const MmcMathematicsCore = () => {
     });
     if (modelRef.current.realSeries) {
       plotDataCurve(board, modelRef.current.realSeries, { color: ctx.theme.green });
+    }
+    const detail = modelRef.current.calculus;
+    if (detail?.ok) {
+      plotDataCurve(board, detail.derivativeCurve, { color: ctx.theme.pink });
+      for (const point of detail.criticalPoints.slice(0, 40)) {
+        board.create('point', [point.t, point.value], {
+          size: 4,
+          color: ctx.theme.amber,
+          name: point.kind === 'maximo' ? 'max' : 'min',
+          label: { fontSize: 10, color: ctx.theme.amber }
+        });
+      }
     }
   }, []);
 
@@ -411,6 +549,40 @@ const MmcMathematicsCore = () => {
     if (modelRef.current.realSeries) {
       plotDataCurve(board, modelRef.current.realSeries, { color: ctx.theme.green });
     }
+    const detail = modelRef.current.calculus;
+    if (detail?.ok) {
+      plotDataCurve(board, detail.derivativeCurve, { color: ctx.theme.pink });
+      for (const point of detail.criticalPoints.slice(0, 40)) {
+        board.create('point', [point.t, point.value], {
+          size: 4,
+          color: ctx.theme.amber,
+          name: point.kind === 'maximo' ? 'max' : 'min',
+          label: { fontSize: 10, color: ctx.theme.amber }
+        });
+      }
+    }
+  }, []);
+
+  const buildCalculusBoard = useCallback((board, ctx) => {
+    const detail = modelRef.current.calculus;
+    if (!detail?.ok) return;
+    board.setBoundingBox(modelRef.current.calculusBoundingbox, false);
+    plotDataCurve(board, detail.cumulativeCurve, { color: ctx.theme.cyan });
+    plotDataCurve(board, detail.energyCurve, { color: ctx.theme.green });
+  }, []);
+
+  const rebuildCalculusBoard = useCallback((board, ctx) => {
+    const detail = modelRef.current.calculus;
+    if (!detail?.ok) return;
+    try {
+      const objects = board.objectsList || [];
+      for (let i = objects.length - 1; i >= 0; i -= 1) {
+        try { board.removeObject(objects[i]); } catch (err) { /* ya eliminado */ }
+      }
+    } catch (err) { /* board vacío */ }
+    board.setBoundingBox(modelRef.current.calculusBoundingbox, false);
+    plotDataCurve(board, detail.cumulativeCurve, { color: ctx.theme.cyan });
+    plotDataCurve(board, detail.energyCurve, { color: ctx.theme.green });
   }, []);
 
   // Al desmontar el instrumento, el board se libera en el propio board bridge.
@@ -449,6 +621,8 @@ const MmcMathematicsCore = () => {
         max: null,
         rms: null,
         metrics: null,
+        calculus: null,
+        phaseSamples: [],
         samples: []
       });
       return;
@@ -490,6 +664,21 @@ const MmcMathematicsCore = () => {
             timeRange: roundStat(comparison.timeRange)
           }
         : null,
+      // Cálculo derivado de la MISMA serie publicada: la procedencia se hereda
+      // y el operador nunca eleva LOCAL/SIM. Acotado a 40 críticos/saltos y a
+      // los vectores de fase ya diezmados; nunca arrays completos en el store.
+      calculus: calculus?.ok
+        ? {
+            version: calculus.analysis.version,
+            provenance: calculus.analysis.provenance,
+            summary: calculus.analysis.summary,
+            criticalPoints: calculus.analysis.differential.criticalPoints.slice(0, 40),
+            jumps: calculus.analysis.differential.jumps.slice(0, 40)
+          }
+        : calculus?.ok === false
+          ? { ok: false, code: calculus.code, error: calculus.error }
+          : null,
+      phaseSamples: calculus?.ok ? calculus.phaseSamples : [],
       samples: loaded
         ? boundedSnapshotSamples(realSeries.time, realSeries.values)
         : boundedSnapshotSamples(series.time, series.values)
@@ -506,6 +695,7 @@ const MmcMathematicsCore = () => {
     realName,
     realDetail,
     comparison,
+    calculus,
     fs,
     t0,
     t1
@@ -625,6 +815,35 @@ const MmcMathematicsCore = () => {
       });
     } catch (err) {
       failReal(err.message);
+    }
+  };
+
+  // Una muestra del catálogo C0 se sirve por el backend con time[] reconstruido
+  // desde el hop (2048/44100 s). Se publica como REAL-LOCAL/C0: no se mezcla con
+  // el CSV local ni se eleva una fuente SIM. Nada se escribe en `data/`.
+  const selectBackendEnvelope = async (event) => {
+    const id = event.target.value;
+    setBackendCatalogId(id);
+    if (!id) return;
+    setCatalogBusy(true);
+    setCatalogError(null);
+    try {
+      const sample = await loadEnvelopeSample(id);
+      const time = Array.from(sample.time ?? [], Number);
+      const values = Array.from(sample.values ?? [], Number);
+      if (time.length < 2 || time.length !== values.length) {
+        throw new Error('muestra C0 incompleta');
+      }
+      setReal({
+        data: { time, values },
+        name: 'catálogo C0 · backend',
+        kind: 'envelope',
+        detail: `${id} · RMS espectral/frame · ${values.length} muestras · ${sample.sourcePath}`
+      });
+    } catch (err) {
+      setCatalogError(err.message);
+    } finally {
+      setCatalogBusy(false);
     }
   };
 
@@ -818,6 +1037,21 @@ return (
             {envelopeCatalog.ids.map((id) => <option key={id} value={id}>{id}</option>)}
           </select>
         )}
+        <label htmlFor="mmc-backend-envelope">catálogo C0 (backend)</label>
+        <select
+          id="mmc-backend-envelope"
+          value={backendCatalogId}
+          onChange={selectBackendEnvelope}
+          disabled={!backendCatalog?.samples?.length || catalogBusy}
+          style={{ flex:'1 1 150px', minWidth:0, background:'#0b1220', color:'#94a3b8', border:'1px solid #1e293b', fontSize:10 }}
+          aria-label="Seleccionar envolvente C0 REAL-LOCAL servida por el backend"
+        >
+          <option value="">{catalogBusy ? 'cargando…' : (backendCatalog?.samples?.length ? 'seleccionar sample_id…' : 'sin catálogo (NO_DATA)')}</option>
+          {(backendCatalog?.samples ?? []).map((s) => (
+            <option key={s.id} value={s.id}>{s.id} · {s.n} muestras</option>
+          ))}
+        </select>
+        {catalogError && <span className="mmc-wb-msg mmc-wb-msg-bad" style={{ flexBasis:'100%' }}>backend NO_DATA · {catalogError}</span>}
         <label htmlFor="mmc-wav-file">WAV local</label>
         <input
           id="mmc-wav-file"
@@ -840,7 +1074,7 @@ return (
         {realName && <span style={{ color:'#39ff14', flexBasis:'100%' }}>{realName} · {realDetail}</span>}
         {realError && <span className="mmc-wb-msg mmc-wb-msg-bad" style={{ flexBasis:'100%' }}>{realError}</span>}
         <span style={{ color:'#475569', flexBasis:'100%' }}>
-          envolturas: {ENVELOPE_SOURCE_PATH} · dataset local fuera de git; selección manual, sin fetch
+          envolturas: {ENVELOPE_SOURCE_PATH} · dataset local fuera de git · importación manual sin fetch · catálogo C0 vía GET /api/v3/cmsc/acoustic-envelopes/ (solo lectura)
         </span>
       </div>
 
@@ -979,6 +1213,98 @@ return (
       ) : (
         <div className="mmc-wb-msg mmc-wb-msg-info">Sin serie: la ecuación no compila.</div>
       )}
+
+      {/* ---------- Cálculo verificable: diferencial / integral / vectorial ---------- */}
+      {calculusSource && (
+        <div className="mmc-wb-series" aria-label="Cálculo numérico sobre la serie cargada">
+          <div className="mmc-wb-metric">
+            <span className="mmc-wb-metric-k">operador</span>
+            <span className="mmc-wb-metric-v">{calculus?.ok ? calculus.analysis.version : (calculus ? 'ERROR' : '...')}</span>
+          </div>
+          {calculus?.ok ? (
+            <>
+              <div className="mmc-wb-metric">
+                <span className="mmc-wb-metric-k">∫·dt</span>
+                <span className="mmc-wb-metric-v">{calculus.analysis.summary.quadrature}</span>
+              </div>
+              <div className="mmc-wb-metric">
+                <span className="mmc-wb-metric-k">∫x dt</span>
+                <span className="mmc-wb-metric-v">{Number.isFinite(calculus.analysis.integral.defined) ? calculus.analysis.integral.defined.toFixed(6) : '--'}</span>
+              </div>
+              <div className="mmc-wb-metric">
+                <span className="mmc-wb-metric-k">energía ∫x²dt</span>
+                <span className="mmc-wb-metric-v">{Number.isFinite(calculus.analysis.integral.energy) ? calculus.analysis.integral.energy.toFixed(6) : '--'}</span>
+              </div>
+              <div className="mmc-wb-metric">
+                <span className="mmc-wb-metric-k">‖x‖₂</span>
+                <span className="mmc-wb-metric-v">{Number.isFinite(calculus.analysis.summary.normL2) ? calculus.analysis.summary.normL2.toFixed(6) : '--'}</span>
+              </div>
+              <div className="mmc-wb-metric">
+                <span className="mmc-wb-metric-k">rms x′</span>
+                <span className="mmc-wb-metric-v">{Number.isFinite(calculus.analysis.summary.rmsD1) ? calculus.analysis.summary.rmsD1.toFixed(6) : '--'}</span>
+              </div>
+              <div className="mmc-wb-metric">
+                <span className="mmc-wb-metric-k">rms x″</span>
+                <span className="mmc-wb-metric-v">{Number.isFinite(calculus.analysis.summary.rmsD2) ? calculus.analysis.summary.rmsD2.toFixed(6) : '--'}</span>
+              </div>
+              <div className="mmc-wb-metric">
+                <span className="mmc-wb-metric-k">críticos / saltos</span>
+                <span className="mmc-wb-metric-v">{calculus.analysis.summary.criticalCount} / {calculus.analysis.summary.jumpCount}</span>
+              </div>
+              <div className="mmc-wb-metric">
+                <span className="mmc-wb-metric-k">‖(x,x′,x″)‖máx</span>
+                <span className="mmc-wb-metric-v">{Number.isFinite(calculus.analysis.summary.maxMagnitude) ? calculus.analysis.summary.maxMagnitude.toFixed(6) : '--'}</span>
+              </div>
+              <details className="mmc-wb-details" style={{ flexBasis:'100%' }}>
+                <summary>críticos y saltos detectados (muestra acotada)</summary>
+                <pre className="mmc-wb-peek">
+                  {`críticos: ${calculus.criticalPoints.length} · saltos: ${calculus.jumps.length}\n` +
+                    (calculus.criticalPoints.length
+                      ? calculus.criticalPoints.slice(0, 8).map((p) => `t=${p.t.toFixed(4)}  ${p.kind}  x=${p.value.toFixed(4)}  x″=${p.d2.toFixed(4)}`).join('\n')
+                      : 'sin críticos en la ventana analizada') +
+                    (calculus.jumps.length
+                      ? `\n` + calculus.jumps.slice(0, 8).map((j) => `t=${j.t.toFixed(4)}  salto x′=${j.jump.toFixed(4)}`).join('\n')
+                      : '\nsin saltos en la ventana analizada') +
+                    `\n\nlimpieza: ${calculus.analysis.diagnostics.inputCount} → ${calculus.analysis.diagnostics.outputCount} muestras` +
+                    ` · NaN/Inf ${calculus.analysis.diagnostics.droppedNonFinite}` +
+                    ` · huecos interpolados ${calculus.analysis.diagnostics.interpolatedGaps}` +
+                    ` · outliers recortados ${calculus.analysis.diagnostics.clippedOutliers}`}
+                </pre>
+              </details>
+            </>
+          ) : (
+            <span className="mmc-wb-msg mmc-wb-msg-bad" style={{ flexBasis:'100%' }}>
+              {calculus ? `${calculus.code}: ${calculus.error}` : 'calculando…'}
+            </span>
+          )}
+          <div className="mmc-wb-honest" style={{ flexBasis:'100%' }}>
+            <div>
+              <b>{calculusSource.estado} · {calculusSource.layer}</b> · operador <code>{CALCULUS_VERSION}</code> · hereda procedencia: nunca eleva LOCAL/SIM a REAL-LOCAL · sin relleno silencioso
+            </div>
+            <div>
+              <b>backend</b> · {backendAnalysis === null
+                ? 'NO_DATA · sin verificación del servidor'
+                : backendAnalysis.status === 'ok'
+                  ? `ok · ${backendAnalysis.result.version} · ${backendAnalysis.result.n} muestras verificadas`
+                  : `NO_DATA · ${backendAnalysis.error}`}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {calculus?.ok && (
+        <div className="mmc-wb-plot">
+          <MmcJsxGraphBoard
+            build={buildCalculusBoard}
+            rebuild={rebuildCalculusBoard}
+            rebuildKey={`calculus|${realFingerprint}`}
+            boundingbox={calculusBoundingbox}
+            height={260}
+            ariaLabel="Integrales acumuladas: ∫x dt y energía ∫x² dt sobre la serie real"
+            onReady={() => {}}
+          />
+        </div>
+      )}
         </div>
       </div>
 
@@ -995,6 +1321,9 @@ return (
         )}
         <div style={{ marginTop: 2 }}>
           <b>S35 → useLabStore</b> · snapshot <b>{publicEstado}</b> · {realSeries ? 'serie contrastada publicada' : 'modelo generado publicado'} · muestras acotadas, sin arrays completos ni escritura en disco
+          {calculus?.ok && (
+            <span> · cálculo y fase <b>(x, x′, x″)</b> publicados con la procedencia heredada de la fuente</span>
+          )}
         </div>
         <details style={{ marginTop: 2 }}>
           <summary style={{ cursor: 'pointer', fontSize: 10, color: '#475569' }}>

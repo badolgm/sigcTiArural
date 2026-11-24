@@ -52,6 +52,42 @@ export const projectSeriesToPaths = (samples) => {
 };
 
 /**
+ * Espacio de fase (x, x′, x″) publicado por S35 → trayectoria 3D.
+ *
+ * Cada eje es UNA componente calculada por `realSeriesCalculus`: no es una
+ * hélice decorativa ni una forma de onda inventada. Se normaliza al cubo visual
+ * [-3,3] SOLO para comparar magnitudes dispares; el HUD muestra la procedencia
+ * heredada y el rango original sigue vivo en S35. Si faltan derivadas se
+ * devuelve [] y la vista dice NO_DATA.
+ */
+export const projectPhaseSpaceToPaths = (phaseSamples) => {
+  if (!Array.isArray(phaseSamples)) return [];
+  const triples = phaseSamples
+    .filter((p) => Array.isArray(p) && p.length >= 3 && p.every(Number.isFinite))
+    .map((p) => [p[0], p[1], p[2]]);
+  if (triples.length < 2) return [];
+
+  const scale = (index) => {
+    let lo = Infinity;
+    let hi = -Infinity;
+    triples.forEach((p) => {
+      if (p[index] < lo) lo = p[index];
+      if (p[index] > hi) hi = p[index];
+    });
+    const span = hi - lo || 1;
+    return (v) => ((v - lo) / span - 0.5) * 5;
+  };
+  const sx = scale(0);
+  const sd1 = scale(1);
+  const sd2 = scale(2);
+
+  return [{
+    id: 'fase-S35',
+    points: triples.map((p) => [sx(p[0]), sd1(p[1]), sd2(p[2])])
+  }];
+};
+
+/**
  * Trazos 2D → capas apiladas en Z. Cada trazo conserva su identidad y sus
  * puntos; se normalizan al cubo visual [-3,3] SOLO para que capas con dominios
  * distintos sean comparables. El JSON exportado en 2D mantiene los valores

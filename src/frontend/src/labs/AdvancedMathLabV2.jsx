@@ -5,9 +5,14 @@ import MmcJsxGraphBoard from './mmc/components/MmcJsxGraphBoard.jsx';
 import MmcEquation from './mmc/components/MmcEquation.jsx';
 import MmcSignal3DProjection, {
   projectSeriesToPaths,
+  projectPhaseSpaceToPaths,
   projectStrokesToPaths
 } from './mmc/components/MmcSignal3DProjection.jsx';
 import { compileEquation, equationToTex } from './mmc/parse/equationParser.js';
+import {
+  computeDerivative,
+  sanitizeSeries
+} from './mmc/numerical/realSeriesCalculus.js';
 
 const AdvancedMathLabV2 = () => {
   const electronicsData = useLabStore((state) => state.electronicsData);
@@ -416,43 +421,83 @@ const vectorComponents = (y, slope) => {
   };
 };
 
-const PhasePortraitPlot = ({ time, signal, width, height }) => {
-  if (!time || !signal || time.length < 2) return null;
-  
-  // Simple dV/dt calculation
-  const dVdt = signal.map((v, i) => {
-    if (i === 0) return 0;
-    const dt = time[i] - time[i-1];
-    return (v - signal[i-1]) / dt;
-  });
+const PhasePortraitPlot = ({
+  time,
+  signal,
+  width,
+  height,
+  estado = 'SIM',
+  layer = 'rules-v0',
+  sourceLabel = 'S32 · simulación de circuito'
+}) => {
+  // dV/dt NO se calcula aquí con una diferencia hacia adelante: se usa el
+  // operador compartido de realSeriesCalculus (Lagrange de 3 nodos, con tiempo
+  // irregular y fail-closed). La señal S32 es SIM; el operador hereda ese
+  // estado y jamás lo presenta como REAL-LOCAL. Si la serie no es válida se
+  // dibuja NO_DATA, nunca una curva inventada ni un dV/dt de 0 en el primer
+  // punto.
+  const analysis = useMemo(() => {
+    if (!time || !signal || time.length < 3 || time.length !== signal.length) {
+      return { ok: false, code: 'NO_DATA', error: 'serie insuficiente o dimensiones divergentes' };
+    }
+    try {
+      const clean = sanitizeSeries(
+        { time, values: signal, estado, layer, sourceKind: 'circuit-sim', sourceLabel },
+        { minSamples: 3 }
+      );
+      const derivative = computeDerivative(clean, { order: 1 });
+      return { ok: true, clean, derivative };
+    } catch (err) {
+      return { ok: false, code: err.code || 'CALCULUS_FAILED', error: err.message };
+    }
+  }, [time, signal, estado, layer, sourceLabel]);
 
-  const minV = Math.min(...signal);
-  const maxV = Math.max(...signal);
-  const minDV = Math.min(...dVdt.slice(1));
-  const maxDV = Math.max(...dVdt.slice(1));
-  
+  if (!analysis.ok) {
+    return (
+      <svg className="mmc-plot" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Retrato de fases sin datos válidos">
+        <rect x="0" y="0" width={width} height={height} fill="#000" />
+        <text x={16} y={height / 2} fill="#ff6b6b" fontSize="12">
+          NO_DATA · {analysis.code}: {analysis.error}
+        </text>
+      </svg>
+    );
+  }
+
+  const values = Array.from(analysis.clean.values);
+  const dVdt = Array.from(analysis.derivative.d1);
+  let minV = Infinity; let maxV = -Infinity;
+  let minDV = Infinity; let maxDV = -Infinity;
+  for (let i = 0; i < values.length; i += 1) {
+    if (values[i] < minV) minV = values[i];
+    if (values[i] > maxV) maxV = values[i];
+    if (dVdt[i] < minDV) minDV = dVdt[i];
+    if (dVdt[i] > maxDV) maxDV = dVdt[i];
+  }
   const rangeV = maxV - minV || 1;
   const rangeDV = maxDV - minDV || 1;
 
   const padding = 20;
-  const mapX = (v) => padding + ((v - minV) / rangeV) * (width - 2*padding);
-  const mapY = (dv) => height - padding - ((dv - minDV) / rangeDV) * (height - 2*padding);
+  const mapX = (v) => padding + ((v - minV) / rangeV) * (width - 2 * padding);
+  const mapY = (dv) => height - padding - ((dv - minDV) / rangeDV) * (height - 2 * padding);
 
-  const path = signal.map((v, i) => {
-    if (i === 0) return `M ${mapX(v)} ${mapY(dVdt[i])}`;
-    return `L ${mapX(v)} ${mapY(dVdt[i])}`;
-  }).join(' ');
+  // Muestreo acotado SOLO para el SVG: el cálculo se hizo con la serie completa.
+  const stride = Math.max(1, Math.ceil(values.length / 800));
+  const path = [];
+  for (let i = 0; i < values.length; i += stride) {
+    path.push(`${i === 0 ? 'M' : 'L'} ${mapX(values[i])} ${mapY(dVdt[i])}`);
+  }
 
   return (
-    <svg className="mmc-plot" viewBox={`0 0 ${width} ${height}`}>
-       <rect x="0" y="0" width={width} height={height} fill="#000" />
-       {/* Axis */}
-       <line x1={padding} y1={height/2} x2={width-padding} y2={height/2} stroke="#333" />
-       <line x1={width/2} y1={padding} x2={width/2} y2={height-padding} stroke="#333" />
-       {/* Plot */}
-       <path d={path} fill="none" stroke="#00ffff" strokeWidth="1" opacity="0.8" />
-       <text x={width-40} y={height/2-5} fill="#666" fontSize="10">V</text>
-       <text x={width/2+5} y={20} fill="#666" fontSize="10">dV/dt</text>
+    <svg className="mmc-plot" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Retrato de fases V frente a dV/dt sobre señal SIM">
+      <rect x="0" y="0" width={width} height={height} fill="#000" />
+      <line x1={padding} y1={height / 2} x2={width - padding} y2={height / 2} stroke="#333" />
+      <line x1={width / 2} y1={padding} x2={width / 2} y2={height - padding} stroke="#333" />
+      <path d={path.join(' ')} fill="none" stroke="#00ffff" strokeWidth="1" opacity="0.8" />
+      <text x={width - 40} y={height / 2 - 5} fill="#666" fontSize="10">V</text>
+      <text x={width / 2 + 5} y={20} fill="#666" fontSize="10">dV/dt</text>
+      <text x={8} y={height - 6} fill="#64748b" fontSize="10">
+        {estado} · {sourceLabel} · dV/dt lagrange-3 · {values.length} muestras válidas
+      </text>
     </svg>
   );
 };
@@ -797,7 +842,15 @@ const RealSignalAnalysis = ({ electronicsData }) => {
           <div className="mt-4 p-4 bg-black/60 rounded border border-cyan-500/30 animate-in fade-in zoom-in duration-300">
              <h5 className="text-cyan-400 font-bold mb-2 text-sm">Análisis en el Espacio de Fases</h5>
              <div className="w-full bg-black rounded relative border border-gray-800">
-                <PhasePortraitPlot time={timeData} signal={history[selectedNode]} width={600} height={250} />
+                <PhasePortraitPlot
+                 time={timeData}
+                 signal={history[selectedNode]}
+                 width={600}
+                 height={250}
+                 estado="SIM"
+                 layer="rules-v0"
+                 sourceLabel={`S32 · nodo ${selectedNode} · simulación SPICE/Falstad`}
+               />
              </div>
           </div>
         )}
@@ -1635,6 +1688,36 @@ const IntegralsInteractive = () => {
           : ''
       };
     }
+    if (projectionSource === 'phase') {
+      const sig = mathLiveSignal;
+      const published = Boolean(sig?.published);
+      const phaseSamples = published ? sig?.phaseSamples : null;
+      const paths = projectPhaseSpaceToPaths(phaseSamples);
+      // La procedencia se hereda de la MISMA señal S35 que produjo las
+      // derivadas. El operador no eleva LOCAL/SIM y el proyector no decide.
+      const inherited = PROJECTION_STATES.has(sig?.estado) ? sig.estado : 'NO_DATA';
+      const estado = !published
+        ? 'NO_DATA'
+        : sig.estado === 'ROTO' ? 'ROTO'
+          : paths.length ? inherited : 'NO_DATA';
+      const calculus = sig?.calculus;
+      const summary = calculus?.summary;
+      const rangeLabel = published && estado !== 'ROTO' && summary
+        ? `rms x′ ${Number.isFinite(summary.rmsD1) ? summary.rmsD1 : '—'} · ‖(x,x′,x″)‖máx ${Number.isFinite(summary.maxMagnitude) ? summary.maxMagnitude : '—'}`
+        : '';
+      return {
+        paths,
+        estado,
+        color: PROJECTION_STATE_COLOR[estado],
+        rangeLabel,
+        sourceLabel: published && phaseSamples
+          ? `${sig.sourceLabel || 'S35'} · ${calculus?.version || 'cálculo'} · ${phaseSamples.length} vectores de fase`
+          : 'S35 sin cálculo publicado: cargá una serie real en el núcleo MMC para alimentar el espacio de fase.',
+        note: published && paths.length
+          ? 'Espacio de fase (x, x′, x″): cada eje es una derivada calculada por real-series-calculus-v1 sobre la MISMA señal publicada. La normalización es solo visual; la procedencia se hereda y no se eleva LOCAL/SIM.'
+          : ''
+      };
+    }
     const paths = projectStrokesToPaths(strokesView);
     const estado = paths.length ? 'SIM' : 'NO_DATA';
     return {
@@ -1896,6 +1979,7 @@ const IntegralsInteractive = () => {
           style={{ background: '#0b1220', color: '#94a3b8', border: '1px solid #1e293b', fontSize: 10 }}
         >
           <option value="signal">Señal activa S35 (store MMC)</option>
+          <option value="phase">Espacio de fase (x, x′, x″) · S35</option>
           <option value="strokes">Trazos del tablero</option>
         </select>
         <span style={{ fontSize: 10, color: PROJECTION_STATE_COLOR[projection.estado] || '#64748b' }}>
@@ -1904,7 +1988,7 @@ const IntegralsInteractive = () => {
       </div>
       {projection3D && (
         <MmcSignal3DProjection
-          title={`Proyección 3D · ${projectionSource === 'signal' ? 'S35' : 'trazos MMC'}`}
+          title={`Proyección 3D · ${projectionSource === 'signal' ? 'S35' : (projectionSource === 'phase' ? 'espacio de fase S35' : 'trazos MMC')}`}
           estado={projection.estado}
           sourceLabel={projection.sourceLabel}
           rangeLabel={projection.rangeLabel}
