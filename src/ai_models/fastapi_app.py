@@ -13,6 +13,8 @@ import time
 import asyncio
 import os
 import base64
+import unicodedata
+from urllib.parse import quote
 from datetime import datetime
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
@@ -62,6 +64,21 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    # S62: el navegador debe poder leer las trazas X-SIGCT-* del /assist.
+    expose_headers=[
+        "X-SIGCT-Assist-Mode",
+        "X-SIGCT-LLM-Used",
+        "X-SIGCT-LLM-Status",
+        "X-SIGCT-Intent",
+        "X-SIGCT-Transcript",
+        "X-SIGCT-Navigate",
+        "X-SIGCT-Context-Status",
+        # Clip local de visión: métricas multi-frame declaradas por el cliente.
+        "X-SIGCT-Clip-Status",
+        "X-SIGCT-Clip-Frames",
+        "X-SIGCT-Clip-Motion",
+        "X-SIGCT-Clip-Sha256",
+    ],
 )
 
 # Configuración dinámica para PostgreSQL (Alineado con tu Guía de Migración)
@@ -376,6 +393,43 @@ def _identity_fields(identity):
     }
 
 
+def _service_capabilities(identity):
+    """Capacidades declaradas, NO un healthcheck de modelo ni de LLM.
+
+    Aditivo a /health: permite a un cliente descubrir el contrato vigente, el
+    espacio de clases del artefacto servido y si hay proveedor LLM configurado,
+    sin disparar inferencia ni revelar credenciales. `status: ok` sigue
+    significando solo que el proceso responde; la procedencia viaja aparte.
+    """
+    labels = identity.get("class_labels") or []
+    return {
+        "semantic_contract_version": SEMANTIC_CONTRACT_VERSION,
+        "model_contract_version": _model_contract_version(),
+        "model_status": identity.get("model_status"),
+        "class_space": identity.get("class_space"),
+        "class_labels": list(labels),
+        "llm": {
+            "status": "CONFIGURED" if VOICE_LLM_READY else "NOT_CONFIGURED",
+            "model": VOICE_LLM_MODEL or None,
+            "fallback": "KEYWORD_RULE",
+        },
+        "vision": {
+            "frames_per_inference_request": 1,
+            "clip_contract": "clip-evidence-v1",
+            "clip_status": "LOCAL",
+        },
+        "ingest": {
+            "envelope_contract": "sigct-ingest-envelope-v1",
+            "persistence": "IN_MEMORY_SESSION",
+        },
+        "limitations": [
+            "Servir un artefacto NO equivale a promoverlo sobre M1.",
+            "Sin inferencia ejecutada no se emite diagnóstico: source_mode=fallback / NO_DATA.",
+            "Clip local y métricas multi-frame son LOCAL: no validan escena agrícola.",
+        ],
+    }
+
+
 def _preprocess_image_onnx(image):
     """Preprocesado M2 (identico al de exportacion, AI-R2).
 
@@ -454,6 +508,8 @@ def health():
         "declared_in": identity.get("declared_in"),
         "expires_on": identity.get("expires_on"),
         "semantic_contract_version": SEMANTIC_CONTRACT_VERSION,
+        # Descubrimiento de capacidades: aditivo, sin modelos ni LLM invocados.
+        "semantic_capabilities": _service_capabilities(identity),
     }
 
 
@@ -553,6 +609,300 @@ def generar_audio_error(mensaje):
     return error_io
 
 # ===================================
+# CONTRATO DE CONTEXTO DE VOZ (S62) — aditivo y fail-closed
+# ===================================
+# El cliente envia un resumen acotado (S35 + evidencia de vision). Este modulo
+# NO es un LLM: valida, normaliza y usa ese resumen como contexto declarado.
+# Los unicos estados aceptados son los del canon de honestidad permitido;
+# cualquier otro valor degrada a NO_DATA. Nunca se eleva nada a REAL.
+
+VOICE_CONTEXT_VERSION = "sigct-voice-context-v1"
+VOICE_HONESTY_STATES = {"REAL-LOCAL", "LOCAL", "SIM", "NO_DATA", "ROTO"}
+VOICE_CONTEXT_MAX_CHARS = 8000
+
+VOICE_NAV_LABELS = {
+    "dashboard": "el panel principal",
+    "cmsc": "el dashboard científico CMSC",
+    "labs": "los laboratorios",
+    "robotics": "robótica",
+    "ai": "inteligencia artificial",
+    "math": "matemáticas",
+    "lab-telecom": "telecomunicaciones",
+    "lab-electronics": "electrónica",
+    "data-lab": "ciencia de datos",
+    "proyectos": "proyectos",
+    "docs": "el centro de conocimiento",
+}
+VOICE_NAV_PREFIXES = (
+    "ir a ", "ir al ", "abre ", "abrir ", "navegar a ", "llevame a ", "vamos a ",
+)
+VOICE_NAV_KEYWORDS = {
+    "dashboard": ("dashboard", "panel principal", "panel", "inicio"),
+    "cmsc": ("cmsc", "dashboard cientifico"),
+    "labs": ("laboratorios", "laboratorio", "labs"),
+    "robotics": ("robotica", "robots", "robot"),
+    "ai": ("inteligencia artificial", "predictiva"),
+    "math": ("matematicas", "matematica", "mate"),
+    "lab-telecom": ("telecomunicaciones", "telecom"),
+    "lab-electronics": ("electronica",),
+    "data-lab": ("ciencia de datos", "data science"),
+    "proyectos": ("proyectos", "proyecto"),
+    "docs": ("conocimiento", "documentacion", "knowledge", "documentos"),
+}
+
+# LLM real SOLO si hay configuracion completa por entorno. Sin ella se usa
+# exclusivamente la regla determinista existente: no se simula un modelo.
+VOICE_LLM_URL = os.getenv("SIGCT_VOICE_LLM_URL", "").strip()
+VOICE_LLM_MODEL = os.getenv("SIGCT_VOICE_LLM_MODEL", "").strip()
+VOICE_LLM_KEY = os.getenv("SIGCT_VOICE_LLM_KEY", "").strip()
+VOICE_LLM_READY = all((VOICE_LLM_URL, VOICE_LLM_MODEL, VOICE_LLM_KEY))
+
+
+def _voice_clip(value, limit=120):
+    if value is None:
+        return None
+    cleaned = str(value).strip()
+    return cleaned[:limit] if cleaned else None
+
+
+def _voice_dict(value):
+    return value if isinstance(value, dict) else {}
+
+
+def _voice_state(value):
+    return value if value in VOICE_HONESTY_STATES else "NO_DATA"
+
+
+def _voice_clip_state(value):
+    """Un clip leido desde disco es LOCAL: jamas se eleva a REAL-LOCAL."""
+    state = _voice_state(value)
+    return "LOCAL" if state == "REAL-LOCAL" else state
+
+
+def _voice_number(value):
+    try:
+        if value is None or value == "":
+            return None
+        parsed = float(value)
+        return parsed if np.isfinite(parsed) else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _ascii_fold(value):
+    return unicodedata.normalize("NFKD", str(value or "")).encode("ascii", "ignore").decode("ascii").lower()
+
+
+def _normalize_voice_context(raw):
+    """Devuelve (contexto_normalizado, estado). Nunca lanza al llamador."""
+    if raw is None or raw == "":
+        return None, "absent"
+    if not isinstance(raw, str) or len(raw) > VOICE_CONTEXT_MAX_CHARS:
+        return None, "invalid"
+    try:
+        payload = json.loads(raw)
+    except (ValueError, TypeError):
+        return None, "invalid"
+    if not isinstance(payload, dict) or payload.get("version") != VOICE_CONTEXT_VERSION:
+        return None, "invalid"
+
+    live = _voice_dict(payload.get("signal"))
+    sight = _voice_dict(payload.get("vision"))
+    capture = _voice_dict(sight.get("capture"))
+    inference = _voice_dict(sight.get("inference"))
+    clip_raw = _voice_dict(sight.get("clip"))
+    clip_frames = _voice_dict(clip_raw.get("frameInferences"))
+    published = live.get("published") is True
+    context = {
+        "version": VOICE_CONTEXT_VERSION,
+        "signal": {
+            "id": _voice_clip(live.get("id"), 12) or "S35",
+            "published": published,
+            "estado": _voice_state(live.get("estado")) if published else "NO_DATA",
+            "sourceLabel": _voice_clip(live.get("sourceLabel"), 100),
+            "sampleCount": _voice_clip(live.get("sampleCount"), 24),
+            "fs": _voice_clip(live.get("fs"), 24),
+            "rms": _voice_clip(live.get("rms"), 24),
+        },
+        "vision": {
+            "status": _voice_state(sight.get("status")),
+            "captureStatus": _voice_state(capture.get("status")),
+            "captureKind": _voice_clip(capture.get("kind"), 40),
+            "authorized": capture.get("authorized") is True,
+            "inferenceExecuted": inference.get("executed") is True,
+            "modelStatus": _voice_clip(inference.get("modelStatus"), 40),
+            "modelId": _voice_clip(inference.get("modelId"), 80),
+            "contractVersion": _voice_clip(inference.get("contractVersion"), 20),
+            "confidence": _voice_number(inference.get("confidence")),
+            "analysisKind": _voice_clip(sight.get("analysisKind"), 40),
+            "clip": None if not clip_raw else {
+                "status": _voice_clip_state(clip_raw.get("status")),
+                "declaredPath": _voice_clip(clip_raw.get("declaredPath"), 160),
+                "sha256": _voice_clip(clip_raw.get("sha256"), 64),
+                "durationSec": _voice_number(clip_raw.get("durationSec")),
+                "analyzedFrames": _voice_number(clip_raw.get("analyzedFrames")),
+                "meanFrameDelta": _voice_number(clip_raw.get("meanFrameDelta")),
+                "temporalVariation": _voice_number(clip_raw.get("temporalVariation")),
+                "lumaTrend": _voice_clip(clip_raw.get("lumaTrend"), 24),
+                "frameInferences": None if not clip_raw.get("frameInferences") else {
+                    "requestedFrames": _voice_number(clip_frames.get("requestedFrames")),
+                    "executedFrames": _voice_number(clip_frames.get("executedFrames")),
+                    "distinctLabels": [
+                        _voice_clip(label, 40)
+                        for label in (clip_frames.get("distinctLabels") or [])
+                        if _voice_clip(label, 40)
+                    ][:8],
+                },
+            },
+        },
+    }
+    return context, "accepted"
+
+
+def _voice_context_short(context):
+    if not context:
+        return "No hay resumen de contexto vivo del cliente."
+    signal = context["signal"]
+    vision = context["vision"]
+    parts = [
+        f"Contexto declarado por la interfaz: S35 {signal['estado']}",
+    ]
+    if signal["sourceLabel"]:
+        parts.append(f"({signal['sourceLabel']})")
+    parts.append(f"; visión {vision['status']}")
+    if vision["inferenceExecuted"]:
+        parts.append(f"; inferencia ejecutada sobre la muestra, artefacto {vision['modelStatus'] or 'no declarado'}")
+    clip = vision.get("clip")
+    if clip:
+        motion = clip["temporalVariation"]
+        parts.append(
+            f"; clip local {clip['status']}, {clip['analyzedFrames'] if clip['analyzedFrames'] is not None else '—'} frames, "
+            f"variación temporal {motion if motion is not None else '—'}"
+        )
+    parts.append(".")
+    return " ".join(parts)
+
+
+def _voice_context_summary(context, sensor):
+    if sensor:
+        sensor_line = (
+            f"Última lectura Postgres: temperatura {sensor['temperature']}, "
+            f"humedad {sensor['humidity']}."
+        )
+    else:
+        sensor_line = "Última lectura Postgres: NO_DATA."
+    if not context:
+        return f"Contexto vivo del cliente: NO_DATA (sin resumen válido). {sensor_line}"
+    signal = context["signal"]
+    vision = context["vision"]
+    chunks = [
+        "Resumen declarado por el cliente (NO verificado por este servicio):",
+        f"S35 publicada={signal['published']} · estado={signal['estado']} · fuente={signal['sourceLabel'] or 'no declarada'}.",
+        f"Visión: estado={vision['status']} · captura={vision['captureStatus']} · "
+        f"inferencia_ejecutada={vision['inferenceExecuted']} · artefacto={vision['modelStatus'] or 'no declarado'}.",
+    ]
+    if vision["confidence"] is not None:
+        chunks.append(
+            f"Confianza declarada sobre la muestra: {vision['confidence']:.4f} "
+            "(no es precisión validada)."
+        )
+    clip = vision.get("clip")
+    if clip:
+        frames = clip["analyzedFrames"]
+        delta = clip["meanFrameDelta"]
+        motion = clip["temporalVariation"]
+        chunk = (
+            f"Clip local declarado (NO cámara, NO campo): estado={clip['status']} · "
+            f"ruta={clip['declaredPath'] or 'no declarada'} · "
+            f"frames={frames if frames is not None else 'no declarado'} · "
+            f"delta medio={delta if delta is not None else 'no declarado'} · "
+            f"variación temporal={motion if motion is not None else 'no declarada'} · "
+            f"tendencia={clip['lumaTrend'] or 'no declarada'}. "
+            "Métricas deterministas locales: NO son inferencia, NO son un diagnóstico "
+            "y NO elevan la escena a REAL-LOCAL."
+        )
+        inferences = clip.get("frameInferences")
+        if inferences:
+            chunk += (
+                f" Frames enviados con autorización: "
+                f"{inferences['executedFrames'] if inferences['executedFrames'] is not None else '—'}/"
+                f"{inferences['requestedFrames'] if inferences['requestedFrames'] is not None else '—'}; "
+                "cada inferencia describe solo su frame."
+            )
+        chunks.append(chunk)
+    chunks.append(sensor_line)
+    chunks.append("Este resumen NO eleva señales a REAL y NO sustituye al modelo servido.")
+    return " ".join(chunks)
+
+
+def _voice_nav_target(text):
+    normalized = _ascii_fold(text)
+    if not any(prefix in normalized for prefix in VOICE_NAV_PREFIXES):
+        return ""
+    for token, keywords in VOICE_NAV_KEYWORDS.items():
+        if any(_ascii_fold(keyword) in normalized for keyword in keywords):
+            return token
+    return ""
+
+
+def _voice_llm_answer(text, summary, intent):
+    """LLM opcional y real. Sin configuración devuelve None: nunca se finge."""
+    if not VOICE_LLM_READY:
+        return None, "NOT_CONFIGURED"
+    system = (
+        "Asistente de lectura de SIGC&T Rural. Responde en español en máximo tres frases. "
+        "Usa únicamente los datos del resumen de contexto; no inventes sensores, modelos, "
+        "métricas ni fuentes. Si el resumen indica NO_DATA o ROTO, dilo explícitamente. "
+        "No afirmes que realizaste inferencia ni que consultaste un modelo."
+    )
+    user = f"Pregunta del operador: {text}\nIntención detectada: {intent}\nResumen verificado: {summary}"
+    try:
+        response = requests.post(
+            VOICE_LLM_URL,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {VOICE_LLM_KEY}",
+            },
+            json={
+                "model": VOICE_LLM_MODEL,
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+                "temperature": 0,
+                "max_tokens": 180,
+            },
+            timeout=8,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        choice = (payload.get("choices") or [{}])[0]
+        content = (choice.get("message") or {}).get("content")
+        if not isinstance(content, str) or not content.strip():
+            return None, "NO_RESPONSE"
+        return content.strip()[:700], "OK"
+    except Exception as exc:
+        print(f"⚠️ LLM de voz no disponible; se mantiene la regla determinista: {exc}")
+        return None, "ERROR_FALLBACK"
+
+
+def _assist_headers(trace):
+    return {
+        "X-SIGCT-Assist-Mode": trace["mode"],
+        "X-SIGCT-LLM-Used": "true" if trace["llm_used"] else "false",
+        "X-SIGCT-LLM-Status": trace["llm_status"],
+        "X-SIGCT-Intent": trace["intent"] or "unknown",
+        "X-SIGCT-Transcript": quote(trace["transcript"] or "", safe=""),
+        "X-SIGCT-Navigate": trace["navigate"] or "",
+        "X-SIGCT-Context-Status": trace["context_status"],
+        "X-SIGCT-Clip-Status": str(trace.get("clip_status") or "absent"),
+        "X-SIGCT-Clip-Frames": str(trace.get("clip_frames") or ""),
+        "X-SIGCT-Clip-Motion": str(trace.get("clip_motion") or ""),
+        "X-SIGCT-Clip-Sha256": str(trace.get("clip_sha256") or ""),
+    }
+
+
+# ===================================
 # Asistente de Voz Inteligente (Postgres)
 # ===================================
 
@@ -562,11 +912,29 @@ async def assist(
     audio: Optional[UploadFile] = File(None),
     audio_file: Optional[UploadFile] = File(None)
 ):
-    """Asistente de voz mejorado: Soporta 'audio' (Nuevo Frontend) y 'audio_file' (Viejo Frontend)"""
-    
+    """S62: voz + contexto vivo opcional + LLM real solo si está configurado."""
+
+    # Traza devuelta SIEMPRE en headers X-SIGCT-* (incluso en fallback).
+    trace = {
+        "mode": "KEYWORD_RULE",
+        "llm_used": False,
+        "llm_status": "NOT_CONFIGURED" if not VOICE_LLM_READY else "CONFIGURED",
+        "intent": "unknown",
+        "transcript": "",
+        "navigate": "",
+        "context_status": "absent",
+        "clip_status": "absent",
+        "clip_frames": "",
+        "clip_motion": "",
+        "clip_sha256": "",
+    }
+
+    def respond(audio_io):
+        return StreamingResponse(audio_io, media_type="audio/mpeg", headers=_assist_headers(trace))
+
     # 1. Unificar entrada de archivo
     incoming_file = audio or audio_file
-    
+
     if not VOICE_AVAILABLE:
         raise HTTPException(503, "Servicios de voz no configurados en el servidor")
 
@@ -574,7 +942,30 @@ async def assist(
         # Debug: Verificar campos recibidos
         form_data = await request.form()
         print(f"DEBUG INCOMING: Form keys: {list(form_data.keys())}")
-        
+
+        voice_context, context_status = _normalize_voice_context(form_data.get("context"))
+        trace["context_status"] = context_status
+
+        # Trazas del clip local: SOLO lo que el cliente declaró y el normalizador
+        # aceptó. Nunca se inventan métricas ni se eleva el clip a REAL.
+        clip = (voice_context or {}).get("vision", {}).get("clip")
+        if clip:
+            trace["clip_status"] = clip["status"]
+            trace["clip_sha256"] = clip.get("sha256") or ""
+            analyzed = clip.get("analyzedFrames")
+            if analyzed is not None:
+                trace["clip_frames"] = f"{analyzed:g} analizados"
+            inferences = clip.get("frameInferences")
+            if (inferences
+                    and inferences.get("executedFrames") is not None
+                    and inferences.get("requestedFrames") is not None):
+                trace["clip_frames"] += (
+                    f" · {inferences['executedFrames']:g}/{inferences['requestedFrames']:g} enviados"
+                )
+            motion = clip.get("temporalVariation")
+            if motion is not None:
+                trace["clip_motion"] = f"var={motion:g}"
+
         # Validar si el archivo llegó
         if incoming_file is None:
             print("⚠️ No se recibió archivo de audio (ni 'audio' ni 'audio_file').")
@@ -582,10 +973,10 @@ async def assist(
 
         audio_bytes = await incoming_file.read()
         if len(audio_bytes) == 0:
-            return {"error": "Audio vacío"}
+            return respond(generar_audio_error("No se capturó audio"))
 
         webm_audio = io.BytesIO(audio_bytes)
-        
+
         # 1. Decodificación
         try:
             audio_segment = AudioSegment.from_file(webm_audio)
@@ -594,7 +985,7 @@ async def assist(
             wav_io.seek(0)
         except Exception as e:
             print(f"❌ Error decodificando audio: {e}")
-            return StreamingResponse(generar_audio_error("No pude procesar tu audio"), media_type="audio/mpeg")
+            return respond(generar_audio_error("No pude procesar tu audio"))
 
         # 2. Reconocimiento de voz
         recognizer = sr.Recognizer()
@@ -603,12 +994,19 @@ async def assist(
             try:
                 text = recognizer.recognize_google(audio_data, language="es-ES").lower()
             except sr.UnknownValueError:
-                return StreamingResponse(generar_audio_error("No te entendí bien"), media_type="audio/mpeg")
+                return respond(generar_audio_error("No te entendí bien"))
 
-        # 3. Lógica de respuesta (Con Inteligencia Contextual)
+        trace["transcript"] = text[:160]
+        trace["navigate"] = _voice_nav_target(text)
+
+        # 3. Contexto disponible: sensores REALes + resumen declarado por el cliente.
+        sensor = get_latest_sensor_data_pg()
+        context_summary = _voice_context_summary(voice_context, sensor)
+
+        # 4. Lógica de respuesta (regla determinista por defecto)
         response_text = ""
         intent = "unknown"
-        
+
         # Palabras clave
         is_greeting = any(w in text for w in ["hola", "buenos días", "buenas tardes"])
         is_sensor_query = any(w in text for w in ["estado", "nodos", "temperatura", "humedad", "clima", "cómo está"])
@@ -616,27 +1014,31 @@ async def assist(
         is_repeat = "repite" in text or "qué dijiste" in text
 
         if is_greeting:
-            response_text = "Hola, soy la inteligencia artificial de SIGC&T Rural. Puedo informarte sobre el estado de los cultivos."
-            memory.update(intent="greeting", response=response_text)
-            
+            response_text = "Hola, soy el asistente de SIGC&T Rural. Puedo informarte sobre el estado de los cultivos."
+            intent = "greeting"
+            memory.update(intent=intent, response=response_text)
+
         elif is_sensor_query:
-            data = get_latest_sensor_data_pg()
-            if data:
-                response_text = (f"El último reporte indica: Temperatura de {data['temperature']} grados "
-                                f"y Humedad del {data['humidity']}%.")
-                memory.update(data=data, intent="sensor_query", response=response_text)
+            intent = "sensor_query"
+            if sensor:
+                response_text = (f"El último reporte indica: Temperatura de {sensor['temperature']} grados "
+                                 f"y Humedad del {sensor['humidity']}%.")
+                memory.update(data=sensor, intent=intent, response=response_text)
             else:
                 response_text = "Conecté a la base de datos, pero no encontré lecturas recientes."
-                
+            if voice_context:
+                response_text += " " + _voice_context_short(voice_context)
+
         elif is_followup:
-            # Aquí es donde ocurre la MAGIA del contexto
+            intent = "followup"
             if memory.last_data:
                 advice = memory.get_context_advice()
-                response_text = f"Analizando los datos anteriores: {advice}"
+                response_text = f"Analizando los datos anteriores: {advice} {_voice_context_short(voice_context)}"
             else:
                 response_text = "No tengo datos recientes en memoria para analizar. Pregúntame primero por el estado de los nodos."
-        
+
         elif is_repeat:
+            intent = "repeat"
             if memory.last_response:
                 response_text = f"Te decía que: {memory.last_response}"
             else:
@@ -645,16 +1047,33 @@ async def assist(
         else:
             response_text = f"Escuché: {text}. Intenta preguntar por el 'estado del sistema'."
 
-        # Guardar última respuesta por si pide repetir
+        if trace["navigate"]:
+            label = VOICE_NAV_LABELS.get(trace["navigate"], trace["navigate"])
+            response_text += f" Navegación solicitada a {label}; la interfaz validará la ruta antes de abrirla."
+            intent = "navigation" if intent == "unknown" else f"{intent}+navigation"
+
+        trace["intent"] = intent
         memory.update(response=response_text)
 
-        # 4. Generar respuesta de audio
+        # 5. LLM real: SOLO si hay URL + modelo + credencial configurados.
+        #    Sin configuracion (o con error) se conserva la respuesta reglada.
+        llm_answer, llm_status = await asyncio.to_thread(
+            _voice_llm_answer, text, context_summary, intent
+        )
+        trace["llm_status"] = llm_status
+        if llm_answer:
+            response_text = llm_answer
+            trace["mode"] = "LLM"
+            trace["llm_used"] = True
+            memory.update(response=response_text)
+
+        # 6. Generar respuesta de audio
         tts = gTTS(text=response_text, lang='es')
         mp3_io = io.BytesIO()
         tts.write_to_fp(mp3_io)
         mp3_io.seek(0)
-        
-        return StreamingResponse(mp3_io, media_type="audio/mpeg")
+
+        return respond(mp3_io)
 
     except Exception as e:
         print(f"🔥 Error crítico en /assist: {e}")
