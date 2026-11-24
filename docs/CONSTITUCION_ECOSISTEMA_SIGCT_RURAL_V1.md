@@ -147,6 +147,21 @@ El **ACP** (Agente Científico Principal) es lector y explicador **posterior** d
 
 **5.6 Puertos de lectura.** La integración se realiza preferentemente por **puertos de lectura** (P-LAB, P-BE, P-WEATHER, P-IA, P-KH, etc.): conectar por lectura y composición, sin interceptar rutas ni duplicar fuentes.
 
+**5.7 Principio de la señal viva: del dato al patrón y al flujo.** La señal no nace en el laboratorio: nace del **dato y del fenómeno** — medición de sensor, experimento, dataset, documento o evento del entorno. El laboratorio matemático la recibe, la modela y la explora para **descubrir patrones**; esos patrones alimentan la interpretación de ML/IA y los flujos de electrónica, telecomunicaciones y del ecosistema, y solo entonces se convierten en evidencia trazable que vuelve al conocimiento. La cadena canónica es:
+
+```
+dato / fenómeno → señal → modelo y exploración matemática → patrón → ML/IA + electrónica y flujos → evidencia → conocimiento → impacto
+```
+
+Este principio desarrolla P-5, P-8, P-11, el §5.2 y R-6.2; **no añade una norma nueva ni cambia la versión de esta Constitución**. Dos límites lo acompañan:
+
+- **No sustituir simuladores genéricos.** El modelado del ecosistema no pretende reemplazar a Mathematica, MATLAB, Maple, Wolfram Alpha, Falstad ni a ningún simulador maduro de internet: los envuelve, los enlaza como referencia y los integra por adaptación cuando aportan valor. El laboratorio matemático es un espacio de exploración y trazabilidad de lo que el ecosistema modela, no un clon ni un sustituto de esas herramientas (R-6.7).
+- **No mezclar límites hexagonales.** El modelado ocurre dentro del contexto Laboratorios/CMSC y publica sus resultados como señales o ítems con estado honesto mediante puertos de lectura (§5.6). No invade los contextos de Telemetría, IA ni Conocimiento: no escribe en sus repositorios, no redefine sus entidades (`SensorReading`, `RobotTelemetry`) ni asume la gobernanza del Knowledge Hub. Rige la regla **lab produce → ledger guarda → KH presenta** (R-6.4). Una señal de electrónica se consume por su propio puerto (`CircuitSimulationPort`) y su forma `{ time, [nodeLabel]: number[] }` viaja por `useLabStore` sin que el modelo matemático conozca al adaptador que la produjo.
+
+**Materialización verificada (estado honesto).** El núcleo matemático compila la expresión del usuario con `compileEquation` de `equationParser.js` — parser descendente recursivo, **sin `eval` ni `Function`** — y la muestrea en rejilla uniforme (`MmcMathematicsCore.jsx`) como serie `{ time, values, fs, finite }`. Esa serie es la señal viva del modelo: se dibuja en `MmcJsxGraphBoard`, se exporta a CSV y se envuelve en `workspace.model` con `estado: SIM` y `clase_senal: GENERADA`; **nunca se declara `REAL`**. `AdvancedMathLabV2.jsx` aplica el mismo contrato al bloque de derivadas e integrales. La señal de electrónica que consume es `SIM` — salida de un simulador de circuito —, no una medición real.
+
+**Regla de entrada del modelo (sin `eval`).** Para que una expresión escrita en notación humana pueda evaluarse como señal, la entrada se normaliza **antes de tokenizar**, solo con transformaciones declaradas: (1) corchetes `[` `]` → paréntesis; (2) alias de funciones en español sobre **identificadores completos** (`sen` → `sin`, `tg` → `tan`), nunca sustitución de subcadenas; (3) `e(` → `exp(` solo cuando `e` es identificador seguido de paréntesis — jamás tocar la `e` de `1e-3`, que el tokenizador ya leyó como número; (4) funciones con argumento implícito (`cosx`) → `cos(x)`, insertando paréntesis alrededor del sufijo de variable. Después, el parser existente resuelve el producto implícito y evalúa con el ámbito declarado. La normalización **no ejecuta código**, **no silencia errores** y **no inventa parámetros**: un alias desconocido o un parámetro sin declarar se reporta al usuario. Caso revisado: `[sen(cosx)]*(e(x^2))` necesita los cuatro pasos; hoy el parser lo rechaza (`"["` no permitido, `sen` desconocida, `cosx` variable libre, `e` tratada como función) y su forma canónica evaluable es `sin(cos(x))*exp(x^2)`.
+
 ---
 
 ## 6. Rol de los laboratorios

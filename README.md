@@ -513,6 +513,17 @@ Plan original para un baseline multiclase de agricultura (tomate, papa, maíz): 
 
 → Punto de entrada: [`docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md`](docs/ai/research_v2/SIGCT_RURAL_AI_RESEARCH_PROGRAM_V2.md)
 
+### 8.6 Estado técnico vivo: visión, LLM, ingesta y trazabilidad *(índice verificado 2026-11-24)*
+
+Punto de entrada para cuatro preguntas operativas: **qué modelos de visión y LLMs existen hoy**, **qué datasets se emplean**, **cómo entra la señal de cualquier hardware hacia la persistencia** y **cómo se auditan ETL/EDA**. No sustituye a los canónicos: los enlaza y respeta la jerarquía D-003.
+
+- **Visión:** M1 MobileNetV2 sigue siendo el baseline oficial congelado y M2 EfficientNet-B0 el challenger validado **sin promoción** (ECE `0.0332 > 0.0313`). El contrato v1 binario es el vigente; el contrato v2 de 16 clases (maíz, papa y tomate, PlantVillage) ya es tolerado por el resolver y la UI como **investigación**, no como diagnóstico de campo. `/health` publica `semantic_capabilities` para descubrir el estado sin invocar modelos.
+- **LLM:** no hay modelo propio entrenado; funciona la regla determinista con `llm_used=false`. El proveedor nube/local es un slot `DISENO` pendiente de asignar mediante `SIGCT_VOICE_LLM_URL`, `SIGCT_VOICE_LLM_MODEL` y `SIGCT_VOICE_LLM_KEY`.
+- **Datasets:** 22.488 imágenes / 16 clases para visión (split seed 42, holdout pendiente); dataset acústico propio `sigct_rural_acoustic/v1` (`schema.json` 1.3.0, 42 columnas, 44 dims) y fuentes externas `REF` gobernadas sin mezclar con splits propios. Se documenta un hallazgo de lectura (290 filas en disco frente al snapshot de 8 muestras) que requiere decisión de gobernanza; **`data/` no fue modificado**.
+- **Ingesta y trazabilidad:** el envelope `sigct-ingest-envelope-v1` declara procedencia, linaje y QC de cualquier fuente (cámara, clip, archivo o sensor) **sin escribir en BD ni en `data/`**; ETL/EDA conserva `raw` inmutable, derivados regenerables y hashes actualizados en el mismo cambio.
+
+→ Ver [`docs/AI_VISION_LLM_INGEST_ETL_STATUS_V1.md`](docs/AI_VISION_LLM_INGEST_ETL_STATUS_V1.md).
+
 ---
 
 <a name="-edge-computing"></a>
@@ -904,6 +915,7 @@ Este README es un documento de entrada público, **no** un reemplazo de la docum
 | 11. Preservación y Expansión (diseño, no implementado) | 6 documentos de la Misión Crítica: estrategia de preservación (NADA DESAPARECE), inventario verificado del filesystem, matriz de evolución por módulo, navegación aditiva, readiness con checklist U1 y auditoría de preservación | [`docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md`](docs/SIGCTIARURAL_PRESERVATION_STRATEGY.md) · [`docs/SIGCTIARURAL_COMPONENT_MAP.md`](docs/SIGCTIARURAL_COMPONENT_MAP.md) · [`docs/SIGCTIARURAL_PRESERVATION_AUDIT.md`](docs/SIGCTIARURAL_PRESERVATION_AUDIT.md) |
 | 12. Transición a la Dashboard Ganadora (diseño, no implementado) | 8 documentos de la MISIÓN CRÍTICA de migración: plan en 7 fases (feature flags/rollback), matriz de componentes (PRESERVAR/AMPLIAR/MOVER/DEPRECAR/NO TOCAR), mapa de páginas, brechas del Dashboard vs Ganadora, evolución de rutas (14 congeladas + 2 nuevas), plan del Hardware Catalog (preserva BBB), preservación de laboratorios por área y auditoría de migración | [`docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md`](docs/SIGCTIARURAL_FRONTEND_MIGRATION_PLAN.md) · [`docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md`](docs/SIGCTIARURAL_COMPONENT_MIGRATION_MATRIX.md) · [`docs/SIGCTIARURAL_MIGRATION_AUDIT.md`](docs/SIGCTIARURAL_MIGRATION_AUDIT.md) |
 | 13. Preparación de U1 (diseño, no implementado) | Cierre del NO GO: auditoría final del gate (NO GO documentado), resolución de los 6 bloqueantes (D-A latente, D-B relabel honesto en U1.3, D-C diferido, D-D módulo `catalog-data.js`, D-A-7 temperatura DS18B20, R-13 instancia aditiva de `Telemetry3DScene`) → GO CON CONDICIONES, y plan de ejecución U1.1-U1.4 con snapshot, pruebas manuales y rollback por fase | [`docs/SIGCTIARURAL_U1_GO_NO_GO.md`](docs/SIGCTIARURAL_U1_GO_NO_GO.md) · [`docs/SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md`](docs/SIGCTIARURAL_U1_BLOCKERS_RESOLUTION.md) · [`docs/SIGCTIARURAL_U1_BOOTSTRAP.md`](docs/SIGCTIARURAL_U1_BOOTSTRAP.md) |
+| 14. Estado técnico IA (índice verificado, 2026-11-24) | Visión M1/M2 y contratos v1/v2, LLMs nube/local pendientes, datasets propios y `REF`, ingesta agnóstica hardware→BD, auditoría ETL/EDA y matriz de honestidad | [`docs/AI_VISION_LLM_INGEST_ETL_STATUS_V1.md`](docs/AI_VISION_LLM_INGEST_ETL_STATUS_V1.md) |
 
 Si tu objetivo es entender el estado real del proyecto en profundidad —o continuar el trabajo como colaborador o como IA sin contexto previo— empieza por `docs/MASTERDOC.md` y `docs/PLAN_MAESTRO.md`. `SIGCT_RURAL_SYSTEM_BOOT.md` se conserva como guía de arranque y continuidad, no como fuente de verdad vigente.
 
