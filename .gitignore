@@ -20,6 +20,25 @@ env/
 benchmark/runs/
 benchmark/requirements.lock
 
+# ==========================
+# Pesos, checkpoints y artefactos pesados de ML/LLM
+# Regla: NUNCA versionar. El entrenamiento se ejecuta en Colab.
+# ==========================
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.gguf
+checkpoints/
+**/checkpoints/
+models_artifacts/
+**/models_artifacts/
+# JSONL de entrenamiento/evaluación pesada (corpus, no resúmenes versionados)
+*.jsonl
+# Bundle generado por scripts/build_colab_llm_bundle.py (se sube a Drive, nunca a Git)
+dist_colab_bundle/
+
 # Cache de Python
 __pycache__/
 *.pyc
