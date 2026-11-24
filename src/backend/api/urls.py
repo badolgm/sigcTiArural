@@ -46,3 +46,15 @@ try:
     ]
 except ImportError:
     pass
+
+# ==============================================================================
+# CMSC · CÁLCULO NUMÉRICO SOBRE SERIES REALES (C0 / C1 / SIM, sin elevación)
+# ==============================================================================
+try:
+    from .cmsc_views import AcousticEnvelopesView, RealSeriesCalculusView
+    urlpatterns += [
+        path('v3/cmsc/acoustic-envelopes/', AcousticEnvelopesView.as_view(), name='cmsc-acoustic-envelopes-v3'),
+        path('v3/cmsc/real-series-calculus/', RealSeriesCalculusView.as_view(), name='cmsc-real-series-calculus-v3'),
+    ]
+except ImportError:
+    pass
